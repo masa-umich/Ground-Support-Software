@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 
-from plot import Plot
+from Python.plot import Plot
 
 class PlotWindow(QMainWindow):
     """

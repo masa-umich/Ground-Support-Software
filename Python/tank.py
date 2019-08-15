@@ -3,9 +3,9 @@ from PyQt5.QtCore import *
 
 from overrides import overrides
 
-from constants import Constants
-from MathHelper import MathHelper
-from object import BaseObject
+from Python.constants import Constants
+from Python.MathHelper import MathHelper
+from Python.object import BaseObject
 
 
 """
