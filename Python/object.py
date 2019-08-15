@@ -12,12 +12,15 @@ from Python.anchorPoint import AnchorPoint
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
 
+
 class BaseObject:
 
     object_name = "Default Object"
-    def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height : float, name: str, scale: float = 1, avionics_number: int = 5,
-                 short_name: str = 'OX-SN-G07', safety_status: int = -1, long_name: str = 'LOX Dewar Drain',
-                 is_vertical: bool = False, is_being_edited: bool = False, is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False,
+
+    def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07', safety_status: int = -1,
+                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False, is_being_edited: bool = False,
+                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False,
                  long_name_label_position_num: int = 0):
         """
         Initializer for base class
@@ -42,8 +45,8 @@ class BaseObject:
         """
         super().__init__()
 
-        self.widget_parent = parent # Important for drawing icon
-        self._id = len(self.widget_parent.object_list) # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
+        self.widget_parent = parent  # Important for drawing icon
+        self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid
         self.width = width
@@ -62,7 +65,8 @@ class BaseObject:
         self.context_menu = QMenu(self.widget_parent)
         self.button = PlotButton(self.short_name, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = QLabel(self.widget_parent)
-        self.short_name_label = CustomLabel(widget_parent= self.widget_parent, object_ = self, is_vertical = self.is_vertical)
+        self.short_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+                                            is_vertical=self.is_vertical)
         self.long_name_label_position_num = long_name_label_position_num
         self.anchor_points = []
 
@@ -132,7 +136,7 @@ class BaseObject:
         else:
             self.short_name_label.moveToPosition("Bottom")
 
-        #Make em visible
+        # Make em visible
         self.long_name_label.show()
         self.short_name_label.show()
 
@@ -195,7 +199,6 @@ class BaseObject:
         # Tells widget painter to update screen
         self.widget_parent.update()
 
-
     def setAvionicsNumber(self, number):
         """
         Sets avionics number of object
@@ -231,12 +234,11 @@ class BaseObject:
         self.long_name_label_position_num = label_num
 
         # If label position is not given, have label follow object
-        if label_position == None:
+        if label_position is None:
             # Move the label into position
             self.long_name_label.move(self.position.x(), self.position.y())
         else:
             self.long_name_label.move(label_position.x(),label_position.y())
-
 
     # TODO: This anchor point stuff can be made much better
     def setAnchorPoints(self):
@@ -320,7 +322,6 @@ class BaseObject:
         else:
             self.hideAnchorPoints()
 
-
         # Checks if the alignment lines (yellow dashed lines) should be drawn
         if self.is_being_dragged:
 
@@ -332,11 +333,10 @@ class BaseObject:
             for ap in self.anchor_points:
                 if ap.x_aligned:
                     self.widget_parent.painter.drawLine(QPoint(ap.x() + 4, 0), QPoint(ap.x(),
-                                                                                        self.widget_parent.gui.screenResolution[
-                                                                                                 1]))
+                                                        self.widget_parent.gui.screenResolution[1]))
                 if ap.y_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + 4), QPoint(self.widget_parent.gui.screenResolution[
-                                                                                      0],ap.y()))
+                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + 4), QPoint(
+                                                        self.widget_parent.gui.screenResolution[0], ap.y()))
 
 
     def move(self, point: QPoint):
@@ -345,7 +345,7 @@ class BaseObject:
         :param point: point to move to
         """
 
-        if self.position_locked == False and self.locked == False:
+        if self.position_locked is False and self.locked is False:
             self.button.move(point)
             self.context_menu.move(point)
             self.position = point
@@ -377,18 +377,14 @@ class BaseObject:
         """
         Handler for context menu. These menus hand-off data plotting to plot windows
         :param event: default event from pyqt
-        :param button: button instance this context_menu is connected to
-        :param menu: input QMenu object to display options on
         :return:
         """
 
         action = self.context_menu.exec_(self.button.mapToGlobal(event))
 
         if action is not None:
-            if action.text()== "Delete Object":
+            if action.text() == "Delete Object":
                 self.widget_parent.deleteObject(self)
-
-
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []
