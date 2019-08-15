@@ -118,8 +118,9 @@ class Solenoid(BaseObject):
         super().onClick()
 
         if not self.widget_parent.window.is_editing:
-            #Toggle state of solenoid
-            self.toggle()
+            # Toggle state of solenoid
+            # self.toggle()
+            print("Ha Broken!")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
