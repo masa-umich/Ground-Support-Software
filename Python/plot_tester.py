@@ -14,6 +14,5 @@ while t < 10:
             wr = csv.writer(f)
             wr.writerow([t,random.randrange(0,100,step=1)])
 
-
     t = t + dt
     time.sleep(0.2)

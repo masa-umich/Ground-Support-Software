@@ -49,8 +49,6 @@ class PlotButton(QPushButton):
 
         super().mousePressEvent(event)
 
-    # New feature
-
     @overrides
     def mouseMoveEvent(self, event: QMouseEvent):
         """
