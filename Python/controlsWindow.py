@@ -101,6 +101,8 @@ class ControlsWidget(QWidget):
         # Object Tracker
         self.object_list = []
 
+        self.tube_list = []
+
         # painter controls the drawing of everything on the widget
         self.painter = QPainter()
 
@@ -231,6 +233,9 @@ class ControlsWidget(QWidget):
         # Draw Solenoids
         for object_ in self.object_list:
             object_.draw()
+
+        for tube in self.tube_list:
+            tube.draw()
 
         self.painter.end()
 

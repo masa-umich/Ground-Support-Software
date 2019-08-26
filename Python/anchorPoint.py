@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
+from tube import Tube
 
 
 class AnchorPoint(QPushButton):
@@ -28,8 +29,7 @@ class AnchorPoint(QPushButton):
         self.x_aligned = x_aligned
         self.y_aligned = y_aligned
         self.parent = parent
-        self.is_drag = False
-        self.drag_now_pos = None
+        self.tube = None
 
         self.setStyleSheet("background-color:transparent;border:0;")
         self.resize(6,6)
@@ -61,10 +61,14 @@ class AnchorPoint(QPushButton):
         :param event: variable holding event data
         """
         # If left click and the button is currently being edited
-        if event.button() == Qt.LeftButton & self.object_.is_being_edited:
+        if event.button() == Qt.LeftButton:
             # Set drag start position
-            self.drag_start_pos = QPoint(3,3)
-            self.is_drag = True
+            if self.tube is not None:
+                self.object_.widget_parent.tube_list.remove(self.tube)
+                
+            self.tube = Tube(self.object_.widget_parent, self.pos() + QPoint(self.width()/2, self.height()/2),
+                             self.pos() + QPoint(self.width()/2, self.height()/2),self.object_.fluid)
+            self.object_.widget_parent.tube_list.append(self.tube)
 
         super().mousePressEvent(event)
 
@@ -75,10 +79,11 @@ class AnchorPoint(QPushButton):
 
         :param event: variable holding event data
         """
-        if event.button() == Qt.LeftButton & self.object_.is_being_edited:
-            self.drag_now_pos = event.pos()
+        if event.button() == Qt.LeftButton and self.tube is not None:
+            self.tube.setEndPos(self.pos() + event.pos())
 
-        self.object_.widget_parent.update()
+            self.object_.widget_parent.update()
+
 
         super().mouseMoveEvent(event)
 

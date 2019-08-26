@@ -249,10 +249,10 @@ class BaseObject:
         # If the points have not been created yet, create them. If they have been, update the local position
         if len(self.anchor_points) == 0:
             # Default points are the midpoints of the four sides.
-            anchor_points = [AnchorPoint(QPoint(int(self.width/2) , 0                  ),self, parent = self.widget_parent),
-                             AnchorPoint(QPoint(int(self.width/2) , self.height        ),self, parent = self.widget_parent),
-                             AnchorPoint(QPoint(0                 , int(self.height/2) ),self, parent = self.widget_parent),
-                             AnchorPoint(QPoint(self.width        , int(self.height/2) ),self, parent = self.widget_parent)
+            anchor_points = [AnchorPoint(QPoint(int(self.width/2) , 0                 ), self, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(self.width/2) , self.height       ), self, parent=self.widget_parent),
+                             AnchorPoint(QPoint(0                 , int(self.height/2)), self, parent=self.widget_parent),
+                             AnchorPoint(QPoint(self.width        , int(self.height/2)), self, parent=self.widget_parent)
                             ]
             self.anchor_points = anchor_points
 
@@ -313,12 +313,6 @@ class BaseObject:
                 self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6, 6))
                 self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6, 6))
 
-                if point.is_drag and point.drag_now_pos is not None:
-                    pen = QPen()
-                    pen.setColor(Constants.fluidColor[self.fluid])
-                    pen.setWidth(1)
-                    self.widget_parent.painter.setPen(pen)
-                    self.widget_parent.painter.drawLine(point.pos() + point.drag_start_pos, point.pos() + point.drag_now_pos)
         else:
             self.hideAnchorPoints()
 
