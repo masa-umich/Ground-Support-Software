@@ -2,10 +2,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from Python.constants import Constants
-from Python.plotButton import PlotButton
-from Python.customLabel import CustomLabel
-from Python.anchorPoint import AnchorPoint
+from constants import Constants
+from plotButton import PlotButton
+from customLabel import CustomLabel
+from anchorPoint import AnchorPoint
 
 
 """

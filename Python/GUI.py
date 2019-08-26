@@ -1,6 +1,6 @@
 import sys
 
-from Python.controlsWindow import ControlsWindow
+from controlsWindow import ControlsWindow
 
 from PyQt5.QtWidgets import *
 

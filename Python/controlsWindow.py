@@ -2,12 +2,12 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from Python.csvHelper import CsvHelper
-from Python.solenoid import Solenoid
-from Python.tank import Tank
-from Python.pressureTransducer import PressureTransducer
-from Python.MathHelper import MathHelper
-from Python.controlsPanelWidget import  ControlsPanelWidget
+from csvHelper import CsvHelper
+from solenoid import Solenoid
+from tank import Tank
+from pressureTransducer import PressureTransducer
+from MathHelper import MathHelper
+from controlsPanelWidget import ControlsPanelWidget
 from overrides import overrides
 
 from termcolor import colored
