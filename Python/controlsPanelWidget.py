@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from Python.constants import Constants
+from constants import Constants
 
 class ControlsPanelWidget(QWidget):
     """
