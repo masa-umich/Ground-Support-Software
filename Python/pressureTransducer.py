@@ -4,8 +4,8 @@ from PyQt5.QtCore import *
 
 from overrides import overrides
 
-from Python.constants import Constants
-from Python.object import BaseObject
+from constants import Constants
+from object import BaseObject
 
 
 class PressureTransducer(BaseObject):
