@@ -1,6 +1,7 @@
 import sys
 
 from controlsWindow import ControlsWindow
+from liveVideoWindow import LiveVideoWindow
 
 from PyQt5.QtWidgets import *
 
@@ -16,6 +17,7 @@ class GUI:
 
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
+        self.liveVideoWindow = LiveVideoWindow(self)
 
 
 
