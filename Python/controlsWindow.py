@@ -32,15 +32,13 @@ class ControlsWindow(QMainWindow):
         # TODO: Make them not arbitrary
         self.left = 0
         self.top = 0
-        self.width = 1600
-        self.height = 1200
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
-        self.panel_width = 300
+        self.panel_width = .1875 * self.width
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -51,6 +49,8 @@ class ControlsWindow(QMainWindow):
 
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
+
+        self.showMaximized()
 
         self.show()
 
@@ -107,6 +107,7 @@ class ControlsWidget(QWidget):
         self.context_menu = QMenu(self)
 
         self.initContextMenu()
+
 
         #self.initConfigFiles()
         #self.createObjects()
