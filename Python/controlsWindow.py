@@ -24,6 +24,7 @@ class ControlsWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
+        self.gui = self.parent
 
         # Set geometry
         self.title = 'Controls Window'
@@ -32,13 +33,15 @@ class ControlsWindow(QMainWindow):
         # TODO: Make them not arbitrary
         self.left = 0
         self.top = 0
+        self.width = self.gui.screenResolution[0]
+        self.height = self.gui.screenResolution[1]
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
-        self.panel_width = .1875 * self.width
+        self.panel_width = 300 * self.gui.scale_ratio[0]
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -91,6 +94,7 @@ class ControlsWidget(QWidget):
 
         self.width = self.gui.screenResolution[0] - self.window.panel_width
         self.height = self.gui.screenResolution[1]
+
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
 
@@ -108,6 +112,12 @@ class ControlsWidget(QWidget):
 
         self.initContextMenu()
 
+        # Sets the color of the panel to dark Gray
+        # TODO: Make this not look totally terrible
+        self.setAutoFillBackground(True)
+        p = self.palette()
+        p.setColor(self.backgroundRole(), Qt.darkGray)
+        self.setPalette(p)
 
         #self.initConfigFiles()
         #self.createObjects()
@@ -116,9 +126,11 @@ class ControlsWidget(QWidget):
         # TODO: Move this button to the edit menu bar
         self.edit_button = QPushButton("EDIT", self)
         self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30,
-                              30)
+        self.edit_button.resize(70 * self.gui.scale_ratio[0], 30 * self.gui.scale_ratio[1])
+        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.scale_ratio[0],
+                              30 * self.gui.scale_ratio[1])
         self.edit_button.show()
+        print(self.edit_button.size())
 
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell

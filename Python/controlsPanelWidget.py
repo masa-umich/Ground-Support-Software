@@ -28,11 +28,11 @@ class ControlsPanelWidget(QWidget):
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        # Sets the color of the panel to dark Gray
+        # Sets the color of the panel to light Gray
         # TODO: Make this not look totally terrible
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.darkGray)
+        p.setColor(self.backgroundRole(), Qt.lightGray)
         self.setPalette(p)
 
         # Frames and layouts that holds everything in it and can be hidden / shown

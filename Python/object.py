@@ -49,8 +49,8 @@ class BaseObject:
         self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid
-        self.width = width
-        self.height = height
+        self.width = width * self.widget_parent.gui.scale_ratio[0]
+        self.height = height * self.widget_parent.gui.scale_ratio[0]
         self.name = name
         self.scale = scale
         self.avionics_number = avionics_number
@@ -113,8 +113,8 @@ class BaseObject:
         #### Long Name Label ####
         # Sets the sizing of the label
         self.long_name_label.setFont(font)
-        self.long_name_label.setFixedWidth(40 * 1.75)
-        self.long_name_label.setFixedHeight(80)  # 80 Corresponds to three rows at this font type and size (Arial 23)
+        self.long_name_label.setFixedWidth(40 * 1.75 * self.widget_parent.gui.scale_ratio[0])
+        self.long_name_label.setFixedHeight(80 * self.widget_parent.gui.scale_ratio[1])  # 80 Corresponds to three rows at this font type and size (Arial 23)
         self.long_name_label.setText(self.long_name)  # Solenoid long name
         self.long_name_label.setStyleSheet('color: white')
         self.long_name_label.setWordWrap(1)

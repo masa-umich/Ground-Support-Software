@@ -13,6 +13,8 @@ class GUI:
     def __init__(self):
 
         self.screenResolution = [app.desktop().screenGeometry().width(),app.desktop().screenGeometry().height()]
+        self.scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
+        print(self.screenResolution)
 
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
