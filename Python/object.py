@@ -46,11 +46,12 @@ class BaseObject:
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
+        self.gui = self.widget_parent.gui
         self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid
-        self.width = width * self.widget_parent.gui.scale_ratio[0]
-        self.height = height * self.widget_parent.gui.scale_ratio[0]
+        self.width = width * self.widget_parent.gui.object_scale_ratio[0]
+        self.height = height * self.widget_parent.gui.object_scale_ratio[0]
         self.name = name
         self.scale = scale
         self.avionics_number = avionics_number
@@ -108,13 +109,14 @@ class BaseObject:
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(23)
+        font.setPointSize(23 * self.gui.font_scale_ratio)
+
 
         #### Long Name Label ####
         # Sets the sizing of the label
         self.long_name_label.setFont(font)
-        self.long_name_label.setFixedWidth(40 * 1.75 * self.widget_parent.gui.scale_ratio[0])
-        self.long_name_label.setFixedHeight(80 * self.widget_parent.gui.scale_ratio[1])  # 80 Corresponds to three rows at this font type and size (Arial 23)
+        self.long_name_label.setFixedWidth(40 * 1.75 * self.widget_parent.gui.object_scale_ratio[0])
+        self.long_name_label.setFixedHeight(80 * self.widget_parent.gui.object_scale_ratio[0])  # 80 Corresponds to three rows at this font type and size (Arial 23)
         self.long_name_label.setText(self.long_name)  # Solenoid long name
         self.long_name_label.setStyleSheet('color: white')
         self.long_name_label.setWordWrap(1)
@@ -123,8 +125,11 @@ class BaseObject:
         # Sets alignment of label
         self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
 
+        print("hey")
+        print(self.long_name_label.fontMetrics().boundingRect(self.long_name_label.text()).width())
+
         #### Short Name Label ####
-        font.setPointSize(10)
+        font.setPointSize(10 * self.gui.font_scale_ratio)
         self.short_name_label.setFont(font)
         self.short_name_label.setText(self.short_name)
         self.short_name_label.setStyleSheet('color: white')
