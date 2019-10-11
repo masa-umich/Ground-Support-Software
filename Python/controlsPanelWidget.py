@@ -38,7 +38,9 @@ class ControlsPanelWidget(QWidget):
         # Frames and layouts that holds everything in it and can be hidden / shown
         self.edit_frame = QFrame(self)
         self.edit_form_layout = QFormLayout(self)
+        self.edit_frame.resize(300 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1])
         self.edit_frame.setLayout(self.edit_form_layout)
+
 
         # Textboxes, radioButtons, and drop-downs
         self.long_name_textbox = QLineEdit(self)

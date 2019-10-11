@@ -41,7 +41,7 @@ class ControlsWindow(QMainWindow):
 
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
-        self.panel_width = 300 * self.gui.object_scale_ratio[0]
+        self.panel_width = 300 * self.gui.pixel_scale_ratio[0]
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -126,9 +126,9 @@ class ControlsWidget(QWidget):
         # TODO: Move this button to the edit menu bar
         self.edit_button = QPushButton("EDIT", self)
         self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.resize(70 * self.gui.object_scale_ratio[0], 30 * self.gui.object_scale_ratio[1])
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.object_scale_ratio[0],
-                              30 * self.gui.object_scale_ratio[1])
+        self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
+        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
+                              30 * self.gui.pixel_scale_ratio[1])
         self.edit_button.show()
         print(self.edit_button.size())
 

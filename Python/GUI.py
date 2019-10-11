@@ -15,7 +15,7 @@ class GUI:
         self.screenResolution = [app.desktop().screenGeometry().width(),app.desktop().screenGeometry().height()]
         # Get the scaling ratio for objects in the gui. The scale ratio would be 1 on a screen of a resolution of 1600
         # wide and 1200 tall
-        self.object_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
+        self.pixel_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
 
         if sys.platform == "win32":
             self.platform = "Windows"
