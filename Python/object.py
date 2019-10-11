@@ -309,21 +309,20 @@ class BaseObject:
         Will almost always be overridden, this exists to
         provide some default functionality
         """
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+        pen.setColor(Constants.fluidColor[self.fluid])
+        self.widget_parent.painter.setPen(pen)
+
         # TODO: This is a funky place to put the showAnchorPoint stuff but is the simplest option right now
         if self.widget_parent.window.is_editing:
             self.showAnchorPoints()
             # Draws small anchor points (6x6 box) on the object to help user when editing
             for point in self.anchor_points:
-                self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
-                self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6, 6))
-                self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6, 6))
+                self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6 * self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
+                self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6* self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
 
-                if point.is_drag and point.drag_now_pos is not None:
-                    pen = QPen()
-                    pen.setColor(Constants.fluidColor[self.fluid])
-                    pen.setWidth(1)
-                    self.widget_parent.painter.setPen(pen)
-                    self.widget_parent.painter.drawLine(point.pos() + point.drag_start_pos, point.pos() + point.drag_now_pos)
         else:
             self.hideAnchorPoints()
 

@@ -22,7 +22,7 @@ class AnchorPoint(QPushButton):
         """
         # Init the point
         super().__init__(parent)
-
+        self.parent
         self.local_pos = local_pos
         self.object_ = object_
         self.x_aligned = x_aligned
@@ -32,7 +32,7 @@ class AnchorPoint(QPushButton):
         self.drag_now_pos = None
 
         self.setStyleSheet("background-color:transparent;border:0;")
-        self.resize(6,6)
+        self.resize(6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0])
         self.show()
 
         self.updatePosition()

@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from constants import Constants
 from csvHelper import CsvHelper
 from solenoid import Solenoid
 from tank import Tank
@@ -241,8 +242,14 @@ class ControlsWidget(QWidget):
         # This makes the objects onscreen more crisp
         self.painter.setRenderHint(QPainter.HighQualityAntialiasing)
 
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+
         # Draw Solenoids
         for object_ in self.object_list:
+            pen.setColor(Constants.fluidColor[object_.fluid])
+            self.painter.setPen(pen)
             object_.draw()
 
         self.painter.end()
