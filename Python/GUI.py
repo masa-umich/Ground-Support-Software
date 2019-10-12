@@ -1,7 +1,7 @@
 import sys
 
 from controlsWindow import ControlsWindow
-
+from constants import  Constants
 from PyQt5.QtWidgets import *
 
 
@@ -26,9 +26,12 @@ class GUI:
         if self.platform == "Windows":
             # Once again the font scale is 1 on Mac and smaller for windows. This should produce identical results
             self.font_scale_ratio = 0.82
+
+            Constants.line_width = 4
         elif self.platform == "OSX":
             self.font_scale_ratio = 1
 
+            Constants.line_width = 2
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
 
