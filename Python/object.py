@@ -330,7 +330,10 @@ class BaseObject:
             pen = QPen()
             pen.setColor(Qt.yellow)
             pen.setStyle(Qt.DashLine)
-            pen.setWidth(2)
+            if self.gui.platform == "Windows":
+                pen.setWidth(2)
+            elif self.gui.platform == "OSX":
+                pen.setWidth(1)
             self.widget_parent.painter.setPen(pen)
 
 
