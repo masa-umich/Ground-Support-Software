@@ -42,6 +42,7 @@ class PlotButton(QPushButton):
 
         :param event: variable holding event data
         """
+
         # If left click and the button is currently being edited
         if event.button() == Qt.LeftButton & self.object_.is_being_edited:
             # Set drag start position
@@ -56,8 +57,13 @@ class PlotButton(QPushButton):
 
         :param event: variable holding event data
         """
-        if event.button() == Qt.LeftButton & self.object_.is_being_edited:
 
+        # For some unknown reason mouse move events handle buttons differently on OSX and Windows
+        target_button = Qt.LeftButton
+        if self.parent.gui.platform == "Windows":
+            target_button = Qt.NoButton
+
+        if event.button() == target_button and self.object_.is_being_edited:
             # I have no idea where the 22 comes from
             # 22 is for non full screen on my (all?) macs
             # HMM: Elegant Solution?
@@ -100,9 +106,9 @@ class PlotButton(QPushButton):
 
         :param event: variable holding event data
         """
-        # Checks if the object is currently being dragged
-        if event.button() == Qt.LeftButton & self.object_.is_being_edited & self.object_.is_being_dragged:
 
+        # Checks if the object is currently being dragged
+        if event.button() == Qt.LeftButton and self.object_.is_being_edited and self.object_.is_being_dragged:
             # Does background stuff when object is released
             super().mouseReleaseEvent(event)
 

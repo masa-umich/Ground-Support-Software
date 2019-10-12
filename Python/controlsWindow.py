@@ -113,6 +113,9 @@ class ControlsWidget(QWidget):
 
         self.initContextMenu()
 
+        # Var to keep track of the importance of mouse clicks
+        self.should_ignore_mouse_release = False
+
         # Sets the color of the panel to dark Gray
         # TODO: Make this not look totally terrible
         self.setAutoFillBackground(True)
@@ -131,7 +134,6 @@ class ControlsWidget(QWidget):
         self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
                               30 * self.gui.pixel_scale_ratio[1])
         self.edit_button.show()
-        print(self.edit_button.size())
 
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
@@ -254,6 +256,16 @@ class ControlsWidget(QWidget):
 
         self.painter.end()
 
+
+    @overrides
+    def mouseMoveEvent(self, QMouseEvent):
+        """"
+        This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
+        moving an object.
+        """
+        # When an object is being dragged we dont want a mouse release event to trigger
+        self.should_ignore_mouse_release = True
+
     @overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
         """
@@ -261,7 +273,11 @@ class ControlsWidget(QWidget):
         It tells the controls panel to removes all the editing objects and clear itself.
         """
 
-        self.controlsPanel.removeAllEditingObjects()
+        # If we are not expecting a release don't remove all objects
+        if not self.should_ignore_mouse_release:
+            self.controlsPanel.removeAllEditingObjects()
+        else:
+            self.should_ignore_mouse_release = False
 
         # Tells widget painter to update screen
         self.update()

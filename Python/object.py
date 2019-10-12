@@ -125,9 +125,6 @@ class BaseObject:
         # Sets alignment of label
         self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
 
-        print("hey")
-        print(self.long_name_label.fontMetrics().boundingRect(self.long_name_label.text()).width())
-
         #### Short Name Label ####
         font.setPointSize(10 * self.gui.font_scale_ratio)
         self.short_name_label.setFont(font)
@@ -293,6 +290,7 @@ class BaseObject:
         child class
         """
 
+
         if self.widget_parent.window.is_editing:
             if self.is_being_edited:
                 self.widget_parent.controlsPanel.removeEditingObjects(self)
@@ -332,14 +330,16 @@ class BaseObject:
             pen = QPen()
             pen.setColor(Qt.yellow)
             pen.setStyle(Qt.DashLine)
+            pen.setWidth(2)
             self.widget_parent.painter.setPen(pen)
+
 
             for ap in self.anchor_points:
                 if ap.x_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(ap.x() + 4, 0), QPoint(ap.x(),
+                    self.widget_parent.painter.drawLine(QPoint(ap.x() + (5 * self.gui.pixel_scale_ratio[0]), 0), QPoint(ap.x(),
                                                         self.widget_parent.gui.screenResolution[1]))
                 if ap.y_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + 4), QPoint(
+                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + (6 * self.gui.pixel_scale_ratio[1])), QPoint(
                                                         self.widget_parent.gui.screenResolution[0], ap.y()))
 
 
