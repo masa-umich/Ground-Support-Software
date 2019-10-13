@@ -20,7 +20,9 @@ class Constants:
         3: "LN2"
     }
 
-    #List of fluids
+    line_width = 3
+
+    # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2"]
 
     # Dict of fluid colors. Number on left should match value of fluid dict above. Example call: fluidColor[0] -> Returns Qt.white

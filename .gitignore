@@ -1,3 +1,15 @@
+#OS Files
 *.DS_Store
+
+# Visual debugger configurations
+.vscode/
+.vs/
+*.vcxproj
+*.vcxproj.*
+*.xcodeproj/
 *.idea/
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class

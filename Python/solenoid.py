@@ -69,11 +69,6 @@ class Solenoid(BaseObject):
         # If solenoid is open color it in
         if self.state == 1:
             self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])  # This function colors in a path
-        else:
-            self.widget_parent.painter.setBrush(0)
-
-        # Sets line color
-        self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
 
         # Move path to starting position
         path.moveTo(0, 0)  # Top left corner
@@ -120,7 +115,6 @@ class Solenoid(BaseObject):
         if not self.widget_parent.window.is_editing:
             # Toggle state of solenoid
             self.toggle()
-            print("Ha (no longer) Broken!")
 
         # Tells widget painter to update screen
         self.widget_parent.update()

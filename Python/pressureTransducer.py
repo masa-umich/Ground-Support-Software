@@ -42,12 +42,13 @@ class PressureTransducer(BaseObject):
         self.pressure_label.move(self.position.x(), self.position.y())
         self.pressure_label.setText(str(self.pressure) + "psi")
         self.pressure_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+        self.pressure_label.setStyleSheet('color: white')
 
         # Get font and set it
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(23)
+        font.setPointSize(23 * self.gui.font_scale_ratio)
         self.pressure_label.setFont(font)
 
         self.pressure_label.show()
@@ -115,7 +116,6 @@ class PressureTransducer(BaseObject):
         """
         Draws the PT icon on screen
         """
-        self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
 
         super().draw()

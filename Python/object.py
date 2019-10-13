@@ -46,11 +46,12 @@ class BaseObject:
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
+        self.gui = self.widget_parent.gui
         self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid
-        self.width = width
-        self.height = height
+        self.width = width * self.widget_parent.gui.pixel_scale_ratio[0]
+        self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
         self.name = name
         self.scale = scale
         self.avionics_number = avionics_number
@@ -108,13 +109,14 @@ class BaseObject:
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(23)
+        font.setPointSize(23 * self.gui.font_scale_ratio)
+
 
         #### Long Name Label ####
         # Sets the sizing of the label
         self.long_name_label.setFont(font)
-        self.long_name_label.setFixedWidth(40 * 1.75)
-        self.long_name_label.setFixedHeight(80)  # 80 Corresponds to three rows at this font type and size (Arial 23)
+        self.long_name_label.setFixedWidth(40 * 1.75 * self.widget_parent.gui.pixel_scale_ratio[0])
+        self.long_name_label.setFixedHeight(80 * self.widget_parent.gui.pixel_scale_ratio[0])  # 80 Corresponds to three rows at this font type and size (Arial 23)
         self.long_name_label.setText(self.long_name)  # Solenoid long name
         self.long_name_label.setStyleSheet('color: white')
         self.long_name_label.setWordWrap(1)
@@ -124,7 +126,7 @@ class BaseObject:
         self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
 
         #### Short Name Label ####
-        font.setPointSize(10)
+        font.setPointSize(10 * self.gui.font_scale_ratio)
         self.short_name_label.setFont(font)
         self.short_name_label.setText(self.short_name)
         self.short_name_label.setStyleSheet('color: white')
@@ -288,6 +290,7 @@ class BaseObject:
         child class
         """
 
+
         if self.widget_parent.window.is_editing:
             if self.is_being_edited:
                 self.widget_parent.controlsPanel.removeEditingObjects(self)
@@ -304,14 +307,19 @@ class BaseObject:
         Will almost always be overridden, this exists to
         provide some default functionality
         """
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+        pen.setColor(Constants.fluidColor[self.fluid])
+        self.widget_parent.painter.setPen(pen)
+
         # TODO: This is a funky place to put the showAnchorPoint stuff but is the simplest option right now
         if self.widget_parent.window.is_editing:
             self.showAnchorPoints()
             # Draws small anchor points (6x6 box) on the object to help user when editing
             for point in self.anchor_points:
-                self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
-                self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6, 6))
-                self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6, 6))
+                self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6 * self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
+                self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6* self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
 
         else:
             self.hideAnchorPoints()
@@ -322,14 +330,19 @@ class BaseObject:
             pen = QPen()
             pen.setColor(Qt.yellow)
             pen.setStyle(Qt.DashLine)
+            if self.gui.platform == "Windows":
+                pen.setWidth(2)
+            elif self.gui.platform == "OSX":
+                pen.setWidth(1)
             self.widget_parent.painter.setPen(pen)
+
 
             for ap in self.anchor_points:
                 if ap.x_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(ap.x() + 4, 0), QPoint(ap.x(),
+                    self.widget_parent.painter.drawLine(QPoint(ap.x() + (5 * self.gui.pixel_scale_ratio[0]), 0), QPoint(ap.x(),
                                                         self.widget_parent.gui.screenResolution[1]))
                 if ap.y_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + 4), QPoint(
+                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + (6 * self.gui.pixel_scale_ratio[1])), QPoint(
                                                         self.widget_parent.gui.screenResolution[0], ap.y()))
 
 

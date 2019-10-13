@@ -69,7 +69,7 @@ class Tank(BaseObject):
         """
         self.long_name_label_position_num = label_num
 
-        self.long_name_label.move(QPoint(int(self.position.x() + self.width /2 - self.long_name_label.width() / 2), self.position.y() + 20))
+        self.long_name_label.move(QPoint(int(self.position.x() + self.width /2 - self.long_name_label.width() / 2), self.position.y() + 20 * self.widget_parent.gui.pixel_scale_ratio[0]))
 
     @overrides
     def draw(self):
@@ -78,11 +78,10 @@ class Tank(BaseObject):
         """
 
         # Height of curved arc at top and bottom of tank
-        arcHeight = 20 * self.scale
+        arcHeight = 20 * self.scale * self.widget_parent.gui.pixel_scale_ratio[0]
 
         # Draws the tank outline
         path = QPainterPath()
-        self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
 
         path.moveTo(0,arcHeight)
         path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180) # Top Arc

@@ -2,12 +2,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from constants import Constants
 from csvHelper import CsvHelper
 from solenoid import Solenoid
 from tank import Tank
 from pressureTransducer import PressureTransducer
 from MathHelper import MathHelper
-from controlsPanelWidget import ControlsPanelWidget
+from controlsPanelWidget import  ControlsPanelWidget
 from overrides import overrides
 
 from termcolor import colored
@@ -24,6 +25,7 @@ class ControlsWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
+        self.gui = self.parent
 
         # Set geometry
         self.title = 'Controls Window'
@@ -32,15 +34,15 @@ class ControlsWindow(QMainWindow):
         # TODO: Make them not arbitrary
         self.left = 0
         self.top = 0
-        self.width = 1600
-        self.height = 1200
+        self.width = self.gui.screenResolution[0]
+        self.height = self.gui.screenResolution[1]
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
-        self.panel_width = 300
+        self.panel_width = 300 * self.gui.pixel_scale_ratio[0]
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -51,6 +53,8 @@ class ControlsWindow(QMainWindow):
 
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
+
+        self.showMaximized()
 
         self.show()
 
@@ -91,6 +95,7 @@ class ControlsWidget(QWidget):
 
         self.width = self.gui.screenResolution[0] - self.window.panel_width
         self.height = self.gui.screenResolution[1]
+
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
 
@@ -110,6 +115,16 @@ class ControlsWidget(QWidget):
 
         self.initContextMenu()
 
+        # Var to keep track of the importance of mouse clicks
+        self.should_ignore_mouse_release = False
+
+        # Sets the color of the panel to dark Gray
+        # TODO: Make this not look totally terrible
+        self.setAutoFillBackground(True)
+        p = self.palette()
+        p.setColor(self.backgroundRole(), Qt.darkGray)
+        self.setPalette(p)
+
         #self.initConfigFiles()
         #self.createObjects()
 
@@ -117,8 +132,9 @@ class ControlsWidget(QWidget):
         # TODO: Move this button to the edit menu bar
         self.edit_button = QPushButton("EDIT", self)
         self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30,
-                              30)
+        self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
+        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
+                              30 * self.gui.pixel_scale_ratio[1])
         self.edit_button.show()
 
         # Masa Logo on bottom left of screen
@@ -126,9 +142,12 @@ class ControlsWidget(QWidget):
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap('masawhiteworm.png')
+        pixmap = QPixmap('masawhiteworm2.png')
+        pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
-        self.masa_logo.setGeometry(10, self.gui.screenResolution[1] - 110, 300, 100)
+        self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
+                                   (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
+                                   100 * self.gui.pixel_scale_ratio[1])
 
 
     # TODO: Almost anything but this, that being said it works
@@ -230,14 +249,30 @@ class ControlsWidget(QWidget):
         # This makes the objects onscreen more crisp
         self.painter.setRenderHint(QPainter.HighQualityAntialiasing)
 
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+
         # Draw Solenoids
         for object_ in self.object_list:
+            pen.setColor(Constants.fluidColor[object_.fluid])
+            self.painter.setPen(pen)
             object_.draw()
 
         for tube in self.tube_list:
             tube.draw()
 
         self.painter.end()
+
+
+    @overrides
+    def mouseMoveEvent(self, QMouseEvent):
+        """"
+        This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
+        moving an object.
+        """
+        # When an object is being dragged we dont want a mouse release event to trigger
+        self.should_ignore_mouse_release = True
 
     @overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
@@ -246,7 +281,11 @@ class ControlsWidget(QWidget):
         It tells the controls panel to removes all the editing objects and clear itself.
         """
 
-        self.controlsPanel.removeAllEditingObjects()
+        # If we are not expecting a release don't remove all objects
+        if not self.should_ignore_mouse_release:
+            self.controlsPanel.removeAllEditingObjects()
+        else:
+            self.should_ignore_mouse_release = False
 
         # Tells widget painter to update screen
         self.update()
