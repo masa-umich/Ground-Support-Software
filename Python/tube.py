@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
@@ -8,28 +9,52 @@ class Tube:
 
     object_name = "Tube"
 
-    def __init__(self, parent: QWidget, start_pos: QPoint, end_pos: QPoint, fluid: int):
-
+    def __init__(self, parent: QWidget,points: [QPoint], fluid: int):
         self.parent = parent
-        self.start_pos = start_pos
-        self.end_pos = end_pos
+        self.points = points
         self.fluid = fluid
+        self.is_being_drawn = False
 
-    def setStartPos(self, start_pos):
-        self.start_pos = start_pos
+    def completeTube(self):
+        del self.points[-1]
+        self.is_being_drawn = False
+        for obj in self.parent.object_list:
+            obj.setMouseEventTransparency(False)
+        self.parent.update()
 
-    def setEndPos(self, end_pos):
-        #self.end_pos = end_pos
+    def setCurrentPos(self, current_pos: QPoint):
+        self.points.append(current_pos)
 
-        diff = self.start_pos - end_pos
+    def updateCurrentPos(self, current_pos: QPoint):
 
-        if abs(diff.x()) > abs(diff.y()):
-            self.end_pos = QPoint(end_pos.x(), self.start_pos.y())
+        for obj in self.parent.object_list:
+            obj.setMouseEventTransparency(True)
+
+
+        diff = self.points[-2] - current_pos
+
+        # If this is the first point allow the user to make a straight line in the x or y direction
+        if len(self.points) <= 2:
+            if abs(diff.x()) > abs(diff.y()):
+                self.points[-1] = QPoint(current_pos.x(), self.points[-2].y())
+            else:
+                self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
+        # If this is not the first line make sure the new segment is perpendicular to the last segment
         else:
-            self.end_pos = QPoint(self.start_pos.x(), end_pos.y())
-
+            if abs(self.points[-2].x() - self.points[-3].x()) == 0:
+                self.points[-1] = QPoint(current_pos.x(), self.points[-2].y())
+            elif abs(self.points[-2].y() - self.points[-3].y()) == 0:
+                self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
 
 
     def draw(self):
         self.parent.painter.setPen(Constants.fluidColor[self.fluid])
-        self.parent.painter.drawLine(self.start_pos, self.end_pos)
+
+        path = QPainterPath()
+
+        path.moveTo(self.points[0])
+
+        for point in self.points:
+            path.lineTo(point)
+
+        self.parent.painter.drawPath(path)

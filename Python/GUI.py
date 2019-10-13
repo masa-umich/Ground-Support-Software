@@ -1,8 +1,11 @@
 import sys
 
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+
 from controlsWindow import ControlsWindow
 from constants import  Constants
-from PyQt5.QtWidgets import *
+
 
 
 """
@@ -41,5 +44,7 @@ class GUI:
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     gui = GUI()
+
     sys.exit(app.exec_())

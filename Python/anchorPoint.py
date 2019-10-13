@@ -56,7 +56,7 @@ class AnchorPoint(QPushButton):
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
         """
-        Called when mouse is pressed on a button. Used for drag and drop of objects
+        Called when mouse is pressed on a anchor point. Used for drawing lines between objects
 
         :param event: variable holding event data
         """
@@ -66,11 +66,21 @@ class AnchorPoint(QPushButton):
             if self.tube is not None:
                 self.object_.widget_parent.tube_list.remove(self.tube)
                 
-            self.tube = Tube(self.object_.widget_parent, self.pos() + QPoint(self.width()/2, self.height()/2),
-                             self.pos() + QPoint(self.width()/2, self.height()/2),self.object_.fluid)
+            self.tube = Tube(self.object_.widget_parent, [self.pos() + QPoint(self.width()/2, self.height()/2),
+                             self.pos() + QPoint(self.width()/2, self.height()/2)],self.object_.fluid)
+            self.tube.is_being_drawn = True
+            self.object_.widget_parent.setMouseTracking(True)
             self.object_.widget_parent.tube_list.append(self.tube)
 
         super().mousePressEvent(event)
+
+    @overrides
+    def deleteLater(self):
+        if self.tube is not None:
+            self.parent.tube_list.remove(self.tube)
+            del self.tube
+
+        super().deleteLater()
 
     @overrides
     def mouseMoveEvent(self, event: QMouseEvent):
@@ -79,10 +89,10 @@ class AnchorPoint(QPushButton):
 
         :param event: variable holding event data
         """
-        if event.button() == Qt.LeftButton and self.tube is not None:
-            self.tube.setEndPos(self.pos() + event.pos())
+        #if event.button() == Qt.LeftButton and self.tube is not None:
+            #self.tube.setEndPos(self.pos() + event.pos())
 
-            self.object_.widget_parent.update()
+            #self.object_.widget_parent.update()
 
 
         super().mouseMoveEvent(event)

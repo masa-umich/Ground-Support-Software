@@ -301,6 +301,13 @@ class BaseObject:
         # Tells widget painter to update screen
         self.widget_parent.update()
 
+    def setMouseEventTransparency(self, should_be_transparent):
+        self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.short_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        for ap in self.anchor_points:
+            ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
     def draw(self):
         """
         Draws the object
@@ -374,6 +381,8 @@ class BaseObject:
         del self.short_name_label
         self.long_name_label.deleteLater()
         del self.long_name_label
+        for ap in self.anchor_points:
+            ap.deleteLater()
         del self.anchor_points
         del self._id
         del self.avionics_number

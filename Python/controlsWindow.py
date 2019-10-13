@@ -108,6 +108,8 @@ class ControlsWidget(QWidget):
 
         self.tube_list = []
 
+        self.setMouseTracking(True)
+
         # painter controls the drawing of everything on the widget
         self.painter = QPainter()
 
@@ -266,13 +268,53 @@ class ControlsWidget(QWidget):
 
 
     @overrides
-    def mouseMoveEvent(self, QMouseEvent):
+    def keyPressEvent(self, e:QKeyEvent):
+        """
+        Called whenever the user presses a button on the keyboard
+        :param e:
+        :return:
+        """
+        # If the return key is pressed:
+        if e.key() == Qt.Key_Return:
+            for tube in self.tube_list:
+                if tube.is_being_drawn:
+                    tube.completeTube()
+        # If the escape key is pressed:
+        elif e.key() == Qt.Key_Escape:
+            for tube in self.tube_list:
+                if tube.is_being_drawn:
+                    self.tube_list.remove(tube)
+                    del tube
+                    self.update()
+
+
+    @overrides
+    def mousePressEvent(self, e:QMouseEvent):
+        """"
+        This event is called when the user is drawing a new line and wants to put 'bends' into the line
+        """
+        for tube in self.tube_list:
+            if tube.is_being_drawn:
+                tube.setCurrentPos(e.pos())
+                self.update()
+
+
+
+    @overrides
+    def mouseMoveEvent(self, e:QMouseEvent):
         """"
         This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
         moving an object.
         """
         # When an object is being dragged we dont want a mouse release event to trigger
         self.should_ignore_mouse_release = True
+
+        for tube in self.tube_list:
+            if tube.is_being_drawn:
+                tube.updateCurrentPos(e.pos())
+                self.update()
+
+
 
     @overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
