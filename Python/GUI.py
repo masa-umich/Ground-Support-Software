@@ -13,6 +13,7 @@ Program start point. This class handles all child windows of the gui
 """
 class GUI:
 
+
     def __init__(self):
         # Get the screen resolution of the user
         self.screenResolution = [app.desktop().screenGeometry().width(),app.desktop().screenGeometry().height()]
