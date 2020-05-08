@@ -316,6 +316,7 @@ class ControlsWidget(QWidget):
 
 
 
+
     @overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
         """
