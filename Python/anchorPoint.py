@@ -11,6 +11,7 @@ class AnchorPoint(QPushButton):
     QPoint class that holds specific info to anchor points
     """
 
+    # TODO: The parent system here seems messed up
     def __init__(self, local_pos: QPoint, object_, x_aligned: bool = False, y_aligned: bool = False, parent=None):
         """
         Init for the AnchorPoint
@@ -60,17 +61,25 @@ class AnchorPoint(QPushButton):
 
         :param event: variable holding event data
         """
+
         # If left click and the button is currently being edited
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton and self.parent.is_drawing is False:
             # Set drag start position
             if self.tube is not None:
-                self.object_.widget_parent.tube_list.remove(self.tube)
+                self.object_.parent.tube_list.remove(self.tube)
                 
             self.tube = Tube(self.object_.widget_parent, [self.pos() + QPoint(self.width()/2, self.height()/2),
                              self.pos() + QPoint(self.width()/2, self.height()/2)],self.object_.fluid)
             self.tube.is_being_drawn = True
+            self.parent.is_drawing = True
             self.object_.widget_parent.setMouseTracking(True)
             self.object_.widget_parent.tube_list.append(self.tube)
+        elif event.button() == Qt.LeftButton:
+            self.parent.is_drawing = False
+            for tube in self.parent.tube_list:
+                if tube.is_being_drawn:
+                    tube.setCurrentPos(self.pos())
+                    tube.completeTube()
 
         super().mousePressEvent(event)
 

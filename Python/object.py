@@ -305,8 +305,10 @@ class BaseObject:
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.short_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        for ap in self.anchor_points:
-            ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        # Right now does not set ap points as transparent to allow for them to be clicked on
+        # for ap in self.anchor_points:
+        #     ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
 
     def draw(self):
         """
@@ -332,7 +334,8 @@ class BaseObject:
             self.hideAnchorPoints()
 
         # Checks if the alignment lines (yellow dashed lines) should be drawn
-        if self.is_being_dragged:
+        # TODO: This is also a bad place to put this but the system is poorly set up to provide a better location for it
+        if self.is_being_dragged or self.widget_parent.is_drawing:
 
             pen = QPen()
             pen.setColor(Qt.yellow)

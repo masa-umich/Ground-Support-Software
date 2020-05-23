@@ -120,6 +120,9 @@ class ControlsWidget(QWidget):
         # Var to keep track of the importance of mouse clicks
         self.should_ignore_mouse_release = False
 
+        # Var to keep track when a tube is being drawn
+        self.is_drawing = False
+
         # Sets the color of the panel to dark Gray
         # TODO: Make this not look totally terrible
         self.setAutoFillBackground(True)
@@ -259,6 +262,7 @@ class ControlsWidget(QWidget):
         for object_ in self.object_list:
             pen.setColor(Constants.fluidColor[object_.fluid])
             self.painter.setPen(pen)
+            print("test")
             object_.draw()
 
         for tube in self.tube_list:
