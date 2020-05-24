@@ -54,6 +54,32 @@ class AnchorPoint(QPushButton):
 
         self.updatePosition()
 
+    def draw(self):
+        """
+        Draws the anchor point on the screen, also draws the alignment lines
+        """
+        # Draws the 6x6 box
+        self.parent.painter.drawRect(QRectF(self.x(), self.y(), 6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0]))
+        self.parent.painter.eraseRect(QRectF(self.x(), self.y(), 6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0]))
+
+        # Draws the yellow dashed alignment lines when dragging the ap's object or drawing the ap's tube
+        if self.object_.is_being_dragged or self.parent.is_drawing:
+            pen = QPen()
+            pen.setColor(Qt.yellow)
+            pen.setStyle(Qt.DashLine)
+            if self.parent.gui.platform == "Windows":
+                pen.setWidth(2)
+            elif self.parent.gui.platform == "OSX":
+                pen.setWidth(1)
+            self.parent.painter.setPen(pen)
+
+            if self.x_aligned:
+                self.parent.painter.drawLine(QPoint(self.x() + (5 * self.parent.gui.pixel_scale_ratio[0]), 0),
+                                                    QPoint(self.x(), self.parent.gui.screenResolution[1]))
+            if self.y_aligned:
+                self.parent.painter.drawLine(QPoint(0, self.y() + (6 * self.parent.gui.pixel_scale_ratio[1])),
+                                                    QPoint(self.parent.gui.screenResolution[0], self.y()))
+
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
         """

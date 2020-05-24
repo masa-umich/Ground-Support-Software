@@ -17,6 +17,11 @@ class BaseObject:
 
     object_name = "Default Object"
 
+    """----------------------------------------------------------------------------------------------------------------
+    INIT SECTION 
+    ----------------------------------------------------------------------------------------------------------------"""
+
+
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
                  scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07', safety_status: int = -1,
                  long_name: str = 'LOX Dewar Drain', is_vertical: bool = False, is_being_edited: bool = False,
@@ -73,7 +78,7 @@ class BaseObject:
 
         self._initButton()
         self._initLabels()
-        self.setAnchorPoints()
+        self._initAnchorPoints()
 
     def _initButton(self):
         """
@@ -141,6 +146,24 @@ class BaseObject:
         # Make em visible
         self.long_name_label.show()
         self.short_name_label.show()
+
+    def _initAnchorPoints(self):
+        """
+        Inits the anchor points for the object
+        Should only be called from __init__
+        """
+        # Default points are the midpoints of the four sides.
+        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, parent=self.widget_parent),
+                         AnchorPoint(QPoint(0, int(self.height / 2)), self, parent=self.widget_parent),
+                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, parent=self.widget_parent)
+                         ]
+        self.anchor_points = anchor_points
+
+    """----------------------------------------------------------------------------------------------------------------
+    GETTERS and SETTERS
+    ----------------------------------------------------------------------------------------------------------------"""
+
 
     def setToolTip_(self, text):
         """
@@ -242,28 +265,18 @@ class BaseObject:
         else:
             self.long_name_label.move(label_position.x(),label_position.y())
 
-    # TODO: This anchor point stuff can be made much better
     def setAnchorPoints(self):
         """
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
-        # HMM: Should this be combined with update anchor points somehow?
-        # If the points have not been created yet, create them. If they have been, update the local position
-        if len(self.anchor_points) == 0:
-            # Default points are the midpoints of the four sides.
-            anchor_points = [AnchorPoint(QPoint(int(self.width/2) , 0                 ), self, parent=self.widget_parent),
-                             AnchorPoint(QPoint(int(self.width/2) , self.height       ), self, parent=self.widget_parent),
-                             AnchorPoint(QPoint(0                 , int(self.height/2)), self, parent=self.widget_parent),
-                             AnchorPoint(QPoint(self.width        , int(self.height/2)), self, parent=self.widget_parent)
-                            ]
-            self.anchor_points = anchor_points
+        self.anchor_points[0].updateLocalPosition(QPoint(int(self.width/2) , 0                  ))
+        self.anchor_points[1].updateLocalPosition(QPoint(int(self.width/2) , self.height        ))
+        self.anchor_points[2].updateLocalPosition(QPoint(0                 , int(self.height/2) ))
+        self.anchor_points[3].updateLocalPosition(QPoint(self.width        , int(self.height/2) ))
 
-        # This is called when the scale changes, otherwise, update anchor points is called when objects move
-        else:
-            self.anchor_points[0].updateLocalPosition(QPoint(int(self.width/2) , 0                  ))
-            self.anchor_points[1].updateLocalPosition(QPoint(int(self.width/2) , self.height        ))
-            self.anchor_points[2].updateLocalPosition(QPoint(0                 , int(self.height/2) ))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width        , int(self.height/2) ))
+    """----------------------------------------------------------------------------------------------------------------
+    OBJECT ACTIONS 
+    ----------------------------------------------------------------------------------------------------------------"""
 
     def updateAnchorPoints(self):
         """
@@ -274,7 +287,6 @@ class BaseObject:
             ap.updatePosition()
 
     def hideAnchorPoints(self):
-
         for ap in self.anchor_points:
             ap.hide()
 
@@ -284,12 +296,9 @@ class BaseObject:
 
     def onClick(self):
         """
-        When a object is clicked this function is called
-        This is base functionality, more functionality
-        can be added by overriding this function in the
-        child class
+        When a object is clicked this function is called. This is base functionality, more functionality
+        can be added by overriding this function in the child class
         """
-
 
         if self.widget_parent.window.is_editing:
             if self.is_being_edited:
@@ -302,6 +311,10 @@ class BaseObject:
         self.widget_parent.update()
 
     def setMouseEventTransparency(self, should_be_transparent):
+        """
+        Sets the object and its labels to be mouse transparent or not. When transparent the mouse events are not
+        triggered on the buttons/ labels
+        """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.short_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -309,12 +322,10 @@ class BaseObject:
         # for ap in self.anchor_points:
         #     ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
 
-
     def draw(self):
         """
-        Draws the object
-        Will almost always be overridden, this exists to
-        provide some default functionality
+        Draws the object. Will almost always be overridden, this exists to provide some default functionality,
+        mainly anchor points
         """
         # Default pen qualities
         pen = QPen()
@@ -322,39 +333,14 @@ class BaseObject:
         pen.setColor(Constants.fluidColor[self.fluid])
         self.widget_parent.painter.setPen(pen)
 
-        # TODO: This is a funky place to put the showAnchorPoint stuff but is the simplest option right now
+        # While editing draws small anchor points (6x6 box) on the object to help user with alignment
         if self.widget_parent.window.is_editing:
             self.showAnchorPoints()
-            # Draws small anchor points (6x6 box) on the object to help user when editing
             for point in self.anchor_points:
-                self.widget_parent.painter.drawRect(QRectF(point.x(), point.y(), 6 * self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
-                self.widget_parent.painter.eraseRect(QRectF(point.x(), point.y(), 6* self.gui.pixel_scale_ratio[0], 6* self.gui.pixel_scale_ratio[0]))
-
+                self.widget_parent.painter.setPen(pen)
+                point.draw()
         else:
             self.hideAnchorPoints()
-
-        # Checks if the alignment lines (yellow dashed lines) should be drawn
-        # TODO: This is also a bad place to put this but the system is poorly set up to provide a better location for it
-        if self.is_being_dragged or self.widget_parent.is_drawing:
-
-            pen = QPen()
-            pen.setColor(Qt.yellow)
-            pen.setStyle(Qt.DashLine)
-            if self.gui.platform == "Windows":
-                pen.setWidth(2)
-            elif self.gui.platform == "OSX":
-                pen.setWidth(1)
-            self.widget_parent.painter.setPen(pen)
-
-
-            for ap in self.anchor_points:
-                if ap.x_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(ap.x() + (5 * self.gui.pixel_scale_ratio[0]), 0), QPoint(ap.x(),
-                                                        self.widget_parent.gui.screenResolution[1]))
-                if ap.y_aligned:
-                    self.widget_parent.painter.drawLine(QPoint(0, ap.y() + (6 * self.gui.pixel_scale_ratio[1])), QPoint(
-                                                        self.widget_parent.gui.screenResolution[0], ap.y()))
-
 
     def move(self, point: QPoint):
         """
@@ -373,6 +359,78 @@ class BaseObject:
 
         # Tells widget painter to update screen
         self.widget_parent.update()
+
+    def checkApAlignment(self, pos: QPoint = None):
+        """
+        Checks to see if object should snap into place based on anchor points.
+        :param pos: The position of the BASE object. For example if you want to see if a certain object's aps are
+                    aligned you would pass in the that objects position. NOTE: the pos argument is provided to allow for
+                    checking of alignment and potential adjusting before move() is called. If you are not calling this
+                    before a move() call you (most likely) can leave the pos blank. It will default to the objects
+                    current position
+        :return:    This function returns the objects pos after checking alignment. This is to allow the position to be
+                    updated if it was snapped into place
+        """
+
+        if pos is None:
+            pos = self.position
+
+        # TODO: Think real hard about a better less costly solution to this. Currently runs Ok? though
+
+        # Determines if the object should be 'snapped' into place
+        # Triple for loop :(. First for loop runs through all anchor points on the object, then for every object
+        # onscreen, checks to see if the current anchor point, is near another object anchor point
+        for anchor_point in self.anchor_points:
+            anchor_point.x_aligned = False
+            anchor_point.y_aligned = False
+            for obj in self.widget_parent.object_list:
+                if obj is not self:
+                    for obj_ap in obj.anchor_points:
+                        if obj_ap.x() - 5 < anchor_point.x() < obj_ap.x() + 5 and abs(
+                                pos.x() - self.position.x()) < 5:
+                            pos = QPoint(obj_ap.x() + (self.position.x() - anchor_point.x()), pos.y())
+                            anchor_point.x_aligned = True
+                        if obj_ap.y() - 5 < anchor_point.y() < obj_ap.y() + 5 and abs(
+                                pos.y() - self.position.y()) < 5:
+                            pos = QPoint(pos.x(), obj_ap.y() + (self.position.y() - anchor_point.y()))
+                            anchor_point.y_aligned = True
+
+        return pos
+
+    """----------------------------------------------------------------------------------------------------------------
+    EVENTS 
+    ----------------------------------------------------------------------------------------------------------------"""
+
+    def contextMenuEvent_(self, event):
+        """
+        Handler for context menu. These menus hand-off data plotting to plot windows
+        :param event: default event from pyqt
+        :return:
+        """
+
+        action = self.context_menu.exec_(self.button.mapToGlobal(event))
+
+        if action is not None:
+            if action.text() == "Delete Object":
+                self.widget_parent.deleteObject(self)
+
+        # TODO: Re-implement this when plotting is ready
+        # self.plotMenuActions = []
+        # for plot in self.widget_parent.gui.plotWindow.plotList:
+        #     action = QAction(plot.name)
+        #     self.plotMenuActions.append(action)
+        #
+        #     self.plotMenuActions[-1].triggered.connect(
+        #         lambda *args, p=plot: self.link_plot(p, button)
+        #     )
+        #
+        #     menu.addAction(self.plotMenuActions[-1])
+        #
+        # menu.exec_(self.button.mapToGlobal(event))
+
+    """----------------------------------------------------------------------------------------------------------------
+    DELETION 
+    ----------------------------------------------------------------------------------------------------------------"""
 
     def deleteSelf(self):
         """
@@ -405,33 +463,6 @@ class BaseObject:
 
         self.widget_parent.update()
 
-
-    def contextMenuEvent_(self, event):
-        """
-        Handler for context menu. These menus hand-off data plotting to plot windows
-        :param event: default event from pyqt
-        :return:
-        """
-
-        action = self.context_menu.exec_(self.button.mapToGlobal(event))
-
-        if action is not None:
-            if action.text() == "Delete Object":
-                self.widget_parent.deleteObject(self)
-
-        # TODO: Re-implement this when plotting is ready
-        # self.plotMenuActions = []
-        # for plot in self.widget_parent.gui.plotWindow.plotList:
-        #     action = QAction(plot.name)
-        #     self.plotMenuActions.append(action)
-        #
-        #     self.plotMenuActions[-1].triggered.connect(
-        #         lambda *args, p=plot: self.link_plot(p, button)
-        #     )
-        #
-        #     menu.addAction(self.plotMenuActions[-1])
-        #
-        # menu.exec_(self.button.mapToGlobal(event))
 
     def link_plot(self, plot, button):
         """

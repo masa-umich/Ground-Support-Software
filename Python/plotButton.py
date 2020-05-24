@@ -75,26 +75,10 @@ class PlotButton(QPushButton):
             # Move the button into place on screen
             pos = event.globalPos() - self.window_pos - self.drag_start_pos
 
-            # OPTIMIZE: Can create a list of all anchor points, sort it and then check the index before and after,
-            # to determine if there is a object to snap too.
+            # Checks if the object should be snapped into place, and get that new pos if it does
+            pos = self.object_.checkApAlignment(pos)
 
-            # Determines if the object should be 'snapped' into place
-            # Triple for loop :(. First for loop runs through all anchor points on the object, then for every object onscreen,
-            # Checks to see if the current anchor point, is near another object anchor point
-            for anchor_point in self.object_.anchor_points:
-                anchor_point.x_aligned = False
-                anchor_point.y_aligned = False
-                for obj in self.parent.object_list:
-                    if obj is not self.object_:
-                        for obj_ap in obj.anchor_points:
-                            if obj_ap.x() - 5 < anchor_point.x() < obj_ap.x() + 5 and abs(pos.x() - self.object_.position.x()) < 5:
-                                pos = QPoint(obj_ap.x() + (self.object_.position.x() - anchor_point.x()), pos.y())
-                                anchor_point.x_aligned = True
-                            if obj_ap.y() - 5 < anchor_point.y() < obj_ap.y() + 5 and abs(pos.y() - self.object_.position.y()) < 5:
-                                pos = QPoint(pos.x(), obj_ap.y() + (self.object_.position.y() - anchor_point.y()))
-                                anchor_point.y_aligned = True
-
-
+            # Moves the object into its new position
             self.object_.move(pos)
 
         super().mouseMoveEvent(event)

@@ -50,6 +50,7 @@ class ControlsWindow(QMainWindow):
         self.showMaximized()
 
         self.show()
+
         # Menu shit that is not ready yet
         # exitAct = QAction('&Save', self)
         # exitAct.setStatusTip('Exit application')
@@ -69,6 +70,6 @@ class ControlsWindow(QMainWindow):
 
         :param e: variable holding event data
         """
-        self.width = self.size().width
-        self.height = self.size().height
+        self.width = self.size().width()
+        self.height = self.size().height()
 

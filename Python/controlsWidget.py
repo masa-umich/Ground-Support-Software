@@ -3,11 +3,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
-from csvHelper import CsvHelper
 from solenoid import Solenoid
 from tank import Tank
 from pressureTransducer import PressureTransducer
-from MathHelper import MathHelper
 from overrides import overrides
 
 from termcolor import colored
@@ -16,6 +14,7 @@ from termcolor import colored
 """
 This file contains the class to create the main controls widget (where the P&ID is)
 """
+
 
 class ControlsWidget(QWidget):
     """
@@ -107,41 +106,6 @@ class ControlsWidget(QWidget):
         """
         self.controlsPanel = self.window.controlsPanelWidget
 
-    def initConfigFiles(self):
-        """
-        Loads in all the configuration files for the widget
-        """
-
-        self.csvObjectData = CsvHelper.loadCsv("csvObjectData.csv")
-
-        # Map objects on screen to the screen resolution of the users screen.
-        # This is a quick fix, this method messes with two objects that should be aligned
-        # TODO: Change position scaling algorithm in such a way that maintains inter-object alignment
-        # TODO: Move this loop somewhere else
-        for i in range(self.csvObjectData[1]):
-            self.csvObjectData[2][2][i] = MathHelper.mapValue(float(self.csvObjectData[2][2][i]), 139, 790, self.screenWidthBuffer, self.parent.parent.screenResolution[0]-self.screenWidthBuffer - 300)
-            self.csvObjectData[2][3][i] = MathHelper.mapValue(float(self.csvObjectData[2][3][i]), 179, 590, self.screenHeightBuffer,self.parent.parent.screenResolution[1] - self.screenHeightBuffer)
-
-    def createObjects(self):
-        """
-        Creates objects to be drawn onscreen. Uses csv file to load in all the object types, positions, and fluids
-        """
-        # Loops through all the cols of the csv
-
-        for i in range(self.csvObjectData[1]):
-            # Creates horizontal and vertical solenoids
-            if int(self.csvObjectData[2][0][i]) == 0 or int(self.csvObjectData[2][0][i]) == 1:
-                self.solenoid_list.append(
-                    Solenoid(self, QPointF(float(self.csvObjectData[2][2][i]), float(self.csvObjectData[2][3][i])),
-                             int(self.csvObjectData[2][1][i]), int(self.csvObjectData[2][0][i])))
-            # Creates Tanks
-            if int(self.csvObjectData[2][0][i]) == 2:
-                self.tank_list.append(
-                    Tank(self, QPointF(float(self.csvObjectData[2][2][i]), float(self.csvObjectData[2][3][i])),
-                          int(self.csvObjectData[2][1][i])))
-
-
-        self.pressure_transducer_list.append(PressureTransducer(self, QPointF(20, 300), 0, False))
 
     def initContextMenu(self):
         """
@@ -154,7 +118,6 @@ class ControlsWidget(QWidget):
         # For all the object types, create a right button action called "New 'Object Name'"
         for object_type in self.object_type_list:
             self.context_menu.addAction("New " + object_type.object_name)
-
 
 
     def toggleEdit(self):
@@ -183,7 +146,7 @@ class ControlsWidget(QWidget):
         # Remove object from any tracker lists
         self.object_list.remove(object_)
 
-        #Tells the object to delete itself
+        # Tells the object to delete itself
         object_.deleteSelf()
 
         self.update()
@@ -242,10 +205,13 @@ class ControlsWidget(QWidget):
         """"
         This event is called when the user is drawing a new line and wants to put 'bends' into the line
         """
-        for tube in self.tube_list:
-            if tube.is_being_drawn:
-                tube.setCurrentPos(e.pos())
-                self.update()
+
+        # Checks is tubes are being drawn and if so a blend is placed
+        if self.is_drawing:
+            for tube in self.tube_list:
+                if tube.is_being_drawn:
+                    tube.setCurrentPos(e.pos())
+                    self.update()
 
 
 
@@ -255,15 +221,15 @@ class ControlsWidget(QWidget):
         This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
         moving an object.
         """
-        # When an object is being dragged we dont want a mouse release event to trigger
+        # When an object is being dragged we don't want a mouse release event to trigger
         self.should_ignore_mouse_release = True
 
-        for tube in self.tube_list:
-            if tube.is_being_drawn:
-                tube.updateCurrentPos(e.pos())
-                self.update()
-
-
+        # Checks if tubes are being drawn and if so updates the end position of the tube to be the mouse position
+        if self.is_drawing:
+            for tube in self.tube_list:
+                if tube.is_being_drawn:
+                    tube.updateCurrentPos(e.pos())
+                    self.update()
 
 
     @overrides
