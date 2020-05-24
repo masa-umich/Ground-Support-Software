@@ -20,20 +20,21 @@ class AnchorPoint(QPushButton):
         :param object_: object point is assigned to
         :param x_aligned: is the x position of the point aligned with another objects anchor point
         :param y_aligned: is the y position of the point aligned with another objects anchor point
-        :param parent: parent window
+        :param parent: Controls widget
         """
         # Init the point
         super().__init__(parent)
-        self.parent
-        self.local_pos = local_pos
+        self.parent = parent
+        self.widget = parent
+        self.gui = object_.gui
         self.object_ = object_
+        self.local_pos = local_pos
         self.x_aligned = x_aligned
         self.y_aligned = y_aligned
-        self.parent = parent
         self.tube = None
 
         self.setStyleSheet("background-color:transparent;border:0;")
-        self.resize(6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0])
+        self.resize(6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0])
         self.show()
 
         self.updatePosition()
@@ -59,26 +60,26 @@ class AnchorPoint(QPushButton):
         Draws the anchor point on the screen, also draws the alignment lines
         """
         # Draws the 6x6 box
-        self.parent.painter.drawRect(QRectF(self.x(), self.y(), 6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0]))
-        self.parent.painter.eraseRect(QRectF(self.x(), self.y(), 6 * self.parent.gui.pixel_scale_ratio[0], 6 * self.parent.gui.pixel_scale_ratio[0]))
+        self.widget.painter.drawRect(QRectF(self.x(), self.y(), 6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0]))
+        self.widget.painter.eraseRect(QRectF(self.x(), self.y(), 6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0]))
 
         # Draws the yellow dashed alignment lines when dragging the ap's object or drawing the ap's tube
-        if self.object_.is_being_dragged or self.parent.is_drawing:
+        if self.object_.is_being_dragged or self.widget.is_drawing:
             pen = QPen()
             pen.setColor(Qt.yellow)
             pen.setStyle(Qt.DashLine)
-            if self.parent.gui.platform == "Windows":
+            if self.gui.platform == "Windows":
                 pen.setWidth(2)
-            elif self.parent.gui.platform == "OSX":
+            elif self.gui.platform == "OSX":
                 pen.setWidth(1)
-            self.parent.painter.setPen(pen)
+            self.widget.painter.setPen(pen)
 
             if self.x_aligned:
-                self.parent.painter.drawLine(QPoint(self.x() + (5 * self.parent.gui.pixel_scale_ratio[0]), 0),
-                                                    QPoint(self.x(), self.parent.gui.screenResolution[1]))
+                self.widget.painter.drawLine(QPoint(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
+                                                    QPoint(self.x(), self.gui.screenResolution[1]))
             if self.y_aligned:
-                self.parent.painter.drawLine(QPoint(0, self.y() + (6 * self.parent.gui.pixel_scale_ratio[1])),
-                                                    QPoint(self.parent.gui.screenResolution[0], self.y()))
+                self.widget.painter.drawLine(QPoint(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
+                                                    QPoint(self.gui.screenResolution[0], self.y()))
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
@@ -89,19 +90,19 @@ class AnchorPoint(QPushButton):
         """
 
         # If left click and the button is currently being edited
-        if event.button() == Qt.LeftButton and self.parent.is_drawing is False:
+        if event.button() == Qt.LeftButton and self.widget.is_drawing is False:
             # Set drag start position
             if self.tube is not None:
-                self.object_.parent.tube_list.remove(self.tube)
+                self.widget.tube_list.remove(self.tube)
                 
             self.tube = Tube(self.object_, [self.pos() + QPoint(self.width()/2, self.height()/2),
                              self.pos() + QPoint(self.width()/2, self.height()/2)],self.object_.fluid)
             self.tube.is_being_drawn = True
-            self.parent.is_drawing = True
-            self.object_.widget_parent.setMouseTracking(True)
-            self.object_.widget_parent.tube_list.append(self.tube)
+            self.widget.is_drawing = True
+            self.widget.setMouseTracking(True)
+            self.widget.tube_list.append(self.tube)
         elif event.button() == Qt.LeftButton:
-            self.parent.is_drawing = False
+            self.widget.is_drawing = False
             for tube in self.parent.tube_list:
                 if tube.is_being_drawn:
                     tube.setCurrentPos(self.pos())
@@ -112,29 +113,15 @@ class AnchorPoint(QPushButton):
     @overrides
     def deleteLater(self):
         if self.tube is not None:
-            self.parent.tube_list.remove(self.tube)
+            self.widget.tube_list.remove(self.tube)
             del self.tube
 
         super().deleteLater()
 
     @overrides
     def mouseMoveEvent(self, event: QMouseEvent):
-        """
-        Called when mouse is moving a button. Used for drag and drop of objects
-
-        :param event: variable holding event data
-        """
-        #if event.button() == Qt.LeftButton and self.tube is not None:
-            #self.tube.setEndPos(self.pos() + event.pos())
-
-            #self.object_.widget_parent.update()
-
-
         super().mouseMoveEvent(event)
 
     @overrides
     def mouseReleaseEvent(self, event: QMouseEvent):
         super().mouseReleaseEvent(event)
-
-        #self.is_drag = False
-        #self.drag_now_pos = None

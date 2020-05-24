@@ -4,7 +4,6 @@ from PyQt5.QtCore import *
 
 from overrides import overrides
 
-from constants import Constants
 from object import BaseObject
 
 
@@ -119,8 +118,6 @@ class PressureTransducer(BaseObject):
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
 
         super().draw()
-
-        #self.widget_parent.painter.eraseRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
 
     @overrides
     def deleteSelf(self):
