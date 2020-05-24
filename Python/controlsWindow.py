@@ -1,14 +1,19 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
 from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
+
+from overrides import overrides
 
 """
 This file contains the class to create the main window
 """
 
+
 class ControlsWindow(QMainWindow):
     """
-    Window to house the controlsWidget
+    Window to house the controls and editing Widgets
     """
 
     def __init__(self, parent=None):
@@ -36,7 +41,6 @@ class ControlsWindow(QMainWindow):
         # Marker for if the controls area is being edited
         self.is_editing = False
 
-
         self.controlsWidget = ControlsWidget(self)
         self.controlsPanelWidget = ControlsPanelWidget(self)
 
@@ -46,7 +50,6 @@ class ControlsWindow(QMainWindow):
         self.showMaximized()
 
         self.show()
-
         # Menu shit that is not ready yet
         # exitAct = QAction('&Save', self)
         # exitAct.setStatusTip('Exit application')
@@ -58,3 +61,14 @@ class ControlsWindow(QMainWindow):
         # menubar = self.menuBar()
         # fileMenu = menubar.addMenu('&File')
         # fileMenu.addAction(exitAct)
+
+    @overrides
+    def resizeEvent(self, e: QResizeEvent):
+        """
+        Called when window is re-sized, updates height and width vas
+
+        :param e: variable holding event data
+        """
+        self.width = self.size().width
+        self.height = self.size().height
+
