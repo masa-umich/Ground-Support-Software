@@ -11,6 +11,8 @@ class Tube:
 
     def __init__(self, parent: QWidget,points: [QPoint], fluid: int):
         self.parent = parent
+        self.object = parent
+        self.widget_parent = parent.widget_parent
         self.points = points
         self.fluid = fluid
         self.is_being_drawn = False
@@ -19,20 +21,21 @@ class Tube:
     def completeTube(self):
         del self.points[-1]
         self.is_being_drawn = False
-        for obj in self.parent.object_list:
+        for obj in self.widget_parent.object_list:
             obj.setMouseEventTransparency(False)
             for obj_ap in obj.anchor_points:
                 obj_ap.x_aligned = False
                 obj_ap.y_aligned = False
 
-        self.parent.update()
+        self.widget_parent.is_drawing = False
+        self.widget_parent.update()
 
     def setCurrentPos(self, current_pos: QPoint):
         self.points.append(current_pos)
 
     def updateCurrentPos(self, current_pos: QPoint):
 
-        for obj in self.parent.object_list:
+        for obj in self.widget_parent.object_list:
             obj.setMouseEventTransparency(True)
 
         diff = self.points[-2] - current_pos
@@ -54,8 +57,8 @@ class Tube:
                 self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
                 self.draw_direction = "Vertical"
 
-
-        for obj in self.parent.object_list:
+        # This will check for tube end alignment with object anchor points
+        for obj in self.widget_parent.object_list:
             for obj_ap in obj.anchor_points:
                 obj_ap.x_aligned = False
                 obj_ap.y_aligned = False
@@ -66,13 +69,11 @@ class Tube:
                     self.points[-1] = QPoint(self.points[-1].x(),obj_ap.y() + 3)
                     obj_ap.y_aligned = True
 
-
-
-        self.parent.update()
+        self.widget_parent.update()
 
 
     def draw(self):
-        self.parent.painter.setPen(Constants.fluidColor[self.fluid])
+        self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
 
         path = QPainterPath()
 
@@ -81,4 +82,4 @@ class Tube:
         for point in self.points:
             path.lineTo(point)
 
-        self.parent.painter.drawPath(path)
+        self.widget_parent.painter.drawPath(path)

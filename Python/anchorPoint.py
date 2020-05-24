@@ -68,7 +68,7 @@ class AnchorPoint(QPushButton):
             if self.tube is not None:
                 self.object_.parent.tube_list.remove(self.tube)
                 
-            self.tube = Tube(self.object_.widget_parent, [self.pos() + QPoint(self.width()/2, self.height()/2),
+            self.tube = Tube(self.object_, [self.pos() + QPoint(self.width()/2, self.height()/2),
                              self.pos() + QPoint(self.width()/2, self.height()/2)],self.object_.fluid)
             self.tube.is_being_drawn = True
             self.parent.is_drawing = True

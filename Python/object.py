@@ -369,6 +369,7 @@ class BaseObject:
             self.updateAnchorPoints()
             self.setLongNameLabelPosition(self.long_name_label_position_num)
             self.short_name_label.moveToPosition()
+            self.deleteConnectedTubes()
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -390,6 +391,19 @@ class BaseObject:
         del self._id
         del self.avionics_number
         del self
+
+    def deleteConnectedTubes(self):
+        """
+        Called for object to attached tubes
+        """
+
+        for ap in self.anchor_points:
+            if ap.tube is not None:
+                self.widget_parent.tube_list.remove(ap.tube)
+                del ap.tube
+                ap.tube = None
+
+        self.widget_parent.update()
 
 
     def contextMenuEvent_(self, event):

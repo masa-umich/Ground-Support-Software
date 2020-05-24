@@ -262,7 +262,6 @@ class ControlsWidget(QWidget):
         for object_ in self.object_list:
             pen.setColor(Constants.fluidColor[object_.fluid])
             self.painter.setPen(pen)
-            print("test")
             object_.draw()
 
         for tube in self.tube_list:
@@ -288,6 +287,7 @@ class ControlsWidget(QWidget):
             for tube in self.tube_list:
                 if tube.is_being_drawn:
                     self.tube_list.remove(tube)
+                    self.is_drawing = False
                     del tube
                     self.update()
 
