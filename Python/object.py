@@ -25,8 +25,7 @@ class BaseObject:
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
                  scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07', safety_status: int = -1,
                  long_name: str = 'LOX Dewar Drain', is_vertical: bool = False, is_being_edited: bool = False,
-                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False,
-                 long_name_label_position_num: int = 0):
+                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False):
         """
         Initializer for base class
 
@@ -70,10 +69,10 @@ class BaseObject:
         self.position_locked = position_locked
         self.context_menu = QMenu(self.widget_parent)
         self.button = PlotButton(self.short_name, self, 'data.csv', 'Pressure', self.widget_parent)
-        self.long_name_label = QLabel(self.widget_parent)
+        self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+                                            is_vertical=False)
         self.short_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
                                             is_vertical=self.is_vertical)
-        self.long_name_label_position_num = long_name_label_position_num
         self.anchor_points = []
 
         self._initButton()
@@ -114,29 +113,18 @@ class BaseObject:
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(23 * self.gui.font_scale_ratio)
-
 
         #### Long Name Label ####
         # Sets the sizing of the label
         self.long_name_label.setFont(font)
-        self.long_name_label.setFixedWidth(40 * 1.75 * self.widget_parent.gui.pixel_scale_ratio[0])
-        self.long_name_label.setFixedHeight(80 * self.widget_parent.gui.pixel_scale_ratio[0])  # 80 Corresponds to three rows at this font type and size (Arial 23)
-        self.long_name_label.setText(self.long_name)  # Solenoid long name
-        self.long_name_label.setStyleSheet('color: white')
-        self.long_name_label.setWordWrap(1)
-        # Move the label into position
-        self.setLongNameLabelPosition(self.long_name_label_position_num)
-        # Sets alignment of label
-        self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
+        self.long_name_label.setFontSize(23)
+        self.long_name_label.setText(self.long_name)
 
         #### Short Name Label ####
-        font.setPointSize(10 * self.gui.font_scale_ratio)
         self.short_name_label.setFont(font)
+        self.short_name_label.setFontSize(10)
         self.short_name_label.setText(self.short_name)
-        self.short_name_label.setStyleSheet('color: white')
 
-        self.short_name_label.setFixedSize_()
 
         if self.is_vertical:
             self.short_name_label.moveToPosition("Left")
@@ -171,6 +159,13 @@ class BaseObject:
         :param text: text to be set on the tooltip
         """
         self.button.setToolTip(self.short_name + "\n" + text)
+
+    def setIsEditing(self, is_editing: bool):
+        """
+        Sets if the object is being edited or now and does some related stuff
+        :param is_editing: text to be set on the tooltip
+        """
+        self.is_being_edited = is_editing
 
     def setLongName(self, name):
         """
@@ -249,22 +244,6 @@ class BaseObject:
 
         self.position_locked = is_locked
 
-    # TODO: Get rid of label_num and move over to a point based system
-    def setLongNameLabelPosition(self, label_num: int, label_position: QPoint = None):
-        """
-        Sets the position of the long name label on an object
-        :param label_num: num position of label -> Want to deprecate
-        :param label_position: new position of label
-        """
-        self.long_name_label_position_num = label_num
-
-        # If label position is not given, have label follow object
-        if label_position is None:
-            # Move the label into position
-            self.long_name_label.move(self.position.x(), self.position.y())
-        else:
-            self.long_name_label.move(label_position.x(),label_position.y())
-
     def setAnchorPoints(self):
         """
         Sets the anchor points for the object. Called when object is created, and when scale changes
@@ -303,6 +282,7 @@ class BaseObject:
         if self.widget_parent.window.is_editing:
             if self.is_being_edited:
                 self.widget_parent.controlsPanel.removeEditingObjects(self)
+
             else:
                 self.widget_parent.controlsPanel.removeAllEditingObjects()
                 self.widget_parent.controlsPanel.addEditingObjects(self)
@@ -353,7 +333,7 @@ class BaseObject:
             self.context_menu.move(point)
             self.position = point
             self.updateAnchorPoints()
-            self.setLongNameLabelPosition(self.long_name_label_position_num)
+            self.long_name_label.moveToPosition()
             self.short_name_label.moveToPosition()
             self.deleteConnectedTubes()
 
@@ -407,12 +387,13 @@ class BaseObject:
         :param event: default event from pyqt
         :return:
         """
+        # If window is in edit mode
+        if self.widget_parent.window.is_editing:
+            action = self.context_menu.exec_(self.button.mapToGlobal(event))
 
-        action = self.context_menu.exec_(self.button.mapToGlobal(event))
-
-        if action is not None:
-            if action.text() == "Delete Object":
-                self.widget_parent.deleteObject(self)
+            if action is not None:
+                if action.text() == "Delete Object":
+                    self.widget_parent.deleteObject(self)
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []

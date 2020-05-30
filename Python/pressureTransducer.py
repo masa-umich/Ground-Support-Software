@@ -72,33 +72,6 @@ class PressureTransducer(BaseObject):
         if self.position_locked == False and self.locked == False:
             self.pressure_label.move(point)
 
-    # TODO: Get rid of label_num and move over to a point based system
-    @overrides
-    def setLongNameLabelPosition(self, label_num: int, label_position: QPoint = None):
-        """
-        Updates the label position value and then updates the labels position on screen
-        """
-
-        self.labelPosition = label_num
-        self.long_name_label_position_num = label_num
-
-        if self.labelPosition == 0:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2,
-                                      self.position.y() - self.long_name_label.height())
-        elif self.labelPosition == 1:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() + self.width,
-                                      self.position.y() - self.long_name_label.height() / 2 + self.height / 2)
-        elif self.labelPosition == 2:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2,
-                                      self.position.y() + self.height)
-        elif self.labelPosition == 3:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() - self.height,
-                                      self.position.y() - self.long_name_label.height() / 2 + self.height / 2)
-
     @overrides
     def onClick(self):
         """

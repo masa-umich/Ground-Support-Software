@@ -1,5 +1,4 @@
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 
 from overrides import overrides
 
@@ -7,12 +6,13 @@ from constants import Constants
 from object import BaseObject
 
 
-"""
-Class to handle all solenoid objects and their functionality 
-"""
 class Solenoid(BaseObject):
+    """
+    Class to handle all solenoid objects and their functionality
+    """
 
     object_name = "Solenoid"
+
     def __init__(self, widget_parent, position, fluid, isVertical):
 
         """
@@ -37,26 +37,6 @@ class Solenoid(BaseObject):
         # State tracks whether the solenoid is open or closed
         self.state = 0
 
-        # Label Position designates the side of the object the label will be placed
-        # TODO: Make dictionary to designate, top, bottom, left and right positions
-        # This is so badddddd
-        self.labelPosition = self.long_name_label_position_num
-
-        # This is a fucking mess but I am too hella lazy to fix it rn
-        # TODO: Make this not a mess
-        if self.labelPosition == 0:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2, self.position.y() - self.long_name_label.height())
-        elif self.labelPosition == 1:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() + self.width, self.position.y() - self.long_name_label.height() / 2 + self.height / 2)
-        elif self.labelPosition == 2:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2, self.position.y() + self.height)
-        elif self.labelPosition == 3:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() - self.height, self.position.y() - self.long_name_label.height() / 2 + self.height / 2)
-
     @overrides
     def draw(self):
         """
@@ -79,7 +59,6 @@ class Solenoid(BaseObject):
             path.lineTo(self.width,0)  # Diag to upper right
             path.lineTo(self.width, self.height)  # Straight Up
             path.lineTo(0, 0)
-
 
             # TODO: Implement three way Solenoid
             # path.moveTo(self.width/2, self.height/2)
@@ -132,33 +111,3 @@ class Solenoid(BaseObject):
             self.setToolTip_("State: Closed")
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
-
-    # TODO: Get rid of this label position number stuff
-    @overrides
-    def setLongNameLabelPosition(self, label_num: int, label_position: QPoint = None):
-        """
-        Updates the label position value and then updates the labels position on screen
-        """
-
-        self.labelPosition = label_num
-        self.long_name_label_position_num = label_num
-
-        label = self.long_name_label
-        # This is a fucking mess but I am too hella lazy to fix it rn
-        # TODO: Make this not a mess
-        if self.labelPosition == 0:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2,
-                                      self.position.y() - self.long_name_label.height())
-        elif self.labelPosition == 1:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() + self.width,
-                                      self.position.y() - self.long_name_label.height() / 2 + self.height / 2)
-        elif self.labelPosition == 2:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
-            self.long_name_label.move(self.position.x() - self.long_name_label.width() / 2 + self.width / 2,
-                                      self.position.y() + self.height)
-        elif self.labelPosition == 3:
-            self.long_name_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-            self.long_name_label.move(self.position.x() - self.width,
-                                      self.position.y() - self.long_name_label.height() / 2 + self.height / 2)

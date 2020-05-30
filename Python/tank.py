@@ -12,10 +12,12 @@ from object import BaseObject
 Class to handle all tank objects and their functionality 
 """
 
+
 # TODO: Tanks need to be more similar to solenoids so the base object can be expanded
 class Tank(BaseObject):
 
     object_name = "Tank"
+
     def __init__(self, widget_parent, position, fluid):
 
         """
@@ -41,9 +43,8 @@ class Tank(BaseObject):
         self.short_name_label.moveToPosition("Bottom")
 
         # TODO: Make this a better system
-        self.long_name_label.setFixedWidth(self.width)
-        self.setLongNameLabelPosition(self.long_name_label_position_num)
-
+        #self.long_name_label.setFixedWidth(self.width)
+        #self.setLongNameLabelPosition(self.long_name_label_position_num)
 
     @overrides
     def onClick(self):
@@ -60,16 +61,6 @@ class Tank(BaseObject):
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-
-    def setLongNameLabelPosition(self, label_num: int, label_position: QPoint = None):
-        """
-        Sets the position of the long name label on an object
-        :param label_num: num position of label -> Want to deprecate
-        :param label_position: new position of label
-        """
-        self.long_name_label_position_num = label_num
-
-        self.long_name_label.move(QPoint(int(self.position.x() + self.width /2 - self.long_name_label.width() / 2), self.position.y() + 20 * self.widget_parent.gui.pixel_scale_ratio[0]))
 
     @overrides
     def draw(self):

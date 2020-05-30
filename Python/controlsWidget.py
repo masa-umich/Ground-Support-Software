@@ -106,7 +106,6 @@ class ControlsWidget(QWidget):
         """
         self.controlsPanel = self.window.controlsPanelWidget
 
-
     def initContextMenu(self):
         """
         Inits the context menu for when someone right clicks on the widget (background)
@@ -118,7 +117,6 @@ class ControlsWidget(QWidget):
         # For all the object types, create a right button action called "New 'Object Name'"
         for object_type in self.object_type_list:
             self.context_menu.addAction("New " + object_type.object_name)
-
 
     def toggleEdit(self):
         """
@@ -176,7 +174,6 @@ class ControlsWidget(QWidget):
             tube.draw()
 
         self.painter.end()
-
 
     @overrides
     def keyPressEvent(self, e:QKeyEvent):

@@ -44,11 +44,15 @@ class ControlsPanelWidget(QWidget):
 
         # Textboxes, radioButtons, and drop-downs
         self.long_name_textbox = QLineEdit(self)
-        self.label_position_combobox = QComboBox(self)
+        self.long_name_position_combobox = QComboBox(self)
         self.avionics_number_textbox = QLineEdit(self)
         self.fluid_combobox = QComboBox(self)
         self.short_name_textbox = QLineEdit(self)
+        self.short_name_position_combobox = QComboBox(self)
         self.scale_spinbox = QDoubleSpinBox(self)
+        self.long_name_row_spinbox = QDoubleSpinBox(self)
+        self.long_name_font_size_spinbox = QDoubleSpinBox(self)
+        self.short_name_font_size_spinbox = QDoubleSpinBox(self)
 
         # Inits above widgets
         self.initEditFrame()
@@ -63,12 +67,16 @@ class ControlsPanelWidget(QWidget):
         # Add text boxes to the layout
         self.createTFRadioButtons("Long Name Label", "Enabled", "Disabled", True)
         self.createLineEdit(self.long_name_textbox, "Long Name")
-        self.createComboBox(self.label_position_combobox, "Label Position", ["Top","Right","Bottom","Left"])
+        self.createComboBox(self.long_name_position_combobox, "Label Position", ["Top","Right","Bottom","Left", "Custom"])
         self.createLineEdit(self.avionics_number_textbox, "Avionics Number", QIntValidator())
         self.createComboBox(self.fluid_combobox, "Fluid", Constants.fluids)
         self.createTFRadioButtons("Position is", "Locked", "Unlocked", False)
         self.createLineEdit(self.short_name_textbox, "Short Name")
+        self.createComboBox(self.short_name_position_combobox, "Short Name Position", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.scale_spinbox, "Scale", .1, 10, 0.1)
+        self.createSpinbox(self.long_name_row_spinbox, "Rows", 1, 5, 1)
+        self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", 6, 50, 1)
+        self.createSpinbox(self.short_name_font_size_spinbox, "Short Name Font Size", 6, 50, 1)
 
         self.edit_frame.hide()
 
@@ -152,11 +160,15 @@ class ControlsPanelWidget(QWidget):
         Updates the various fields in the edit frame when a new object is selected for editing
         """
         self.long_name_textbox.setText(object_.long_name)
-        self.label_position_combobox.setCurrentIndex(object_.long_name_label_position_num)
+        self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
         self.avionics_number_textbox.setText(str(object_.avionics_number))
         self.fluid_combobox.setCurrentText(Constants.fluid[object_.fluid])
         self.short_name_textbox.setText(object_.short_name)
+        self.short_name_position_combobox.setCurrentText(object_.short_name_label.position_string)
         self.scale_spinbox.setValue(object_.scale)
+        self.long_name_row_spinbox.setValue(object_.long_name_label.rows)
+        self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
+        self.short_name_font_size_spinbox.setValue(object_.short_name_label.getFontSize())
 
         self.avionics_number_textbox.setDisabled(True)
 
@@ -172,15 +184,7 @@ class ControlsPanelWidget(QWidget):
                 if identifier == "Long Name":
                     object_.setLongName(text)
                 elif identifier == "Label Position":
-                    # TODO: Fix the badness
-                    if text == "Top":
-                        object_.setLongNameLabelPosition(0)
-                    elif text == "Right":
-                        object_.setLongNameLabelPosition(1)
-                    elif text == "Bottom":
-                        object_.setLongNameLabelPosition(2)
-                    elif text == "Left":
-                        object_.setLongNameLabelPosition(3)
+                    object_.long_name_label.moveToPosition(text)
                 elif identifier == "Avionics Number":
                     if text != "":
                         object_.setAvionicsNumber(int(text))
@@ -192,8 +196,16 @@ class ControlsPanelWidget(QWidget):
                     object_.setPositionLock(text)
                 elif identifier == "Short Name":
                     object_.setShortName(text)
+                elif identifier == "Short Name Position":
+                    object_.short_name_label.moveToPosition(text)
                 elif identifier == "Scale":
                     object_.setScale(text)
+                elif identifier == "Rows":
+                    object_.long_name_label.setRows(text)
+                elif identifier == "Long Name Font Size":
+                    object_.long_name_label.setFontSize(text)
+                elif identifier == "Short Name Font Size":
+                    object_.short_name_label.setFontSize(text)
 
     # FIXME: Things don't work well if more than one object are in here
     # HMM: Move is_being_edited to object class and call this function here
@@ -201,7 +213,7 @@ class ControlsPanelWidget(QWidget):
         """
         Adds object to list to be edited
         """
-        objects.is_being_edited = True
+        objects.setIsEditing(True)
         self.objects_editing.append(objects)
         self.edit_frame.show()
         self.updateEditPanelFields(objects)
@@ -210,7 +222,7 @@ class ControlsPanelWidget(QWidget):
         """
         Removes object from list to be edited
         """
-        objects.is_being_edited = False
+        objects.setIsEditing(False)
         self.objects_editing.remove(objects)
 
         # If no objects are being edited hide the edit frame
@@ -222,7 +234,7 @@ class ControlsPanelWidget(QWidget):
         Sets all objects to not be editing and clears the editing list
         """
         for object_ in self.objects_editing:
-            object_.is_being_edited = False
+            object_.setIsEditing(False)
 
         self.objects_editing.clear()
         self.edit_frame.hide()
