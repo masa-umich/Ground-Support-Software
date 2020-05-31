@@ -10,6 +10,7 @@ from overrides import overrides
 
 from termcolor import colored
 
+import json
 
 """
 This file contains the class to create the main controls widget (where the P&ID is)
@@ -77,6 +78,8 @@ class ControlsWidget(QWidget):
         #self.initConfigFiles()
         #self.createObjects()
 
+        self.loadData()
+
 
         # TODO: Move this button to the edit menu bar
         self.edit_button = QPushButton("EDIT", self)
@@ -130,9 +133,41 @@ class ControlsWidget(QWidget):
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.save()
+            self.saveData()
 
         # Tells painter to update screen
         self.update()
+
+    def saveData(self):
+        data = {}
+
+        for object in self.object_list:
+            data = {**data, **(object.generateSaveDict())}
+
+        with open("data_file.json", "w") as write_file:
+            json.dump(data, write_file, indent="\t")
+
+
+    def loadData(self):
+        with open("data_file.json", "r") as read_file:
+            data = json.load(read_file)
+
+        for i in data:
+            if i.split()[0] == "Solenoid":
+                sol = data[i]
+                self.object_list.append(Solenoid(self, _id=sol["id"], position=QPoint(sol["pos"]["x"],sol["pos"]["y"]),
+                                                 fluid=sol["fluid"],width=sol["width"], height=sol["height"],
+                                                 name=sol["name"],scale=sol["scale"],
+                                                 avionics_number=sol["avionics number"], short_name=sol["short name"],
+                                                 long_name=sol["long name"], is_vertical=sol["is vertical"],
+                                                 locked=sol["is locked"],position_locked=sol["is pos locked"],
+                                                 short_name_label_pos=sol["short name label"]["pos string"],
+                                                 short_name_label_font_size=sol["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(sol["short name label"]["local pos"]["x"],sol["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=sol["long name label"]["pos string"],
+                                                 long_name_label_font_size=sol["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=sol["long name label"]["rows"]))
 
     def deleteObject(self, object_):
         """
@@ -262,7 +297,8 @@ class ControlsWidget(QWidget):
                 self.controlsPanel.removeAllEditingObjects()
 
                 if action.text() == "New Solenoid":
-                    self.object_list.append(Solenoid(self, point, 0, 0))
+                    self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
+
                 elif action.text() == "New Tank":
                     self.object_list.append(Tank(self, point, 0))
                 elif action.text() == "New Pressure Transducer":

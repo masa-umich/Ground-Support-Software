@@ -1,0 +1,74 @@
+{
+	"Solenoid 0": {
+		"id": 0,
+		"pos": {
+			"x": 285,
+			"y": 243
+		},
+		"fluid": 2,
+		"width": 147.0,
+		"height": 66.15,
+		"name": "Solenoid",
+		"scale": 2.100000000000001,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "Test Test",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": -105,
+				"y": 69
+			},
+			"rows": 1,
+			"font size": 16.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 20,
+				"y": -71
+			},
+			"rows": 2.0,
+			"font size": 30.0
+		}
+	},
+	"Solenoid 1": {
+		"id": 1,
+		"pos": {
+			"x": 755,
+			"y": 331
+		},
+		"fluid": 1,
+		"width": 56.00000000000001,
+		"height": 25.200000000000003,
+		"name": "Solenoid",
+		"scale": 0.8,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "IDRK",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": -33,
+				"y": 29
+			},
+			"rows": 1,
+			"font size": 22.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -43,
+				"y": -117
+			},
+			"rows": 3.0,
+			"font size": 34.0
+		}
+	}
+}

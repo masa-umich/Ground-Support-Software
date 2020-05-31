@@ -42,9 +42,6 @@ class Tank(BaseObject):
         self.short_name_label.setIsVertical(False)
         self.short_name_label.moveToPosition("Bottom")
 
-        # TODO: Make this a better system
-        #self.long_name_label.setFixedWidth(self.width)
-        #self.setLongNameLabelPosition(self.long_name_label_position_num)
 
     @overrides
     def onClick(self):
