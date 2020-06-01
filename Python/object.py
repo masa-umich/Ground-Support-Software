@@ -56,6 +56,7 @@ class BaseObject:
         if _id is not None:
             self._id = _id
         else:
+            # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
             self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid

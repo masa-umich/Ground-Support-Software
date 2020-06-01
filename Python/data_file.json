@@ -35,42 +35,6 @@
 			"font size": 30.0
 		}
 	},
-	"Solenoid 1": {
-		"id": 1,
-		"pos": {
-			"x": 857,
-			"y": 217
-		},
-		"fluid": 1,
-		"width": 56.00000000000001,
-		"height": 25.200000000000003,
-		"name": "Solenoid",
-		"scale": 0.8,
-		"avionics number": 5,
-		"short name": "O",
-		"long name": "IDRK",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 18,
-				"y": 29
-			},
-			"rows": 1,
-			"font size": 22.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -43,
-				"y": -117
-			},
-			"rows": 3.0,
-			"font size": 34.0
-		}
-	},
 	"Tank 2": {
 		"id": 2,
 		"pos": {
@@ -110,37 +74,237 @@
 	"Pressure Transducer 3": {
 		"id": 3,
 		"pos": {
-			"x": 208,
-			"y": 513
+			"x": 230,
+			"y": 658
 		},
-		"fluid": 2,
+		"fluid": 0,
 		"width": 105.0,
 		"height": 35.0,
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "D2-PT-G01",
-		"long name": "Chamber Pressure",
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
-			"pos string": "Left",
+			"pos string": "Bottom",
 			"local pos": {
-				"x": -86,
-				"y": 7
+				"x": 26,
+				"y": 39
 			},
 			"rows": 1,
-			"font size": 16.0
+			"font size": 10.0
 		},
 		"long name label": {
-			"pos string": "Custom",
+			"pos string": "Top",
 			"local pos": {
-				"x": 89,
-				"y": -14
+				"x": -37,
+				"y": -29
 			},
-			"rows": 2.0,
-			"font size": 29.0
+			"rows": 1,
+			"font size": 23.0
+		}
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 633,
+			"y": 167
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 31.5,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 7,
+				"y": 36
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -56,
+				"y": -29
+			},
+			"rows": 1,
+			"font size": 23.0
+		}
+	},
+	"Tank 4": {
+		"id": 4,
+		"pos": {
+			"x": 1065,
+			"y": 520
+		},
+		"fluid": 0,
+		"width": 154.0,
+		"height": 297.5,
+		"name": "Tank",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 51,
+				"y": 315
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12,
+				"y": -29
+			},
+			"rows": 1,
+			"font size": 23.0
+		}
+	},
+	"Pressure Transducer 5": {
+		"id": 5,
+		"pos": {
+			"x": 294,
+			"y": 454
+		},
+		"fluid": 0,
+		"width": 105.0,
+		"height": 35.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 39
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -37,
+				"y": -29
+			},
+			"rows": 1,
+			"font size": 23.0
+		}
+	},
+	"Pressure Transducer 6": {
+		"id": 6,
+		"pos": {
+			"x": 439,
+			"y": 708
+		},
+		"fluid": 0,
+		"width": 105.0,
+		"height": 35.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewa\\",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 39
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -7,
+				"y": -29
+			},
+			"rows": 1,
+			"font size": 23.0
+		}
+	},
+	"Tube 0": {
+		"tube id": 0,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 362,
+				"y": 312
+			},
+			"1": {
+				"x": 362,
+				"y": 388
+			},
+			"2": {
+				"x": 559,
+				"y": 388
+			},
+			"3": {
+				"x": 559,
+				"y": 280
+			}
+		}
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 915,
+				"y": 230
+			},
+			"1": {
+				"x": 1060,
+				"y": 230
+			},
+			"2": {
+				"x": 1060,
+				"y": 451
+			},
+			"3": {
+				"x": 1175,
+				"y": 451
+			},
+			"4": {
+				"x": 1175,
+				"y": 177
+			},
+			"5": {
+				"x": 993,
+				"y": 177
+			},
+			"6": {
+				"x": 993,
+				"y": 79
+			}
 		}
 	}
 }

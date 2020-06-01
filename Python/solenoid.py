@@ -26,12 +26,29 @@ class Solenoid(BaseObject):
                  long_name_label_rows: int = 1):
 
         """
-        Init the solenoid object
-        :param widget_parent: widget this object will be added to
+        Initializer for Solenoid
+
+        :param widget_parent: parent widget
         :param position: position of icon on screen
         :param fluid: fluid in object
-        :param isVertical: tracker if object is drawn vertically
-        :return:
+        :param width: width of object
+        :param height: height of object
+        :param name: name of object
+        :param scale: scale applied to the object
+        :param avionics_number: avionics identifier
+        :param short_name: abbreviated name on schematics
+        :param long_name: human-readable name for display on screen
+        :param is_vertical: tracker if object is drawn vertically
+        :param locked: tracker if the object is locked from editing
+        :param position_locked: tracker if the object position is locked
+        :param _id: unique internal gui id of the object
+        :param short_name_label_pos: string of where the short name label is
+        :param short_name_label_local_pos: local position on where short name label is
+        :param short_name_label_font_size: font size of short name label
+        :param long_name_label_pos: string of where the long name label is
+        :param long_name_label_local_pos: local position on where long name label is
+        :param long_name_label_font_size: font size of long name label
+        :param long_name_label_rows: how many rows long name label should have
         """
 
         # TODO: Still bleah, should have a way to rotate or something

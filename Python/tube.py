@@ -9,14 +9,17 @@ class Tube:
 
     object_name = "Tube"
 
-    def __init__(self, parent: QWidget,points: [QPoint], fluid: int):
+    def __init__(self, parent: QWidget,points: [QPoint], fluid: int, tube_id: int = None):
         self.parent = parent
-        self.object = parent
-        self.widget_parent = parent.widget_parent
+        self.widget_parent = parent
         self.points = points
+        if tube_id is not None:
+            self.tube_id = tube_id
+        else:
+            self.tube_id = len(self.widget_parent.tube_list)
         self.fluid = fluid
         self.is_being_drawn = False
-        self.draw_direction = "None" # Either "Horizontal" or "Vertical"
+        self.draw_direction = "None"  # Either "Horizontal" or "Vertical"
 
     def completeTube(self):
         del self.points[-1]
@@ -71,7 +74,6 @@ class Tube:
 
         self.widget_parent.update()
 
-
     def draw(self):
         self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
 
@@ -83,3 +85,28 @@ class Tube:
             path.lineTo(point)
 
         self.widget_parent.painter.drawPath(path)
+
+    def generateSaveDict(self):
+        """
+        Here is where an tube data is moved into a dict, it will be combined with all the other tubes data and
+        saved to a json file. Unfortuantely for any data to be saved it must be manually inserted here and also manually
+        pulled from the load function. It has the benefit of being easily readable though
+        """
+
+        # Put all the points in their own dictionary
+        points_dict = {}
+        i = 0
+        for point in self.points:
+            points_dict[i] = {"x": point.x(), "y": point.y()}
+            i = i + 1
+
+        # Put it all together
+        save_dict = {
+            self.object_name + " " + str(self.tube_id): {
+                "tube id": self.tube_id,
+                "fluid": self.fluid,
+                "bend positions": points_dict
+            }
+        }
+
+        return save_dict
