@@ -121,14 +121,7 @@ class BaseObject:
         Basic function that handles all the setup for the labels
         Should only be called from __init__
         """
-
-        if self.is_vertical:
-            self.short_name_label.moveToPosition("Left")
-        else:
-            self.short_name_label.moveToPosition("Bottom")
-
-        self.long_name_label.show()
-        self.short_name_label.show()
+        # Used to have stuff but is currently empty, saving its spot here if it ever needed again
 
     def _initAnchorPoints(self):
         """

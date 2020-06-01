@@ -152,6 +152,7 @@ class ControlsWidget(QWidget):
         with open("data_file.json", "r") as read_file:
             data = json.load(read_file)
 
+        # TODO: I was really lazy so I just copy pasted but can be done nicer
         for i in data:
             if i.split()[0] == "Solenoid":
                 sol = data[i]
@@ -168,6 +169,36 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=sol["long name label"]["rows"]))
+            if i.split()[0] == "Tank":
+                tnk = data[i]
+                self.object_list.append(Tank(self, _id=tnk["id"], position=QPoint(tnk["pos"]["x"], tnk["pos"]["y"]),
+                                                 fluid=tnk["fluid"], width=tnk["width"], height=tnk["height"],
+                                                 name=tnk["name"], scale=tnk["scale"],
+                                                 avionics_number=tnk["avionics number"], short_name=tnk["short name"],
+                                                 long_name=tnk["long name"], is_vertical=tnk["is vertical"],
+                                                 locked=tnk["is locked"], position_locked=tnk["is pos locked"],
+                                                 short_name_label_pos=tnk["short name label"]["pos string"],
+                                                 short_name_label_font_size=tnk["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(tnk["short name label"]["local pos"]["x"], tnk["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=tnk["long name label"]["pos string"],
+                                                 long_name_label_font_size=tnk["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=tnk["long name label"]["rows"]))
+            if i.split()[0] +" "+ i.split()[1] == "Pressure Transducer": # Truly a lazy mans fix
+                pt = data[i]
+                self.object_list.append(PressureTransducer(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
+                                                 fluid=pt["fluid"], width=pt["width"], height=pt["height"],
+                                                 name=pt["name"], scale=pt["scale"],
+                                                 avionics_number=pt["avionics number"], short_name=pt["short name"],
+                                                 long_name=pt["long name"], is_vertical=pt["is vertical"],
+                                                 locked=pt["is locked"], position_locked=pt["is pos locked"],
+                                                 short_name_label_pos=pt["short name label"]["pos string"],
+                                                 short_name_label_font_size=pt["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(pt["short name label"]["local pos"]["x"], pt["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=pt["long name label"]["pos string"],
+                                                 long_name_label_font_size=pt["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=pt["long name label"]["rows"]))
 
     def deleteObject(self, object_):
         """
@@ -300,9 +331,9 @@ class ControlsWidget(QWidget):
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
 
                 elif action.text() == "New Tank":
-                    self.object_list.append(Tank(self, point, 0))
+                    self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Pressure Transducer":
-                    self.object_list.append(PressureTransducer(self, point, 0, 0))
+                    self.object_list.append(PressureTransducer(self, position=point, fluid=0, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 

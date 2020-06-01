@@ -10,19 +10,35 @@ from object import BaseObject
 class PressureTransducer(BaseObject):
 
     object_name = "Pressure Transducer"
-    def __init__(self, widget_parent, position, fluid, isVertical):
 
+    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 60*1.75,
+                 height: float = 20*1.75, name: str = "PT",
+                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
+                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False,
+                 locked: bool = False, position_locked: bool = False, _id: int = None,
+                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0, 0),
+                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 23,
+                 long_name_label_rows: int = 1):
         """
         Init the pressure transducer object
         :param widget_parent: widget this object will be added to
         :param position: position of icon on screen
         :param fluid: fluid in object
-        :param isVertical: tracker if object is drawn vertically
+        :param is_vertical: tracker if object is drawn vertically
         :return:
         """
 
         # Initialize base classes
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 60*1.75, height = 20*1.75, name = "PT", is_vertical=isVertical, is_being_edited = False)
+        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
+                         name=name, is_vertical=is_vertical, scale=scale, avionics_number=avionics_number,
+                         short_name=short_name, long_name=long_name, locked=locked, position_locked=position_locked,
+                         _id=_id, short_name_label_pos=short_name_label_pos,
+                         short_name_label_local_pos=short_name_label_local_pos,
+                         short_name_label_font_size=short_name_label_font_size,
+                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
+                         long_name_label_font_size=long_name_label_font_size,
+                         long_name_label_rows=long_name_label_rows)
 
         # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent
