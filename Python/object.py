@@ -321,6 +321,11 @@ class BaseObject:
                 point.draw()
         else:
             self.hideAnchorPoints()
+            
+        # TODO: Make box appear around object currently being edited iss#10
+        #if self.is_being_edited == True:
+            
+
 
     def move(self, point: QPoint):
         """
