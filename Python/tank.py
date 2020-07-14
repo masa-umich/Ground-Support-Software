@@ -29,7 +29,7 @@ class Tank(BaseObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 88*1.75, height = 170*1.75, name = "Tank", is_vertical=True, is_being_edited = False,
+        super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 88, height = 170, name = "Tank", is_vertical=True, is_being_edited = False,
                          is_being_dragged = False)
 
         # TODO: Grab height and width from csv file

@@ -71,7 +71,7 @@ class ControlsWidget(QWidget):
         # TODO: Make this not look totally terrible
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.darkGray)
+        p.setColor(self.backgroundRole(), QColor(10,22,44))
         self.setPalette(p)
 
         #self.initConfigFiles()
@@ -91,11 +91,11 @@ class ControlsWidget(QWidget):
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap('masawhiteworm2.png')
+        pixmap = QPixmap('masawhiteworm3.png')
         pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
         self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
-                                   (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
+                                   (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
 
 

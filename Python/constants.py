@@ -20,7 +20,7 @@ class Constants:
         3: "LN2"
     }
 
-    line_width = 3
+    line_width = 2
 
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2"]
@@ -29,10 +29,10 @@ class Constants:
     fluidColor = {
         "HE": Qt.white,
         0: Qt.white,
-        "Fuel": Qt.magenta,
-        1: Qt.magenta,
-        "OX": QColor(60,126,232),
-        2: QColor(60,126,232),
+        "Fuel": Qt.red,
+        1: Qt.red,
+        "OX": QColor(0,255,255),
+        2: QColor(0,255,255),
         "LN2": Qt.green,
         3: Qt.green
     }

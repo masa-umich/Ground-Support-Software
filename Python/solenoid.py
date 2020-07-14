@@ -26,10 +26,10 @@ class Solenoid(BaseObject):
 
         # TODO: Still bleah, should have a way to rotate or something
         if isVertical:
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=18 * 1.75, height=40 * 1.75,name="Solenoid", is_vertical=isVertical, is_being_edited=False)
+            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=18, height=40,name="Solenoid", is_vertical=isVertical, is_being_edited=False)
         else:
             # Initialize base classes
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 40*1.75, height = 18*1.75, name = "Solenoid", is_vertical=isVertical, is_being_edited = False)
+            super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 40, height = 18, name = "Solenoid", is_vertical=isVertical, is_being_edited = False)
 
         # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent

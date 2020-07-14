@@ -22,7 +22,7 @@ class PressureTransducer(BaseObject):
         """
 
         # Initialize base classes
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 60*1.75, height = 20*1.75, name = "PT", is_vertical=isVertical, is_being_edited = False)
+        super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 50, height = 20, name = "PT", is_vertical=isVertical, is_being_edited = False)
 
         # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent
@@ -47,7 +47,7 @@ class PressureTransducer(BaseObject):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(23 * self.gui.font_scale_ratio)
+        font.setPointSize(12 * self.gui.font_scale_ratio)
         self.pressure_label.setFont(font)
 
         self.pressure_label.show()

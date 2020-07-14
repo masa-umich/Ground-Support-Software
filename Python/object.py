@@ -117,7 +117,7 @@ class BaseObject:
         #### Long Name Label ####
         # Sets the sizing of the label
         self.long_name_label.setFont(font)
-        self.long_name_label.setFontSize(23)
+        self.long_name_label.setFontSize(12)
         self.long_name_label.setText(self.long_name)
 
         #### Short Name Label ####
