@@ -339,6 +339,20 @@ class BaseObject:
 
         # Tells widget painter to update screen
         self.widget_parent.update()
+    
+    def rotate(self):
+        """
+        Rotate objects. Updates anchor points, geometry, and drawing
+        called by controlsWidget
+        """
+        dim1 = self.width
+        dim2 = self.height
+        self.width = dim2
+        self.height = dim1
+        self.is_vertical = not self.is_vertical
+        self.setAnchorPoints()
+        self.button.resize(self.width, self.height)
+        self.draw()
 
     def checkApAlignment(self, pos: QPoint = None):
         """

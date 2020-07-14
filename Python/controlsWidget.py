@@ -195,6 +195,12 @@ class ControlsWidget(QWidget):
                     self.is_drawing = False
                     del tube
                     self.update()
+        #If 'r' key is pressed:
+        elif e.key() == 82:
+            #Calls rotate method on last object in editing list
+            if len(self.controlsPanel.objects_editing) != 0:
+                self.controlsPanel.objects_editing[-1].rotate()
+                self.update()
 
 
     @overrides

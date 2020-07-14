@@ -73,13 +73,19 @@ class Tank(BaseObject):
 
         # Draws the tank outline
         path = QPainterPath()
-
-        path.moveTo(0,arcHeight)
-        path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180) # Top Arc
-        path.lineTo(self.width, self.height - 2 * arcHeight) # Line down
-        path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180) # Bottom Arc
-        path.lineTo(0, arcHeight) # Line up
-
+        if self.is_vertical == True:
+            path.moveTo(0,arcHeight)
+            path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180) # Top Arc
+            path.lineTo(self.width, self.height - 2 * arcHeight) # Line down
+            path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180) # Bottom Arc
+            path.lineTo(0, arcHeight) # Line up
+        
+        elif self.is_vertical == False:
+            path.moveTo(arcHeight,0)
+            path.arcTo(QRectF(0, 0,  arcHeight * 2, self.height), 90, 180) # left Arc
+            path.lineTo(self.width - arcHeight, self.height) # Bottom Line
+            path.arcTo(path.currentPosition().x()-arcHeight,0,arcHeight*2,self.height, -90, 180) # Bottom Arc
+            path.lineTo(arcHeight, 0) # Line up
         path.translate(self.position.x(), self.position.y()) # Translate it into position
 
         self.widget_parent.painter.drawPath(path) # Draw Path
