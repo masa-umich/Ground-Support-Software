@@ -27,12 +27,12 @@ class Constants:
 
     # Dict of fluid colors. Number on left should match value of fluid dict above. Example call: fluidColor[0] -> Returns Qt.white
     fluidColor = {
-        "HE": Qt.white,
-        0: Qt.white,
-        "Fuel": Qt.red,
-        1: Qt.red,
-        "OX": QColor(0,255,255),
-        2: QColor(0,255,255),
-        "LN2": Qt.green,
-        3: Qt.green
+        "HE": QColor(255,255,255,255),
+        0: QColor(255,255,255,255),
+        "Fuel": QColor(255,0,0,255),
+        1: QColor(255,0,0,255),
+        "OX": QColor(0,255,255,255),
+        2: QColor(0,255,255,255),
+        "LN2": QColor(0,255,0,255),
+        3: QColor(0,255,0,255)
     }

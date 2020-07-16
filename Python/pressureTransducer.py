@@ -126,7 +126,7 @@ class PressureTransducer(BaseObject):
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
 
         super().draw()
-
+        self.widget_parent.painter.setBrush(0)
     @overrides
     def deleteSelf(self):
         """
