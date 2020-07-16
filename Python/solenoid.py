@@ -1,4 +1,6 @@
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 from overrides import overrides
 
@@ -13,23 +15,66 @@ class Solenoid(BaseObject):
 
     object_name = "Solenoid"
 
-    def __init__(self, widget_parent, position, fluid, isVertical):
+    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
+                 height: float = 18 *1, name: str = "Solenoid",
+                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
+                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False,
+                 locked: bool = False, position_locked: bool = False, _id: int = None,
+                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
+                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
+                 long_name_label_rows: int = 1):
 
         """
-        Init the solenoid object
-        :param widget_parent: widget this object will be added to
+        Initializer for Solenoid
+
+        :param widget_parent: parent widget
         :param position: position of icon on screen
         :param fluid: fluid in object
-        :param isVertical: tracker if object is drawn vertically
-        :return:
+        :param width: width of object
+        :param height: height of object
+        :param name: name of object
+        :param scale: scale applied to the object
+        :param avionics_number: avionics identifier
+        :param short_name: abbreviated name on schematics
+        :param long_name: human-readable name for display on screen
+        :param is_vertical: tracker if object is drawn vertically
+        :param locked: tracker if the object is locked from editing
+        :param position_locked: tracker if the object position is locked
+        :param _id: unique internal gui id of the object
+        :param short_name_label_pos: string of where the short name label is
+        :param short_name_label_local_pos: local position on where short name label is
+        :param short_name_label_font_size: font size of short name label
+        :param long_name_label_pos: string of where the long name label is
+        :param long_name_label_local_pos: local position on where long name label is
+        :param long_name_label_font_size: font size of long name label
+        :param long_name_label_rows: how many rows long name label should have
         """
 
         # TODO: Still bleah, should have a way to rotate or something
-        if isVertical:
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=18, height=40,name="Solenoid", is_vertical=isVertical, is_being_edited=False)
+
+        if is_vertical:
+            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
+                             name=name, is_vertical=is_vertical, scale=scale, avionics_number = avionics_number,
+                             short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
+                             _id=_id, short_name_label_pos=short_name_label_pos,
+                             short_name_label_local_pos=short_name_label_local_pos,
+                             short_name_label_font_size=short_name_label_font_size,
+                             long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
+                             long_name_label_font_size=long_name_label_font_size,
+                             long_name_label_rows=long_name_label_rows)
         else:
             # Initialize base classes
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width= 40, height = 18, name = "Solenoid", is_vertical=isVertical, is_being_edited = False)
+            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
+                             name=name, is_vertical=is_vertical, scale=scale, avionics_number = avionics_number,
+                             short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
+                             _id=_id, short_name_label_pos=short_name_label_pos,
+                             short_name_label_local_pos=short_name_label_local_pos,
+                             short_name_label_font_size=short_name_label_font_size,
+                             long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
+                             long_name_label_font_size=long_name_label_font_size,
+                             long_name_label_rows=long_name_label_rows)
+
 
         # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent
@@ -111,3 +156,24 @@ class Solenoid(BaseObject):
             self.setToolTip_("State: Closed")
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
+
+    # There is currently no Solenoid specific data that needs to be persistent but if some ever does it goes here
+    # @overrides
+    # def generateSaveDict(self):
+    #     """
+    #     Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
+    #     info needs to be saved is added here.
+    #     """
+    #
+    #     # Gets the BaseObject data that needs to be saved
+    #     super_dict = super().generateSaveDict()
+    #
+    #     # Extra data the Solenoid contains that needs to be saved
+    #     save_dict = {
+    #         "state": self.state
+    #     }
+    #
+    #     # Update the super_dict under the solenoid entry with the solenoid specific data
+    #     super_dict['Solenoid'].update(save_dict)
+    #
+    #     return super_dict

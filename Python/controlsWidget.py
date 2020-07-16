@@ -6,10 +6,12 @@ from constants import Constants
 from solenoid import Solenoid
 from tank import Tank
 from pressureTransducer import PressureTransducer
+from tube import Tube
 from overrides import overrides
 
 from termcolor import colored
 
+import json
 
 """
 This file contains the class to create the main controls widget (where the P&ID is)
@@ -26,7 +28,7 @@ class ControlsWidget(QWidget):
     # TODO: Properly implement these values
     screenWidthBuffer = 100
     screenHeightBuffer = 100
-    objectScale = 1.75 # This maybe should be a instance variable of all objects
+    objectScale = 1.75  # This maybe should be a instance variable of all objects
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -74,9 +76,8 @@ class ControlsWidget(QWidget):
         p.setColor(self.backgroundRole(), QColor(10,22,44))
         self.setPalette(p)
 
-        #self.initConfigFiles()
-        #self.createObjects()
-
+        # TODO: move these somewhere when file system is initiated
+        self.loadData()
 
         # TODO: Move this button to the edit menu bar
         self.edit_button = QPushButton("EDIT", self)
@@ -130,6 +131,7 @@ class ControlsWidget(QWidget):
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.save()
+            self.saveData()
 
         # Tells painter to update screen
         self.update()
@@ -262,16 +264,111 @@ class ControlsWidget(QWidget):
                 self.controlsPanel.removeAllEditingObjects()
 
                 if action.text() == "New Solenoid":
-                    self.object_list.append(Solenoid(self, point, 0, 0))
+                    self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
+
                 elif action.text() == "New Tank":
-                    self.object_list.append(Tank(self, point, 0))
+                    self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Pressure Transducer":
-                    self.object_list.append(PressureTransducer(self, point, 0, 0))
+                    self.object_list.append(PressureTransducer(self, position=point, fluid=0, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
                 self.controlsPanel.addEditingObjects(self.object_list[-1])
 
             self.update()
+
+    # HMM: Most likely in the future more than just object data will be saved so this function will need to be adjusted
+    #  so it can pass along the saveDict. Similar to the TO-DO for load data
+    def saveData(self):
+        """
+        When the user requests data to be saved this function is called and handles saving all the data for objects that
+        are currently drawn on screen. It simply requests save data from each individual object and compiles it into one
+        dictionary and then saves it to a json
+        """
+        data = {}
+        # For every object, get it save dictionary and compile it into one dictionary
+        for obj in self.object_list:
+            data = {**data, **(obj.generateSaveDict())}
+
+        # For every tube, get it save dictionary and compile it into one dictionary
+        for tube in self.tube_list:
+            data = {**data, **(tube.generateSaveDict())}
+
+        # With the open file, write to json with a tab as an indent
+        with open("data_file.json", "w") as write_file:
+            json.dump(data, write_file, indent="\t")
+
+    # TODO: This should not be the location that data is started the load from,
+    #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
+    def loadData(self):
+        """
+        Loads data from a json file and populates the widget with all the saved objects
+        """
+
+        # Open and read the loaded json file
+        with open("data_file.json", "r") as read_file:
+            data = json.load(read_file)
+
+        # TODO: I was really lazy so I just copy pasted but can be done nicer
+        # Quickly parses json data dict and calls the right object initializer to add it to screen
+        for i in data:
+            if i.split()[0] == "Solenoid":
+                sol = data[i]
+                self.object_list.append(Solenoid(self, _id=sol["id"], position=QPoint(sol["pos"]["x"],sol["pos"]["y"]),
+                                                 fluid=sol["fluid"],width=sol["width"], height=sol["height"],
+                                                 name=sol["name"],scale=sol["scale"],
+                                                 avionics_number=sol["avionics number"], short_name=sol["short name"],
+                                                 long_name=sol["long name"], is_vertical=sol["is vertical"],
+                                                 locked=sol["is locked"],position_locked=sol["is pos locked"],
+                                                 short_name_label_pos=sol["short name label"]["pos string"],
+                                                 short_name_label_font_size=sol["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(sol["short name label"]["local pos"]["x"],sol["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=sol["long name label"]["pos string"],
+                                                 long_name_label_font_size=sol["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=sol["long name label"]["rows"]))
+
+            if i.split()[0] == "Tank":
+                tnk = data[i]
+                self.object_list.append(Tank(self, _id=tnk["id"], position=QPoint(tnk["pos"]["x"], tnk["pos"]["y"]),
+                                             fluid=tnk["fluid"], width=tnk["width"], height=tnk["height"],
+                                             name=tnk["name"], scale=tnk["scale"],
+                                             avionics_number=tnk["avionics number"], short_name=tnk["short name"],
+                                             long_name=tnk["long name"], is_vertical=tnk["is vertical"],
+                                             locked=tnk["is locked"], position_locked=tnk["is pos locked"],
+                                             short_name_label_pos=tnk["short name label"]["pos string"],
+                                             short_name_label_font_size=tnk["short name label"]["font size"],
+                                             short_name_label_local_pos=QPoint(tnk["short name label"]["local pos"]["x"], tnk["short name label"]["local pos"]["y"]),
+                                             long_name_label_pos=tnk["long name label"]["pos string"],
+                                             long_name_label_font_size=tnk["long name label"]["font size"],
+                                             long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
+                                             long_name_label_rows=tnk["long name label"]["rows"]))
+
+            if i.split()[0] + " " + i.split()[1] == "Pressure Transducer":  # Truly a lazy mans fix
+                pt = data[i]
+                self.object_list.append(PressureTransducer(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
+                                                 fluid=pt["fluid"], width=pt["width"], height=pt["height"],
+                                                 name=pt["name"], scale=pt["scale"],
+                                                 avionics_number=pt["avionics number"], short_name=pt["short name"],
+                                                 long_name=pt["long name"], is_vertical=pt["is vertical"],
+                                                 locked=pt["is locked"], position_locked=pt["is pos locked"],
+                                                 short_name_label_pos=pt["short name label"]["pos string"],
+                                                 short_name_label_font_size=pt["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(pt["short name label"]["local pos"]["x"], pt["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=pt["long name label"]["pos string"],
+                                                 long_name_label_font_size=pt["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=pt["long name label"]["rows"]))
+
+            # TODO: Pass data to properly attach these to the right anchor point if applicable
+            if i.split()[0] == "Tube":
+                tube = data[i]
+                # First pull all the point data out and put it in an array
+                points = []
+                for j in tube["bend positions"]:
+                    points.append(QPoint(tube["bend positions"][j]["x"], tube["bend positions"][j]["y"]))
+
+                self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
+
 
 

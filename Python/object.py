@@ -21,11 +21,14 @@ class BaseObject:
     INIT SECTION 
     ----------------------------------------------------------------------------------------------------------------"""
 
-
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
                  scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07', safety_status: int = -1,
                  long_name: str = 'LOX Dewar Drain', is_vertical: bool = False, is_being_edited: bool = False,
-                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False):
+                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
+                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
+                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
+                 long_name_label_rows: int = 1):
         """
         Initializer for base class
 
@@ -45,13 +48,16 @@ class BaseObject:
         :param is_being_dragged: tracker if object is currently being dragged by user
         :param locked: tracker if the object is locked from editing
         :param position_locked: tracker if the object position is locked
-        :param long_name_label_position_num: num specifying the location of the label -> Move to pos based system
         """
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
-        self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
+        if _id is not None:
+            self._id = _id
+        else:
+            # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
+            self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
         self.fluid = fluid
         self.width = width * self.widget_parent.gui.pixel_scale_ratio[0]
@@ -62,7 +68,7 @@ class BaseObject:
         self.short_name = short_name
         self.safety_status = safety_status
         self.long_name = long_name
-        self.is_vertical = is_vertical
+        self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
         self.is_being_edited = is_being_edited
         self.is_being_dragged = is_being_dragged
         self.locked = locked
@@ -70,14 +76,21 @@ class BaseObject:
         self.context_menu = QMenu(self.widget_parent)
         self.button = PlotButton(self.short_name, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
-                                            is_vertical=False)
+                                           is_vertical=False, font_size=long_name_label_font_size,
+                                           text=self.long_name, local_pos=long_name_label_local_pos,
+                                           position_string=long_name_label_pos, rows=long_name_label_rows)
+
         self.short_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
-                                            is_vertical=self.is_vertical)
+                                            is_vertical=False, font_size=short_name_label_font_size,
+                                            text=self.short_name, local_pos=short_name_label_local_pos,
+                                            position_string=short_name_label_pos)
+
         self.anchor_points = []
 
         self._initButton()
         self._initLabels()
         self._initAnchorPoints()
+
 
     def _initButton(self):
         """
@@ -106,9 +119,10 @@ class BaseObject:
 
     def _initLabels(self):
         """
-        Basic function that handles all the setup for the object label
+        Basic function that handles all the setup for the labels
         Should only be called from __init__
         """
+
         # Get font and set it
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
@@ -134,6 +148,8 @@ class BaseObject:
         # Make em visible
         self.long_name_label.show()
         self.short_name_label.show()
+
+        # Used to have stuff but is currently empty, saving its spot here if it ever needed again
 
     def _initAnchorPoints(self):
         """
@@ -413,6 +429,38 @@ class BaseObject:
         #     menu.addAction(self.plotMenuActions[-1])
         #
         # menu.exec_(self.button.mapToGlobal(event))
+
+    """----------------------------------------------------------------------------------------------------------------
+   File save and Loading
+   ----------------------------------------------------------------------------------------------------------------"""
+
+    def generateSaveDict(self):
+        """
+        Here is where an objects data is moved into a dict, it will be combined with all the other objects data and
+        saved to a json file. Unfortuantely for any data to be saved it must be manually inserted here and also manually
+        pulled from the load function. It has the benefit of being easily readable though
+        """
+        save_dict = {
+            self.object_name + " " + str(self._id): {
+                "id": self._id,
+                "pos": {"x": self.position.x(), "y": self.position.y()},
+                "fluid": self.fluid,
+                "width": self.width/self.gui.pixel_scale_ratio[0],
+                "height": self.height/self.gui.pixel_scale_ratio[0],
+                "name": self.name,
+                "scale": self.scale,
+                "avionics number": self.avionics_number,
+                "short name": self.short_name,
+                "long name": self.long_name,
+                "is vertical": self.is_vertical,
+                "is locked": self.locked,
+                "is pos locked": self.position_locked,
+                "short name label": self.short_name_label.generateSaveDict(),
+                "long name label": self.long_name_label.generateSaveDict(),
+            }
+        }
+
+        return save_dict
 
     """----------------------------------------------------------------------------------------------------------------
     DELETION 

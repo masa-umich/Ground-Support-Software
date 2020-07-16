@@ -1,0 +1,454 @@
+{
+	"Solenoid 0": {
+		"id": 0,
+		"pos": {
+			"x": 285,
+			"y": 243
+		},
+		"fluid": 2,
+		"width": 146.99999999999994,
+		"height": 66.14999999999998,
+		"name": "Solenoid",
+		"scale": 2.1,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "Test Test",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 49,
+				"y": 82
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 60,
+				"y": -39
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Tank 2": {
+		"id": 2,
+		"pos": {
+			"x": 637,
+			"y": 403
+		},
+		"fluid": 3,
+		"width": 200.20000000000002,
+		"height": 386.75,
+		"name": "Tank",
+		"scale": 1.3,
+		"avionics number": 5,
+		"short name": "OX-S",
+		"long name": "LOX dewar big chill",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -40,
+				"y": 222
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 243,
+				"y": 203
+			},
+			"rows": 3.0,
+			"font size": 12.0
+		}
+	},
+	"Pressure Transducer 3": {
+		"id": 3,
+		"pos": {
+			"x": 230,
+			"y": 658
+		},
+		"fluid": 0,
+		"width": 105.0,
+		"height": 35.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 24,
+				"y": 45
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -1,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 633,
+			"y": 167
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 31.5,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 3,
+				"y": 40
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -22,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 4": {
+		"id": 4,
+		"pos": {
+			"x": 1065,
+			"y": 520
+		},
+		"fluid": 0,
+		"width": 154.0,
+		"height": 297.5,
+		"name": "Tank",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -81,
+				"y": 168
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 28,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Pressure Transducer 5": {
+		"id": 5,
+		"pos": {
+			"x": 294,
+			"y": 454
+		},
+		"fluid": 0,
+		"width": 105.0,
+		"height": 35.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 24,
+				"y": 45
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -1,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Pressure Transducer 6": {
+		"id": 6,
+		"pos": {
+			"x": 439,
+			"y": 708
+		},
+		"fluid": 0,
+		"width": 105.0,
+		"height": 35.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewa\\",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 24,
+				"y": 45
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 20,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 7": {
+		"id": 7,
+		"pos": {
+			"x": 127,
+			"y": 122
+		},
+		"fluid": 0,
+		"width": 44.0,
+		"height": 85.0,
+		"name": "Tank",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -81,
+				"y": 41
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -38,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Pressure Transducer 8": {
+		"id": 8,
+		"pos": {
+			"x": 285,
+			"y": 167
+		},
+		"fluid": 0,
+		"width": 50.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": -9,
+				"y": 27
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -34,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 9": {
+		"id": 9,
+		"pos": {
+			"x": 439,
+			"y": 157
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": -15,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -40,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 10": {
+		"id": 10,
+		"pos": {
+			"x": 1229,
+			"y": 77
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -81,
+				"y": 92
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tube 0": {
+		"tube id": 0,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 362,
+				"y": 312
+			},
+			"1": {
+				"x": 362,
+				"y": 388
+			},
+			"2": {
+				"x": 559,
+				"y": 388
+			},
+			"3": {
+				"x": 559,
+				"y": 280
+			}
+		}
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 915,
+				"y": 230
+			},
+			"1": {
+				"x": 1060,
+				"y": 230
+			},
+			"2": {
+				"x": 1060,
+				"y": 451
+			},
+			"3": {
+				"x": 1175,
+				"y": 451
+			},
+			"4": {
+				"x": 1175,
+				"y": 177
+			},
+			"5": {
+				"x": 993,
+				"y": 177
+			},
+			"6": {
+				"x": 993,
+				"y": 79
+			}
+		}
+	}
+}
