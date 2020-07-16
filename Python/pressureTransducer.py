@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
-
+from constants import Constants
 from object import BaseObject
 
 
@@ -88,6 +88,7 @@ class PressureTransducer(BaseObject):
         """
         Draws the PT icon on screen
         """
+        self.widget_parent.painter.setBrush(QColor(10,22,44,100))
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
 
         super().draw()

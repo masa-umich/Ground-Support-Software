@@ -20,7 +20,7 @@ class Constants:
         3: "LN2"
     }
 
-    line_width = 10
+    line_width = 2
 
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2"]
