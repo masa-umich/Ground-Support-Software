@@ -144,9 +144,9 @@ class GenSensor(BaseObject):
         """
         self.widget_parent.painter.setBrush(QColor(10,22,44,100))
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
-
-        super().draw()
         self.widget_parent.painter.setBrush(0)
+        super().draw()
+        
     @overrides
     def deleteSelf(self):
         """

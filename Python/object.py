@@ -8,6 +8,7 @@ from customLabel import CustomLabel
 from anchorPoint import AnchorPoint
 
 
+
 """
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
@@ -337,12 +338,22 @@ class BaseObject:
                 point.draw()
         else:
             self.hideAnchorPoints()
+        
+        if self.is_being_edited == True:
+            self.highlight(pen)
             
         # TODO: Make box appear around object currently being edited iss#10
         #if self.is_being_edited == True:
             
 
-
+    def highlight(self,pen):
+        buffer = 8
+        pen.setStyle(Qt.DotLine)
+        pen.setWidth(1)
+        pen.setColor(QColor(255,255,0))
+        self.widget_parent.painter.setPen(pen)
+        self.widget_parent.painter.drawRect(QRect(self.position.x()-buffer/2, self.position.y()-buffer/2, self.width+buffer, self.height+buffer))
+        
     def move(self, point: QPoint):
         """
         Move object to a new position
