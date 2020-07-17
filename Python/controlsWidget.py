@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from constants import Constants
 from solenoid import Solenoid
 from tank import Tank
+from chamber import Chamber
 from genSensor import GenSensor
 from tube import Tube
 from overrides import overrides
@@ -47,7 +48,7 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, Tank, GenSensor]
+        self.object_type_list = [Solenoid, Tank, GenSensor, Chamber]
 
         # Object Tracker
         self.object_list = []
@@ -276,6 +277,8 @@ class ControlsWidget(QWidget):
                     self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Generic Sensor":
                     self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Chamber":
+                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=1))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 

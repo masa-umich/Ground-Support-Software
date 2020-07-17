@@ -183,5 +183,41 @@
 			"font size": 12.0
 		},
 		"sensor type": "Valve Position"
+	},
+	"Chamber 5": {
+		"id": 5,
+		"pos": {
+			"x": 525,
+			"y": 651
+		},
+		"fluid": 4,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Chamber",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "RP-D2",
+		"long name": "Arpulus Delus the Second",
+		"is vertical": 1,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -49,
+				"y": 92
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -39,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
 	}
 }
