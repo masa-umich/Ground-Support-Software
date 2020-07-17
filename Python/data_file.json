@@ -2,24 +2,24 @@
 	"Generic Sensor 0": {
 		"id": 0,
 		"pos": {
-			"x": 986,
-			"y": 226
+			"x": 134,
+			"y": 79
 		},
 		"fluid": 0,
 		"width": 55.0,
 		"height": 20.0,
 		"name": "PT",
-		"scale": 1.0,
+		"scale": 1,
 		"avionics number": 5,
-		"short name": "OX-SN-G07",
-		"long name": "LOX Dewar Drain",
+		"short name": "",
+		"long name": "Static Pressure",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": -6,
+				"x": 30,
 				"y": 27
 			},
 			"rows": 1,
@@ -28,7 +28,44 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -31,
+				"x": -23,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Generic Sensor 1": {
+		"id": 1,
+		"pos": {
+			"x": 134,
+			"y": 144
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Differential Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30,
+				"y": 27
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -40,
 				"y": -21
 			},
 			"rows": 1,
@@ -36,11 +73,11 @@
 		},
 		"sensor type": "Differential Pressure"
 	},
-	"Generic Sensor 1": {
-		"id": 1,
+	"Generic Sensor 2": {
+		"id": 2,
 		"pos": {
-			"x": 820,
-			"y": 438
+			"x": 134,
+			"y": 210
 		},
 		"fluid": 0,
 		"width": 55.0,
@@ -48,15 +85,15 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "OX-SN-G07",
-		"long name": "LOX Dewar Drain",
+		"short name": "",
+		"long name": "Temperature",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": -6,
+				"x": 30,
 				"y": 27
 			},
 			"rows": 1,
@@ -65,12 +102,86 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -31,
+				"x": -13,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"sensor type": "Static Pressure"
+		"sensor type": "Temperature"
+	},
+	"Generic Sensor 3": {
+		"id": 3,
+		"pos": {
+			"x": 134,
+			"y": 275
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Force",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30,
+				"y": 27
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 10,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		},
+		"sensor type": "Force"
+	},
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 134,
+			"y": 343
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Valve Position",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30,
+				"y": 27
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -19,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		},
+		"sensor type": "Valve Position"
 	}
 }

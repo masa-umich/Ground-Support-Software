@@ -172,6 +172,7 @@ class ControlsPanelWidget(QWidget):
         self.long_name_row_spinbox.setValue(object_.long_name_label.rows)
         self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
         self.short_name_font_size_spinbox.setValue(object_.short_name_label.getFontSize())
+        self.sensor_type_combobox.setCurrentText(object_.sensor_type)
 
         self.avionics_number_textbox.setDisabled(True)
 
