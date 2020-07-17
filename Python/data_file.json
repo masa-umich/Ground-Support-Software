@@ -1,1 +1,38 @@
-{}
+{
+	"Solenoid 0": {
+		"id": 0,
+		"pos": {
+			"x": 896,
+			"y": 446
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": -15,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -40,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	}
+}
