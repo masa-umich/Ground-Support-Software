@@ -53,7 +53,8 @@ class ControlsPanelWidget(QWidget):
         self.long_name_row_spinbox = QDoubleSpinBox(self)
         self.long_name_font_size_spinbox = QDoubleSpinBox(self)
         self.short_name_font_size_spinbox = QDoubleSpinBox(self)
-
+        self.sensor_type_combobox = QComboBox(self)
+        
         # Inits above widgets
         self.initEditFrame()
 
@@ -77,7 +78,8 @@ class ControlsPanelWidget(QWidget):
         self.createSpinbox(self.long_name_row_spinbox, "Rows", 1, 5, 1)
         self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", 6, 50, 1)
         self.createSpinbox(self.short_name_font_size_spinbox, "Short Name Font Size", 6, 50, 1)
-
+        self.createComboBox(self.sensor_type_combobox, "Sensor Type", ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
+        self.sensor_type_combobox.resize(self.sensor_type_combobox.sizeHint())
         self.edit_frame.hide()
 
     def createLineEdit(self, lineEdit: QLineEdit, identifier, validator: QValidator = None):
@@ -136,8 +138,9 @@ class ControlsPanelWidget(QWidget):
         :param items: list of strings user can select in drop-down
         """
         identifier_label = QLabel(identifier + ":")
-
-        comboBox.setFixedWidth(100)
+        
+        #I removed this so that I could use sizeHint() method on comboboxes in control panel
+        #comboBox.setFixedWidth(100)
         comboBox.addItems(items)
         comboBox.currentIndexChanged.connect(lambda: self.updateEditingObjectFields(comboBox.currentText(), identifier))
 
@@ -206,6 +209,8 @@ class ControlsPanelWidget(QWidget):
                     object_.long_name_label.setFontSize(text)
                 elif identifier == "Short Name Font Size":
                     object_.short_name_label.setFontSize(text)
+                elif identifier == "Sensor Type":
+                    object_.setUnits(text)
 
     # FIXME: Things don't work well if more than one object are in here
     # HMM: Move is_being_edited to object class and call this function here

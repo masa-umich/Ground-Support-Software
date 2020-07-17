@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from constants import Constants
 from solenoid import Solenoid
 from tank import Tank
-from pressureTransducer import PressureTransducer
+from genSensor import GenSensor
 from tube import Tube
 from overrides import overrides
 
@@ -47,7 +47,7 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, Tank, PressureTransducer]
+        self.object_type_list = [Solenoid, Tank, GenSensor]
 
         # Object Tracker
         self.object_list = []
@@ -274,8 +274,8 @@ class ControlsWidget(QWidget):
 
                 elif action.text() == "New Tank":
                     self.object_list.append(Tank(self, position=point, fluid=0))
-                elif action.text() == "New Pressure Transducer":
-                    self.object_list.append(PressureTransducer(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Generic Sensor":
+                    self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
@@ -350,9 +350,9 @@ class ControlsWidget(QWidget):
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
                                              long_name_label_rows=tnk["long name label"]["rows"]))
 
-            if i.split()[0] + " " + i.split()[1] == "Pressure Transducer":  # Truly a lazy mans fix
+            if i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
                 pt = data[i]
-                self.object_list.append(PressureTransducer(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
+                self.object_list.append(GenSensor(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
                                                  fluid=pt["fluid"], width=pt["width"], height=pt["height"],
                                                  name=pt["name"], scale=pt["scale"],
                                                  avionics_number=pt["avionics number"], short_name=pt["short name"],
@@ -364,7 +364,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=pt["long name label"]["pos string"],
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=pt["long name label"]["rows"]))
+                                                 long_name_label_rows=pt["long name label"]["rows"],
+                                                 sensor_type=pt["sensor type"]))
 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             if i.split()[0] == "Tube":
