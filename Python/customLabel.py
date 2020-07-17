@@ -13,18 +13,21 @@ Provides custom functionality for labels
 class CustomLabel(QLabel):
 
     def __init__(self, widget_parent, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPoint = QPoint(0, 0), rows: int = 1):
+                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 23, text: str = "Name"):
         super().__init__(widget_parent)
         self.widget = widget_parent
         self.gui = self.widget.gui
         self.object_ = object_
         self.is_vertical = is_vertical
         self.position_string = position_string
-        self.local_pos = local_pos  # Default Location (0,0), will almost always be set later
+        self.local_pos = local_pos
         self.rows = rows
         self.setAlignment(Qt.AlignCenter | Qt.AlignTop)
         self.setStyleSheet("color: white")
         self.setWordWrap(True)
+        self.setFont_()
+        self.setFontSize(font_size)
+        self.setText(text)
         self.show()
 
     @overrides
@@ -37,6 +40,15 @@ class CustomLabel(QLabel):
         # Update the label size and make sure it is still centered
         self.setFixedSize_()
         self.moveToPosition()
+
+    def setFont_(self, font: QFont = None):
+        if font is not None:
+            self.setFont(font)
+        else:
+            font = QFont()
+            font.setStyleStrategy(QFont.PreferAntialias)
+            font.setFamily("Arial")
+            self.setFont(font)
 
     def setFontSize(self, size: int):
         """
@@ -241,3 +253,13 @@ class CustomLabel(QLabel):
             self.widget.controlsPanel.addEditingObjects(self.object_)
         else:
             super().mouseReleaseEvent(event)
+
+
+    def generateSaveDict(self):
+        save_dict = {
+            "pos string": self.position_string,
+            "local pos": {"x": self.local_pos.x(), "y": self.local_pos.y()},
+            "rows": self.rows,
+            "font size": self.getFontSize()
+        }
+        return save_dict

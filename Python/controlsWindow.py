@@ -22,14 +22,15 @@ class ControlsWindow(QMainWindow):
         self.gui = self.parent
 
         # Set geometry
-        self.title = 'Controls Window'
+        self.title = 'MASA Console'
+        self.setWindowIcon(QIcon('M_icon.png'))
 
         # Below numbers are arbitrary
         # TODO: Make them not arbitrary
         self.left = 0
         self.top = 0
         self.width = self.gui.screenResolution[0]
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1]*.9
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
