@@ -172,7 +172,9 @@ class ControlsPanelWidget(QWidget):
         self.long_name_row_spinbox.setValue(object_.long_name_label.rows)
         self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
         self.short_name_font_size_spinbox.setValue(object_.short_name_label.getFontSize())
-        self.sensor_type_combobox.setCurrentText(object_.sensor_type)
+        
+        if object_.object_name == "Generic Sensor":
+            self.sensor_type_combobox.setCurrentText(object_.sensor_type)
 
         self.avionics_number_textbox.setDisabled(True)
 
@@ -210,7 +212,7 @@ class ControlsPanelWidget(QWidget):
                     object_.long_name_label.setFontSize(text)
                 elif identifier == "Short Name Font Size":
                     object_.short_name_label.setFontSize(text)
-                elif identifier == "Sensor Type":
+                elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
                     object_.setUnits(text)
 
     # FIXME: Things don't work well if more than one object are in here
@@ -222,6 +224,10 @@ class ControlsPanelWidget(QWidget):
         objects.setIsEditing(True)
         self.objects_editing.append(objects)
         self.edit_frame.show()
+        if self.objects_editing[0].object_name != "Generic Sensor":
+            self.sensor_type_combobox.setDisabled(True)
+        else:
+            self.sensor_type_combobox.setEnabled(True)
         self.updateEditPanelFields(objects)
 
     def removeEditingObjects(self, objects):

@@ -156,3 +156,34 @@ class GenSensor(BaseObject):
         del self.measurement_label
 
         super().deleteSelf()
+    
+    @overrides
+    def generateSaveDict(self):
+        """
+        Overrides definition in object.py
+        Here is where an objects data is moved into a dict, it will be combined with all the other objects data and
+        saved to a json file. Unfortuantely for any data to be saved it must be manually inserted here and also manually
+        pulled from the load function. It has the benefit of being easily readable though
+        """
+        save_dict = {
+            self.object_name + " " + str(self._id): {
+                "id": self._id,
+                "pos": {"x": self.position.x(), "y": self.position.y()},
+                "fluid": self.fluid,
+                "width": self.width/self.gui.pixel_scale_ratio[0],
+                "height": self.height/self.gui.pixel_scale_ratio[0],
+                "name": self.name,
+                "scale": self.scale,
+                "avionics number": self.avionics_number,
+                "short name": self.short_name,
+                "long name": self.long_name,
+                "is vertical": self.is_vertical,
+                "is locked": self.locked,
+                "is pos locked": self.position_locked,
+                "short name label": self.short_name_label.generateSaveDict(),
+                "long name label": self.long_name_label.generateSaveDict(),
+                "sensor type": self.sensor_type,
+            }
+        }
+
+        return save_dict

@@ -470,8 +470,7 @@ class BaseObject:
                 "is locked": self.locked,
                 "is pos locked": self.position_locked,
                 "short name label": self.short_name_label.generateSaveDict(),
-                "long name label": self.long_name_label.generateSaveDict(),
-                "sensor type": self.sensor_type,
+                "long name label": self.long_name_label.generateSaveDict()
             }
         }
 
