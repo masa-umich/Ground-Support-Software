@@ -7,6 +7,7 @@ from solenoid import Solenoid
 from tank import Tank
 from chamber import Chamber
 from throttleValve import ThrottleValve
+from threeWayValve import ThreeWayValve
 from genSensor import GenSensor
 from tube import Tube
 from overrides import overrides
@@ -49,7 +50,7 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, Tank, GenSensor, Chamber, ThrottleValve]
+        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber, ThrottleValve]
 
         # Object Tracker
         self.object_list = []
@@ -273,6 +274,8 @@ class ControlsWidget(QWidget):
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
+                elif action.text() == "New 3 Way Valve":
+                    self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=0))
                 elif action.text() == "New Tank":
                     self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Generic Sensor":
