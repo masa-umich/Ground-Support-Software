@@ -280,7 +280,7 @@ class ControlsWidget(QWidget):
                 elif action.text() == "New Chamber":
                     self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=1))
                 elif action.text() == "New Throttle Valve":
-                    self.object_list.append(ThrottleValve(self, position=point, fluid=1, is_vertical=0))
+                    self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
