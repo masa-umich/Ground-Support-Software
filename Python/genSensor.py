@@ -103,6 +103,7 @@ class GenSensor(BaseObject):
         Uses text (sensor type) to assign units to sensor label
         """
         self.sensor_type = text
+        
         if text == "Static Pressure":
             self.units = "psi"
         elif text == "Differential Pressure":
@@ -113,6 +114,7 @@ class GenSensor(BaseObject):
             self.units = "lbf"
         elif text == "Valve Position":
             self.units = "%"
+        
         self.measurement_label.setText(str(self.measurement)+self.units)
             
     @overrides
@@ -142,9 +144,11 @@ class GenSensor(BaseObject):
         """
         Draws the Sensor icon on screen
         """
+
         self.widget_parent.painter.setBrush(QColor(10,22,44,100))
         self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
         self.widget_parent.painter.setBrush(0)
+        
         super().draw()
         
     @overrides

@@ -6,6 +6,7 @@ from constants import Constants
 from solenoid import Solenoid
 from tank import Tank
 from chamber import Chamber
+from throttleValve import ThrottleValve
 from genSensor import GenSensor
 from tube import Tube
 from overrides import overrides
@@ -48,7 +49,7 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, Tank, GenSensor, Chamber]
+        self.object_type_list = [Solenoid, Tank, GenSensor, Chamber, ThrottleValve]
 
         # Object Tracker
         self.object_list = []
@@ -269,16 +270,17 @@ class ControlsWidget(QWidget):
             # Below ifs creates new objects at the point where the right click
             if action is not None:
                 self.controlsPanel.removeAllEditingObjects()
-
+                #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
-
                 elif action.text() == "New Tank":
                     self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Generic Sensor":
                     self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=0))
                 elif action.text() == "New Chamber":
                     self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=1))
+                elif action.text() == "New Throttle Valve":
+                    self.object_list.append(ThrottleValve(self, position=point, fluid=1, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
@@ -369,7 +371,39 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
                                                  sensor_type=pt["sensor type"]))
+            
+            if i.split()[0] == "Chamber":
+                idx = data[i]
+                self.object_list.append(Chamber(self, _id=idx["id"], position=QPoint(idx["pos"]["x"], idx["pos"]["y"]),
+                                                fluid=idx["fluid"], width=idx["width"], height=idx["height"],
+                                                name=idx["name"], scale=idx["scale"],
+                                                avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                                locked=idx["is locked"], position_locked=idx["is pos locked"],
+                                                short_name_label_pos=idx["short name label"]["pos string"],
+                                                short_name_label_font_size=idx["short name label"]["font size"],
+                                                short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"], idx["short name label"]["local pos"]["y"]),
+                                                long_name_label_pos=idx["long name label"]["pos string"],
+                                                long_name_label_font_size=idx["long name label"]["font size"],
+                                                long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
+                                                long_name_label_rows=idx["long name label"]["rows"]))
 
+            if i.split()[0] + " " + i.split()[1] == "Throttle Valve":  
+                idx = data[i]
+                self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
+                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
+                                                 name=idx["name"],scale=idx["scale"],
+                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
+                                                 short_name_label_pos=idx["short name label"]["pos string"],
+                                                 short_name_label_font_size=idx["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=idx["long name label"]["pos string"],
+                                                 long_name_label_font_size=idx["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=idx["long name label"]["rows"]))
+                
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             if i.split()[0] == "Tube":
                 tube = data[i]

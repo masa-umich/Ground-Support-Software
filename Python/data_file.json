@@ -1,26 +1,26 @@
 {
-	"Generic Sensor 0": {
+	"Throttle Valve 0": {
 		"id": 0,
 		"pos": {
-			"x": 134,
-			"y": 79
+			"x": 189,
+			"y": 145
 		},
-		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
+		"fluid": 1,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Throttle Valve",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
-		"long name": "Static Pressure",
+		"short name": "TV",
+		"long name": "Untitled",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30,
-				"y": 27
+				"x": 12,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -28,36 +28,35 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -23,
+				"x": -4,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
-		},
-		"sensor type": "Static Pressure"
+		}
 	},
-	"Generic Sensor 1": {
-		"id": 1,
+	"Solenoid 2": {
+		"id": 2,
 		"pos": {
-			"x": 134,
-			"y": 150
+			"x": 189,
+			"y": 53
 		},
 		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
-		"long name": "Differential Pressure",
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30,
-				"y": 27
+				"x": -15,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -70,88 +69,13 @@
 			},
 			"rows": 1,
 			"font size": 12.0
-		},
-		"sensor type": "Differential Pressure"
-	},
-	"Generic Sensor 2": {
-		"id": 2,
-		"pos": {
-			"x": 134,
-			"y": 219
-		},
-		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
-		"scale": 1.0,
-		"avionics number": 5,
-		"short name": "",
-		"long name": "Temperature",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 30,
-				"y": 27
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -13,
-				"y": -21
-			},
-			"rows": 1,
-			"font size": 12.0
-		},
-		"sensor type": "Temperature"
+		}
 	},
 	"Generic Sensor 3": {
 		"id": 3,
 		"pos": {
-			"x": 134,
-			"y": 279
-		},
-		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
-		"scale": 1.0,
-		"avionics number": 5,
-		"short name": "",
-		"long name": "Force",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 30,
-				"y": 27
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": 10,
-				"y": -21
-			},
-			"rows": 1,
-			"font size": 12.0
-		},
-		"sensor type": "Force"
-	},
-	"Generic Sensor 4": {
-		"id": 4,
-		"pos": {
-			"x": 134,
-			"y": 343
+			"x": 180,
+			"y": 233
 		},
 		"fluid": 0,
 		"width": 55.0,
@@ -159,15 +83,15 @@
 		"name": "PT",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
-		"long name": "Valve Position",
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30,
+				"x": -6,
 				"y": 27
 			},
 			"rows": 1,
@@ -176,25 +100,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -19,
+				"x": -31,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"sensor type": "Valve Position"
+		"sensor type": "Static Pressure"
 	},
-	"Chamber 5": {
-		"id": 5,
+	"Chamber 4": {
+		"id": 4,
 		"pos": {
-			"x": 525,
-			"y": 651
+			"x": 317,
+			"y": 53
 		},
 		"fluid": 4,
 		"width": 88.0,
 		"height": 170.0,
 		"name": "Chamber",
-		"scale": 1.0,
+		"scale": 1,
 		"avionics number": 5,
 		"short name": "RP-D2",
 		"long name": "Arpulus Delus the Second",
@@ -214,6 +138,42 @@
 			"pos string": "Top",
 			"local pos": {
 				"x": -39,
+				"y": -21
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 5": {
+		"id": 5,
+		"pos": {
+			"x": 494,
+			"y": 53
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "OX-SN-G07",
+		"long name": "LOX Dewar Drain",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -81,
+				"y": 92
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12,
 				"y": -21
 			},
 			"rows": 1,
