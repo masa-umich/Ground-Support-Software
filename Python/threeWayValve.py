@@ -91,41 +91,66 @@ class ThreeWayValve(BaseObject):
         sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
         # Holds the path of lines to draw
         path = QPainterPath()
-
-        # If ThreeWayValve is open color it in
+        
+        #Sets the two brush types for each valve path based on whether the valve is energized or not
         if self.state == 1:
-            self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])  # This function colors in a path
+            fill = [QBrush(Constants.fluidColor[self.fluid],Qt.SolidPattern),QBrush(0)]
+        else:
+            fill = [QBrush(0),QBrush(Constants.fluidColor[self.fluid],Qt.Dense5Pattern)]
 
         # Move path to starting position
         path.moveTo(0, 0)  # Top left corner
 
         # = 0 -> Draw horizontally
         if self.is_vertical == 0:
-            path.lineTo(0,sec_width)  # Straight Down
-            path.lineTo(self.width,0)  # Diag to upper right
-            path.lineTo(self.width, sec_width)  # Straight Up
+            #Draws 1st and 3rd ports
+            self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
+            path.lineTo(0,sec_width) 
+            path.lineTo(self.width,0) 
+            path.lineTo(self.width, sec_width)  
             path.lineTo(0, 0)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)               
+            
+            path = QPainterPath()
+            #Draws 3rd port, and draws over 2nd port again (with new brush)
+            self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
             path.moveTo(self.width/2,sec_width/2)
             path.lineTo((self.width-sec_width)/2,self.height)
             path.lineTo((self.width+sec_width)/2,self.height)
             path.lineTo(self.width/2,sec_width/2)
             
+            #Re-draw 2nd port to make sure it has the correct brush
+            path.lineTo(self.width,0)
+            path.lineTo(self.width, sec_width)
+            path.lineTo(self.width/2,sec_width/2)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)
 
-            # TODO: Implement three way ThreeWayValve
-            # path.moveTo(self.width/2, self.height/2)
-            # path.lineTo((self.width/2) - (self.height/2), (self.height/2) - (self.width /2))
-            # path.lineTo((self.width/2) + (self.height/2), (self.height/2) - (self.width /2))
-            # path.lineTo(self.width/2, self.height/2)
         else:  # Draw vertically
+            #Draws 1st and 3rd ports
+            self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
             path.lineTo(sec_width, 0)
             path.lineTo(0, self.height)
             path.lineTo(sec_width, self.height)
             path.lineTo(0, 0)
-
-
-        path.translate(self.position.x(), self.position.y())
-
-        self.widget_parent.painter.drawPath(path)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)    
+            
+            path = QPainterPath()
+            #Draws 3rd port, and draws over 2nd port again (with new brush)
+            self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
+            path.moveTo(sec_width/2,self.height/2)
+            path.lineTo(self.width,(self.height-sec_width)/2)
+            path.lineTo(self.width,(self.height+sec_width)/2)
+            path.lineTo(sec_width/2,self.height/2)
+            
+            #Re-draw 2nd port to make sure it has the correct brush
+            path.lineTo(0,0)
+            path.lineTo(sec_width, 0)
+            path.lineTo(sec_width/2,self.height/2)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)
 
         self.widget_parent.painter.setBrush(0)
 

@@ -2,8 +2,8 @@
 	"Solenoid 0": {
 		"id": 0,
 		"pos": {
-			"x": 274,
-			"y": 119
+			"x": 593,
+			"y": 297
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -35,16 +35,16 @@
 			"font size": 12.0
 		}
 	},
-	"Tank 1": {
+	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 584,
-			"y": 27
+			"x": 753,
+			"y": 283
 		},
 		"fluid": 0,
-		"width": 88.0,
-		"height": 170.0,
-		"name": "Tank",
+		"width": 18.0,
+		"height": 40.0,
+		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
 		"short name": "OX-SN-G07",
@@ -53,10 +53,10 @@
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
-			"pos string": "Left",
+			"pos string": "Bottom",
 			"local pos": {
-				"x": -81,
-				"y": 92
+				"x": -29,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -64,23 +64,23 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -12,
+				"x": -54,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
 		}
 	},
-	"Generic Sensor 2": {
+	"3 Way Valve 2": {
 		"id": 2,
 		"pos": {
-			"x": 408,
-			"y": 117
+			"x": 593,
+			"y": 389
 		},
 		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
 		"scale": 1,
 		"avionics number": 5,
 		"short name": "OX-SN-G07",
@@ -91,8 +91,8 @@
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": -6,
-				"y": 27
+				"x": -15,
+				"y": 35
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -100,108 +100,35 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -31,
-				"y": -21
-			},
-			"rows": 1,
-			"font size": 12.0
-		},
-		"sensor type": "Static Pressure"
-	},
-	"Chamber 4": {
-		"id": 4,
-		"pos": {
-			"x": 988,
-			"y": 586
-		},
-		"fluid": 4,
-		"width": 88.0,
-		"height": 170.0,
-		"name": "Chamber",
-		"scale": 1,
-		"avionics number": 5,
-		"short name": "RP-D2",
-		"long name": "Arpulus Delus the Second",
-		"is vertical": 1,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Left",
-			"local pos": {
-				"x": -49,
-				"y": 92
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -39,
+				"x": -40,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
 		}
 	},
-	"Throttle Valve 5": {
-		"id": 5,
+	"3 Way Valve 3": {
+		"id": 3,
 		"pos": {
-			"x": 805,
-			"y": 469
+			"x": 758,
+			"y": 376
 		},
 		"fluid": 0,
-		"width": 40.0,
-		"height": 18.0,
-		"name": "Throttle Valve",
+		"width": 27.0,
+		"height": 40.0,
+		"name": "3 Way Valve",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "TV",
-		"long name": "",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 12,
-				"y": 24
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": 21,
-				"y": -3
-			},
-			"rows": 1,
-			"font size": 12.0
-		}
-	},
-	"Generic Sensor 6": {
-		"id": 6,
-		"pos": {
-			"x": 796,
-			"y": 403
-		},
-		"fluid": 0,
-		"width": 55.0,
-		"height": 20.0,
-		"name": "PT",
-		"scale": 1,
-		"avionics number": 5,
-		"short name": "",
+		"short name": "OX-SN-G07",
 		"long name": "LOX Dewar Drain",
-		"is vertical": 0,
+		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30,
-				"y": 27
+				"x": -23,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -209,26 +136,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -31,
+				"x": -48,
 				"y": -21
 			},
 			"rows": 1,
 			"font size": 12.0
-		},
-		"sensor type": "Valve Position"
-	},
-	"Tube 0": {
-		"tube id": 0,
-		"fluid": 0,
-		"bend positions": {
-			"0": {
-				"x": 828,
-				"y": 426
-			},
-			"1": {
-				"x": 828,
-				"y": 468
-			}
 		}
 	}
 }
