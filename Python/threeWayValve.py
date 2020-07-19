@@ -81,6 +81,7 @@ class ThreeWayValve(BaseObject):
 
         # State tracks whether the ThreeWayValve is open or closed
         self.state = 0
+        self.sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
 
     @overrides
     def draw(self):
@@ -88,7 +89,7 @@ class ThreeWayValve(BaseObject):
         Draws the ThreeWayValve icon on screen
         """
         
-        sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
+        
         # Holds the path of lines to draw
         path = QPainterPath()
         
@@ -105,9 +106,9 @@ class ThreeWayValve(BaseObject):
         if self.is_vertical == 0:
             #Draws 1st and 3rd ports
             self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
-            path.lineTo(0,sec_width) 
+            path.lineTo(0,self.sec_width) 
             path.lineTo(self.width,0) 
-            path.lineTo(self.width, sec_width)  
+            path.lineTo(self.width, self.sec_width)  
             path.lineTo(0, 0)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)               
@@ -115,24 +116,24 @@ class ThreeWayValve(BaseObject):
             path = QPainterPath()
             #Draws 3rd port, and draws over 2nd port again (with new brush)
             self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
-            path.moveTo(self.width/2,sec_width/2)
-            path.lineTo((self.width-sec_width)/2,self.height)
-            path.lineTo((self.width+sec_width)/2,self.height)
-            path.lineTo(self.width/2,sec_width/2)
+            path.moveTo(self.width/2,self.sec_width/2)
+            path.lineTo((self.width-self.sec_width)/2,self.height)
+            path.lineTo((self.width+self.sec_width)/2,self.height)
+            path.lineTo(self.width/2,self.sec_width/2)
             
             #Re-draw 2nd port to make sure it has the correct brush
             path.lineTo(self.width,0)
-            path.lineTo(self.width, sec_width)
-            path.lineTo(self.width/2,sec_width/2)
+            path.lineTo(self.width, self.sec_width)
+            path.lineTo(self.width/2,self.sec_width/2)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
 
         else:  # Draw vertically
             #Draws 1st and 3rd ports
             self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
-            path.lineTo(sec_width, 0)
+            path.lineTo(self.sec_width, 0)
             path.lineTo(0, self.height)
-            path.lineTo(sec_width, self.height)
+            path.lineTo(self.sec_width, self.height)
             path.lineTo(0, 0)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)    
@@ -140,15 +141,15 @@ class ThreeWayValve(BaseObject):
             path = QPainterPath()
             #Draws 3rd port, and draws over 2nd port again (with new brush)
             self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
-            path.moveTo(sec_width/2,self.height/2)
-            path.lineTo(self.width,(self.height-sec_width)/2)
-            path.lineTo(self.width,(self.height+sec_width)/2)
-            path.lineTo(sec_width/2,self.height/2)
+            path.moveTo(self.sec_width/2,self.height/2)
+            path.lineTo(self.width,(self.height-self.sec_width)/2)
+            path.lineTo(self.width,(self.height+self.sec_width)/2)
+            path.lineTo(self.sec_width/2,self.height/2)
             
             #Re-draw 2nd port to make sure it has the correct brush
             path.lineTo(0,0)
-            path.lineTo(sec_width, 0)
-            path.lineTo(sec_width/2,self.height/2)
+            path.lineTo(self.sec_width, 0)
+            path.lineTo(self.sec_width/2,self.height/2)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
 
@@ -160,6 +161,21 @@ class ThreeWayValve(BaseObject):
         #self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y(), 7, 7),Constants.fluidColor[self.fluid])
 
     @overrides
+    def setAnchorPoints(self):
+        """
+        Sets the anchor points for the object. Called when object is created, and when scale changes
+        """
+        if self.is_vertical == False:
+            self.anchor_points[0].updateLocalPosition(QPoint(0,int(self.sec_width/2)))
+            self.anchor_points[1].updateLocalPosition(QPoint(self.width ,int(self.sec_width/2)))
+            self.anchor_points[2].updateLocalPosition(QPoint(self.width/2,0))
+            self.anchor_points[3].updateLocalPosition(QPoint(self.width/2, self.height))
+        else:
+            self.anchor_points[0].updateLocalPosition(QPoint(int(self.sec_width/2),0))
+            self.anchor_points[1].updateLocalPosition(QPoint(int(self.sec_width/2),self.height))
+            self.anchor_points[2].updateLocalPosition(QPoint(0,int(self.height/2)))
+            self.anchor_points[3].updateLocalPosition(QPoint(self.width, int(self.height/2)))
+        
     def onClick(self):
         """
         When a ThreeWayValve is clicked this function is called

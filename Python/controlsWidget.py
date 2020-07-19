@@ -425,6 +425,22 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
+            
+            if i.split()[0] + " " + i.split()[1] == "Heat Exchanger":  
+                idx = data[i]
+                self.object_list.append(HeatEx(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
+                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
+                                                 name=idx["name"],scale=idx["scale"],
+                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
+                                                 short_name_label_pos=idx["short name label"]["pos string"],
+                                                 short_name_label_font_size=idx["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=idx["long name label"]["pos string"],
+                                                 long_name_label_font_size=idx["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=idx["long name label"]["rows"]))
                 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             if i.split()[0] == "Tube":

@@ -64,8 +64,7 @@ class Chamber(BaseObject):
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows)
-
-
+    
     @overrides
     def onClick(self):
         """
@@ -78,6 +77,7 @@ class Chamber(BaseObject):
         # Tells widget painter to update screen
         self.widget_parent.update()
         
+        #placeholder for future functionality
         print("Chamber object clicked")
 
     @overrides
