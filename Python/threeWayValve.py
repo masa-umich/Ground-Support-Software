@@ -16,7 +16,7 @@ class ThreeWayValve(BaseObject):
     object_name = "3 Way Valve"
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
-                 height: float = 18 *1, name: str = "3 Way Valve",
+                 height: float = 27*1, name: str = "3 Way Valve",
                  scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
                  long_name: str = 'LOX Dewar Drain', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
@@ -87,7 +87,8 @@ class ThreeWayValve(BaseObject):
         """
         Draws the ThreeWayValve icon on screen
         """
-
+        
+        sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
         # Holds the path of lines to draw
         path = QPainterPath()
 
@@ -100,10 +101,15 @@ class ThreeWayValve(BaseObject):
 
         # = 0 -> Draw horizontally
         if self.is_vertical == 0:
-            path.lineTo(0,self.height)  # Straight Down
+            path.lineTo(0,sec_width)  # Straight Down
             path.lineTo(self.width,0)  # Diag to upper right
-            path.lineTo(self.width, self.height)  # Straight Up
+            path.lineTo(self.width, sec_width)  # Straight Up
             path.lineTo(0, 0)
+            path.moveTo(self.width/2,sec_width/2)
+            path.lineTo((self.width-sec_width)/2,self.height)
+            path.lineTo((self.width+sec_width)/2,self.height)
+            path.lineTo(self.width/2,sec_width/2)
+            
 
             # TODO: Implement three way ThreeWayValve
             # path.moveTo(self.width/2, self.height/2)
@@ -111,9 +117,9 @@ class ThreeWayValve(BaseObject):
             # path.lineTo((self.width/2) + (self.height/2), (self.height/2) - (self.width /2))
             # path.lineTo(self.width/2, self.height/2)
         else:  # Draw vertically
-            path.lineTo(self.width, 0)
+            path.lineTo(sec_width, 0)
             path.lineTo(0, self.height)
-            path.lineTo(self.width, self.height)
+            path.lineTo(sec_width, self.height)
             path.lineTo(0, 0)
 
 
