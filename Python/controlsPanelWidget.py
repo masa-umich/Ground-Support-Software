@@ -21,6 +21,7 @@ class ControlsPanelWidget(QWidget):
         # Keeps track of all the objects currently being edited
         self.objects_editing = []
 
+        #Defines placement and size of control panel
         self.left = self.gui.screenResolution[0] - self.window.panel_width
         self.top = 0
 
@@ -28,13 +29,21 @@ class ControlsPanelWidget(QWidget):
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        # Sets the color of the panel to light Gray
-        # TODO: Make this not look totally terrible
+        #Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.lightGray)
         self.setPalette(p)
+        
+        # Inits widgets for edit frame
+        self.initEditFrame()
 
+        self.show()
+
+    def initEditFrame(self):
+        """
+        Inits the widgets inside of the editing frame
+        """
         # Frames and layouts that holds everything in it and can be hidden / shown
         self.edit_frame = QFrame(self)
         self.edit_form_layout = QFormLayout(self)
@@ -55,16 +64,6 @@ class ControlsPanelWidget(QWidget):
         self.short_name_font_size_spinbox = QDoubleSpinBox(self)
         self.sensor_type_combobox = QComboBox(self)
         
-        # Inits above widgets
-        self.initEditFrame()
-
-        self.show()
-
-    def initEditFrame(self):
-        """
-        Inits the widgets inside of the editing frame
-        """
-
         # Add text boxes to the layout
         self.createTFRadioButtons("Long Name Label", "Enabled", "Disabled", True)
         self.createLineEdit(self.long_name_textbox, "Long Name")
@@ -224,6 +223,8 @@ class ControlsPanelWidget(QWidget):
         objects.setIsEditing(True)
         self.objects_editing.append(objects)
         self.edit_frame.show()
+        
+        #Disables "Sensor Type" field for non-sensor objects
         if self.objects_editing[0].object_name != "Generic Sensor":
             self.sensor_type_combobox.setDisabled(True)
         else:

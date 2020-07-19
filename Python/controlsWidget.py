@@ -32,7 +32,6 @@ class ControlsWidget(QWidget):
     # TODO: Properly implement these values
     screenWidthBuffer = 100
     screenHeightBuffer = 100
-    objectScale = 1.75  # This maybe should be a instance variable of all objects
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -73,11 +72,9 @@ class ControlsWidget(QWidget):
         # Var to keep track when a tube is being drawn
         self.is_drawing = False
 
-        # Sets the color of the panel to dark Gray
-        # TODO: Make this not look totally terrible
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), QColor(10,22,44))
+        p.setColor(self.backgroundRole(), Constants.BG_color)
         self.setPalette(p)
 
         # TODO: move these somewhere when file system is initiated

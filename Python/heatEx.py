@@ -8,28 +8,25 @@ from constants import Constants
 from MathHelper import MathHelper
 from object import BaseObject
 
-
 """
 Class to handle all HeatEx objects and their functionality 
 """
-
-
-# TODO: HeatExs need to be more similar to solenoids so the base object can be expanded
+# TODO: HeatEx need to be more similar to solenoids so the base object can be expanded
 class HeatEx(BaseObject):
 
     object_name = "Heat Exchanger"
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40,
                  height: float = 18, name: str = "HeatEx",
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
-                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = True,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = '',
+                 long_name: str = 'Heat Exchanger', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0, 0),
                  short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
                  long_name_label_rows: int = 1):
         """
-        Initializer for Solenoid
+        Initializer for HeatEx
 
         :param widget_parent: parent widget
         :param position: position of icon on screen
@@ -64,25 +61,6 @@ class HeatEx(BaseObject):
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows)
-
-
-
-    #Heat Exchangers are passive objects
-    # @overrides
-    # def onClick(self):
-    #     """
-    #     When a HeatEx is clicked this function is called
-    #     This is really only useful for adding plots and
-    #     selecting the HeatEx for editing
-    #     """
-    #     super().onClick()
-
-    #     if not self.widget_parent.window.is_editing:
-    #         # This is for testing and will normally be used with capacitive level sensor
-    #         self.fillPercent += .05
-
-    #     # Tells widget painter to update screen
-    #     self.widget_parent.update()
 
     @overrides
     def draw(self):

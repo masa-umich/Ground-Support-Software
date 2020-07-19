@@ -12,8 +12,6 @@ from object import BaseObject
 """
 Class to handle all tank objects and their functionality 
 """
-
-
 # TODO: Tanks need to be more similar to solenoids so the base object can be expanded
 class Tank(BaseObject):
 
@@ -21,8 +19,8 @@ class Tank(BaseObject):
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 88*1,
                  height: float = 170*1, name: str = "Tank",
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
-                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = True,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = '',
+                 long_name: str = 'Tank', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0, 0),
                  short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
@@ -71,8 +69,6 @@ class Tank(BaseObject):
         # Tracks the percentage of fluid in the tank
         self.fillPercent = 0
 
-
-
     @overrides
     def onClick(self):
         """
@@ -92,9 +88,8 @@ class Tank(BaseObject):
     @overrides
     def draw(self):
         """
-        Draws the solenoid icon on screen
+        Draws the tank icon on screen
         """
-
         # Height of curved arc at top and bottom of tank
         arcHeight = 20 * self.scale * self.widget_parent.gui.pixel_scale_ratio[0]
 
@@ -102,19 +97,19 @@ class Tank(BaseObject):
         path = QPainterPath()
         if self.is_vertical == True:
             path.moveTo(0,arcHeight)
-            path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180) # Top Arc
-            path.lineTo(self.width, self.height - 2 * arcHeight) # Line down
-            path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180) # Bottom Arc
-            path.lineTo(0, arcHeight) # Line up
+            path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180)
+            path.lineTo(self.width, self.height - 2 * arcHeight) 
+            path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180)
+            path.lineTo(0, arcHeight)
         
         elif self.is_vertical == False:
             path.moveTo(arcHeight,0)
-            path.arcTo(QRectF(0, 0,  arcHeight * 2, self.height), 90, 180) # left Arc
-            path.lineTo(self.width - arcHeight, self.height) # Bottom Line
-            path.arcTo(path.currentPosition().x()-arcHeight,0,arcHeight*2,self.height, -90, 180) # Bottom Arc
-            path.lineTo(arcHeight, 0) # Line up
+            path.arcTo(QRectF(0, 0,  arcHeight * 2, self.height), 90, 180) 
+            path.lineTo(self.width - arcHeight, self.height) 
+            path.arcTo(path.currentPosition().x()-arcHeight,0,arcHeight*2,self.height, -90, 180)
+            path.lineTo(arcHeight, 0)
+            
         path.translate(self.position.x(), self.position.y()) # Translate it into position
-
         self.widget_parent.painter.drawPath(path) # Draw Path
 
         # Debug randomness
@@ -144,7 +139,6 @@ class Tank(BaseObject):
 
         self.widget_parent.painter.drawPath(path)
         # End fill in bottom arc
-
 
         # Fill in tank body
         # Maps fill percentage to the height of the body to fill

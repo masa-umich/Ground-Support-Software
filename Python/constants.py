@@ -23,6 +23,8 @@ class Constants:
     }
 
     line_width = 2
+    
+    BG_color = QColor(10,22,44)
 
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]

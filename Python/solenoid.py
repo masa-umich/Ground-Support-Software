@@ -17,8 +17,8 @@ class Solenoid(BaseObject):
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
                  height: float = 18 *1, name: str = "Solenoid",
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
-                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = '',
+                 long_name: str = 'Solenoid', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
                  short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",

@@ -8,11 +8,9 @@ from customLabel import CustomLabel
 from anchorPoint import AnchorPoint
 
 
-
 """
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
-
 
 class BaseObject:
 
@@ -23,8 +21,8 @@ class BaseObject:
     ----------------------------------------------------------------------------------------------------------------"""
 
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07', safety_status: int = -1,
-                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False, is_being_edited: bool = False,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = 'untitled', safety_status: int = -1,
+                 long_name: str = 'untitled', is_vertical: bool = False, is_being_edited: bool = False,
                  is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
                  short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
@@ -150,8 +148,6 @@ class BaseObject:
         self.long_name_label.show()
         self.short_name_label.show()
 
-        # Used to have stuff but is currently empty, saving its spot here if it ever needed again
-
     def _initAnchorPoints(self):
         """
         Inits the anchor points for the object
@@ -164,11 +160,11 @@ class BaseObject:
                          AnchorPoint(QPoint(self.width, int(self.height / 2)), self, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
+        
 
     """----------------------------------------------------------------------------------------------------------------
     GETTERS and SETTERS
     ----------------------------------------------------------------------------------------------------------------"""
-
 
     def setToolTip_(self, text):
         """
@@ -339,15 +335,15 @@ class BaseObject:
         else:
             self.hideAnchorPoints()
         
+        #If object is selected, a thin yellow box is drawn to idicate so
         if self.is_being_edited == True:
             self.highlight(pen)
             
-        # TODO: Make box appear around object currently being edited iss#10
-        #if self.is_being_edited == True:
-            
-
     def highlight(self,pen):
-        buffer = 8
+        """
+        Draws a thin box around selected object
+        """
+        buffer = 8  #Space between the object and the highlight line
         pen.setStyle(Qt.DotLine)
         pen.setWidth(1)
         pen.setColor(QColor(255,255,0))

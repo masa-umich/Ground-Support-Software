@@ -17,8 +17,8 @@ class ThreeWayValve(BaseObject):
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
                  height: float = 27*1, name: str = "3 Way Valve",
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'OX-SN-G07',
-                 long_name: str = 'LOX Dewar Drain', is_vertical: bool = False,
+                 scale: float = 1, avionics_number: int = 5, short_name: str = '',
+                 long_name: str = '3 Way Valve', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
                  short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
@@ -51,8 +51,6 @@ class ThreeWayValve(BaseObject):
         :param long_name_label_rows: how many rows long name label should have
         """
 
-        # TODO: Still bleah, should have a way to rotate or something
-
         if is_vertical:
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
                              name=name, is_vertical=is_vertical, scale=scale, avionics_number = avionics_number,
@@ -82,14 +80,13 @@ class ThreeWayValve(BaseObject):
         # State tracks whether the ThreeWayValve is open or closed
         self.state = 0
         self.sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
-
+        self.setAnchorPoints()
+        
     @overrides
     def draw(self):
         """
         Draws the ThreeWayValve icon on screen
         """
-        
-        
         # Holds the path of lines to draw
         path = QPainterPath()
         
@@ -102,8 +99,8 @@ class ThreeWayValve(BaseObject):
         # Move path to starting position
         path.moveTo(0, 0)  # Top left corner
 
-        # = 0 -> Draw horizontally
-        if self.is_vertical == 0:
+        
+        if self.is_vertical == 0: # Draw horizontally
             #Draws 1st and 3rd ports
             self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
             path.lineTo(0,self.sec_width) 
@@ -156,9 +153,6 @@ class ThreeWayValve(BaseObject):
         self.widget_parent.painter.setBrush(0)
 
         super().draw()
-
-        # This is debug, draws a box around the origin of object
-        #self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y(), 7, 7),Constants.fluidColor[self.fluid])
 
     @overrides
     def setAnchorPoints(self):

@@ -8,12 +8,9 @@ from constants import Constants
 from MathHelper import MathHelper
 from object import BaseObject
 
-
 """
 Class to handle all Chamber objects and their functionality 
 """
-
-
 # TODO: Chambers need to be more similar to solenoids so the base object can be expanded
 class Chamber(BaseObject):
 
@@ -85,7 +82,6 @@ class Chamber(BaseObject):
         """
         Draws the chamber on the screen
         """
-
         path = QPainterPath()
         
         if self.is_vertical == True:
