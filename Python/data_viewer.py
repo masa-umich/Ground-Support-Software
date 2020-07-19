@@ -43,7 +43,7 @@ class DataViewer(QtWidgets.QTabWidget):
     """
     channels = ["", "SVOTP.e", "SVOTP.i", "SVOTP.state", "TOTH", "TOTL", "POT"]
 
-    def __init__(self, num_channels=4, *args, **kwargs):
+    def __init__(self, num_channels=5, *args, **kwargs):
         super(DataViewer, self).__init__(*args, **kwargs)
 
         # initialize tabs
