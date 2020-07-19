@@ -53,10 +53,10 @@
 		"is locked": false,
 		"is pos locked": false,
 		"short name label": {
-			"pos string": "Bottom",
+			"pos string": "Left",
 			"local pos": {
-				"x": -29,
-				"y": 51
+				"x": -81,
+				"y": 14
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -74,50 +74,14 @@
 	"3 Way Valve 2": {
 		"id": 2,
 		"pos": {
-			"x": 593,
-			"y": 389
-		},
-		"fluid": 0,
-		"width": 40.0,
-		"height": 27.0,
-		"name": "3 Way Valve",
-		"scale": 1,
-		"avionics number": 5,
-		"short name": "OX-SN-G07",
-		"long name": "LOX Dewar Drain",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"short name label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": -15,
-				"y": 35
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -40,
-				"y": -21
-			},
-			"rows": 1,
-			"font size": 12.0
-		}
-	},
-	"3 Way Valve 3": {
-		"id": 3,
-		"pos": {
-			"x": 758,
-			"y": 376
+			"x": 955,
+			"y": 283
 		},
 		"fluid": 0,
 		"width": 27.0,
 		"height": 40.0,
 		"name": "3 Way Valve",
-		"scale": 1,
+		"scale": 1.0,
 		"avionics number": 5,
 		"short name": "OX-SN-G07",
 		"long name": "LOX Dewar Drain",

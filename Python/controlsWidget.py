@@ -50,7 +50,7 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber, ThrottleValve]
+        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber, ThrottleValve, ThreeWayValve]
 
         # Object Tracker
         self.object_list = []
@@ -394,6 +394,22 @@ class ControlsWidget(QWidget):
             if i.split()[0] + " " + i.split()[1] == "Throttle Valve":  
                 idx = data[i]
                 self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
+                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
+                                                 name=idx["name"],scale=idx["scale"],
+                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
+                                                 short_name_label_pos=idx["short name label"]["pos string"],
+                                                 short_name_label_font_size=idx["short name label"]["font size"],
+                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 long_name_label_pos=idx["long name label"]["pos string"],
+                                                 long_name_label_font_size=idx["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=idx["long name label"]["rows"]))
+            
+            if i.split()[0] + " " + i.split()[1] == "3 Way":  
+                idx = data[i]
+                self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
                                                  name=idx["name"],scale=idx["scale"],
                                                  avionics_number=idx["avionics number"], short_name=idx["short name"],
