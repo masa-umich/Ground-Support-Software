@@ -41,10 +41,11 @@ class DataViewer(QtWidgets.QTabWidget):
     """
     Custom Qt Widget to plot data
     """
-    channels = ["", "SVOTP.e", "SVOTP.i", "SVOTP.state", "TOTH", "TOTL", "POT"]
 
-    def __init__(self, num_channels=5, *args, **kwargs):
+    def __init__(self, channels, num_channels=4, *args, **kwargs):
         super(DataViewer, self).__init__(*args, **kwargs)
+
+        self.channels = channels
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -62,6 +63,7 @@ class DataViewer(QtWidgets.QTabWidget):
             self.config_layout.addWidget(self.switches[i], i, 1)
             dropdown = QtWidgets.QComboBox()
             dropdown.clear()
+            dropdown.addItem("")
             dropdown.addItems(self.channels)
             font = dropdown.font()
             font.setPointSize(12)
@@ -72,9 +74,23 @@ class DataViewer(QtWidgets.QTabWidget):
         self.config_layout.setColumnStretch(1, 15)
 
         # setup plot
-        self.plot_tab.setBackground(None)
-        
+        self.plot_tab.setBackground('w')
+        self.plot_tab.addPlot()
 
+    def getActive(self):
+        # returns list of active channels
+        return [str(s.currentText()) for s in self.series if str(s.currentText()) is not ""]
+
+    def isActive(self):
+        # returns True if plot is configured with a channel
+        return len(self.getActive())>0
+
+    def update(self, frame):
+        data = frame[self.getActive()]
+        # pull out required data
+        # push data to plot
+        print(data.tail(500))
+        
 
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
