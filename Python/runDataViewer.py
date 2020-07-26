@@ -28,7 +28,7 @@ w.setLayout(top_layout)
 
 # set up environment and database
 parser = ECParse()
-channels = parser.items
+channels = [item for item in parser.items if (item is not 'zero' and item is not '')]
 
 cols = ['time'] + channels
 database = pd.DataFrame(columns=cols)
@@ -44,7 +44,7 @@ for i in range(rows):
 # loop
 def update():
 	#per_viewer_actives = [viewer.getActive() for viewer in viewers]
-	#active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
+	active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
 	#print(active_channels)
 	for viewer in viewers:
 		if viewer.isActive():
