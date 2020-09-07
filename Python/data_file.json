@@ -1,1 +1,1202 @@
-{}
+{
+	"Tank 0": {
+		"id": 0,
+		"pos": {
+			"x": 214,
+			"y": 231
+		},
+		"fluid": 1,
+		"width": 114.40000000000002,
+		"height": 221.0,
+		"name": "Tank",
+		"scale": 1.3,
+		"avionics number": 5,
+		"short name": "TK-502",
+		"long name": "RP-1 Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -40,
+				"y": 108
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 29,
+				"y": 7
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 550,
+			"y": 231
+		},
+		"fluid": 2,
+		"width": 114.40000000000002,
+		"height": 221.0,
+		"name": "Tank",
+		"scale": 1.3,
+		"avionics number": 5,
+		"short name": "TK-502",
+		"long name": "LOX Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -40,
+				"y": 108
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 31,
+				"y": 6
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 2": {
+		"id": 2,
+		"pos": {
+			"x": 391,
+			"y": 303
+		},
+		"fluid": 0,
+		"width": 79.2,
+		"height": 153.0,
+		"name": "Tank",
+		"scale": 0.9,
+		"avionics number": 5,
+		"short name": "TK-501",
+		"long name": "COPV",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -39,
+				"y": 72
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 21,
+				"y": 6
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 474,
+			"y": 201
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "SN-102",
+		"long name": "LOX Press",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 2,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 349,
+			"y": 201
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "SN-101",
+		"long name": "Fuel Press",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 2,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 5": {
+		"id": 5,
+		"pos": {
+			"x": 172,
+			"y": 201
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "SN-103",
+		"long name": "Fuel Vent",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 2,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 6": {
+		"id": 6,
+		"pos": {
+			"x": 670,
+			"y": 201
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "SN-104",
+		"long name": "LOX Vent",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 2,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Chamber 7": {
+		"id": 7,
+		"pos": {
+			"x": 391,
+			"y": 687
+		},
+		"fluid": 4,
+		"width": 79.2,
+		"height": 153.0,
+		"name": "Chamber",
+		"scale": 0.9,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "RP-D2",
+		"is vertical": 1,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 78
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 4,
+				"y": 164
+			},
+			"rows": 1.0,
+			"font size": 25.0
+		}
+	},
+	"Throttle Valve 8": {
+		"id": 8,
+		"pos": {
+			"x": 256,
+			"y": 683
+		},
+		"fluid": 1,
+		"width": 18.0,
+		"height": 40.0,
+		"name": "Throttle Valve",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Fuel MPV",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 19
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": -42,
+				"y": 8
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Tank 9": {
+		"id": 9,
+		"pos": {
+			"x": 52,
+			"y": 598
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "2k Bottle",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 87
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 20,
+				"y": 181
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Generic Sensor 10": {
+		"id": 10,
+		"pos": {
+			"x": 70,
+			"y": 626
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 2,
+				"y": -16
+			},
+			"rows": 1,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Throttle Valve 11": {
+		"id": 11,
+		"pos": {
+			"x": 495,
+			"y": 570
+		},
+		"fluid": 2,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Throttle Valve",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "LOX MPV",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 18,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8,
+				"y": -16
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Tank 12": {
+		"id": 12,
+		"pos": {
+			"x": 303,
+			"y": 499
+		},
+		"fluid": 0,
+		"width": 44.0,
+		"height": 85.0,
+		"name": "Tank",
+		"scale": 0.5,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "MPV Press",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 42
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Generic Sensor 13": {
+		"id": 13,
+		"pos": {
+			"x": 246,
+			"y": 270
+		},
+		"fluid": 1,
+		"width": 55.00000000000001,
+		"height": 20.000000000000004,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26,
+				"y": -3
+			},
+			"rows": 1.0,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Generic Sensor 14": {
+		"id": 14,
+		"pos": {
+			"x": 582,
+			"y": 270
+		},
+		"fluid": 2,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26,
+				"y": -3
+			},
+			"rows": 1,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Generic Sensor 15": {
+		"id": 15,
+		"pos": {
+			"x": 309,
+			"y": 512
+		},
+		"fluid": 0,
+		"width": 33.0,
+		"height": 12.0,
+		"name": "PT",
+		"scale": 0.6,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 14,
+				"y": 15
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 14,
+				"y": -3
+			},
+			"rows": 1.0,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Throttle Valve 16": {
+		"id": 16,
+		"pos": {
+			"x": 151,
+			"y": 534
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Throttle Valve",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Reg",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 18,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 8,
+				"y": -16
+			},
+			"rows": 1.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 17": {
+		"id": 17,
+		"pos": {
+			"x": 322,
+			"y": 719
+		},
+		"fluid": 0,
+		"width": 14.400000000000002,
+		"height": 32.00000000000001,
+		"name": "Solenoid",
+		"scale": 0.8,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "MPV NC Vent",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 14
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 13,
+				"y": 4
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 18": {
+		"id": 18,
+		"pos": {
+			"x": 509,
+			"y": 671
+		},
+		"fluid": 0,
+		"width": 14.400000000000002,
+		"height": 32.00000000000001,
+		"name": "Solenoid",
+		"scale": 0.8,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "MPV NC Vent",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 14
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 18,
+				"y": 1
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 19": {
+		"id": 19,
+		"pos": {
+			"x": 322,
+			"y": 610
+		},
+		"fluid": 0,
+		"width": 14.400000000000002,
+		"height": 32.00000000000001,
+		"name": "Solenoid",
+		"scale": 0.8,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "MPV NO Press",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Left",
+			"local pos": {
+				"x": -8,
+				"y": 14
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 18,
+				"y": 1
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 20": {
+		"id": 20,
+		"pos": {
+			"x": 172,
+			"y": 481
+		},
+		"fluid": 1,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Fuel Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 18,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -9,
+				"y": -16
+			},
+			"rows": 1.0,
+			"font size": 12.0
+		}
+	},
+	"Solenoid 21": {
+		"id": 21,
+		"pos": {
+			"x": 529,
+			"y": 481
+		},
+		"fluid": 2,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "LOX Drain",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 18,
+				"y": 21
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -9,
+				"y": -16
+			},
+			"rows": 1,
+			"font size": 12.0
+		}
+	},
+	"Generic Sensor 22": {
+		"id": 22,
+		"pos": {
+			"x": 404,
+			"y": 725
+		},
+		"fluid": 4,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1.0,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "Chamber Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -7,
+				"y": -29
+			},
+			"rows": 2.0,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Generic Sensor 23": {
+		"id": 23,
+		"pos": {
+			"x": 404,
+			"y": 347
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"avionics number": 5,
+		"short name": "",
+		"long name": "",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"short name label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 26,
+				"y": 24
+			},
+			"rows": 1,
+			"font size": 10.0
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26,
+				"y": -3
+			},
+			"rows": 1.0,
+			"font size": 12.0
+		},
+		"sensor type": "Static Pressure"
+	},
+	"Tube 0": {
+		"tube id": 0,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 432,
+				"y": 303
+			},
+			"1": {
+				"x": 432,
+				"y": 210
+			},
+			"2": {
+				"x": 474,
+				"y": 210
+			}
+		}
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 391,
+				"y": 210
+			},
+			"1": {
+				"x": 432,
+				"y": 210
+			},
+			"2": {
+				"x": 432,
+				"y": 210
+			},
+			"3": {
+				"x": 432,
+				"y": 210
+			}
+		}
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 516,
+				"y": 210
+			},
+			"1": {
+				"x": 578,
+				"y": 210
+			},
+			"2": {
+				"x": 578,
+				"y": 235
+			}
+		}
+	},
+	"Tube 3": {
+		"tube id": 3,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 349,
+				"y": 210
+			},
+			"1": {
+				"x": 315,
+				"y": 210
+			},
+			"2": {
+				"x": 315,
+				"y": 238
+			}
+		}
+	},
+	"Tube 4": {
+		"tube id": 4,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 214,
+				"y": 210
+			},
+			"1": {
+				"x": 228,
+				"y": 210
+			},
+			"2": {
+				"x": 228,
+				"y": 240
+			}
+		}
+	},
+	"Tube 5": {
+		"tube id": 5,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 670,
+				"y": 210
+			},
+			"1": {
+				"x": 655,
+				"y": 210
+			},
+			"2": {
+				"x": 655,
+				"y": 240
+			}
+		}
+	},
+	"Tube 6": {
+		"tube id": 6,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 98,
+				"y": 598
+			},
+			"1": {
+				"x": 98,
+				"y": 543
+			},
+			"2": {
+				"x": 151,
+				"y": 543
+			}
+		}
+	},
+	"Tube 7": {
+		"tube id": 7,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 193,
+				"y": 543
+			},
+			"1": {
+				"x": 309,
+				"y": 543
+			}
+		}
+	},
+	"Tube 8": {
+		"tube id": 8,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 329,
+				"y": 610
+			},
+			"1": {
+				"x": 329,
+				"y": 588
+			}
+		}
+	},
+	"Tube 10": {
+		"tube id": 10,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 329,
+				"y": 719
+			},
+			"1": {
+				"x": 329,
+				"y": 643
+			}
+		}
+	},
+	"Tube 11": {
+		"tube id": 11,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 329,
+				"y": 643
+			},
+			"1": {
+				"x": 329,
+				"y": 658
+			},
+			"2": {
+				"x": 516,
+				"y": 658
+			},
+			"3": {
+				"x": 516,
+				"y": 671
+			}
+		}
+	},
+	"Tube 12": {
+		"tube id": 12,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 274,
+				"y": 704
+			},
+			"1": {
+				"x": 329,
+				"y": 704
+			},
+			"2": {
+				"x": 329,
+				"y": 725
+			}
+		}
+	},
+	"Tube 13": {
+		"tube id": 13,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 265,
+				"y": 683
+			},
+			"1": {
+				"x": 265,
+				"y": 518
+			},
+			"2": {
+				"x": 274,
+				"y": 518
+			},
+			"3": {
+				"x": 274,
+				"y": 466
+			}
+		}
+	},
+	"Tube 14": {
+		"tube id": 14,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 610,
+				"y": 463
+			},
+			"1": {
+				"x": 610,
+				"y": 579
+			},
+			"2": {
+				"x": 542,
+				"y": 579
+			}
+		}
+	},
+	"Tube 15": {
+		"tube id": 15,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 265,
+				"y": 725
+			},
+			"1": {
+				"x": 265,
+				"y": 812
+			},
+			"2": {
+				"x": 408,
+				"y": 812
+			}
+		}
+	},
+	"Tube 16": {
+		"tube id": 16,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 214,
+				"y": 490
+			},
+			"1": {
+				"x": 237,
+				"y": 490
+			},
+			"2": {
+				"x": 237,
+				"y": 490
+			},
+			"3": {
+				"x": 256,
+				"y": 490
+			},
+			"4": {
+				"x": 256,
+				"y": 463
+			}
+		}
+	},
+	"Tube 17": {
+		"tube id": 17,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 571,
+				"y": 490
+			},
+			"1": {
+				"x": 589,
+				"y": 490
+			},
+			"2": {
+				"x": 589,
+				"y": 463
+			},
+			"3": {
+				"x": 589,
+				"y": 463
+			},
+			"4": {
+				"x": 591,
+				"y": 463
+			},
+			"5": {
+				"x": 591,
+				"y": 463
+			},
+			"6": {
+				"x": 613,
+				"y": 463
+			}
+		}
+	}
+}
