@@ -11,6 +11,16 @@ import os
 import sys
 from datetime import datetime
 
+
+dummy_packet = {
+    'process_id' : 0,
+    'process_name' : 'blah',
+    'packetnum' : 345,
+    'bool_field' : True,
+    'pos' : 1,
+    'neg' : -1,
+    'field' : 0.34235 }
+
 # initialize application
 app = QtWidgets.QApplication([])
 appid = 'MASA.Server' # arbitrary string
@@ -28,6 +38,9 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
+top.setFixedWidth(1200)
+top.setFixedHeight(800)
+
 
 log_box  = QtGui.QTextEdit()
 log_box.setReadOnly(True)
@@ -82,14 +95,20 @@ threads = []
 
 def on_new_client(clientsocket, addr):
     while True:
-        msg = clientsocket.recv(1024)
-        send_to_log(addr[0] + ' >> ' + str(msg))
-        #data = pickle.dumps(dataframe)
-        #clientsocket.send(msg)
-        clientsocket.send(msg)
-        if msg == b'':
-            #remote connection closed
-            break
+        try:
+            msg = clientsocket.recv(1024)
+            print(addr[0] + ' >> ' + str(msg))
+            if msg.decode("utf-8") == "gimme":
+                data = pickle.dumps(dummy_packet)
+                clientsocket.send(data)
+                #clientsocket.send(msg)
+            elif msg == b'':
+                #remote connection closed
+                break
+            else:
+                send_to_log(addr[0] + ' >> ' + str(msg))  
+        except:
+            print("dropped packet")
     clientsocket.close()
     send_to_log("Closing connection " + addr[0])
 
@@ -136,12 +155,12 @@ file_menu.addAction(quit)
 
 # loop
 def update():
-	return
+	dummy_packet["packetnum"] += 1
 
 #timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(1000)
+timer.start(100)
 
 # run
 top.show()
