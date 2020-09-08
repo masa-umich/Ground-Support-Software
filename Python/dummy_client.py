@@ -2,7 +2,6 @@ import socket, pickle, time
 
 HOST = 'localhost'
 PORT = 6969
-# Create a socket connection.
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 
