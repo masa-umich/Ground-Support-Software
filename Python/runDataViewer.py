@@ -43,7 +43,7 @@ for i in range(rows):
 
 # loop
 def update():
-	#per_viewer_actives = [viewer.getActive() for viewer in viewers]
+	per_viewer_actives = [viewer.getActive() for viewer in viewers]
 	active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
 	#print(active_channels)
 	for viewer in viewers:

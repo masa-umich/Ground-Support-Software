@@ -54,6 +54,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.addTab(self.plot_tab, "Plot")
 
         # set up config
+        completer = QtWidgets.QCompleter(self.channels)
         self.config_layout = QtWidgets.QGridLayout()
         self.config_tab.setLayout(self.config_layout)
         self.switches = []
@@ -61,13 +62,11 @@ class DataViewer(QtWidgets.QTabWidget):
         for i in range(num_channels):
             self.switches.append(Switch())
             self.config_layout.addWidget(self.switches[i], i, 1)
-            dropdown = QtWidgets.QComboBox()
-            dropdown.clear()
-            dropdown.addItem("")
-            dropdown.addItems(self.channels)
+            dropdown = QtWidgets.QLineEdit()
             font = dropdown.font()
             font.setPointSize(12)
             dropdown.setFont(font)
+            dropdown.setCompleter(completer)
             self.series.append(dropdown)
             self.config_layout.addWidget(self.series[i], i, 0)
         self.config_layout.setColumnStretch(0, 85)
@@ -79,7 +78,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def getActive(self):
         # returns list of active channels
-        return [str(s.currentText()) for s in self.series if str(s.currentText()) is not ""]
+        return [str(s.text()) for s in self.series if str(s.text()) is not ""]
 
     def isActive(self):
         # returns True if plot is configured with a channel
