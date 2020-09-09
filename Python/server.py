@@ -37,7 +37,7 @@ top.setFixedHeight(800)
 # server log
 log_box  = QtGui.QTextEdit()
 log_box.setReadOnly(True)
-top_layout.addWidget(log_box, 1, 0)
+top_layout.addWidget(log_box, 2, 0)
 
 # send message to log (should work from any thread but it throws a warning after the first attempt)
 def send_to_log(text):
@@ -71,6 +71,16 @@ def scan():
     ports_box.clear()
     ports_box.addItems(ports)
 
+def set_commander(clientid):
+    global commander
+    commander = clientid
+    send_to_log("New commander: " + str(clientid))
+
+def override_commander():
+    global commander
+    send_to_log("Clearing commander")
+    commander = None
+
 # connection box (add to top_layout)
 connection = QtGui.QGroupBox("EC Connection")
 top_layout.addWidget(connection, 0, 0)
@@ -84,6 +94,17 @@ connection_layout.addWidget(scanButton, 0, 4)
 connectButton = QtGui.QPushButton("Connect")
 connectButton.clicked.connect(connect)
 connection_layout.addWidget(connectButton, 0, 5)
+
+# commander status
+command_box = QtGui.QGroupBox("Command Status")
+top_layout.addWidget(command_box, 1, 0)
+command_layout = QtGui.QGridLayout()
+command_box.setLayout(command_layout)
+commander_label = QtGui.QLabel("Commander: None")
+command_layout.addWidget(commander_label, 0, 0, 0, 4)
+override_button = QtGui.QPushButton("Override")
+override_button.clicked.connect(override_commander)
+command_layout.addWidget(override_button, 0, 4)
 
 threads = []
 
@@ -107,12 +128,12 @@ def client_handler(clientsocket, addr):
                 if command["command"] == 0:
                     pass
                 elif (command["command"] == 1 and not commander):
-                    commander = command["clientid"]
+                    set_commander(command["clientid"])
                 elif (command["command"] == 2 and commander == command["clientid"]):
-                    commander = None
+                    override_commander()
                 elif (command["command"] == 4):
                     if commander == command["clientid"]:
-                        commander = None
+                        override_commander()
                     break
                 else:
                     print("WARNING: Unhandled command")
@@ -179,13 +200,14 @@ file_menu.addAction(quit)
 
 # main update loop
 def update():
-    global packet_num
+    global packet_num, commander_label
     packet_num += 1
+    commander_label.setText("Commander: " + str(commander))
 
 #timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(1000) # 1hz
+timer.start(100) # 10hz
 
 # run
 top.show()
