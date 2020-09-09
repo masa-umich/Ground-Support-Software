@@ -11,24 +11,17 @@ import os
 import sys
 from datetime import datetime
 
-# fake data
-dummy_packet = {
-    'process_id' : 0,
-    'process_name' : 'blah',
-    'packetnum' : 0,
-    'bool_field' : True,
-    'pos' : 1,
-    'neg' : -1,
-    'field' : 0.34235 }
+packet_num = 0
+commander = None
 
 # initialize application
 app = QtWidgets.QApplication([])
 appid = 'MASA.Server' # arbitrary string
 if os.name == 'nt': # Bypass command because it is not supported on Linux 
-	ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
 else:
-	pass
-	# NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
+    pass
+    # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
 app.setWindowIcon(QtGui.QIcon('logo_ed.png'))
 
 # window layout
@@ -60,23 +53,23 @@ ports = [p.device for p in serial.tools.list_ports.comports()]
 # ser = serial.Serial(port=None, baudrate=int(alias["BAUDRATE"]), timeout=0.2)
 ser = serial.Serial(port=None, baudrate=400000, timeout=0.2)
 def connect():
-	global ser, ports_box
-	if ser.isOpen():
-		ser.close()
-	try:
-		ser.port = str(ports_box.currentText())
-		ser.open()
-		ser.readline()
-		send_to_log("Connection established on %s" % str(ports_box.currentText()))
-	except:
-		send_to_log("Unable to connect to selected port or no ports available")
+    global ser, ports_box
+    if ser.isOpen():
+        ser.close()
+    try:
+        ser.port = str(ports_box.currentText())
+        ser.open()
+        ser.readline()
+        send_to_log("Connection established on %s" % str(ports_box.currentText()))
+    except:
+        send_to_log("Unable to connect to selected port or no ports available")
 
 # scan for com ports
 def scan():
-	global ports_box, ports
-	ports = [p.device for p in serial.tools.list_ports.comports()]
-	ports_box.clear()
-	ports_box.addItems(ports)
+    global ports_box, ports
+    ports = [p.device for p in serial.tools.list_ports.comports()]
+    ports_box.clear()
+    ports_box.addItems(ports)
 
 # connection box (add to top_layout)
 connection = QtGui.QGroupBox("EC Connection")
@@ -96,34 +89,55 @@ threads = []
 
 # client handler
 def client_handler(clientsocket, addr):
+    global commander
     counter = 0
+    last_uuid = None;
     while True:
         try:
-            msg = clientsocket.recv(1024)
-            print(addr[0] + ' >> ' + str(msg))
-            if msg.decode("utf-8") == "gimme":
-                data = pickle.dumps(dummy_packet)
-                clientsocket.send(data)
-            elif msg == b'':
+            msg = clientsocket.recv(2048)
+            if msg == b'':
                 # remote connection closed
+                if commander == last_uuid:
+                    commander = None
                 break
             else:
-                send_to_log(addr[0] + ' >> ' + str(msg)) 
+                command = pickle.loads(msg)
+                print(command)
+                last_uuid = command["clientid"]
+                if command["command"] == 0:
+                    pass
+                elif (command["command"] == 1 and not commander):
+                    commander = command["clientid"]
+                elif (command["command"] == 2 and commander == command["clientid"]):
+                    commander = None
+                elif (command["command"] == 4):
+                    if commander == command["clientid"]:
+                        commander = None
+                    break
+                else:
+                    print("WARNING: Unhandled command")
+                
+                packet = {
+                    "commander" : commander,
+                    "packet_num" : packet_num
+                }
+                data = pickle.dumps(packet)
+                clientsocket.send(data)
             counter = 0 
         except:
-            if counter > 10:
+            if counter > 5:
                 break
             print("Failed Packet (consecutive: %s)" % counter)
             counter += 1
 
     clientsocket.close()
-    send_to_log("Closing connection " + addr[0])
+    send_to_log("Closing connection to " + addr[0])
 
 # main server target function
 def server_handler():
     # initialize socket
-    s = socket.socket()         
-    host = 'localhost'
+    s = socket.socket() 
+    host = socket.gethostbyname(socket.gethostname())
     port = 6969
     s.bind((host, port))
 
@@ -165,12 +179,13 @@ file_menu.addAction(quit)
 
 # main update loop
 def update():
-	dummy_packet["packetnum"] += 1
+    global packet_num
+    packet_num += 1
 
 #timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(100) # 10hz
+timer.start(1000) # 1hz
 
 # run
 top.show()
