@@ -10,9 +10,18 @@ import ctypes
 import os
 import sys
 from datetime import datetime
+from hotfire_packet import ECParse
 
 packet_num = 0
 commander = None
+dataframe = None
+starttime = datetime.now().strftime("%Y%m%d%H%M")
+
+if not os.path.exists("data/" + starttime + "/"):
+    os.makedirs("data/" + starttime + "/")
+
+server_log = open('data/'+starttime+"/"+starttime+"_server_log.txt", "w+")
+
 
 # initialize application
 app = QtWidgets.QApplication([])
@@ -21,7 +30,6 @@ if os.name == 'nt': # Bypass command because it is not supported on Linux
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
 else:
     pass
-    # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
 app.setWindowIcon(QtGui.QIcon('logo_ed.png'))
 
 # window layout
@@ -44,7 +52,7 @@ def send_to_log(text):
     time_obj = datetime.now().time()
     time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
     log_box.append(time + text)
-    # command_log.write(text + "\n")
+    server_log.write(time + text + "\n")
 
 # scan com ports
 ports = [p.device for p in serial.tools.list_ports.comports()]
@@ -71,11 +79,13 @@ def scan():
     ports_box.clear()
     ports_box.addItems(ports)
 
-def set_commander(clientid):
+# set client as commander
+def set_commander(clientid, ip):
     global commander
     commander = clientid
-    send_to_log("New commander: " + str(clientid))
+    send_to_log("New commander: " + str(clientid) + " (" + str(ip) + ")")
 
+# remove current commander
 def override_commander():
     global commander
     send_to_log("Clearing commander")
@@ -112,7 +122,7 @@ threads = []
 def client_handler(clientsocket, addr):
     global commander
     counter = 0
-    last_uuid = None;
+    last_uuid = None
     while True:
         try:
             msg = clientsocket.recv(2048)
@@ -128,7 +138,7 @@ def client_handler(clientsocket, addr):
                 if command["command"] == 0:
                     pass
                 elif (command["command"] == 1 and not commander):
-                    set_commander(command["clientid"])
+                    set_commander(command["clientid"], addr[0])
                 elif (command["command"] == 2 and commander == command["clientid"]):
                     override_commander()
                 elif (command["command"] == 4):
@@ -140,7 +150,8 @@ def client_handler(clientsocket, addr):
                 
                 packet = {
                     "commander" : commander,
-                    "packet_num" : packet_num
+                    "packet_num" : packet_num,
+                    "dataframe" : dataframe
                 }
                 data = pickle.dumps(packet)
                 clientsocket.send(data)
@@ -189,6 +200,7 @@ file_menu = main_menu.addMenu('&File')
 #quit application function
 def exit():
     ser.close()
+    server_log.close()
     app.quit()
     sys.exit()
 
@@ -198,9 +210,38 @@ quit.setShortcut("Ctrl+Q")
 quit.triggered.connect(exit)
 file_menu.addAction(quit)
 
+# initialize parser
+parser = ECParse()
+
 # main update loop
 def update():
-    global packet_num, commander_label
+    global packet_num, commander_label, dataframe
+    
+    try:
+        if ser.is_open:
+            # read in packet from EC
+            serial_packet = ser.readline()
+
+            # unstuff the packet
+            unstuffed = b''
+            index = int(serial_packet[0])
+            for n in range(1, len(serial_packet)):
+                temp = serial_packet[n:n+1]
+                if(n == index):
+                    index = int(serial_packet[n])+n
+                    temp = b'\n'
+                unstuffed = unstuffed + temp
+            serial_packet = unstuffed
+
+            # parse packet
+            parser.parse_packet(serial_packet)
+            dataframe = parser.dict
+
+    except Exception as e:
+        print(e)
+        pass
+    
+    # update server state
     packet_num += 1
     commander_label.setText("Commander: " + str(commander))
 
@@ -212,4 +253,4 @@ timer.start(100) # 10hz
 # run
 top.show()
 app.exec()
-sys.exit()
+exit()
