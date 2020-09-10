@@ -3,8 +3,7 @@ import socket
 import serial
 import serial.tools.list_ports
 from PyQt5 import QtGui, QtCore, QtWidgets
-f
-rom PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import threading
 import ctypes
