@@ -59,7 +59,7 @@ ports = [p.device for p in serial.tools.list_ports.comports()]
 
 # connect to com port
 # ser = serial.Serial(port=None, baudrate=int(alias["BAUDRATE"]), timeout=0.2)
-ser = serial.Serial(port=None, baudrate=400000, timeout=0.2)
+ser = serial.Serial(port=None, baudrate=57600, timeout=0.2)
 def connect():
     global ser, ports_box
     if ser.isOpen():
@@ -221,6 +221,7 @@ def update():
         if ser.is_open:
             # read in packet from EC
             serial_packet = ser.readline()
+            print(len(serial_packet))
 
             # unstuff the packet
             unstuffed = b''
@@ -234,8 +235,12 @@ def update():
             serial_packet = unstuffed
 
             # parse packet
-            parser.parse_packet(serial_packet)
-            dataframe = parser.dict
+            try:
+                parser.parse_packet(serial_packet)
+                dataframe = parser.dict
+            except:
+                print("Packet lost")
+            
 
     except Exception as e:
         print(e)
@@ -248,7 +253,7 @@ def update():
 #timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(100) # 10hz
+timer.start(50) # 20hz
 
 # run
 top.show()
