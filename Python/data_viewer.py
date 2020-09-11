@@ -96,6 +96,6 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    plot = DataViewer()
+    plot = DataViewer([])
     plot.show()
     app.exec()

@@ -13,6 +13,7 @@ from datetime import datetime
 from hotfire_packet import ECParse
 
 packet_num = 0
+packet_size = 0
 commander = None
 dataframe = None
 starttime = datetime.now().strftime("%Y%m%d%H%M")
@@ -96,14 +97,16 @@ connection = QtGui.QGroupBox("EC Connection")
 top_layout.addWidget(connection, 0, 0)
 connection_layout = QtGui.QGridLayout()
 connection.setLayout(connection_layout)
+packet_size_label = QtGui.QLabel("Last Packet Size: 0")
+connection_layout.addWidget(packet_size_label, 0, 5)
 ports_box = QtGui.QComboBox()
-connection_layout.addWidget(ports_box, 0, 0, 0, 3)
+connection_layout.addWidget(ports_box, 0, 0, 0, 2)
 scanButton = QtGui.QPushButton("Scan")
 scanButton.clicked.connect(scan)
-connection_layout.addWidget(scanButton, 0, 4)
+connection_layout.addWidget(scanButton, 0, 3)
 connectButton = QtGui.QPushButton("Connect")
 connectButton.clicked.connect(connect)
-connection_layout.addWidget(connectButton, 0, 5)
+connection_layout.addWidget(connectButton, 0, 4)
 
 # commander status
 command_box = QtGui.QGroupBox("Command Status")
@@ -168,8 +171,9 @@ def client_handler(clientsocket, addr):
 # main server target function
 def server_handler():
     # initialize socket
-    s = socket.socket() 
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
+    print(host)
     port = 6969
     s.bind((host, port))
 
@@ -221,7 +225,9 @@ def update():
         if ser.is_open:
             # read in packet from EC
             serial_packet = ser.readline()
-            print(len(serial_packet))
+            #print(len(serial_packet))
+            packet_size = len(serial_packet)
+            packet_size_label.setText("Last Packet Size: %s" % packet_size)
 
             # unstuff the packet
             unstuffed = b''
@@ -237,7 +243,7 @@ def update():
             # parse packet
             try:
                 parser.parse_packet(serial_packet)
-                dataframe = parser.dict
+                dataframe = parser
             except:
                 print("Packet lost")
             
