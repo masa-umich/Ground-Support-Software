@@ -11,6 +11,8 @@ from threeWayValve import ThreeWayValve
 from heatEx import HeatEx
 from genSensor import GenSensor
 from tube import Tube
+from regulator import Regulator
+from checkValve import CheckValve
 from overrides import overrides
 
 from termcolor import colored
@@ -50,7 +52,8 @@ class ControlsWidget(QWidget):
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber, ThrottleValve, HeatEx]
+        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber,
+                                 ThrottleValve, HeatEx, Regulator, CheckValve]
 
         # Object Tracker
         self.object_list = []
@@ -290,6 +293,10 @@ class ControlsWidget(QWidget):
                     self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=0))
                 elif action.text() == "New Heat Exchanger":
                     self.object_list.append(HeatEx(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Regulator":
+                    self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Check Valve":
+                    self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=0))
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
