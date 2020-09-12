@@ -11,6 +11,7 @@ import os
 import sys
 from datetime import datetime
 from hotfire_packet import ECParse
+import queue
 
 packet_num = 0
 packet_size = 0
@@ -120,6 +121,7 @@ override_button.clicked.connect(override_commander)
 command_layout.addWidget(override_button, 0, 4)
 
 threads = []
+command_queue = queue.Queue()
 
 # client handler
 def client_handler(clientsocket, addr):
@@ -144,6 +146,8 @@ def client_handler(clientsocket, addr):
                     set_commander(command["clientid"], addr[0])
                 elif (command["command"] == 2 and commander == command["clientid"]):
                     override_commander()
+                elif (command["command"] == 3 and commander == command["clientid"]):
+                    command_queue.put(command["args"])
                 elif (command["command"] == 4):
                     if commander == command["clientid"]:
                         override_commander()
@@ -223,6 +227,12 @@ def update():
     
     try:
         if ser.is_open:
+            if not command_queue.empty():
+                print("commanding")
+                cmd = command_queue.get()
+                print(cmd)
+                ser.write(cmd)
+
             # read in packet from EC
             serial_packet = ser.readline()
             #print(len(serial_packet))
