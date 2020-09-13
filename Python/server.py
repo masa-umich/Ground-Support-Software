@@ -43,7 +43,7 @@ if os.name == 'nt': # Bypass command because it is not supported on Linux
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
 else:
     pass
-app.setWindowIcon(QtGui.QIcon('logo_ed.png'))
+app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
 # window layout
 top = QtWidgets.QMainWindow()

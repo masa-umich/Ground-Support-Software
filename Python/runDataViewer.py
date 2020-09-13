@@ -16,7 +16,7 @@ if os.name == 'nt': # Bypass command because it is not supported on Linux
 else:
 	pass
 	# NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-app.setWindowIcon(QtGui.QIcon('logo_ed.png'))
+app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
 # layout
 top = QtWidgets.QMainWindow()
