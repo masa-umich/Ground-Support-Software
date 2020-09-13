@@ -18,12 +18,23 @@ packet_size = 0
 commander = None
 dataframe = None
 starttime = datetime.now().strftime("%Y%m%d%H%M")
+threads = []
+command_queue = queue.Queue()
+
+# initialize parser
+parser = ECParse()
 
 if not os.path.exists("data/" + starttime + "/"):
     os.makedirs("data/" + starttime + "/")
 
+# log file init and headers
 server_log = open('data/'+starttime+"/"+starttime+"_server_log.txt", "w+")
-
+serial_log = open('data/'+starttime+"/"+starttime+"_serial_log.csv", "w+")
+data_log = open('data/'+starttime+"/"+starttime+"_data_log.csv", "w+")
+command_log = open('data/'+starttime+"/"+starttime+"_command_log.csv", "w+")
+command_log.write("Time, Command/info\n")
+serial_log.write("Time, Packet\n")
+data_log.write(parser.csv_header)
 
 # initialize application
 app = QtWidgets.QApplication([])
@@ -123,9 +134,6 @@ override_button = QtGui.QPushButton("Override")
 override_button.clicked.connect(override_commander)
 command_layout.addWidget(override_button, 0, 4)
 
-threads = []
-command_queue = queue.Queue()
-
 # client handler
 def client_handler(clientsocket, addr):
     global commander
@@ -213,6 +221,9 @@ file_menu = main_menu.addMenu('&File')
 def exit():
     ser.close()
     server_log.close()
+    serial_log.close()
+    command_log.close()
+    data_log.close()
     app.quit()
     sys.exit()
 
@@ -221,9 +232,6 @@ quit = QtGui.QAction("&Quit", file_menu)
 quit.setShortcut("Ctrl+Q")
 quit.triggered.connect(exit)
 file_menu.addAction(quit)
-
-# initialize parser
-parser = ECParse()
 
 # main update loop
 def update():
@@ -236,9 +244,11 @@ def update():
                 cmd = command_queue.get()
                 print(cmd)
                 ser.write(cmd)
+                command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
 
             # read in packet from EC
             serial_packet = ser.readline()
+            serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(serial_packet)+ '\n')
             #print(len(serial_packet))
             packet_size = len(serial_packet)
             packet_size_label.setText("Last Packet Size: %s" % packet_size)
@@ -258,6 +268,7 @@ def update():
             try:
                 parser.parse_packet(serial_packet)
                 dataframe = parser
+                data_log.write(parser.log_string+'\n')
             except:
                 print("Packet lost")
 

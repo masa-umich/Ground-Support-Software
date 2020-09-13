@@ -9,7 +9,6 @@ import uuid
 import queue
 from LedIndicatorWidget import *
 
-
 class ClientWidget(QtWidgets.QWidget):
     def __init__(self, commandable=True, *args, **kwargs):
         super(ClientWidget, self).__init__(*args, **kwargs)
