@@ -11,7 +11,7 @@ from LedIndicatorWidget import *
 
 
 class ClientWidget(QtWidgets.QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, commandable=True, *args, **kwargs):
         super(ClientWidget, self).__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
         #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,7 +61,8 @@ class ClientWidget(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.connection_widget)
-        self.layout.addWidget(self.command_widget)
+        if commandable:
+            self.layout.addWidget(self.command_widget)
 
         # populate host fields with local address
         self.host.setText(socket.gethostbyname(socket.gethostname()))
@@ -134,7 +135,7 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    controller = ClientWidget()
+    controller = ClientWidget(commandable=False)
     
     timer = QtCore.QTimer()
     timer.timeout.connect(controller.cycle)

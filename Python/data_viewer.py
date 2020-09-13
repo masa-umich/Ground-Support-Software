@@ -3,8 +3,11 @@ from PyQt5.QtCore import Qt, QRect
 import pyqtgraph as pg
 import sys
 
-#switch widget modified from https://stackoverflow.com/questions/56806987/switch-button-in-pyqt
 class Switch(QtWidgets.QPushButton):
+    """
+    Switch widget
+    modified from https://stackoverflow.com/questions/56806987/switch-button-in-pyqt
+    """
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setCheckable(True)
@@ -39,7 +42,7 @@ class Switch(QtWidgets.QPushButton):
 
 class DataViewer(QtWidgets.QTabWidget):
     """
-    Custom Qt Widget to plot data
+    Custom QtWidget to plot data
     """
 
     def __init__(self, channels, num_channels=4, *args, **kwargs):
