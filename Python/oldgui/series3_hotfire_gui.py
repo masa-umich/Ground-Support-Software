@@ -306,7 +306,7 @@ def client_command(clientid, command, args=()):
 
 # host = alias["HOST"]
 # port = alias["PORT"]
-host = '100.64.7.195'
+host = '169.254.163.26'
 port = 6969
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host, port))
