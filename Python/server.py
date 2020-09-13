@@ -109,6 +109,9 @@ connectButton = QtGui.QPushButton("Connect")
 connectButton.clicked.connect(connect)
 connection_layout.addWidget(connectButton, 0, 4)
 
+# populate port box
+scan()
+
 # commander status
 command_box = QtGui.QGroupBox("Command Status")
 top_layout.addWidget(command_box, 1, 0)
@@ -166,7 +169,7 @@ def client_handler(clientsocket, addr):
         except:
             if counter > 5:
                 break
-            print("Failed Packet (consecutive: %s)" % counter)
+            print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
             counter += 1
 
     clientsocket.close()
@@ -183,6 +186,7 @@ def server_handler():
 
     # wait
     send_to_log('Server initialized. Waiting for clients to connect...')
+    send_to_log("Listening on %s:%s" % (host, port))
     s.listen(5)
     
     #create connection
@@ -228,7 +232,7 @@ def update():
     try:
         if ser.is_open:
             if not command_queue.empty():
-                print("commanding")
+                #print("commanding")
                 cmd = command_queue.get()
                 print(cmd)
                 ser.write(cmd)
@@ -256,10 +260,9 @@ def update():
                 dataframe = parser
             except:
                 print("Packet lost")
-            
 
     except Exception as e:
-        print(e)
+        # print(e)
         pass
     
     # update server state
