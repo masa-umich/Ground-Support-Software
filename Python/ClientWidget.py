@@ -27,8 +27,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
         self.connection_layout.addWidget(self.port, 0, 2)
-        self.colon = QtGui.QLabel(":")
-        self.connection_layout.addWidget(self.colon, 0, 1)
+        self.connection_layout.addWidget(QtGui.QLabel(":"), 0, 1)
         self.connect_button = QtGui.QPushButton("Connect")
         self.connection_layout.addWidget(self.connect_button, 0, 3)
         self.connect_button.clicked.connect(lambda: self.connect())
@@ -135,7 +134,7 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    controller = ClientWidget(commandable=False)
+    controller = ClientWidget(commandable=True)
     
     timer = QtCore.QTimer()
     timer.timeout.connect(controller.cycle)
