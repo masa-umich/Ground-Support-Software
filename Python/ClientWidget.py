@@ -14,15 +14,12 @@ class ClientWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(ClientWidget, self).__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.command_queue = queue.Queue()
         self.is_commander = False
         self.is_connected = False
 
-
-        self.layout = QtWidgets.QVBoxLayout()
-        self.setLayout(self.layout)
-
+        # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
         self.connection_layout = QtWidgets.QGridLayout()
         self.connection_widget.setLayout(self.connection_layout)
@@ -30,8 +27,6 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
         self.connection_layout.addWidget(self.port, 0, 2)
-        #self.host_label = QtGui.QLabel("Host Address:")
-        #self.connection_layout.addWidget(self.host_label, 0, 0)
         self.colon = QtGui.QLabel(":")
         self.connection_layout.addWidget(self.colon, 0, 1)
         self.connect_button = QtGui.QPushButton("Connect")
@@ -47,6 +42,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout.setColumnStretch(3, 1.5)
         self.connection_layout.setColumnStretch(4, 1.5)
         
+        # command box init
         self.command_widget = QtWidgets.QGroupBox("Commanding")
         self.command_layout = QtWidgets.QGridLayout()
         self.command_widget.setLayout(self.command_layout)
@@ -55,24 +51,24 @@ class ClientWidget(QtWidgets.QWidget):
         self.command_layout.addWidget(self.control_button, 0, 1)
         self.control_button.clicked.connect(lambda: self.command_toggle())
         self.led = LedIndicator(self)
-        self.led.setDisabled(True)  # Make the led non clickable
+        self.led.setDisabled(True)  # Make the led non-clickable
         self.command_layout.addWidget(self.led, 0, 2)
-        #self.command_layout.addItem(QtWidgets.QSpacerItem(1, 1), 0, 3)
         self.command_layout.setColumnStretch(0, 2)
         self.command_layout.setColumnStretch(1, 1)
         self.command_layout.setColumnStretch(2, 0)
-        #self.command_layout.setColumnStretch(3, 1)
 
+        # top level widget layout
+        self.layout = QtWidgets.QVBoxLayout()
+        self.setLayout(self.layout)
         self.layout.addWidget(self.connection_widget)
         self.layout.addWidget(self.command_widget)
 
+        # populate host fields with local address
         self.host.setText(socket.gethostbyname(socket.gethostname()))
         self.port.setText(str(6969))
-
-    #def onPressButton(self):
-        #self.led.setChecked(not self.led.isChecked())
     
     def command(self, command, args=()):
+        # build and add command to queue
         command_dict = {
             "clientid" : self.clientid,
             "command" : command,
@@ -86,17 +82,21 @@ class ClientWidget(QtWidgets.QWidget):
             print(command_dict)
 
     def connect(self):
+        # try to make a connection with server
         try:
             #self.s.detach()
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.connect((self.host.text(), int(self.port.text())))
             self.is_connected = True
         except:
             self.is_connected = False
 
     def disconnect(self):
+        # send disconnect message
         self.command(4)
 
     def command_toggle(self):
+        # toggle to take/give up command
         if self.is_commander:
             self.command(2)
         else:
@@ -104,16 +104,20 @@ class ClientWidget(QtWidgets.QWidget):
 
     def cycle(self):
         try:
+            # send do nothing if no command queued
             if self.command_queue.empty():
                 self.command(0)
 
+            # send next command
             self.s.sendall(self.command_queue.get())
 
+            # get data
             data = self.s.recv(4096*4)
             packet = pickle.loads(data)
             #print(packet)
             #print(packet["dataframe"])
-
+            
+            # update command status
             if packet["commander"] == self.clientid:
                 self.is_commander = True
             else:
