@@ -3,3 +3,6 @@ matplotlib
 numpy
 overrides
 termcolor
+pandas
+pyqtgraph
+pyserial
