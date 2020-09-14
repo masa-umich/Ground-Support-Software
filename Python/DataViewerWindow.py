@@ -57,7 +57,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     # loop
     def update(self):
         self.last_packet = self.client_dialog.client.cycle()
-        if self.client_dialog.client.is_connected():
+        if self.client_dialog.client.is_connected:
             last_frame = pd.DataFrame.from_dict(self.last_packet)
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
         per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
