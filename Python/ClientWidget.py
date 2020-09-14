@@ -9,6 +9,16 @@ import uuid
 import queue
 from LedIndicatorWidget import *
 
+class ClientDialog(QtWidgets.QDialog):
+    def __init__(self, commandable):
+        super().__init__()
+        self.client = ClientWidget(commandable=commandable)
+
+        self.setWindowTitle("Connection")
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(self.client)
+        self.setLayout(self.layout)
+
 class ClientWidget(QtWidgets.QWidget):
     def __init__(self, commandable=True, *args, **kwargs):
         super(ClientWidget, self).__init__(*args, **kwargs)
