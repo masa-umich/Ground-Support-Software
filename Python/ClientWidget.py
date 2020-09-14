@@ -133,7 +133,7 @@ class ClientWidget(QtWidgets.QWidget):
                 self.is_commander = False
             self.led.setChecked(self.is_commander)
             
-            return packet["dataframe"]
+            return packet
         
         except:
             return None

@@ -44,9 +44,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.parser = ECParse()
         self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
 
-        self.header = ['time'] + self.channels
+        self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
-
         rows = 3
         cols = 3
         self.viewers = [DataViewer(self.channels) for i in range(rows*cols)]
@@ -57,7 +56,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         
     # loop
     def update(self):
-        self.client_dialog.client.cycle()
+        self.last_packet = self.client_dialog.client.cycle()
+        last_frame = pd.DataFrame.from_dict(self.last_packet)
+        self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
         per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
         self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
         #print(self.active_channels)

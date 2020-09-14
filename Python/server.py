@@ -16,7 +16,7 @@ import queue
 packet_num = 0
 packet_size = 0
 commander = None
-dataframe = None
+dataframe = {}
 starttime = datetime.now().strftime("%Y%m%d%H%M")
 threads = []
 command_queue = queue.Queue()
@@ -166,11 +166,10 @@ def client_handler(clientsocket, addr):
                 else:
                     print("WARNING: Unhandled command")
                 
-                packet = {
-                    "commander" : commander,
-                    "packet_num" : packet_num,
-                    "dataframe" : dataframe
-                }
+                packet = dataframe
+                packet["commander"] = commander 
+                packet["packet_num"] = packet_num
+                ## TODO: change from pickle dump to json to reduce bandwidth
                 data = pickle.dumps(packet)
                 clientsocket.send(data)
             counter = 0 
@@ -267,7 +266,8 @@ def update():
             # parse packet
             try:
                 parser.parse_packet(serial_packet)
-                dataframe = parser
+                dataframe = parser.dict
+                dataframe["time"] = datetime.timestanp()
                 data_log.write(parser.log_string+'\n')
             except:
                 print("Packet lost")
