@@ -4,7 +4,7 @@ import pyqtgraph as pg
 import ctypes
 import os
 import pandas as pd
-from data_viewer import DataViewer
+from DataViewer import DataViewer
 from hotfire_packet import ECParse
 from ClientWidget import ClientWidget, ClientDialog
 import sys
@@ -57,8 +57,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     # loop
     def update(self):
         self.last_packet = self.client_dialog.client.cycle()
-        last_frame = pd.DataFrame.from_dict(self.last_packet)
-        self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
+        if self.client_dialog.client.is_connected():
+            last_frame = pd.DataFrame.from_dict(self.last_packet)
+            self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
         per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
         self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
         #print(self.active_channels)
