@@ -1,6 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QRect
 
+# color picker button based on: https://www.mfitzp.com/article/qcolorbutton-a-color-selector-tool-for-pyqt/
 class ColorButton(QtWidgets.QPushButton):
     '''
     Custom Qt Widget to show a chosen color.

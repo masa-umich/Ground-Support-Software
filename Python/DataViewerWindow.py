@@ -8,11 +8,12 @@ from DataViewer import DataViewer
 from hotfire_packet import ECParse
 from ClientWidget import ClientWidget, ClientDialog
 import sys
+import json
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, num_channels=4, *args, **kwargs):
+        super(DataViewerWindow, self).__init__(*args, **kwargs)
         # layout
         self.setWindowTitle("MASA Data Viewer")
         self.w = QtWidgets.QWidget()
@@ -31,8 +32,20 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # connection menu item
         self.quit = QtGui.QAction("&Connection", self.options_menu)
         #self.quit.setShortcut("Ctrl+K")
-        self.quit.triggered.connect(self.showConnection)
+        self.quit.triggered.connect(self.exit)
         self.options_menu.addAction(self.quit)
+
+        # save menu item
+        self.save_action = QtGui.QAction("&Save Config", self.options_menu)
+        self.save_action.setShortcut("Ctrl+S")
+        self.save_action.triggered.connect(self.save)
+        self.options_menu.addAction(self.save_action)
+        
+        # load menu item
+        self.load_action = QtGui.QAction("&Load Config", self.options_menu)
+        self.load_action.setShortcut("Ctrl+O")
+        self.load_action.triggered.connect(self.load)
+        self.options_menu.addAction(self.load_action)
 
         #quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
@@ -43,12 +56,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # set up environment and database
         self.parser = ECParse()
         self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
-
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
+        
+        # init viewers
         rows = 3
         cols = 3
-        self.viewers = [DataViewer(self.channels) for i in range(rows*cols)]
+        self.viewers = [DataViewer(self.channels, num_channels=num_channels) for i in range(rows*cols)]
         for i in range(rows):
             for j in range(cols):
                 idx = i*3+j
@@ -68,12 +82,29 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             if viewer.isActive():
                 viewer.update(self.database)
     
-    #quit application function
+    # quit application function
     def exit(self):
-        pass
+        self.client_dialog.client.disconnect()
+        app.quit()
+        sys.exit()
 
     def showConnection(self):
         self.client_dialog.show()
+    
+    # viewer config load/save (TODO)
+    def load(self):
+        loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
+        with open(loadname, "r") as f:
+            config = json.load(f)
+        for i in range(len(self.viewers)):
+            self.viewers[i].loadConfig(config[i])
+    
+    # save config
+    def save(self):
+        configs = [viewer.saveConfig() for viewer in self.viewers]
+        savename = QtGui.QFileDialog.getSaveFileName(self, 'Save Config', 'dataviewer.cfg', "Config (*.cfg)")[0]
+        with open(savename, "w") as f:
+            json.dump(configs, f)
 
 
 if __name__ == "__main__":
@@ -92,7 +123,7 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
     # init window
-    window = DataViewerWindow()
+    window = DataViewerWindow(num_channels=4)
 
     #timer and tick updates
     timer = QtCore.QTimer()

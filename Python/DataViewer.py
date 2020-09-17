@@ -38,6 +38,8 @@ class DataViewer(QtWidgets.QTabWidget):
         self.series = []
         self.colors = []
         self.curves = []
+        
+        # plot title
         self.title_edit = QtWidgets.QLineEdit()
         self.title_edit.setPlaceholderText("Plot Title")
         self.config_layout.addWidget(self.title_edit, 0, 1)
@@ -45,6 +47,8 @@ class DataViewer(QtWidgets.QTabWidget):
         font.setPointSize(12)
         self.title_edit.setFont(font)
         self.title_edit.editingFinished.connect(self.titleUpdate)
+        
+        # setup channel rows
         for i in range(num_channels):
             self.switches.append(Switch())
             self.switches[i].clicked.connect(lambda state, idx=i: self.redrawCurve(idx))
@@ -61,16 +65,19 @@ class DataViewer(QtWidgets.QTabWidget):
             self.colors.append(ColorButton(default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda idx=i: self.redrawCurve(idx))
             self.config_layout.addWidget(self.colors[i], i+1, 2)
+        # setup duration field
         self.duration_edit = QtWidgets.QLineEdit("30")
         self.duration_label = QtWidgets.QLabel("Seconds")
         self.config_layout.addWidget(self.duration_edit, num_channels+1, 0)
         self.config_layout.addWidget(self.duration_label, num_channels+1, 1)
         self.duration_edit.editingFinished.connect(self.durationUpdate)
+
+        # column sizing
         self.config_layout.setColumnStretch(0, 15)
         self.config_layout.setColumnStretch(1, 85)
         self.config_layout.setColumnStretch(2, 5)
 
-        # setup plot
+        # setup 2 axis plot
         self.left = self.plot.plotItem
         self.left.addLegend()
         self.right = pg.ViewBox()
@@ -81,7 +88,29 @@ class DataViewer(QtWidgets.QTabWidget):
         self.viewUpdate()
         self.left.vb.sigResized.connect(self.viewUpdate)
     
+    def loadConfig(self, config):
+        # viewer config load
+        self.title_edit.setText(config[0])
+        self.titleUpdate()
+        self.duration_edit.setText(config[1])
+        self.durationUpdate()
+        for i in range(self.num_channels):
+            curve_config = config[i+2]
+            self.switches[i].setChecked(bool(curve_config[0]))
+            self.series[i].setText(curve_config[1])
+            self.colors[i].setColor(curve_config[2])
+            self.redrawCurve(i)
+
+    def saveConfig(self):
+        # save config
+        config = [self.title_edit.text(), self.duration_edit.text()]
+        for i in range(self.num_channels):
+            config.append([self.switches[i].isChecked(), self.series[i].text(), self.colors[i].color()])
+        return config
+
+
     def printCurves(self):
+        # debug function to dump children of plots
         print("right: " + str([dataobj for dataobj in self.right.allChildren()]))
         print("left: " + str([dataobj for dataobj in self.left.getViewBox().allChildren()]))
     
@@ -95,18 +124,18 @@ class DataViewer(QtWidgets.QTabWidget):
             if dataobj is self.curves[idx]:
                 self.left.removeItem(dataobj)
         
-        # remove from legend
+        # remove curve from legend
         for dataobj in self.left.legend.allChildItems():
             if dataobj is self.curves[idx]:
                 self.left.legend.removeItem(self.curves[idx])
         
-        # lines
-        parsed = self.series[idx].text().split("=")
+        # handle lines
+        parsed = self.series[idx].text().split("=") # parse
         if (parsed[0] == "line" and len(parsed) == 2):
-            self.curves[idx] = pg.InfiniteLine(pos=parsed[1], angle=0)
+            self.curves[idx] = pg.InfiniteLine(pos=parsed[1], angle=0) # add infinite line
         else:
-           self.curves[idx] = pg.PlotCurveItem()
-           self.left.legend.addItem(self.curves[idx], parsed[0])
+           self.curves[idx] = pg.PlotCurveItem() # add standard curve
+           self.left.legend.addItem(self.curves[idx], parsed[0]) # add to legend
         
         # set curve color
         if self.colors[idx].color():
@@ -118,7 +147,6 @@ class DataViewer(QtWidgets.QTabWidget):
         else:
             self.left.addItem(self.curves[idx])
 
-        #self.left.legend.clear()
         ## debug
         #print(idx)
         #self.printCurves()
@@ -141,9 +169,11 @@ class DataViewer(QtWidgets.QTabWidget):
         self.plot.setTitle(self.title_edit.text())
     
     def durationUpdate(self):
-        self.duration = int(self.duration_edit.text)
+        # update duration on edit
+        self.duration = int(self.duration_edit.text())
 
     def update(self, frame):
+        # update dataviewer with new data
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
@@ -162,6 +192,6 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    plot = DataViewer([])
+    plot = DataViewer([], num_channels=4)
     plot.show()
     sys.exit(app.exec())
