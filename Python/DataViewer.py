@@ -45,6 +45,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.title_edit.editingFinished.connect(self.titleUpdate)
         for i in range(num_channels):
             self.switches.append(Switch())
+            self.switches[i].clicked.connect(lambda state, idx=i: self.redrawCurve(idx))
             self.curves.append(pg.PlotCurveItem())
             self.config_layout.addWidget(self.switches[i], i+1, 0)
             dropdown = QtWidgets.QLineEdit()
@@ -52,9 +53,11 @@ class DataViewer(QtWidgets.QTabWidget):
             font.setPointSize(12)
             dropdown.setFont(font)
             dropdown.setCompleter(completer)
+            dropdown.editingFinished.connect(lambda idx=i: self.redrawCurve(idx))
             self.series.append(dropdown)
             self.config_layout.addWidget(self.series[i], i+1, 1)
             self.colors.append(ColorButton())
+            self.colors[i].colorChanged.connect(lambda idx=i: self.redrawCurve(idx))
             self.config_layout.addWidget(self.colors[i], i+1, 2)
         self.duration_edit = QtWidgets.QLineEdit("30")
         self.duration_label = QtWidgets.QLabel("Seconds")
@@ -74,23 +77,33 @@ class DataViewer(QtWidgets.QTabWidget):
         self.right.setXLink(self.left)
         self.updateViews()
         self.left.vb.sigResized.connect(self.updateViews)
-        #print(self.left.allChildren())
-        self.right.addItem(self.curves[0])
-        self.left.addItem(self.curves[2])
-        self.left.addItem(self.curves[1])
-        self.clearCurves()
     
-    def clearCurves(self):
+    def printCurves(self):
+        print("right: " + str([dataobj for dataobj in self.right.allChildren() if type(dataobj) is type(self.curves[0])]))
+        print("left: " + str([dataobj for dataobj in self.left.listDataItems()]))
+    
+    def redrawCurve(self, idx):
+        # remove curve from plot
         for dataobj in self.right.allChildren():
-            if type(dataobj) is type(self.curves[0]):
+            if dataobj is self.curves[idx]:
                 self.right.removeItem(dataobj)
         
         for dataobj in self.left.listDataItems():
-            if type(dataobj) is type(self.curves[0]):
-                self.left.removeItem(dataobj) 
+            if dataobj is self.curves[idx]:
+                self.left.removeItem(dataobj)
         
-        #print(self.left.listDataItems())
-        #print(self.right.allChildItems())
+        # set curve color
+        if self.colors[idx].color():
+            self.curves[idx].setPen(QtGui.QPen(QtGui.QColor(self.colors[idx].color())))
+        
+        # set curve to left or right side
+        if not self.switches[idx].isChecked():
+            self.right.addItem(self.curves[idx])
+        else:
+            self.left.addItem(self.curves[idx])
+        
+        #print(idx)
+        #self.printCurves()
 
     def updateViews(self):
         # resize plot on window resize
