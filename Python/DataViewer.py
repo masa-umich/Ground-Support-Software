@@ -35,6 +35,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.switches = []
         self.series = []
         self.colors = []
+        self.curves = []
         self.title_edit = QtWidgets.QLineEdit()
         self.title_edit.setPlaceholderText("Plot Title")
         self.config_layout.addWidget(self.title_edit, 0, 1)
@@ -44,6 +45,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.title_edit.editingFinished.connect(self.titleUpdate)
         for i in range(num_channels):
             self.switches.append(Switch())
+            self.curves.append(pg.PlotCurveItem())
             self.config_layout.addWidget(self.switches[i], i+1, 0)
             dropdown = QtWidgets.QLineEdit()
             font = dropdown.font()
@@ -72,7 +74,24 @@ class DataViewer(QtWidgets.QTabWidget):
         self.right.setXLink(self.left)
         self.updateViews()
         self.left.vb.sigResized.connect(self.updateViews)
+        #print(self.left.allChildren())
+        self.right.addItem(self.curves[0])
+        self.left.addItem(self.curves[2])
+        self.left.addItem(self.curves[1])
+        self.clearCurves()
     
+    def clearCurves(self):
+        for dataobj in self.right.allChildren():
+            if type(dataobj) is type(self.curves[0]):
+                self.right.removeItem(dataobj)
+        
+        for dataobj in self.left.listDataItems():
+            if type(dataobj) is type(self.curves[0]):
+                self.left.removeItem(dataobj) 
+        
+        #print(self.left.listDataItems())
+        #print(self.right.allChildItems())
+
     def updateViews(self):
         # resize plot on window resize
         self.right.setGeometry(self.left.vb.sceneBoundingRect())
