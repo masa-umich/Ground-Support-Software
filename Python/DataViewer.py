@@ -16,6 +16,7 @@ class DataViewer(QtWidgets.QTabWidget):
         
         # load data channels
         self.channels = channels
+        self.num_channels = num_channels
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -75,8 +76,8 @@ class DataViewer(QtWidgets.QTabWidget):
         self.left.scene().addItem(self.right)
         self.left.getAxis('right').linkToView(self.right)
         self.right.setXLink(self.left)
-        self.updateViews()
-        self.left.vb.sigResized.connect(self.updateViews)
+        self.viewUpdate()
+        self.left.vb.sigResized.connect(self.viewUpdate)
     
     def printCurves(self):
         print("right: " + str([dataobj for dataobj in self.right.allChildren() if type(dataobj) is type(self.curves[0])]))
@@ -102,10 +103,11 @@ class DataViewer(QtWidgets.QTabWidget):
         else:
             self.left.addItem(self.curves[idx])
         
+        ## debug
         #print(idx)
         #self.printCurves()
 
-    def updateViews(self):
+    def viewUpdate(self):
         # resize plot on window resize
         self.right.setGeometry(self.left.vb.sceneBoundingRect())
         self.right.linkedViewChanged(self.left.vb, self.right.XAxis)
@@ -119,14 +121,21 @@ class DataViewer(QtWidgets.QTabWidget):
         return len(self.getActive())>0
 
     def titleUpdate(self):
+        # update plot title
         self.plot.setTitle(self.title_edit.text())
     
     def durationUpdate(self):
         self.duration = int(self.duration_edit.text)
 
     def update(self, frame):
-        pass
-        #self.plot.setTitle(self.title_edit.text())
+        for i in range(self.num_channels):
+            # see if active
+            # get channel name
+            # process lines
+            # get data from dataframe
+            # trim data
+            # set data
+            pass
         # data = frame[self.getActive()]
         # pull out required data
         # push data to plot
