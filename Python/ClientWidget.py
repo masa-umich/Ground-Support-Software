@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import sys
 import socket
-import pickle
+import json
 import time
 import uuid
 import queue
@@ -84,7 +84,7 @@ class ClientWidget(QtWidgets.QWidget):
             "args" : args
         }
 
-        msg = pickle.dumps(command_dict)
+        msg = json.dumps(command_dict)
         self.command_queue.put(msg)
 
         if command is not 0:
@@ -122,7 +122,7 @@ class ClientWidget(QtWidgets.QWidget):
 
             # get data
             data = self.s.recv(4096*4)
-            packet = pickle.loads(data)
+            packet = json.loads(data)
             #print(packet)
             #print(packet["dataframe"])
             

@@ -1,4 +1,4 @@
-import pickle
+import json
 import socket
 import serial
 import serial.tools.list_ports
@@ -148,7 +148,7 @@ def client_handler(clientsocket, addr):
                     commander = None
                 break
             else:
-                command = pickle.loads(msg)
+                command = json.loads(msg)
                 print(command)
                 last_uuid = command["clientid"]
                 if command["command"] == 0:
@@ -169,8 +169,7 @@ def client_handler(clientsocket, addr):
                 packet = dataframe
                 packet["commander"] = commander 
                 packet["packet_num"] = packet_num
-                ## TODO: change from pickle dump to json to reduce bandwidth
-                data = pickle.dumps(packet)
+                data = json.dumps(packet)
                 clientsocket.send(data)
             counter = 0 
         except:
