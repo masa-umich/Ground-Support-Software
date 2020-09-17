@@ -17,6 +17,7 @@ class DataViewer(QtWidgets.QTabWidget):
         # load data channels
         self.channels = channels
         self.num_channels = num_channels
+        self.default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -57,7 +58,7 @@ class DataViewer(QtWidgets.QTabWidget):
             dropdown.editingFinished.connect(lambda idx=i: self.redrawCurve(idx))
             self.series.append(dropdown)
             self.config_layout.addWidget(self.series[i], i+1, 1)
-            self.colors.append(ColorButton())
+            self.colors.append(ColorButton(default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda idx=i: self.redrawCurve(idx))
             self.config_layout.addWidget(self.colors[i], i+1, 2)
         self.duration_edit = QtWidgets.QLineEdit("30")
@@ -71,6 +72,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # setup plot
         self.left = self.plot.plotItem
+        self.left.addLegend()
         self.right = pg.ViewBox()
         self.left.showAxis('right')
         self.left.scene().addItem(self.right)
@@ -93,12 +95,18 @@ class DataViewer(QtWidgets.QTabWidget):
             if dataobj is self.curves[idx]:
                 self.left.removeItem(dataobj)
         
+        # remove from legend
+        for dataobj in self.left.legend.allChildItems():
+            if dataobj is self.curves[idx]:
+                self.left.legend.removeItem(self.curves[idx])
+        
         # lines
         parsed = self.series[idx].text().split("=")
         if (parsed[0] == "line" and len(parsed) == 2):
             self.curves[idx] = pg.InfiniteLine(pos=parsed[1], angle=0)
         else:
            self.curves[idx] = pg.PlotCurveItem()
+           self.left.legend.addItem(self.curves[idx], parsed[0])
         
         # set curve color
         if self.colors[idx].color():
@@ -109,7 +117,8 @@ class DataViewer(QtWidgets.QTabWidget):
             self.right.addItem(self.curves[idx])
         else:
             self.left.addItem(self.curves[idx])
-        
+
+        #self.left.legend.clear()
         ## debug
         #print(idx)
         #self.printCurves()

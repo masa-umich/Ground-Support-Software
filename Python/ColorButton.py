@@ -11,12 +11,13 @@ class ColorButton(QtWidgets.QPushButton):
 
     colorChanged = QtCore.pyqtSignal()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, default_color="#FF0000", *args, **kwargs):
         super(ColorButton, self).__init__(*args, **kwargs)
-
-        self._color = None
+        self.default_color = default_color
+        self._color = self.default_color
         self.setMaximumWidth(32)
         self.pressed.connect(self.onColorPicker)
+        self.setStyleSheet("background-color: %s;" % self._color)
 
     def setColor(self, color):
         if color != self._color:
@@ -49,6 +50,6 @@ class ColorButton(QtWidgets.QPushButton):
 
     def mousePressEvent(self, e):
         if e.button() == Qt.RightButton:
-            self.setColor(None)
+            self.setColor("#FF0000")
 
         return super(ColorButton, self).mousePressEvent(e)
