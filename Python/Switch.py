@@ -13,7 +13,7 @@ class Switch(QtWidgets.QPushButton):
         self.setMinimumHeight(22)
 
     def paintEvent(self, event):
-        label = "L" if self.isChecked() else "R"
+        label = "R" if self.isChecked() else "L"
         bg_color = Qt.darkGray
 
         radius = 15

@@ -63,6 +63,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
         self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
         #print(self.active_channels)
+        # maybe only run if connection established?
         for viewer in self.viewers:
             if viewer.isActive():
                 viewer.update(self.database)
@@ -90,6 +91,7 @@ if __name__ == "__main__":
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
     app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
+    # init window
     window = DataViewerWindow()
 
     #timer and tick updates

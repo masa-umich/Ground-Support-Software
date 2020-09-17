@@ -80,8 +80,8 @@ class DataViewer(QtWidgets.QTabWidget):
         self.left.vb.sigResized.connect(self.viewUpdate)
     
     def printCurves(self):
-        print("right: " + str([dataobj for dataobj in self.right.allChildren() if type(dataobj) is type(self.curves[0])]))
-        print("left: " + str([dataobj for dataobj in self.left.listDataItems()]))
+        print("right: " + str([dataobj for dataobj in self.right.allChildren()]))
+        print("left: " + str([dataobj for dataobj in self.left.getViewBox().allChildren()]))
     
     def redrawCurve(self, idx):
         # remove curve from plot
@@ -89,16 +89,23 @@ class DataViewer(QtWidgets.QTabWidget):
             if dataobj is self.curves[idx]:
                 self.right.removeItem(dataobj)
         
-        for dataobj in self.left.listDataItems():
+        for dataobj in self.left.getViewBox().allChildren():
             if dataobj is self.curves[idx]:
                 self.left.removeItem(dataobj)
         
+        # lines
+        parsed = self.series[idx].text().split("=")
+        if (parsed[0] == "line" and len(parsed) == 2):
+            self.curves[idx] = pg.InfiniteLine(pos=parsed[1], angle=0)
+        else:
+           self.curves[idx] = pg.PlotCurveItem()
+        
         # set curve color
         if self.colors[idx].color():
-            self.curves[idx].setPen(QtGui.QPen(QtGui.QColor(self.colors[idx].color())))
+            self.curves[idx].setPen(pg.mkPen(QtGui.QColor(self.colors[idx].color())))
         
         # set curve to left or right side
-        if not self.switches[idx].isChecked():
+        if self.switches[idx].isChecked():
             self.right.addItem(self.curves[idx])
         else:
             self.left.addItem(self.curves[idx])
@@ -129,13 +136,12 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def update(self, frame):
         for i in range(self.num_channels):
-            # see if active
             # get channel name
-            # process lines
-            # get data from dataframe
-            # trim data
-            # set data
-            pass
+            channel_name = self.series[i].text()
+            if channel_name in self.channels:
+                pass
+                # trim data
+                # set data
         # data = frame[self.getActive()]
         # pull out required data
         # push data to plot
@@ -149,4 +155,4 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication.instance()
     plot = DataViewer([])
     plot.show()
-    app.exec()
+    sys.exit(app.exec())
