@@ -72,8 +72,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         if self.client_dialog.client.is_connected:
             last_frame = pd.DataFrame.from_dict(self.last_packet)
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
-        per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
-        self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
+        #per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
+        #self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
         #print(self.active_channels)
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
     # init window
-    cycle_time = 1000 # in ms
+    cycle_time = 250 # in ms
     window = DataViewerWindow(num_channels=4, rows=3, cols=3, cycle_time=cycle_time)
 
     #timer and tick updates
