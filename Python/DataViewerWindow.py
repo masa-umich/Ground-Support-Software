@@ -12,7 +12,7 @@ import json
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels=4, *args, **kwargs):
+    def __init__(self, num_channels=4, rows=3, cols=3, cycle_time=250, *args, **kwargs):
         super(DataViewerWindow, self).__init__(*args, **kwargs)
         # layout
         self.setWindowTitle("MASA Data Viewer")
@@ -60,9 +60,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.database = pd.DataFrame(columns=self.header)
         
         # init viewers
-        rows = 3
-        cols = 3
-        self.viewers = [DataViewer(self.channels, num_channels=num_channels) for i in range(rows*cols)]
+        self.viewers = [DataViewer(self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
         for i in range(rows):
             for j in range(cols):
                 idx = i*3+j
@@ -88,6 +86,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         app.quit()
         sys.exit()
 
+    # show connection dialog
     def showConnection(self):
         self.client_dialog.show()
     
@@ -123,12 +122,13 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('logo_server.png'))
 
     # init window
-    window = DataViewerWindow(num_channels=4)
+    cycle_time = 1000 # in ms
+    window = DataViewerWindow(num_channels=4, rows=3, cols=3, cycle_time=cycle_time)
 
     #timer and tick updates
     timer = QtCore.QTimer()
     timer.timeout.connect(window.update)
-    timer.start(250)
+    timer.start(cycle_time)
 
     # run
     window.show()

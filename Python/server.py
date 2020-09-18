@@ -266,7 +266,7 @@ def update():
             try:
                 parser.parse_packet(serial_packet)
                 dataframe = parser.dict
-                dataframe["time"] = datetime.timestanp()
+                dataframe["time"] = datetime.timestamp()
                 data_log.write(parser.log_string+'\n')
             except:
                 print("Packet lost")

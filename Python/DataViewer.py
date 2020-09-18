@@ -11,12 +11,13 @@ class DataViewer(QtWidgets.QTabWidget):
     Custom QtWidget to plot data
     """
 
-    def __init__(self, channels, num_channels=4, *args, **kwargs):
+    def __init__(self, channels, cycle_time, num_channels=4, *args, **kwargs):
         super(DataViewer, self).__init__(*args, **kwargs)
         
         # load data channels
         self.channels = channels
         self.num_channels = num_channels
+        self.cycle_time = cycle_time
         self.default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
         # initialize tabs
@@ -65,12 +66,14 @@ class DataViewer(QtWidgets.QTabWidget):
             self.colors.append(ColorButton(default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda idx=i: self.redrawCurve(idx))
             self.config_layout.addWidget(self.colors[i], i+1, 2)
+        
         # setup duration field
         self.duration_edit = QtWidgets.QLineEdit("30")
         self.duration_label = QtWidgets.QLabel("Seconds")
         self.config_layout.addWidget(self.duration_edit, num_channels+1, 0)
         self.config_layout.addWidget(self.duration_label, num_channels+1, 1)
         self.duration_edit.editingFinished.connect(self.durationUpdate)
+        self.durationUpdate()
 
         # column sizing
         self.config_layout.setColumnStretch(0, 15)
@@ -174,17 +177,17 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def update(self, frame):
         # update dataviewer with new data
+        points = int(self.duration*1000/self.cycle_time)
+        data = frame.tail(points)
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
-                pass
-                # trim data
-                # set data
-        # data = frame[self.getActive()]
-        # pull out required data
-        # push data to plot
-        # print(data.tail(500))
+                # and len(data.index)>0
+                #print(data["time"])
+                #print(data[channel_name])
+                # this may or may not work
+                self.curves[i].setData(x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
         
 
 if __name__ == "__main__":
@@ -192,6 +195,6 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    plot = DataViewer([], num_channels=4)
+    plot = DataViewer([], 250, num_channels=4)
     plot.show()
     sys.exit(app.exec())
