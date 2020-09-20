@@ -94,12 +94,11 @@ class ClientWidget(QtWidgets.QWidget):
     def connect(self):
         # try to make a connection with server
         try:
-            #self.s.detach()
-            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.s.connect((self.host.text(), int(self.port.text())))
-            self.is_connected = True
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # setup socket interface
+            self.s.connect((self.host.text(), int(self.port.text()))) # connect to socket
+            self.is_connected = True # update status
         except:
-            self.is_connected = False
+            self.is_connected = False # update status
 
     def disconnect(self):
         # send disconnect message
@@ -123,9 +122,7 @@ class ClientWidget(QtWidgets.QWidget):
 
             # get data
             data = self.s.recv(4096*4)
-            packet = pickle.loads(data)
-            #print(packet)
-            #print(packet["dataframe"])
+            packet = pickle.loads(data) # TODO: change to json
             
             # update command status
             if packet["commander"] == self.clientid:
@@ -148,9 +145,9 @@ if __name__ == "__main__":
     
     timer = QtCore.QTimer()
     timer.timeout.connect(controller.cycle)
-    timer.start(50) # 20hz
+    timer.start(50) # in ms, 20hz
     
     controller.show()
-    app.exec()
+    sys.exit(app.exec())
 
         
