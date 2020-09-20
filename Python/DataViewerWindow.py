@@ -9,12 +9,12 @@ from hotfire_packet import ECParse
 from ClientWidget import ClientWidget, ClientDialog
 import sys
 import json
-
+from datetime import datetime
 
 class DataViewerWindow(QtWidgets.QMainWindow):
     def __init__(self, num_channels=4, rows=3, cols=3, cycle_time=250, *args, **kwargs):
         super(DataViewerWindow, self).__init__(*args, **kwargs)
-        # layout
+        # window top-level layout
         self.setWindowTitle("MASA Data Viewer")
         self.w = QtWidgets.QWidget()
         self.setCentralWidget(self.w)
@@ -24,16 +24,16 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # set up client
         self.client_dialog = ClientDialog(False)
 
-        #menu bar
+        # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
 
         # connection menu item
-        self.quit = QtGui.QAction("&Connection", self.options_menu)
+        self.connect = QtGui.QAction("&Connection", self.options_menu)
         #self.quit.setShortcut("Ctrl+K")
-        self.quit.triggered.connect(self.exit)
-        self.options_menu.addAction(self.quit)
+        self.connect.triggered.connect(self.client_dialog.show)
+        self.options_menu.addAction(self.connect)
 
         # save menu item
         self.save_action = QtGui.QAction("&Save Config", self.options_menu)
@@ -47,7 +47,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
 
-        #quit application menu item
+        # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
         self.quit.setShortcut("Ctrl+Q")
         self.quit.triggered.connect(self.exit)
@@ -66,19 +66,28 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 idx = i*3+j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
         
+        self.starttime = datetime.now().timestamp()
+        self.cycle_time = cycle_time
+        
     # loop
     def update(self):
         self.last_packet = self.client_dialog.client.cycle()
+        #print(self.last_packet)
         if self.client_dialog.client.is_connected:
-            last_frame = pd.DataFrame.from_dict(self.last_packet)
-            self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True)
-        #per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
-        #self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
-        #print(self.active_channels)
+            self.last_packet["time"] -= self.starttime # time to elapsed
+            last_frame = pd.DataFrame(self.last_packet, index = [0])
+            self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(int(15*60*1000/self.cycle_time)) # cap data to 15 min
+            #except Exception as e:
+                #print(e)
+        
         # maybe only run if connection established?
         for viewer in self.viewers:
             if viewer.isActive():
                 viewer.update(self.database)
+        
+        #per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
+        #self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
+        #print(self.active_channels)
     
     # quit application function
     def exit(self):
@@ -90,7 +99,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def showConnection(self):
         self.client_dialog.show()
     
-    # viewer config load/save (TODO)
+    # viewer config load
     def load(self):
         loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
         with open(loadname, "r") as f:

@@ -1,4 +1,4 @@
-import json
+import json, pickle # still need to get json working
 import socket
 import serial
 import serial.tools.list_ports
@@ -13,6 +13,7 @@ from datetime import datetime
 from hotfire_packet import ECParse
 import queue
 
+# init variables
 packet_num = 0
 packet_size = 0
 commander = None
@@ -24,6 +25,7 @@ command_queue = queue.Queue()
 # initialize parser
 parser = ECParse()
 
+# make data folder
 if not os.path.exists("data/" + starttime + "/"):
     os.makedirs("data/" + starttime + "/")
 
@@ -56,11 +58,11 @@ top.setFixedWidth(1200)
 top.setFixedHeight(800)
 
 # server log
-log_box  = QtGui.QTextEdit()
+log_box = QtGui.QTextEdit()
 log_box.setReadOnly(True)
 top_layout.addWidget(log_box, 2, 0)
 
-# send message to log (should work from any thread but it throws a warning after the first attempt)
+# send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
 def send_to_log(text):
     time_obj = datetime.now().time()
     time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
@@ -136,7 +138,7 @@ command_layout.addWidget(override_button, 0, 4)
 
 # client handler
 def client_handler(clientsocket, addr):
-    global commander
+    global commander, dataframe
     counter = 0
     last_uuid = None
     while True:
@@ -148,32 +150,31 @@ def client_handler(clientsocket, addr):
                     commander = None
                 break
             else:
-                command = json.loads(msg)
+                command = pickle.loads(msg)
                 print(command)
                 last_uuid = command["clientid"]
-                if command["command"] == 0:
+                if command["command"] == 0: # do nothing
                     pass
-                elif (command["command"] == 1 and not commander):
+                elif (command["command"] == 1 and not commander): # take command
                     set_commander(command["clientid"], addr[0])
-                elif (command["command"] == 2 and commander == command["clientid"]):
+                elif (command["command"] == 2 and commander == command["clientid"]): # give up command
                     override_commander()
-                elif (command["command"] == 3 and commander == command["clientid"]):
+                elif (command["command"] == 3 and commander == command["clientid"]): # send command
                     command_queue.put(command["args"])
-                elif (command["command"] == 4):
+                elif (command["command"] == 4): # close connection
                     if commander == command["clientid"]:
                         override_commander()
                     break
                 else:
                     print("WARNING: Unhandled command")
                 
-                packet = dataframe
-                packet["commander"] = commander 
-                packet["packet_num"] = packet_num
-                data = json.dumps(packet)
+                dataframe["commander"] = commander 
+                dataframe["packet_num"] = packet_num
+                data = pickle.dumps(dataframe)
                 clientsocket.send(data)
             counter = 0 
-        except:
-            if counter > 5:
+        except: # detect dropped connection
+            if counter > 5: # close connection after 5 consecutive failed packets
                 break
             print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
             counter += 1
@@ -186,7 +187,6 @@ def server_handler():
     # initialize socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
-    print(host)
     port = 6969
     s.bind((host, port))
 
@@ -195,14 +195,16 @@ def server_handler():
     send_to_log("Listening on %s:%s" % (host, port))
     s.listen(5)
     
-    #create connection
+    # create connection
     while True:
-        c, addr = s.accept()     # Establish connection with client.
+        # establish connection with client
+        c, addr = s.accept() 
         send_to_log('Got connection from ' + addr[0])
+        # create thread to handle client
         t = threading.Thread(target=client_handler, args=(c,addr), daemon=True)
         t.start()
     
-    # close socket on exit (i don't think this ever actually will run. need to figure this out)
+    # close socket on exit (i don't think this ever actually will run. probably should figure this out)
     s.close()
 
 # start server connection thread
@@ -210,12 +212,12 @@ def server_handler():
 t = threading.Thread(target=server_handler, daemon=True)
 t.start()
 
-#menu bar
+# menu bar
 main_menu = top.menuBar()
 main_menu.setNativeMenuBar(True)
 file_menu = main_menu.addMenu('&File')
 
-#quit application function
+# quit application function
 def exit():
     ser.close()
     server_log.close()
@@ -225,7 +227,7 @@ def exit():
     app.quit()
     sys.exit()
 
-#quit application menu item
+# quit application menu item
 quit = QtGui.QAction("&Quit", file_menu)
 quit.setShortcut("Ctrl+Q")
 quit.triggered.connect(exit)
@@ -247,7 +249,7 @@ def update():
             # read in packet from EC
             serial_packet = ser.readline()
             serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(serial_packet)+ '\n')
-            #print(len(serial_packet))
+            # print(len(serial_packet))
             packet_size = len(serial_packet)
             packet_size_label.setText("Last Packet Size: %s" % packet_size)
 
@@ -263,13 +265,10 @@ def update():
             serial_packet = unstuffed
 
             # parse packet
-            try:
-                parser.parse_packet(serial_packet)
-                dataframe = parser.dict
-                dataframe["time"] = datetime.timestamp()
-                data_log.write(parser.log_string+'\n')
-            except:
-                print("Packet lost")
+            parser.parse_packet(serial_packet)
+            dataframe = parser.dict
+            dataframe["time"] = datetime.now().timestamp()
+            data_log.write(parser.log_string+'\n')
 
     except Exception as e:
         # print(e)
@@ -279,7 +278,7 @@ def update():
     packet_num += 1
     commander_label.setText("Commander: " + str(commander))
 
-#timer and tick updates
+# timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
 timer.start(50) # 20hz
