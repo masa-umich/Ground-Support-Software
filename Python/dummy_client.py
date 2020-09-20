@@ -23,7 +23,7 @@ while True:
     s.sendall(msg)
     data = s.recv(4096*4)
     packet = pickle.loads(data)
-    print(packet)
+    #print(packet)
     #print(packet["dataframe"])
     time.sleep(0.05)
 
