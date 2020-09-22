@@ -62,9 +62,9 @@ class Limit(QtWidgets.QGroupBox):
                 pass
 
     def load(self, config):
-        self.channel = str(config["channel"])
-        self.low = str(config["low"])
-        self.high = str(config["high"])
+        self.channel.setText(str(config["channel"]))
+        self.low.setText(str(config["low"]))
+        self.high.setText(str(config["high"]))
 
     def save(self):
         return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text()}
@@ -79,6 +79,7 @@ class LimitWidget(QtWidgets.QWidget):
 
         self.parser = ECParse()
         self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
+        self.num_channels = num_channels
 
         self.limits = []
         for i in range(num_channels):
@@ -86,15 +87,15 @@ class LimitWidget(QtWidgets.QWidget):
             self.layout.addWidget(self.limits[i], i, 0, 1, 2)
 
         self.load_button = QtWidgets.QPushButton("Load")
-        self.layout.addWidget(self.load_button, num_channels, 0, 1, 1)
+        self.layout.addWidget(self.load_button, num_channels, 1, 1, 1)
         self.load_button.clicked.connect(self.load)
         self.save_button = QtWidgets.QPushButton("Save")
-        self.layout.addWidget(self.save_button, num_channels, 1, 1, 1)
+        self.layout.addWidget(self.save_button, num_channels, 0, 1, 1)
         self.save_button.clicked.connect(self.save)
     
     def save(self):
-        configs = [limit.save() for limit in self.limits]
-        savename = QtGui.QFileDialog.getSaveFileName(self, 'Save Config', 'dataviewer.cfg', "Config (*.cfg)")[0]
+        configs = {"num_channels": self.num_channels, "limit_configs": [limit.save() for limit in self.limits]}
+        savename = QtGui.QFileDialog.getSaveFileName(self, 'Save Config', 'limits.cfg', "Config (*.cfg)")[0]
         with open(savename, "w") as f:
             json.dump(configs, f)
             
@@ -102,8 +103,9 @@ class LimitWidget(QtWidgets.QWidget):
         loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
         with open(loadname, "r") as f:
             configs = json.load(f)
-        for i in range(len(self.limits)):
-            self.limits[i].load(configs[i])
+        if int(configs["num_channels"]) == self.num_channels:
+            for i in range(len(self.limits)):
+                self.limits[i].load(configs["limit_configs"][i])
 
     def update(self):
         for i in range(len(self.limits)):
