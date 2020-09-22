@@ -42,6 +42,8 @@ class ControlsWindow(QMainWindow):
         # Marker for if the controls area is being edited
         self.is_editing = False
 
+
+
         self.controlsWidget = ControlsWidget(self)
         self.controlsPanelWidget = ControlsPanelWidget(self)
 
