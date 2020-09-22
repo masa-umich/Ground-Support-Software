@@ -9,9 +9,10 @@ import random
 import json
 
 class Limit(QtWidgets.QGroupBox):
-    def __init__(self, channels, *args, **kwargs):
+    def __init__(self, channels, parent = None, *args, **kwargs):
         super(Limit, self).__init__(*args, **kwargs)
         
+        self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.setStyleSheet("background-color: white;")
@@ -43,11 +44,19 @@ class Limit(QtWidgets.QGroupBox):
         self.channel.setCompleter(completer)
         self.layout.addWidget(self.channel, 0, 4)
 
+        self.delete_button = QtWidgets.QPushButton("x")
+        #self.delete_button.setStyleSheet("")
+        self.layout.addWidget(self.delete_button, 0, 5)
+        self.delete_button.clicked.connect(self.delete)
+        #self.delete_button.setIcon(QtGui.QIcon('Python/xicon.jpg'))
+        self.delete_button.setFixedSize(QtCore.QSize(30,30))
+
         self.layout.setColumnStretch(0, 0.5)
         self.layout.setColumnStretch(1, 1)
         self.layout.setColumnStretch(2, 1)
         self.layout.setColumnStretch(3, 1)
         self.layout.setColumnStretch(4, 2)
+        self.layout.setColumnStretch(5, 0.1)
 
     def update(self, val):
         val = float(val)
@@ -69,6 +78,10 @@ class Limit(QtWidgets.QGroupBox):
     def save(self):
         return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text()}
 
+    def delete(self):
+        self.parent.delete(self)
+    
+
 class LimitWidget(QtWidgets.QWidget):
     def __init__(self, num_channels, *args, **kwargs):
         super(LimitWidget, self).__init__(*args, **kwargs)
@@ -81,17 +94,46 @@ class LimitWidget(QtWidgets.QWidget):
         self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
         self.num_channels = num_channels
 
+        self.limits_box = QtWidgets.QWidget()
+        self.limits_layout = QtWidgets.QVBoxLayout()
+        self.limits_box.setLayout(self.limits_layout)
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.limits_box)
+        self.layout.addWidget(self.scroll, 0, 0, 1, 2)
+
         self.limits = []
         for i in range(num_channels):
-            self.limits.append(Limit(self.channels))
-            self.layout.addWidget(self.limits[i], i, 0, 1, 2)
+            self.limits.append(Limit(self.channels, parent=self))
+            self.limits_layout.addWidget(self.limits[i])
+
+        self.add_limit_button = QtWidgets.QPushButton("+")
+        self.limits_layout.addWidget(self.add_limit_button)
+        self.add_limit_button.clicked.connect(self.add_limit)
+        self.limits_layout.addStretch(1)
 
         self.load_button = QtWidgets.QPushButton("Load")
-        self.layout.addWidget(self.load_button, num_channels, 1, 1, 1)
+        self.layout.addWidget(self.load_button, 2, 1, 1, 1)
         self.load_button.clicked.connect(self.load)
         self.save_button = QtWidgets.QPushButton("Save")
-        self.layout.addWidget(self.save_button, num_channels, 0, 1, 1)
+        self.layout.addWidget(self.save_button, 2, 0, 1, 1)
         self.save_button.clicked.connect(self.save)
+    
+    def delete(self, widget):
+        for i in range(len(self.limits)):
+            if self.limits[i] is widget:
+                self.limits_layout.removeWidget(widget)
+                widget.deleteLater()
+                self.limits.pop(i)
+                break
+        self.num_channels = len(self.limits)
+        
+    def add_limit(self):
+        self.limits.append(Limit(self.channels, parent=self))
+        self.limits_layout.insertWidget(self.num_channels, self.limits[-1])
+        self.num_channels = len(self.limits)
     
     def save(self):
         configs = {"num_channels": self.num_channels, "limit_configs": [limit.save() for limit in self.limits]}
