@@ -171,7 +171,7 @@ def client_handler(clientsocket, addr):
                 dataframe["commander"] = commander 
                 dataframe["packet_num"] = packet_num
                 data = pickle.dumps(dataframe)
-                clientsocket.send(data)
+                clientsocket.sendall(data)
             counter = 0 
         except: # detect dropped connection
             if counter > 5: # close connection after 5 consecutive failed packets
