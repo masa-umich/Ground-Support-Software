@@ -7,7 +7,7 @@ import json, pickle # still need to get json working
 import time
 import uuid
 import queue
-from LedIndicatorWidget import *
+from LedIndicatorWidget import LedIndicator
 
 class ClientDialog(QtWidgets.QDialog):
     def __init__(self, commandable):

@@ -2,6 +2,8 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import sys
+import os
+import ctypes
 from hotfire_packet import ECParse
 from LedIndicatorWidget import LedIndicator
 from ClientWidget import ClientWidget, ClientDialog
@@ -15,7 +17,9 @@ class Limit(QtWidgets.QGroupBox):
         self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        self.setStyleSheet("background-color: white;")
+        p = self.palette()
+        p.setColor(self.backgroundRole(), Qt.white)
+        self.setPalette(p)
         self.setAutoFillBackground(True)
 
         # status indicator
@@ -157,13 +161,33 @@ class LimitWidget(QtWidgets.QWidget):
                 #limits[i].update(dataframe[channel])
                 self.limits[i].update(random.randrange(-100, 100)) # fake data for testing
 
+class LimitDialog(QtWidgets.QDialog):
+    def __init__(self, num_channels, *args, **kwargs):
+        super(LimitDialog, self).__init__(*args, **kwargs)
+        self.widget = LimitWidget(num_channels, *args, **kwargs)
+        self.setModal(False)
+        self.setWindowTitle("Limits")
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(self.widget)
+        self.setLayout(self.layout)
+
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
     
-    limit = LimitWidget(12)
+    # initialize application
+    appid = 'MASA.DataViewer' # arbitrary string
+    if os.name == 'nt': # Bypass command because it is not supported on Linux 
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
+    else:
+        pass
+        # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
+    app.setWindowIcon(QtGui.QIcon('logo_server.png'))
+
+    #app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    limit = LimitDialog(12)
     
     #timer and tick updates
     cycle_time = 100 # in ms
