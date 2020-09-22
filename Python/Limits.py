@@ -79,7 +79,7 @@ class Limit(QtWidgets.QGroupBox):
         return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text()}
 
     def delete(self):
-        self.parent.delete(self)
+        self.parent.delete_limit(self)
     
 
 class LimitWidget(QtWidgets.QWidget):
@@ -121,7 +121,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.save_button, 2, 0, 1, 1)
         self.save_button.clicked.connect(self.save)
     
-    def delete(self, widget):
+    def delete_limit(self, widget):
         for i in range(len(self.limits)):
             if self.limits[i] is widget:
                 self.limits_layout.removeWidget(widget)
@@ -145,16 +145,17 @@ class LimitWidget(QtWidgets.QWidget):
         loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
         with open(loadname, "r") as f:
             configs = json.load(f)
-        if int(configs["num_channels"]) == self.num_channels:
-            for i in range(len(self.limits)):
-                self.limits[i].load(configs["limit_configs"][i])
+        while self.num_channels < int(configs["num_channels"]):
+            self.add_limit()
+        for i in range(len(self.limits)):
+            self.limits[i].load(configs["limit_configs"][i])
 
     def update(self):
         for i in range(len(self.limits)):
             channel = self.limits[i].channel.text()
             if channel in self.channels:
                 #limits[i].update(dataframe[channel])
-                self.limits[i].update(random.randrange(-100, 100))
+                self.limits[i].update(random.randrange(-100, 100)) # fake data for testing
 
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
