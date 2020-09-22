@@ -103,9 +103,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def load(self):
         loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
         with open(loadname, "r") as f:
-            config = json.load(f)
+            configs = json.load(f)
         for i in range(len(self.viewers)):
-            self.viewers[i].loadConfig(config[i])
+            self.viewers[i].loadConfig(configs[i])
     
     # save config
     def save(self):
