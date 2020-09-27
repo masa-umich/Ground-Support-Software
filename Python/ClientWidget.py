@@ -88,7 +88,7 @@ class ClientWidget(QtWidgets.QWidget):
         #print(msg)
         self.command_queue.put(msg)
 
-        if command is not 0:
+        if command != 0:
             print(command_dict)
 
     def connect(self):

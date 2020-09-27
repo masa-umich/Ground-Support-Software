@@ -156,7 +156,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def getActive(self):
         # returns list of active channels
-        return [str(s.text()) for s in self.series if str(s.text()) is not ""]
+        return [str(s.text()) for s in self.series if str(s.text()) != ""]
 
     def isActive(self):
         # returns True if plot is configured with a channel

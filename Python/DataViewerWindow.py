@@ -55,7 +55,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up environment and database
         self.parser = ECParse()
-        self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
+        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         
@@ -116,6 +116,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
+    #QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -129,7 +130,6 @@ if __name__ == "__main__":
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
     app.setWindowIcon(QtGui.QIcon('logo_server.png'))
-    #app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 
     # init window
     cycle_time = 250 # in ms
