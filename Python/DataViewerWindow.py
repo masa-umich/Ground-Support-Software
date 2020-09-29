@@ -55,7 +55,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up environment and database
         self.parser = ECParse()
-        self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
+        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         
@@ -84,10 +84,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for viewer in self.viewers:
             if viewer.isActive():
                 viewer.update(self.database)
-        
-        #per_viewer_actives = [viewer.getActive() for viewer in self.viewers]
-        #self.active_channels = list(set([channel for viewer in per_viewer_actives for channel in viewer])) # kill me now
-        #print(self.active_channels)
     
     # quit application function
     def exit(self):
@@ -103,9 +99,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def load(self):
         loadname = QtGui.QFileDialog.getOpenFileName(self, "Load Config", "", "Config (*.cfg)")[0]
         with open(loadname, "r") as f:
-            config = json.load(f)
+            configs = json.load(f)
         for i in range(len(self.viewers)):
-            self.viewers[i].loadConfig(config[i])
+            self.viewers[i].loadConfig(configs[i])
     
     # save config
     def save(self):
@@ -116,6 +112,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
+    #QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:

@@ -3,11 +3,12 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import sys
 import socket
-import json, pickle # still need to get json working
+import json
+import pickle
 import time
 import uuid
 import queue
-from LedIndicatorWidget import *
+from LedIndicatorWidget import LedIndicator
 
 class ClientDialog(QtWidgets.QDialog):
     def __init__(self, commandable):
@@ -88,7 +89,7 @@ class ClientWidget(QtWidgets.QWidget):
         #print(msg)
         self.command_queue.put(msg)
 
-        if command is not 0:
+        if command != 0:
             print(command_dict)
 
     def connect(self):
