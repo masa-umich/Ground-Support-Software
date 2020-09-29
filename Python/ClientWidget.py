@@ -3,7 +3,8 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import sys
 import socket
-import json, pickle # still need to get json working
+import json
+import pickle
 import time
 import uuid
 import queue

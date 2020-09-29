@@ -1,4 +1,5 @@
-import json, pickle # still need to get json working
+import json
+import pickle
 import socket
 import serial
 import serial.tools.list_ports
@@ -151,17 +152,20 @@ def client_handler(clientsocket, addr):
                 break
             else:
                 command = pickle.loads(msg)
-                print(command)
                 last_uuid = command["clientid"]
                 if command["command"] == 0: # do nothing
                     pass
                 elif (command["command"] == 1 and not commander): # take command
+                    print(command)
                     set_commander(command["clientid"], addr[0])
                 elif (command["command"] == 2 and commander == command["clientid"]): # give up command
+                    print(command)
                     override_commander()
                 elif (command["command"] == 3 and commander == command["clientid"]): # send command
+                    print(command)
                     command_queue.put(command["args"])
                 elif (command["command"] == 4): # close connection
+                    print(command)
                     if commander == command["clientid"]:
                         override_commander()
                     break
@@ -174,7 +178,7 @@ def client_handler(clientsocket, addr):
                 clientsocket.sendall(data)
             counter = 0 
         except: # detect dropped connection
-            if counter > 5: # close connection after 5 consecutive failed packets
+            if counter > 3: # close connection after 3 consecutive failed packets
                 break
             print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
             counter += 1

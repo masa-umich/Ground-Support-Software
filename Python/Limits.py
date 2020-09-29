@@ -192,7 +192,7 @@ if __name__ == "__main__":
     #timer and tick updates
     cycle_time = 100 # in ms
     timer = QtCore.QTimer()
-    timer.timeout.connect(limit.update)
+    timer.timeout.connect(limit.widget.update)
     timer.start(cycle_time)
 
     limit.show()
