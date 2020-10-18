@@ -17,7 +17,7 @@ class ThrottleValve(BaseObject):
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
                  height: float = 18 *1, name: str = "Throttle Valve",
-                 scale: float = 1, avionics_number: int = 5, short_name: str = '',
+                 scale: float = 1, short_name: str = '',
                  long_name: str = 'Throttle Valve', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
@@ -35,7 +35,6 @@ class ThrottleValve(BaseObject):
         :param height:          height of object
         :param name:            name of object
         :param scale:           scale applied to the object
-        :param avionics_number: avionics identifier
         :param short_name:      abbreviated name on schematics
         :param long_name:       human-readable name for display on screen
         :param is_vertical:     tracker if object is drawn vertically
@@ -53,7 +52,7 @@ class ThrottleValve(BaseObject):
 
         if is_vertical:
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                             name=name, is_vertical=is_vertical, scale=scale, avionics_number = avionics_number,
+                             name=name, is_vertical=is_vertical, scale=scale,
                              short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
                              _id=_id, short_name_label_pos=short_name_label_pos,
                              short_name_label_local_pos=short_name_label_local_pos,
@@ -64,7 +63,7 @@ class ThrottleValve(BaseObject):
         else:
             # Initialize base classes
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                             name=name, is_vertical=is_vertical, scale=scale, avionics_number = avionics_number,
+                             name=name, is_vertical=is_vertical, scale=scale,
                              short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
                              _id=_id, short_name_label_pos=short_name_label_pos,
                              short_name_label_local_pos=short_name_label_local_pos,

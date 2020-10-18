@@ -54,7 +54,6 @@ class ControlsPanelWidget(QWidget):
         # Textboxes, radioButtons, and drop-downs
         self.long_name_textbox = QLineEdit(self)
         self.long_name_position_combobox = QComboBox(self)
-        self.avionics_number_textbox = QLineEdit(self)
         self.fluid_combobox = QComboBox(self)
         self.short_name_textbox = QLineEdit(self)
         self.short_name_position_combobox = QComboBox(self)
@@ -68,7 +67,6 @@ class ControlsPanelWidget(QWidget):
         self.createTFRadioButtons("Long Name Label", "Enabled", "Disabled", True)
         self.createLineEdit(self.long_name_textbox, "Long Name")
         self.createComboBox(self.long_name_position_combobox, "Label Position", ["Top","Right","Bottom","Left", "Custom"])
-        self.createLineEdit(self.avionics_number_textbox, "Avionics Number", QIntValidator())
         self.createComboBox(self.fluid_combobox, "Fluid", Constants.fluids)
         self.createTFRadioButtons("Position is", "Locked", "Unlocked", False)
         self.createLineEdit(self.short_name_textbox, "Short Name")
@@ -163,7 +161,6 @@ class ControlsPanelWidget(QWidget):
         """
         self.long_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
-        self.avionics_number_textbox.setText(str(object_.avionics_number))
         self.fluid_combobox.setCurrentText(Constants.fluid[object_.fluid])
         self.short_name_textbox.setText(object_.short_name)
         self.short_name_position_combobox.setCurrentText(object_.short_name_label.position_string)
@@ -175,7 +172,6 @@ class ControlsPanelWidget(QWidget):
         if object_.object_name == "Generic Sensor":
             self.sensor_type_combobox.setCurrentText(object_.sensor_type)
 
-        self.avionics_number_textbox.setDisabled(True)
 
     def updateEditingObjectFields(self, text, identifier):
         """
@@ -190,9 +186,6 @@ class ControlsPanelWidget(QWidget):
                     object_.setLongName(text)
                 elif identifier == "Label Position":
                     object_.long_name_label.moveToPosition(text)
-                elif identifier == "Avionics Number":
-                    if text != "":
-                        object_.setAvionicsNumber(int(text))
                 elif identifier == "Fluid":
                     object_.setFluid(text)
                 elif identifier == "Long Name Label":

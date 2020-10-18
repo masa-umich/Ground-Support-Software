@@ -21,7 +21,7 @@ class BaseObject:
     ----------------------------------------------------------------------------------------------------------------"""
 
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'untitled', safety_status: int = -1,
+                 scale: float = 1, short_name: str = 'untitled', safety_status: int = -1,
                  long_name: str = 'untitled', is_vertical: bool = False, is_being_edited: bool = False,
                  is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
                  short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
@@ -38,7 +38,6 @@ class BaseObject:
         :param height: height of object
         :param name: name of object
         :param scale: scale applied to the object
-        :param avionics_number: avionics identifier
         :param short_name: abbreviated name on schematics
         :param safety_status: safety criticality
         :param long_name: human-readable name for display on screen
@@ -63,7 +62,6 @@ class BaseObject:
         self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
         self.name = name
         self.scale = scale
-        self.avionics_number = avionics_number
         self.short_name = short_name
         self.safety_status = safety_status
         self.long_name = long_name
@@ -231,13 +229,6 @@ class BaseObject:
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-
-    def setAvionicsNumber(self, number):
-        """
-        Sets avionics number of object
-        :param number: avionics number of the object
-        """
-        self.avionics_number = number
 
     def setFluid(self, fluid):
         """
@@ -470,7 +461,6 @@ class BaseObject:
                 "height": self.height/self.gui.pixel_scale_ratio[0],
                 "name": self.name,
                 "scale": self.scale,
-                "avionics number": self.avionics_number,
                 "short name": self.short_name,
                 "long name": self.long_name,
                 "is vertical": self.is_vertical,
@@ -502,7 +492,6 @@ class BaseObject:
             ap.deleteLater()
         del self.anchor_points
         del self._id
-        del self.avionics_number
         del self
 
     def deleteConnectedTubes(self):

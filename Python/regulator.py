@@ -54,7 +54,7 @@ class Regulator(BaseObject):
 
         ## Initialize underlying class
         super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale, avionics_number=0,
+                         name=name, is_vertical=is_vertical, scale=scale,
                          short_name=short_name, long_name=long_name, locked=locked, position_locked=position_locked,
                          _id=_id, short_name_label_pos=short_name_label_pos,
                          short_name_label_local_pos=short_name_label_local_pos,
