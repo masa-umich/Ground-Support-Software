@@ -141,7 +141,10 @@ class ControlsWidget(QWidget):
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.save()
-            self.saveData()
+            if self.parent.window.fileName != "":
+                self.saveData(self.parent.window.fileName)
+            else:
+                self.parent.window.saveFileDialog()
 
         # Tells painter to update screen
         self.update()
@@ -306,7 +309,7 @@ class ControlsWidget(QWidget):
 
     # HMM: Most likely in the future more than just object data will be saved so this function will need to be adjusted
     #  so it can pass along the saveDict. Similar to the TO-DO for load data
-    def saveData(self):
+    def saveData(self, filename):
         """
         When the user requests data to be saved this function is called and handles saving all the data for objects that
         are currently drawn on screen. It simply requests save data from each individual object and compiles it into one
@@ -322,18 +325,18 @@ class ControlsWidget(QWidget):
             data = {**data, **(tube.generateSaveDict())}
 
         # With the open file, write to json with a tab as an indent
-        with open("data_file.json", "w") as write_file:
+        with open(filename, "w") as write_file:
             json.dump(data, write_file, indent="\t")
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
-    def loadData(self):
+    def loadData(self, fileName="data_file.json"):
         """
         Loads data from a json file and populates the widget with all the saved objects
         """
 
         # Open and read the loaded json file
-        with open("data_file.json", "r") as read_file:
+        with open(fileName, "r") as read_file:
             data = json.load(read_file)
 
         # TODO: I was really lazy so I just copy pasted but can be done nicer
