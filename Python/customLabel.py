@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
+from constants import Constants
 
 """
 Provides custom functionality for labels
@@ -42,12 +43,15 @@ class CustomLabel(QLabel):
         self.moveToPosition()
 
     def setFont_(self, font: QFont = None):
+
+
+
         if font is not None:
             self.setFont(font)
         else:
             font = QFont()
             font.setStyleStrategy(QFont.PreferAntialias)
-            font.setFamily("Arial")
+            font.setFamily(Constants.default_font)
             self.setFont(font)
 
     def setFontSize(self, size: int):

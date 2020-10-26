@@ -10,12 +10,12 @@
 		"height": 221.0,
 		"name": "Tank",
 		"scale": 1.3,
-		"short name": "TK-502",
+		"serial number": "TK-502",
 		"long name": "RP-1 Tank",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -40,
@@ -45,12 +45,12 @@
 		"height": 221.0,
 		"name": "Tank",
 		"scale": 1.3,
-		"short name": "TK-502",
+		"serial number": "TK-502",
 		"long name": "LOX Tank",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -40,
@@ -80,12 +80,12 @@
 		"height": 153.0,
 		"name": "Tank",
 		"scale": 0.9,
-		"short name": "TK-501",
+		"serial number": "TK-501",
 		"long name": "COPV",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -39,
@@ -115,12 +115,12 @@
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1.0,
-		"short name": "SN-102",
+		"serial number": "SN-102",
 		"long name": "LOX Press",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 2,
@@ -151,12 +151,12 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "SN-101",
+		"serial number": "SN-101",
 		"long name": "Fuel Press",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 2,
@@ -187,12 +187,12 @@
 		"name": "Solenoid",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "SN-103",
+		"serial number": "SN-103",
 		"long name": "Fuel Vent",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 2,
@@ -223,12 +223,12 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "SN-104",
+		"serial number": "SN-104",
 		"long name": "LOX Vent",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 2,
@@ -259,12 +259,12 @@
 		"name": "Chamber",
 		"scale": 0.9,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "RP-D2",
 		"is vertical": 1,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -295,12 +295,12 @@
 		"name": "Throttle Valve",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Fuel MPV",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -331,12 +331,12 @@
 		"name": "Tank",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "2k Bottle",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -367,12 +367,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Pressure",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -404,12 +404,12 @@
 		"name": "Throttle Valve",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "LOX MPV",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 18,
@@ -440,12 +440,12 @@
 		"name": "Tank",
 		"scale": 0.5,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "MPV Press",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -476,12 +476,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -513,12 +513,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -550,12 +550,12 @@
 		"name": "PT",
 		"scale": 0.6,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 14,
@@ -587,12 +587,12 @@
 		"name": "Throttle Valve",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Reg",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 18,
@@ -623,12 +623,12 @@
 		"name": "Solenoid",
 		"scale": 0.8,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "MPV NC Vent",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -659,12 +659,12 @@
 		"name": "Solenoid",
 		"scale": 0.8,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "MPV NC Vent",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -695,12 +695,12 @@
 		"name": "Solenoid",
 		"scale": 0.8,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "MPV NO Press",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -731,12 +731,12 @@
 		"name": "Solenoid",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Fuel Drain",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 18,
@@ -767,12 +767,12 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "LOX Drain",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 18,
@@ -803,12 +803,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Chamber Pressure",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -840,12 +840,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "asdf",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -877,12 +877,12 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Solenoid",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 18,
@@ -913,12 +913,12 @@
 		"name": "Tank",
 		"scale": 1.3,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "LOX Dewar",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -949,12 +949,12 @@
 		"name": "PT",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Tank Pressure",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,
@@ -986,12 +986,12 @@
 		"name": "Solenoid",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Solenoid",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -1022,12 +1022,12 @@
 		"name": "Tank",
 		"scale": 1.0,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Tank",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
@@ -1058,12 +1058,12 @@
 		"name": "PT",
 		"scale": 1,
 		"avionics number": 5,
-		"short name": "",
+		"serial number": "",
 		"long name": "Sensor",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
-		"short name label": {
+		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 26,

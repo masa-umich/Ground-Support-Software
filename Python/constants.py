@@ -23,8 +23,15 @@ class Constants:
     }
 
     line_width = 2
+
     
-    BG_color = QColor(10,22,44)
+    BG_color = QColor(0, 22, 44)
+    MASA_Blue_color = QColor(0, 39, 76)
+    MASA_Beige_color = QColor(238, 238, 234)
+    MASA_Scarlet_color = QColor(242, 46, 0)
+    MASA_Maize_color = QColor(255, 203, 5)
+
+    default_font = "Montserrat"
 
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]

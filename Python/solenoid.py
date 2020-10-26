@@ -17,13 +17,13 @@ class Solenoid(BaseObject):
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
                  height: float = 18 *1, name: str = "Solenoid",
-                 scale: float = 1, short_name: str = '',
+                 scale: float = 1, serial_number: str = '',
                  long_name: str = 'Solenoid', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
-                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, harness_number: str = ''):
 
         """
         Initializer for Solenoid
@@ -35,19 +35,20 @@ class Solenoid(BaseObject):
         :param height: height of object
         :param name: name of object
         :param scale: scale applied to the object
-        :param short_name: abbreviated name on schematics
+        :param serial_number: abbreviated name on schematics
         :param long_name: human-readable name for display on screen
         :param is_vertical: tracker if object is drawn vertically
         :param locked: tracker if the object is locked from editing
         :param position_locked: tracker if the object position is locked
         :param _id: unique internal gui id of the object
-        :param short_name_label_pos: string of where the short name label is
-        :param short_name_label_local_pos: local position on where short name label is
-        :param short_name_label_font_size: font size of short name label
+        :param serial_number_label_pos: string of where the serial number label is
+        :param serial_number_label_local_pos: local position on where serial number label is
+        :param serial_number_label_font_size: font size of serial number label
         :param long_name_label_pos: string of where the long name label is
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
+        :param harness_number: the specific harness the device is plugged into
         """
 
         # TODO: Still bleah, should have a way to rotate or something
@@ -55,24 +56,24 @@ class Solenoid(BaseObject):
         if is_vertical:
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
                              name=name, is_vertical=is_vertical, scale=scale,
-                             short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
-                             _id=_id, short_name_label_pos=short_name_label_pos,
-                             short_name_label_local_pos=short_name_label_local_pos,
-                             short_name_label_font_size=short_name_label_font_size,
+                             serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
+                             _id=_id, serial_number_label_pos=serial_number_label_pos,
+                             serial_number_label_local_pos=serial_number_label_local_pos,
+                             serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
+                             long_name_label_rows=long_name_label_rows, harness_number=harness_number)
         else:
             # Initialize base classes
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
                              name=name, is_vertical=is_vertical, scale=scale,
-                             short_name=short_name, long_name=long_name,locked=locked,position_locked=position_locked,
-                             _id=_id, short_name_label_pos=short_name_label_pos,
-                             short_name_label_local_pos=short_name_label_local_pos,
-                             short_name_label_font_size=short_name_label_font_size,
+                             serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
+                             _id=_id, serial_number_label_pos=serial_number_label_pos,
+                             serial_number_label_local_pos=serial_number_label_local_pos,
+                             serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
+                             long_name_label_rows=long_name_label_rows, harness_number=harness_number)
 
 
         # TODO: Grab height and width from csv file

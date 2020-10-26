@@ -32,7 +32,7 @@ class ControlsPanelWidget(QWidget):
         #Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.lightGray)
+        p.setColor(self.backgroundRole(), Qt.darkGray)
         self.setPalette(p)
         
         # Inits widgets for edit frame
@@ -54,27 +54,30 @@ class ControlsPanelWidget(QWidget):
         # Textboxes, radioButtons, and drop-downs
         self.long_name_textbox = QLineEdit(self)
         self.long_name_position_combobox = QComboBox(self)
-        self.fluid_combobox = QComboBox(self)
-        self.short_name_textbox = QLineEdit(self)
-        self.short_name_position_combobox = QComboBox(self)
-        self.scale_spinbox = QDoubleSpinBox(self)
-        self.long_name_row_spinbox = QDoubleSpinBox(self)
         self.long_name_font_size_spinbox = QDoubleSpinBox(self)
-        self.short_name_font_size_spinbox = QDoubleSpinBox(self)
+        self.long_name_row_spinbox = QDoubleSpinBox(self)
+        self.fluid_combobox = QComboBox(self)
+        self.serial_number_textbox = QLineEdit(self)
+        self.serial_number_position_combobox = QComboBox(self)
+        self.serial_number_font_size_spinbox = QDoubleSpinBox(self)
+        self.scale_spinbox = QDoubleSpinBox(self)
         self.sensor_type_combobox = QComboBox(self)
         
         # Add text boxes to the layout
-        self.createTFRadioButtons("Long Name Label", "Enabled", "Disabled", True)
+
+        self.edit_form_layout.addRow(QLabel("Object Name Label:"))
         self.createLineEdit(self.long_name_textbox, "Long Name")
+        self.createTFRadioButtons("Long Name Label", "Shown", "Hidden", True)
         self.createComboBox(self.long_name_position_combobox, "Label Position", ["Top","Right","Bottom","Left", "Custom"])
+        self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", 6, 50, 1)
+        self.createSpinbox(self.long_name_row_spinbox, "Rows", 1, 5, 1)
         self.createComboBox(self.fluid_combobox, "Fluid", Constants.fluids)
         self.createTFRadioButtons("Position is", "Locked", "Unlocked", False)
-        self.createLineEdit(self.short_name_textbox, "Short Name")
-        self.createComboBox(self.short_name_position_combobox, "Short Name Position", ["Top", "Right", "Bottom", "Left", "Custom"])
+        self.edit_form_layout.addRow(QLabel("Serial Number:"))
+        self.createLineEdit(self.serial_number_textbox, "Serial Number")
+        self.createComboBox(self.serial_number_position_combobox, "Serial Number Position", ["Top", "Right", "Bottom", "Left", "Custom"])
+        self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size", 6, 50, 1)
         self.createSpinbox(self.scale_spinbox, "Scale", .1, 10, 0.1)
-        self.createSpinbox(self.long_name_row_spinbox, "Rows", 1, 5, 1)
-        self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", 6, 50, 1)
-        self.createSpinbox(self.short_name_font_size_spinbox, "Short Name Font Size", 6, 50, 1)
         self.createComboBox(self.sensor_type_combobox, "Sensor Type", ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
         self.sensor_type_combobox.resize(self.sensor_type_combobox.sizeHint())
         self.edit_frame.hide()
@@ -109,6 +112,10 @@ class ControlsPanelWidget(QWidget):
         hbox = QHBoxLayout()
         true_button = QRadioButton(true_btn_label)
         false_button = QRadioButton(false_btn_label)
+
+        p = true_button.palette()
+        p.setColor(QPalette.Button, Qt.red)
+        true_button.setPalette(p)
 
         if checked:
             true_button.setChecked(True)
@@ -162,12 +169,12 @@ class ControlsPanelWidget(QWidget):
         self.long_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
         self.fluid_combobox.setCurrentText(Constants.fluid[object_.fluid])
-        self.short_name_textbox.setText(object_.short_name)
-        self.short_name_position_combobox.setCurrentText(object_.short_name_label.position_string)
+        self.serial_number_textbox.setText(object_.serial_number)
+        self.serial_number_position_combobox.setCurrentText(object_.serial_number_label.position_string)
         self.scale_spinbox.setValue(object_.scale)
         self.long_name_row_spinbox.setValue(object_.long_name_label.rows)
         self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
-        self.short_name_font_size_spinbox.setValue(object_.short_name_label.getFontSize())
+        self.serial_number_font_size_spinbox.setValue(object_.serial_number_label.getFontSize())
         
         if object_.object_name == "Generic Sensor":
             self.sensor_type_combobox.setCurrentText(object_.sensor_type)
@@ -192,18 +199,18 @@ class ControlsPanelWidget(QWidget):
                     object_.long_name_label.setVisible(text)
                 elif identifier == "Position is":
                     object_.setPositionLock(text)
-                elif identifier == "Short Name":
+                elif identifier == "Serial Number":
                     object_.setShortName(text)
-                elif identifier == "Short Name Position":
-                    object_.short_name_label.moveToPosition(text)
+                elif identifier == "Serial Number Position":
+                    object_.serial_number_label.moveToPosition(text)
                 elif identifier == "Scale":
                     object_.setScale(text)
                 elif identifier == "Rows":
                     object_.long_name_label.setRows(text)
                 elif identifier == "Long Name Font Size":
                     object_.long_name_label.setFontSize(text)
-                elif identifier == "Short Name Font Size":
-                    object_.short_name_label.setFontSize(text)
+                elif identifier == "Serial Number Font Size":
+                    object_.serial_number_label.setFontSize(text)
                 elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
                     object_.setUnits(text)
 
