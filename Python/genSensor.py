@@ -131,7 +131,7 @@ class GenSensor(BaseObject):
         """
         Called when the Sensor is clicked
         """
-        if not self.widget_parent.window.is_editing:
+        if not self.widget_parent.parent.is_editing:
             self.setMeasurement(self.measurement + 200)
 
         super().onClick()

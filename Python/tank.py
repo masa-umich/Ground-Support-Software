@@ -78,7 +78,7 @@ class Tank(BaseObject):
         """
         super().onClick()
 
-        if not self.widget_parent.window.is_editing:
+        if not self.widget_parent.parent.is_editing:
             # This is for testing and will normally be used with capacitive level sensor
             self.fillPercent += .05
 

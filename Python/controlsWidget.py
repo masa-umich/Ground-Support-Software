@@ -38,13 +38,17 @@ class ControlsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.window = parent
-        self.gui = self.window.parent
+        self.window = parent.window
+        self.gui = parent.gui
+        self.client = self.window.client_dialog.client
+
+        #self.client = gui.client
+        #print(self.parent)
 
         self.left = 0
         self.top = 0
 
-        self.width = self.gui.screenResolution[0] - self.window.panel_width
+        self.width = self.gui.screenResolution[0] - self.parent.panel_width
         self.height = self.gui.screenResolution[1]
 
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -87,7 +91,7 @@ class ControlsWidget(QWidget):
         self.edit_button = QPushButton("EDIT", self)
         self.edit_button.clicked.connect(lambda: self.toggleEdit())
         self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
+        self.edit_button.move(self.gui.screenResolution[0] - self.parent.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
                               30 * self.gui.pixel_scale_ratio[1])
         self.edit_button.show()
 
@@ -115,7 +119,7 @@ class ControlsWidget(QWidget):
         """
         There simply must be an elegant solution to this
         """
-        self.controlsPanel = self.window.controlsPanelWidget
+        self.controlsPanel = self.parent.controlsPanelWidget
 
     def initContextMenu(self):
         """
@@ -133,18 +137,18 @@ class ControlsWidget(QWidget):
         """
         Toggles if the window is in edit mode or not
         """
-        self.window.is_editing = not self.window.is_editing
+        self.parent.is_editing = not self.parent.is_editing
 
-        if self.window.is_editing:
+        if self.parent.is_editing:
             self.edit_button.setText("SAVE")
         else:
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.save()
-            if self.parent.window.fileName != "":
-                self.saveData(self.parent.window.fileName)
+            if self.parent.parent.fileName != "":
+                self.saveData(self.parent.parent.fileName)
             else:
-                self.parent.window.saveFileDialog()
+                self.parent.parent.saveFileDialog()
 
         # Tells painter to update screen
         self.update()
@@ -275,7 +279,7 @@ class ControlsWidget(QWidget):
         """
 
         # If window is in edit mode
-        if self.window.is_editing:
+        if self.parent.is_editing:
             action = self.context_menu.exec_(self.mapToGlobal(point))
 
             # Below ifs creates new objects at the point where the right click
@@ -464,6 +468,14 @@ class ControlsWidget(QWidget):
                     points.append(QPoint(tube["bend positions"][j]["x"], tube["bend positions"][j]["y"]))
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
+
+    def update(self):
+        self.last_packet = self.client.cycle()
+        #print(self.last_packet)
+        if self.client.is_connected:
+            self.last_packet["time"] -= self.starttime # time to elapsed
+            #last_frame = pd.DataFrame(self.last_packet, index = [0])
+            #self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(int(15*60*1000/self.cycle_time))
 
 
 

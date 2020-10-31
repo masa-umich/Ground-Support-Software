@@ -36,6 +36,9 @@ class GUI:
             Constants.line_width = 2
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
+    
+    def update(self):
+        self.controlsWindow.update()
 
 
 
@@ -45,5 +48,11 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     gui = GUI()
+
+    #timer and tick updates
+    cycle_time = 200 # in ms
+    timer = QTimer()
+    timer.timeout.connect(gui.update)
+    timer.start(cycle_time)
 
     sys.exit(app.exec_())

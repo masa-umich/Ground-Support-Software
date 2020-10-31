@@ -12,20 +12,20 @@ class ControlsPanelWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.window = parent
+        self.window = parent.window
         # TODO: Rename the controls because it is weird
-        self.controls = self.window.controlsWidget
+        self.controls = self.parent.controlsWidget
 
-        self.gui = self.window.parent
+        self.gui = self.parent.gui
 
         # Keeps track of all the objects currently being edited
         self.objects_editing = []
 
         #Defines placement and size of control panel
-        self.left = self.gui.screenResolution[0] - self.window.panel_width
+        self.left = self.gui.screenResolution[0] - self.parent.panel_width
         self.top = 0
 
-        self.width = self.window.panel_width
+        self.width = self.parent.panel_width
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 

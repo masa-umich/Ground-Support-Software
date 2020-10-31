@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 
 from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
+from ClientWidget import ClientWidget, ClientDialog
 
 from overrides import overrides
 
@@ -17,13 +18,14 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('M_icon.png'))
-        self.w = ControlsCentralWidget(self.gui, self)
+        self.client_dialog = ClientDialog(True) # control client
+        self.w = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.w)
         self.fileName = ""
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.w.left, self.w.top, self.w.width, self.w.height)
-
+        
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
         exitAct = QAction('&Save and Quit', self)
         exitAct.setStatusTip('Exit application')
@@ -63,12 +65,17 @@ class ControlsWindow(QMainWindow):
         exitEditAct.setShortcut('Ctrl+Shift+E')
         exitEditAct.triggered.connect(self.exitEdit)
 
+        # CONNECTION -> Connection Settings
+        connect = QAction("&Connection Settings", self)
+        connect.triggered.connect(self.client_dialog.show)
+        
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
         view_menu = menuBar.addMenu('View')
+        connection_menu = menuBar.addMenu('Connection')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -81,10 +88,14 @@ class ControlsWindow(QMainWindow):
         edit_menu.addAction(enterEditAct)
         edit_menu.addAction(exitEditAct)
 
+        # add connection actions
+        connection_menu.addAction(connect)
+
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
-                      "View": view_menu}
+                      "View": view_menu,
+                      "Connection": connection_menu}
         
         self.showMaximized()
 
@@ -149,6 +160,9 @@ class ControlsWindow(QMainWindow):
         if self.w.is_editing:
             self.w.controlsWidget.toggleEdit()
 
+    def update(self):
+        self.w.update()
+
 class ControlsCentralWidget(QWidget):
     """
     Window to house the controls and editing Widgets
@@ -157,7 +171,7 @@ class ControlsCentralWidget(QWidget):
     def __init__(self, parent=None, window=None):
         super().__init__()
         self.parent = parent
-        self.gui = self.parent
+        self.gui = parent.gui
         self.window = window
 
         # Below numbers are arbitrary

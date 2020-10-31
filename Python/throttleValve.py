@@ -130,7 +130,7 @@ class ThrottleValve(BaseObject):
         """
         super().onClick()
 
-        if not self.widget_parent.window.is_editing:
+        if not self.widget_parent.parent.is_editing:
             # Toggle state of ThrottleValve
             self.toggle()
 
