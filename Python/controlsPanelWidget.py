@@ -53,6 +53,8 @@ class ControlsPanelWidget(QWidget):
 
         # Textboxes, radioButtons, and drop-downs
         self.long_name_textbox = QLineEdit(self)
+        self.long_name_visibility_group = QButtonGroup(self)  # Not really needed here but including it
+        self.is_pos_locked_group = QButtonGroup  # Used for radio buttons
         self.long_name_position_combobox = QComboBox(self)
         self.long_name_font_size_spinbox = QDoubleSpinBox(self)
         self.long_name_row_spinbox = QDoubleSpinBox(self)
@@ -66,15 +68,15 @@ class ControlsPanelWidget(QWidget):
         # Add text boxes to the layout
 
         self.edit_form_layout.addRow(QLabel("Object Name Label:"))
-        self.createLineEdit(self.long_name_textbox, "Long Name")
-        self.createTFRadioButtons("Long Name Label", "Shown", "Hidden", True)
+        self.createLineEdit(self.long_name_textbox, "Long Name", "Long Name Test:")
+        self.long_name_visibility_group = self.createTFRadioButtons("Long Name Label", "Shown", "Hidden", True)
         self.createComboBox(self.long_name_position_combobox, "Label Position", ["Top","Right","Bottom","Left", "Custom"])
         self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", 6, 50, 1)
         self.createSpinbox(self.long_name_row_spinbox, "Rows", 1, 5, 1)
         self.createComboBox(self.fluid_combobox, "Fluid", Constants.fluids)
-        self.createTFRadioButtons("Position is", "Locked", "Unlocked", False)
+        self.is_pos_locked_group = self.createTFRadioButtons("Position is", "Locked", "Unlocked", False)
         self.edit_form_layout.addRow(QLabel("Serial Number:"))
-        self.createLineEdit(self.serial_number_textbox, "Serial Number")
+        self.createLineEdit(self.serial_number_textbox, "Serial Number", "SN Test:")
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size", 6, 50, 1)
         self.createSpinbox(self.scale_spinbox, "Scale", .1, 10, 0.1)
@@ -82,14 +84,14 @@ class ControlsPanelWidget(QWidget):
         self.sensor_type_combobox.resize(self.sensor_type_combobox.sizeHint())
         self.edit_frame.hide()
 
-    def createLineEdit(self, lineEdit: QLineEdit, identifier, validator: QValidator = None):
+    def createLineEdit(self, lineEdit: QLineEdit, identifier, label, validator: QValidator = None):
         """
         Creates text box user can type in, used for editing labels and so forth
         :param lineEdit: reference to line edit widget
         :param identifier: identifies line edit widget, used when text changes
         :param validator: validator used to make sure text entered is int, double etc.
         """
-        identifier_label = QLabel(identifier + ":")
+        identifier_label = QLabel(label)
         lineEdit.textChanged.connect(lambda : self.updateEditingObjectFields(lineEdit.text(), identifier))
         if validator is not None:
             lineEdit.setValidator(validator)
@@ -104,6 +106,8 @@ class ControlsPanelWidget(QWidget):
         :param true_btn_label: label on the button that correlates to True
         :param false_btn_label: label on the button that correlates to False
         :param checked: Which button, True or False, is initially checked
+
+        :return group: Returns the group holding the true/false buttons, true is always first button
         """
         identifier_label = QLabel(identifier + ":")
 
@@ -133,6 +137,27 @@ class ControlsPanelWidget(QWidget):
         hbox.addStretch()
 
         self.edit_form_layout.addRow(identifier_label, hbox)
+
+        return group
+
+    @staticmethod
+    def setTFRadioButtonValue(group: QButtonGroup, value: bool):
+        """
+        Allows the TF radio buttons to be updated properly when the user switches objects
+        :param group: group holding the TF radio buttons, True value is first
+        :param value: value the TF button is being set to
+        """
+
+        trueButton = group.buttons()[0]
+        falseButton = group.buttons()[1]
+
+        if value:
+            trueButton.setChecked(True)
+            falseButton.setChecked(False)
+        else:
+            trueButton.setChecked(False)
+            falseButton.setChecked(True)
+
 
     def createComboBox(self, comboBox: QComboBox, identifier:str, items: []):
         """
@@ -168,6 +193,8 @@ class ControlsPanelWidget(QWidget):
         """
         self.long_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
+        self.setTFRadioButtonValue(self.long_name_visibility_group, object_.long_name_label.isVisible())
+        self.setTFRadioButtonValue(self.is_pos_locked_group, object_.position_locked)
         self.fluid_combobox.setCurrentText(Constants.fluid[object_.fluid])
         self.serial_number_textbox.setText(object_.serial_number)
         self.serial_number_position_combobox.setCurrentText(object_.serial_number_label.position_string)
