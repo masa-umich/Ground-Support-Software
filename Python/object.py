@@ -21,15 +21,15 @@ class BaseObject:
     ----------------------------------------------------------------------------------------------------------------"""
 
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'untitled', safety_status: int = -1,
+                 scale: float = 1, serial_number: str = 'untitled', safety_status: int = -1,
                  long_name: str = 'untitled', is_vertical: bool = False, is_being_edited: bool = False,
                  is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
-                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
-                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, harness_number: str = ''):
         """
-        Initializer for base class
+        Initializer for Solenoid
 
         :param parent: parent widget
         :param position: position of icon on screen
@@ -38,15 +38,20 @@ class BaseObject:
         :param height: height of object
         :param name: name of object
         :param scale: scale applied to the object
-        :param avionics_number: avionics identifier
-        :param short_name: abbreviated name on schematics
-        :param safety_status: safety criticality
+        :param serial_number: abbreviated name on schematics
         :param long_name: human-readable name for display on screen
         :param is_vertical: tracker if object is drawn vertically
-        :param is_being_edited: tracker if object is drawn vertically
-        :param is_being_dragged: tracker if object is currently being dragged by user
         :param locked: tracker if the object is locked from editing
         :param position_locked: tracker if the object position is locked
+        :param _id: unique internal gui id of the object
+        :param serial_number_label_pos: string of where the serial number label is
+        :param serial_number_label_local_pos: local position on where serial number label is
+        :param serial_number_label_font_size: font size of serial number label
+        :param long_name_label_pos: string of where the long name label is
+        :param long_name_label_local_pos: local position on where long name label is
+        :param long_name_label_font_size: font size of long name label
+        :param long_name_label_rows: how many rows long name label should have
+        :param harness_number: the specific harness the device is plugged into
         """
         super().__init__()
 
@@ -63,8 +68,7 @@ class BaseObject:
         self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
         self.name = name
         self.scale = scale
-        self.avionics_number = avionics_number
-        self.short_name = short_name
+        self.serial_number = serial_number
         self.safety_status = safety_status
         self.long_name = long_name
         self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
@@ -72,17 +76,18 @@ class BaseObject:
         self.is_being_dragged = is_being_dragged
         self.locked = locked
         self.position_locked = position_locked
+        self.harness_number = harness_number
         self.context_menu = QMenu(self.widget_parent)
-        self.button = PlotButton(self.short_name, self, 'data.csv', 'Pressure', self.widget_parent)
+        self.button = PlotButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
                                            position_string=long_name_label_pos, rows=long_name_label_rows)
 
-        self.short_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
-                                            is_vertical=False, font_size=short_name_label_font_size,
-                                            text=self.short_name, local_pos=short_name_label_local_pos,
-                                            position_string=short_name_label_pos)
+        self.serial_number_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+                                            is_vertical=False, font_size=serial_number_label_font_size,
+                                            text=self.serial_number, local_pos=serial_number_label_local_pos,
+                                            position_string=serial_number_label_pos)
 
         self.anchor_points = []
 
@@ -99,7 +104,7 @@ class BaseObject:
         # Create Button and style it
         self.button.setStyleSheet("background-color:transparent;border:0;")
         self.button.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.button.setToolTip(self.short_name + "\nState: Closed")
+        self.button.setToolTip(self.serial_number + "\nState: Closed")
 
         self.button.resize(self.width, self.height)
         self.button.move(self.position.x(), self.position.y())
@@ -125,7 +130,7 @@ class BaseObject:
         # Get font and set it
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily("Arial")
+        font.setFamily(Constants.default_font)
 
         #### Long Name Label ####
         # Sets the sizing of the label
@@ -133,20 +138,20 @@ class BaseObject:
         self.long_name_label.setFontSize(12)
         self.long_name_label.setText(self.long_name)
 
-        #### Short Name Label ####
-        self.short_name_label.setFont(font)
-        self.short_name_label.setFontSize(10)
-        self.short_name_label.setText(self.short_name)
+        #### Serial Number Label ####
+        self.serial_number_label.setFont(font)
+        self.serial_number_label.setFontSize(10)
+        self.serial_number_label.setText(self.serial_number)
 
 
         if self.is_vertical:
-            self.short_name_label.moveToPosition("Left")
+            self.serial_number_label.moveToPosition("Left")
         else:
-            self.short_name_label.moveToPosition("Bottom")
+            self.serial_number_label.moveToPosition("Bottom")
 
         # Make em visible
         self.long_name_label.show()
-        self.short_name_label.show()
+        self.serial_number_label.show()
 
     def _initAnchorPoints(self):
         """
@@ -171,7 +176,7 @@ class BaseObject:
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip(self.short_name + "\n" + text)
+        self.button.setToolTip(self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
@@ -190,14 +195,14 @@ class BaseObject:
 
     def setShortName(self, name):
         """
-        Sets short name and label of object
-        :param name: short_name of the object
+        Sets serial number and label of object
+        :param name: serial_number of the object
         """
-        self.short_name = name
-        self.short_name_label.setText(name)
+        self.serial_number = name
+        self.serial_number_label.setText(name)
 
         # Moves the label to keep it in the center if it changes length
-        self.short_name_label.moveToPosition()
+        self.serial_number_label.moveToPosition()
 
     def setScale(self, scale):
         """
@@ -231,13 +236,6 @@ class BaseObject:
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-
-    def setAvionicsNumber(self, number):
-        """
-        Sets avionics number of object
-        :param number: avionics number of the object
-        """
-        self.avionics_number = number
 
     def setFluid(self, fluid):
         """
@@ -310,7 +308,7 @@ class BaseObject:
         """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.short_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.serial_number_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         # Right now does not set ap points as transparent to allow for them to be clicked on
         # for ap in self.anchor_points:
         #     ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -362,7 +360,7 @@ class BaseObject:
             self.position = point
             self.updateAnchorPoints()
             self.long_name_label.moveToPosition()
-            self.short_name_label.moveToPosition()
+            self.serial_number_label.moveToPosition()
             self.deleteConnectedTubes()
 
         # Tells widget painter to update screen
@@ -470,13 +468,12 @@ class BaseObject:
                 "height": self.height/self.gui.pixel_scale_ratio[0],
                 "name": self.name,
                 "scale": self.scale,
-                "avionics number": self.avionics_number,
-                "short name": self.short_name,
+                "serial number": self.serial_number,
                 "long name": self.long_name,
                 "is vertical": self.is_vertical,
                 "is locked": self.locked,
                 "is pos locked": self.position_locked,
-                "short name label": self.short_name_label.generateSaveDict(),
+                "serial number label": self.serial_number_label.generateSaveDict(),
                 "long name label": self.long_name_label.generateSaveDict()
             }
         }
@@ -494,15 +491,14 @@ class BaseObject:
 
         self.button.deleteLater()
         del self.button
-        self.short_name_label.deleteLater()
-        del self.short_name_label
+        self.serial_number_label.deleteLater()
+        del self.serial_number_label
         self.long_name_label.deleteLater()
         del self.long_name_label
         for ap in self.anchor_points:
             ap.deleteLater()
         del self.anchor_points
         del self._id
-        del self.avionics_number
         del self
 
     def deleteConnectedTubes(self):
