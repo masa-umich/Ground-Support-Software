@@ -64,6 +64,7 @@ class ControlsPanelWidget(QWidget):
         self.scale_spinbox = QDoubleSpinBox(self)
         self.sensor_type_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
+        self.serial_number_visibility_group = QButtonGroup(self)
         
         #
         title_font = QFont()
@@ -75,8 +76,8 @@ class ControlsPanelWidget(QWidget):
         label = QLabel("Component Parameters:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
+        self.createLineEdit(self.long_name_textbox, "Long Name", "Component Name:")
         self.createLineEdit(self.serial_number_textbox, "Serial Number", "Serial Number:")
-        self.createLineEdit(self.long_name_textbox, "Component Name", "Text:")
         self.is_pos_locked_group = self.createTFRadioButtons("Position is", "Position:", "Locked", "Unlocked", False)
         self.createSpinbox(self.scale_spinbox, "Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Fluid", "Fluid:", Constants.fluids)
@@ -85,7 +86,7 @@ class ControlsPanelWidget(QWidget):
         self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
                             ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
         self.edit_form_layout.addRow(QLabel(""))
-        label = QLabel("Object Name Label:                                                                  ")
+        label = QLabel("Component Name Label:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
         self.long_name_visibility_group = self.createTFRadioButtons("Long Name Label", "Visibility:", "Shown", "Hidden", True)
@@ -96,6 +97,7 @@ class ControlsPanelWidget(QWidget):
         label = QLabel("Serial Number Label:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
+        self.serial_number_visibility_group = self.createTFRadioButtons("SN Label Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size","Font Size:", 6, 50, 1)
         # Row 14
@@ -222,6 +224,7 @@ class ControlsPanelWidget(QWidget):
         self.long_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
         self.setTFRadioButtonValue(self.long_name_visibility_group, object_.long_name_label.isVisible())
+        self.setTFRadioButtonValue(self.serial_number_visibility_group, object_.serial_number_label.isVisible())
         self.setTFRadioButtonValue(self.is_pos_locked_group, object_.position_locked)
         self.fluid_combobox.setCurrentText(Constants.fluid[object_.fluid])
         self.serial_number_textbox.setText(object_.serial_number)
@@ -280,6 +283,8 @@ class ControlsPanelWidget(QWidget):
                     object_.setUnits(text)
                 elif identifier == "Channel":
                     object_.setChannel(text)
+                elif identifier == "SN Label Visibility":
+                    object_.serial_number_label.setVisible(text)
 
 
     # FIXME: Things don't work well if more than one object are in here
