@@ -27,7 +27,7 @@ class BaseObject:
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
-                 long_name_label_rows: int = 1, harness_number: str = ''):
+                 long_name_label_rows: int = 1):
         """
         Initializer for Solenoid
 
@@ -51,7 +51,6 @@ class BaseObject:
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
-        :param harness_number: the specific harness the device is plugged into
         """
         super().__init__()
 
@@ -76,7 +75,6 @@ class BaseObject:
         self.is_being_dragged = is_being_dragged
         self.locked = locked
         self.position_locked = position_locked
-        self.harness_number = harness_number
         self.context_menu = QMenu(self.widget_parent)
         self.button = PlotButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,

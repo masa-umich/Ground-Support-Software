@@ -356,7 +356,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel_number=sol["channel number"]))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
@@ -389,7 +389,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 sensor_type=pt["sensor type"]))
+                                                 sensor_type=pt["sensor type"], channel_number=pt["channel number"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]

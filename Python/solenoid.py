@@ -23,7 +23,7 @@ class Solenoid(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
-                 long_name_label_rows: int = 1, harness_number: str = ''):
+                 long_name_label_rows: int = 1, channel_number: str = '0'):
 
         """
         Initializer for Solenoid
@@ -48,7 +48,7 @@ class Solenoid(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
-        :param harness_number: the specific harness the device is plugged into
+        :param channel_number: the specific channel the device is plugged into
         """
 
         # TODO: Still bleah, should have a way to rotate or something
@@ -62,7 +62,7 @@ class Solenoid(BaseObject):
                              serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows, harness_number=harness_number)
+                             long_name_label_rows=long_name_label_rows)
         else:
             # Initialize base classes
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
@@ -73,14 +73,14 @@ class Solenoid(BaseObject):
                              serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows, harness_number=harness_number)
+                             long_name_label_rows=long_name_label_rows)
 
 
-        # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent
 
         # State tracks whether the solenoid is open or closed
         self.state = 0
+        self.channel_number = channel_number
 
     @overrides
     def draw(self):
@@ -143,6 +143,13 @@ class Solenoid(BaseObject):
         # Tells widget painter to update screen
         self.widget_parent.update()
 
+    def setChannel(self, channel: str):
+        """
+        Sets channel of object
+        :param channel: channel of the object
+        """
+        self.channel_number = channel
+
     def toggle(self):
         """
         Toggle the state of the solenoid
@@ -157,23 +164,22 @@ class Solenoid(BaseObject):
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
 
-    # There is currently no Solenoid specific data that needs to be persistent but if some ever does it goes here
-    # @overrides
-    # def generateSaveDict(self):
-    #     """
-    #     Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-    #     info needs to be saved is added here.
-    #     """
-    #
-    #     # Gets the BaseObject data that needs to be saved
-    #     super_dict = super().generateSaveDict()
-    #
-    #     # Extra data the Solenoid contains that needs to be saved
-    #     save_dict = {
-    #         "state": self.state
-    #     }
-    #
-    #     # Update the super_dict under the solenoid entry with the solenoid specific data
-    #     super_dict['Solenoid'].update(save_dict)
-    #
-    #     return super_dict
+    @overrides
+    def generateSaveDict(self):
+        """
+        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
+        info needs to be saved is added here.
+        """
+
+        # Gets the BaseObject data that needs to be saved
+        super_dict = super().generateSaveDict()
+
+        # Extra data the Solenoid contains that needs to be saved
+        save_dict = {
+            "channel number": self.channel_number
+        }
+
+        # Update the super_dict under the solenoid entry with the solenoid specific data
+        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
+
+        return super_dict
