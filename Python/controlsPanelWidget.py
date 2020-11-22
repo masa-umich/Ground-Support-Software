@@ -19,7 +19,7 @@ class ControlsPanelWidget(QWidget):
         self.gui = self.window.parent
 
         # Keeps track of all the objects currently being edited
-        self.objects_editing = []
+        self.object_editing = None
 
         #Defines placement and size of control panel
         self.left = self.gui.screenResolution[0] - self.window.panel_width
@@ -51,7 +51,7 @@ class ControlsPanelWidget(QWidget):
         self.edit_frame.setLayout(self.edit_form_layout)
 
         # Textboxes, radioButtons, and drop-downs
-        self.long_name_textbox = QLineEdit(self)
+        self.component_name_textbox = QLineEdit(self)
         self.long_name_visibility_group = QButtonGroup(self)  # Not really needed here but including it
         self.is_pos_locked_group = QButtonGroup  # Used for radio buttons
         self.long_name_position_combobox = QComboBox(self)
@@ -71,33 +71,36 @@ class ControlsPanelWidget(QWidget):
         title_font.setBold(True)
         title_font.setUnderline(True)
 
-        # Add in all the fields and formatting
-        # TODO: The formatting here is really nasty but it works & can be edited if one wishes, lots of trial and error
+        # Component Parameters
         label = QLabel("Component Parameters:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
-        self.createLineEdit(self.long_name_textbox, "Long Name", "Component Name:")
+        self.createLineEdit(self.component_name_textbox, "Component Name", "Component Name:")
         self.createLineEdit(self.serial_number_textbox, "Serial Number", "Serial Number:")
-        self.is_pos_locked_group = self.createTFRadioButtons("Position is", "Position:", "Locked", "Unlocked", False)
-        self.createSpinbox(self.scale_spinbox, "Scale", "Scale:", .1, 10, 0.1)
-        self.createComboBox(self.fluid_combobox, "Fluid", "Fluid:", Constants.fluids)
+        self.is_pos_locked_group = self.createTFRadioButtons("Component Fixed?", "Position:", "Locked", "Unlocked", False)
+        self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
+        self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["0", "1", "2", "3"])  # Put in channel list here
         self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
                             ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
         self.edit_form_layout.addRow(QLabel(""))
+
+        # Component Label Parameters
         label = QLabel("Component Name Label:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
-        self.long_name_visibility_group = self.createTFRadioButtons("Long Name Label", "Visibility:", "Shown", "Hidden", True)
-        self.createComboBox(self.long_name_position_combobox, "Label Position", "Position:", ["Top","Right","Bottom","Left", "Custom"])
-        self.createSpinbox(self.long_name_font_size_spinbox, "Long Name Font Size", "Font Size:", 6, 50, 1)
-        self.createSpinbox(self.long_name_row_spinbox, "Rows", "Text Rows:", 1, 5, 1)
+        self.long_name_visibility_group = self.createTFRadioButtons("Component Name Visibility", "Visibility:", "Shown", "Hidden", True)
+        self.createComboBox(self.long_name_position_combobox, "Component Name Position", "Position:", ["Top","Right","Bottom","Left", "Custom"])
+        self.createSpinbox(self.long_name_font_size_spinbox, "Component Name Font Size", "Font Size:", 6, 50, 1)
+        self.createSpinbox(self.long_name_row_spinbox, "Component Name Rows", "Text Rows:", 1, 5, 1)
         self.edit_form_layout.addRow(QLabel(""))
+
+        # Serial Label Parameters
         label = QLabel("Serial Number Label:                                                                  ")
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
-        self.serial_number_visibility_group = self.createTFRadioButtons("SN Label Visibility", "Visibility:", "Shown", "Hidden", True)
+        self.serial_number_visibility_group = self.createTFRadioButtons("Serial Number Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size","Font Size:", 6, 50, 1)
         # Row 14
@@ -221,7 +224,7 @@ class ControlsPanelWidget(QWidget):
         Updates the various fields in the edit frame when a new object is selected for editing
         :param object_: the object that is selected for editing
         """
-        self.long_name_textbox.setText(object_.long_name)
+        self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
         self.setTFRadioButtonValue(self.long_name_visibility_group, object_.long_name_label.isVisible())
         self.setTFRadioButtonValue(self.serial_number_visibility_group, object_.serial_number_label.isVisible())
@@ -255,76 +258,68 @@ class ControlsPanelWidget(QWidget):
         :param identifier: identifier of the field being changed
         """
         # Gets the object being edited right now and updated the fields based on identifier
-        for object_ in self.objects_editing:
-            if object_.is_being_edited:
-                if identifier == "Long Name":
-                    object_.setLongName(text)
-                elif identifier == "Label Position":
-                    object_.long_name_label.moveToPosition(text)
-                elif identifier == "Fluid":
-                    object_.setFluid(text)
-                elif identifier == "Long Name Label":
-                    object_.long_name_label.setVisible(text)
-                elif identifier == "Position is":
-                    object_.setPositionLock(text)
-                elif identifier == "Serial Number":
-                    object_.setShortName(text)
-                elif identifier == "Serial Number Position":
-                    object_.serial_number_label.moveToPosition(text)
-                elif identifier == "Scale":
-                    object_.setScale(text)
-                elif identifier == "Rows":
-                    object_.long_name_label.setRows(text)
-                elif identifier == "Long Name Font Size":
-                    object_.long_name_label.setFontSize(text)
-                elif identifier == "Serial Number Font Size":
-                    object_.serial_number_label.setFontSize(text)
-                elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
-                    object_.setUnits(text)
-                elif identifier == "Channel":
-                    object_.setChannel(text)
-                elif identifier == "SN Label Visibility":
-                    object_.serial_number_label.setVisible(text)
+        object_ = self.object_editing # Lazy mans fix
 
+        # Sanity check that object is actually being edited
+        if object_.is_being_edited:
 
-    # FIXME: Things don't work well if more than one object are in here
+            # Component Parameters
+            if identifier == "Component Name":
+                object_.setLongName(text)
+            elif identifier == "Serial Number":
+                object_.setShortName(text)
+            elif identifier == "Component Fixed?":
+                object_.setPositionLock(text)
+            elif identifier == "Component Scale":
+                object_.setScale(text)
+            elif identifier == "Component Fluid":
+                object_.setFluid(text)
+            elif identifier == "Channel":
+                object_.setChannel(text)
+            elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
+                object_.setUnits(text)
+
+            # Component Label Parameters
+            elif identifier == "Component Name Visibility":
+                object_.long_name_label.setVisible(text)
+            elif identifier == "Component Name Position":
+                object_.long_name_label.moveToPosition(text)
+            elif identifier == "Component Name Font Size":
+                object_.long_name_label.setFontSize(text)
+            elif identifier == "Component Name Rows":
+                object_.long_name_label.setRows(text)
+
+            # Serial Number Label Parameters
+            elif identifier == "Serial Number Visibility":
+                object_.serial_number_label.setVisible(text)
+            elif identifier == "Serial Number Position":
+                object_.serial_number_label.moveToPosition(text)
+            elif identifier == "Serial Number Font Size":
+                object_.serial_number_label.setFontSize(text)
+
     # HMM: Move is_being_edited to object class and call this function here
-    def addEditingObjects(self, objects):
+    def addEditingObject(self, object_):
         """
         Adds object to list to be edited
         """
-        objects.setIsEditing(True)
-        self.objects_editing.append(objects)
+        # Make sure the currently editing object is removed
+        self.removeEditingObject()
+        # Keep track of what object is being updated, and update the fields
+        object_.setIsEditing(True)
+        self.object_editing = object_
         self.edit_frame.show()
+        self.updateEditPanelFields(object_)
 
-        self.updateEditPanelFields(objects)
-
-    def removeEditingObjects(self, objects):
+    def removeEditingObject(self):
         """
         Removes object from list to be edited
         """
-        objects.setIsEditing(False)
-        self.objects_editing.remove(objects)
-
-        # If no objects are being edited hide the edit frame
-        if len(self.objects_editing) == 0:
+        # Safely remove the object that is currently being edited
+        if self.object_editing is not None:
+            self.object_editing.setIsEditing(False)
+            self.object_editing = None
             self.edit_frame.hide()
 
-    def removeAllEditingObjects(self):
-        """
-        Sets all objects to not be editing and clears the editing list
-        """
-        for object_ in self.objects_editing:
-            object_.setIsEditing(False)
-
-        self.objects_editing.clear()
-        self.edit_frame.hide()
-
-    def save(self):
-        """
-        This saves the edits and changes back into user mode
-        """
-        self.removeAllEditingObjects()
 
 
 

@@ -12,7 +12,8 @@ from object import BaseObject
 """
 Class to handle all tank objects and their functionality 
 """
-# TODO: Tanks need to be more similar to solenoids so the base object can be expanded
+
+
 class Tank(BaseObject):
 
     object_name = "Tank"
@@ -24,7 +25,7 @@ class Tank(BaseObject):
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
+                 long_name_label_local_pos: QPoint = QPoint(0 , 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1):
         """
         Initializer for Solenoid
@@ -94,18 +95,17 @@ class Tank(BaseObject):
 
         # Draws the tank outline
         path = QPainterPath()
-        if self.is_vertical == True:
+        if self.is_vertical:
             path.moveTo(0,arcHeight)
             path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180)
             path.lineTo(self.width, self.height - 2 * arcHeight) 
             path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180)
             path.lineTo(0, arcHeight)
-        
-        elif self.is_vertical == False:
+        else:
             path.moveTo(arcHeight,0)
             path.arcTo(QRectF(0, 0,  arcHeight * 2, self.height), 90, 180) 
             path.lineTo(self.width - arcHeight, self.height) 
-            path.arcTo(path.currentPosition().x()-arcHeight,0,arcHeight*2,self.height, -90, 180)
+            path.arcTo(path.currentPosition().x()-arcHeight, 0 ,arcHeight*2,self.height, -90, 180)
             path.lineTo(arcHeight, 0)
             
         path.translate(self.position.x(), self.position.y()) # Translate it into position

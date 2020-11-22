@@ -3,7 +3,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
-from constants import Constants
 from object import BaseObject
 
 
@@ -18,7 +17,7 @@ class GenSensor(BaseObject):
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 23,
+                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1,sensor_type: str = "Static Pressure", channel_number: str = '0'):
 
         """
@@ -59,7 +58,8 @@ class GenSensor(BaseObject):
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows)
 
-        # TODO: Grab object scale from widget_parent
+        self.widget_parent = widget_parent  # Important for drawing icon
+        self.gui = self.widget_parent.gui
         self.sensor_type = sensor_type
         self.channel_number = channel_number
         self.measurement = 0
@@ -141,6 +141,28 @@ class GenSensor(BaseObject):
             self.setMeasurement(self.measurement + 200)
 
         super().onClick()
+
+    @overrides
+    def setScale(self, scale):
+        """
+        Called when the Sensor is clicked
+        """
+        font = self.measurement_label.font()
+        size = font.pointSizeF()
+        if scale < self.scale:
+            font.setPointSizeF((size-1) * self.gui.font_scale_ratio)
+        else:
+            font.setPointSizeF((size + 1) * self.gui.font_scale_ratio)
+
+        self.measurement_label.setFont(font)
+
+        super().setScale(scale)
+
+        self.measurement_label.setFixedSize(QSize(self.width, self.height))
+        self.measurement_label.move(self.position.x(), self.position.y())
+        self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+
+
 
     @overrides
     def draw(self):
