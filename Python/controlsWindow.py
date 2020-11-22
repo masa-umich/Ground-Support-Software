@@ -130,7 +130,7 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         length = len(self.w.controlsWidget.object_list)
         for i in range(length):
-            print(self.w.controlsWidget.object_list[0].short_name)
+            print(self.w.controlsWidget.object_list[0].serial_number)
             self.w.controlsWidget.deleteObject(self.w.controlsWidget.object_list[0])
 
         self.w.controlsWidget.tube_list = []

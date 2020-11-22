@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
-from plotButton import PlotButton
+from objectButton import ObjectButton
 from customLabel import CustomLabel
 from anchorPoint import AnchorPoint
 
@@ -21,15 +21,15 @@ class BaseObject:
     ----------------------------------------------------------------------------------------------------------------"""
 
     def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
-                 scale: float = 1, avionics_number: int = 5, short_name: str = 'untitled', safety_status: int = -1,
+                 scale: float = 1, serial_number: str = 'untitled', safety_status: int = -1,
                  long_name: str = 'untitled', is_vertical: bool = False, is_being_edited: bool = False,
                  is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
-                 short_name_label_pos: str = "Bottom", short_name_label_local_pos: QPoint = QPoint(0,0),
-                 short_name_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 23,
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
+                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1):
         """
-        Initializer for base class
+        Initializer for Solenoid
 
         :param parent: parent widget
         :param position: position of icon on screen
@@ -38,15 +38,19 @@ class BaseObject:
         :param height: height of object
         :param name: name of object
         :param scale: scale applied to the object
-        :param avionics_number: avionics identifier
-        :param short_name: abbreviated name on schematics
-        :param safety_status: safety criticality
+        :param serial_number: abbreviated name on schematics
         :param long_name: human-readable name for display on screen
         :param is_vertical: tracker if object is drawn vertically
-        :param is_being_edited: tracker if object is drawn vertically
-        :param is_being_dragged: tracker if object is currently being dragged by user
         :param locked: tracker if the object is locked from editing
         :param position_locked: tracker if the object position is locked
+        :param _id: unique internal gui id of the object
+        :param serial_number_label_pos: string of where the serial number label is
+        :param serial_number_label_local_pos: local position on where serial number label is
+        :param serial_number_label_font_size: font size of serial number label
+        :param long_name_label_pos: string of where the long name label is
+        :param long_name_label_local_pos: local position on where long name label is
+        :param long_name_label_font_size: font size of long name label
+        :param long_name_label_rows: how many rows long name label should have
         """
         super().__init__()
 
@@ -63,8 +67,7 @@ class BaseObject:
         self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
         self.name = name
         self.scale = scale
-        self.avionics_number = avionics_number
-        self.short_name = short_name
+        self.serial_number = serial_number
         self.safety_status = safety_status
         self.long_name = long_name
         self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
@@ -73,80 +76,21 @@ class BaseObject:
         self.locked = locked
         self.position_locked = position_locked
         self.context_menu = QMenu(self.widget_parent)
-        self.button = PlotButton(self.short_name, self, 'data.csv', 'Pressure', self.widget_parent)
+        self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
                                            position_string=long_name_label_pos, rows=long_name_label_rows)
 
-        self.short_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
-                                            is_vertical=False, font_size=short_name_label_font_size,
-                                            text=self.short_name, local_pos=short_name_label_local_pos,
-                                            position_string=short_name_label_pos)
+        self.serial_number_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+                                            is_vertical=False, font_size=serial_number_label_font_size,
+                                            text=self.serial_number, local_pos=serial_number_label_local_pos,
+                                            position_string=serial_number_label_pos)
 
         self.anchor_points = []
 
-        self._initButton()
-        self._initLabels()
         self._initAnchorPoints()
-
-
-    def _initButton(self):
-        """
-        Basic function that handles all the setup for the PlotButton
-        Should only be called from __init__
-        """
-        # Create Button and style it
-        self.button.setStyleSheet("background-color:transparent;border:0;")
-        self.button.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.button.setToolTip(self.short_name + "\nState: Closed")
-
-        self.button.resize(self.width, self.height)
-        self.button.move(self.position.x(), self.position.y())
-
-        # Add quitAction
-        self.context_menu.addAction("Delete Object")
-
-        # Connect plot options to button context menu
-        self.button.clicked.connect(lambda: self.onClick())
-        self.button.customContextMenuRequested.connect(
-            lambda *args: self.contextMenuEvent_(*args)
-        )
-        self.button.show()
-        # Raise button above label
-        self.button.raise_()
-
-    def _initLabels(self):
-        """
-        Basic function that handles all the setup for the labels
-        Should only be called from __init__
-        """
-
-        # Get font and set it
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily("Arial")
-
-        #### Long Name Label ####
-        # Sets the sizing of the label
-        self.long_name_label.setFont(font)
-        self.long_name_label.setFontSize(12)
-        self.long_name_label.setText(self.long_name)
-
-        #### Short Name Label ####
-        self.short_name_label.setFont(font)
-        self.short_name_label.setFontSize(10)
-        self.short_name_label.setText(self.short_name)
-
-
-        if self.is_vertical:
-            self.short_name_label.moveToPosition("Left")
-        else:
-            self.short_name_label.moveToPosition("Bottom")
-
-        # Make em visible
-        self.long_name_label.show()
-        self.short_name_label.show()
+        self._initContextMenu()
 
     def _initAnchorPoints(self):
         """
@@ -160,7 +104,16 @@ class BaseObject:
                          AnchorPoint(QPoint(self.width, int(self.height / 2)), self, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
-        
+
+    def _initContextMenu(self):
+        """
+        Initialize is an odd work to use, simply just sets the actions the context menu will contain
+        """
+
+        # Add quitAction
+        self.context_menu.addAction("Delete Object")
+        # Connect Context menu to button right click
+        self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
 
     """----------------------------------------------------------------------------------------------------------------
     GETTERS and SETTERS
@@ -171,7 +124,7 @@ class BaseObject:
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip(self.short_name + "\n" + text)
+        self.button.setToolTip(self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
@@ -190,14 +143,14 @@ class BaseObject:
 
     def setShortName(self, name):
         """
-        Sets short name and label of object
-        :param name: short_name of the object
+        Sets serial number and label of object
+        :param name: serial_number of the object
         """
-        self.short_name = name
-        self.short_name_label.setText(name)
+        self.serial_number = name
+        self.serial_number_label.setText(name)
 
         # Moves the label to keep it in the center if it changes length
-        self.short_name_label.moveToPosition()
+        self.serial_number_label.moveToPosition()
 
     def setScale(self, scale):
         """
@@ -224,20 +177,12 @@ class BaseObject:
 
         # Move things into the correct location
         self.move(QPointF(self.position).toPoint() - QPointF(center_offset).toPoint())
-        self.button.move(self.position)
 
         # Update some other dependent values
         self.setAnchorPoints()
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-
-    def setAvionicsNumber(self, number):
-        """
-        Sets avionics number of object
-        :param number: avionics number of the object
-        """
-        self.avionics_number = number
 
     def setFluid(self, fluid):
         """
@@ -292,13 +237,13 @@ class BaseObject:
         can be added by overriding this function in the child class
         """
 
+        # If the widget is in edit mode and an object is clicked, toggle if it is editing or now
         if self.widget_parent.window.is_editing:
             if self.is_being_edited:
-                self.widget_parent.controlsPanel.removeEditingObjects(self)
+                self.widget_parent.controlsPanel.removeEditingObject()
 
             else:
-                self.widget_parent.controlsPanel.removeAllEditingObjects()
-                self.widget_parent.controlsPanel.addEditingObjects(self)
+                self.widget_parent.controlsPanel.addEditingObject(self)
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -310,7 +255,7 @@ class BaseObject:
         """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.short_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.serial_number_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         # Right now does not set ap points as transparent to allow for them to be clicked on
         # for ap in self.anchor_points:
         #     ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -335,15 +280,16 @@ class BaseObject:
         else:
             self.hideAnchorPoints()
         
-        #If object is selected, a thin yellow box is drawn to idicate so
-        if self.is_being_edited == True:
+        # If object is selected, a thin yellow box is drawn to idicate so
+        if self.is_being_edited:
             self.highlight(pen)
             
-    def highlight(self,pen):
+    def highlight(self, pen):
         """
         Draws a thin box around selected object
+        :param pen: Pen that will be used to draw
         """
-        buffer = 8  #Space between the object and the highlight line
+        buffer = 8  # Space between the object and the highlight line
         pen.setStyle(Qt.DotLine)
         pen.setWidth(1)
         pen.setColor(QColor(255,255,0))
@@ -352,18 +298,22 @@ class BaseObject:
         
     def move(self, point: QPoint):
         """
-        Move object to a new position
+        Move object to a new position. This function does not handle the dragging and dropping of objects directly.
+        Instead look in objectButton.py, the button class that object builds on, inside of the mouseMoveEvent function.
+        Also note, this function will always succeed regardless if the object position is locked. This is intentional
+        and because it allows the code to always move the object if need be. The positions lock is checked inside of the
+        mouseMoveEvent instead.
         :param point: point to move to
         """
 
-        if self.position_locked is False and self.locked is False:
-            self.button.move(point)
-            self.context_menu.move(point)
-            self.position = point
-            self.updateAnchorPoints()
-            self.long_name_label.moveToPosition()
-            self.short_name_label.moveToPosition()
-            self.deleteConnectedTubes()
+        # Move the object and all the shit connected to it
+        self.button.move(point)
+        self.context_menu.move(point)
+        self.position = point
+        self.updateAnchorPoints()
+        self.long_name_label.moveToPosition()
+        self.serial_number_label.moveToPosition()
+        self.deleteConnectedTubes()
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -373,14 +323,28 @@ class BaseObject:
         Rotate objects. Updates anchor points, geometry, and drawing
         called by controlsWidget
         """
-        dim1 = self.width
-        dim2 = self.height
-        self.width = dim2
-        self.height = dim1
+        # Switch the height and width dimensions, also move to rotate about center
+        oldWidth = self.width
+        oldHeight = self.height
+        old_center_position = self.position + QPoint(int(oldWidth / 2), int(oldHeight / 2))
+
+        self.width = oldHeight
+        self.height = oldWidth
+        new_center_position = self.position + QPoint(int(self.width / 2), int(self.height / 2))
+
+        # Get the center offset and move it to the correct position to rotate about the center
+        center_offset = new_center_position - old_center_position
+        self.move(QPointF(self.position).toPoint() - QPointF(center_offset).toPoint())
+
+        # Toggle if the object is labeled as vertical or not and update properties
         self.is_vertical = not self.is_vertical
         self.setAnchorPoints()
         self.button.resize(self.width, self.height)
-        self.draw()
+        self.long_name_label.moveToPosition()
+        self.serial_number_label.moveToPosition()
+
+        # Tells widget painter to update screen
+        self.widget_parent.update()
 
     def checkApAlignment(self, pos: QPoint = None):
         """
@@ -433,6 +397,7 @@ class BaseObject:
         if self.widget_parent.window.is_editing:
             action = self.context_menu.exec_(self.button.mapToGlobal(event))
 
+        # The actions that go in here can be found in the _initContextMenu function in this class
             if action is not None:
                 if action.text() == "Delete Object":
                     self.widget_parent.deleteObject(self)
@@ -470,13 +435,12 @@ class BaseObject:
                 "height": self.height/self.gui.pixel_scale_ratio[0],
                 "name": self.name,
                 "scale": self.scale,
-                "avionics number": self.avionics_number,
-                "short name": self.short_name,
+                "serial number": self.serial_number,
                 "long name": self.long_name,
                 "is vertical": self.is_vertical,
                 "is locked": self.locked,
                 "is pos locked": self.position_locked,
-                "short name label": self.short_name_label.generateSaveDict(),
+                "serial number label": self.serial_number_label.generateSaveDict(),
                 "long name label": self.long_name_label.generateSaveDict()
             }
         }
@@ -494,15 +458,14 @@ class BaseObject:
 
         self.button.deleteLater()
         del self.button
-        self.short_name_label.deleteLater()
-        del self.short_name_label
+        self.serial_number_label.deleteLater()
+        del self.serial_number_label
         self.long_name_label.deleteLater()
         del self.long_name_label
         for ap in self.anchor_points:
             ap.deleteLater()
         del self.anchor_points
         del self._id
-        del self.avionics_number
         del self
 
     def deleteConnectedTubes(self):

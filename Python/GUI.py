@@ -2,9 +2,10 @@ import sys
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from controlsWindow import ControlsWindow
-from constants import  Constants
+from constants import Constants
 
 
 
@@ -18,6 +19,9 @@ class GUI:
         # Get the scaling ratio for objects in the gui. The scale ratio would be 1 on a screen of a resolution of 1600
         # wide and 1200 tall
         self.pixel_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
+
+        # Add in fonts
+        QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
 
         if sys.platform == "win32":
             self.platform = "Windows"

@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
+from constants import Constants
 
 """
 Provides custom functionality for labels
@@ -13,7 +14,7 @@ Provides custom functionality for labels
 class CustomLabel(QLabel):
 
     def __init__(self, widget_parent, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 23, text: str = "Name"):
+                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name"):
         super().__init__(widget_parent)
         self.widget = widget_parent
         self.gui = self.widget.gui
@@ -42,12 +43,13 @@ class CustomLabel(QLabel):
         self.moveToPosition()
 
     def setFont_(self, font: QFont = None):
+
         if font is not None:
             self.setFont(font)
         else:
             font = QFont()
             font.setStyleStrategy(QFont.PreferAntialias)
-            font.setFamily("Arial")
+            font.setFamily(Constants.default_font)
             self.setFont(font)
 
     def setFontSize(self, size: int):
@@ -250,7 +252,7 @@ class CustomLabel(QLabel):
             super().mouseReleaseEvent(event)
 
             # Makes sure that the button is still checked as editing and edit panel does not disappear
-            self.widget.controlsPanel.addEditingObjects(self.object_)
+            self.widget.controlsPanel.addEditingObject(self.object_)
         else:
             super().mouseReleaseEvent(event)
 

@@ -77,7 +77,7 @@ class ControlsWidget(QWidget):
 
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Constants.BG_color)
+        p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
         self.setPalette(p)
 
         # TODO: move these somewhere when file system is initiated
@@ -140,7 +140,7 @@ class ControlsWidget(QWidget):
         else:
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
-            self.controlsPanel.save()
+            self.controlsPanel.removeEditingObject()
             if self.parent.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
@@ -213,8 +213,8 @@ class ControlsWidget(QWidget):
         #If 'r' key is pressed:
         elif e.key() == 82:
             #Calls rotate method on last object in editing list
-            if len(self.controlsPanel.objects_editing) != 0:
-                self.controlsPanel.objects_editing[-1].rotate()
+            if self.controlsPanel.object_editing is not None:
+                self.controlsPanel.object_editing.rotate()
                 self.update()
 
 
@@ -259,7 +259,7 @@ class ControlsWidget(QWidget):
 
         # If we are not expecting a release don't remove all objects
         if not self.should_ignore_mouse_release:
-            self.controlsPanel.removeAllEditingObjects()
+            self.controlsPanel.removeEditingObject()
         else:
             self.should_ignore_mouse_release = False
 
@@ -280,7 +280,7 @@ class ControlsWidget(QWidget):
 
             # Below ifs creates new objects at the point where the right click
             if action is not None:
-                self.controlsPanel.removeAllEditingObjects()
+                self.controlsPanel.removeEditingObject()
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
@@ -303,7 +303,7 @@ class ControlsWidget(QWidget):
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
-                self.controlsPanel.addEditingObjects(self.object_list[-1])
+                self.controlsPanel.addEditingObject(self.object_list[-1])
 
             self.update()
 
@@ -347,28 +347,28 @@ class ControlsWidget(QWidget):
                 self.object_list.append(Solenoid(self, _id=sol["id"], position=QPoint(sol["pos"]["x"],sol["pos"]["y"]),
                                                  fluid=sol["fluid"],width=sol["width"], height=sol["height"],
                                                  name=sol["name"],scale=sol["scale"],
-                                                 avionics_number=sol["avionics number"], short_name=sol["short name"],
+                                                 serial_number=sol["serial number"],
                                                  long_name=sol["long name"], is_vertical=sol["is vertical"],
                                                  locked=sol["is locked"],position_locked=sol["is pos locked"],
-                                                 short_name_label_pos=sol["short name label"]["pos string"],
-                                                 short_name_label_font_size=sol["short name label"]["font size"],
-                                                 short_name_label_local_pos=QPoint(sol["short name label"]["local pos"]["x"],sol["short name label"]["local pos"]["y"]),
+                                                 serial_number_label_pos=sol["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=sol["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(sol["serial number label"]["local pos"]["x"],sol["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel_number=sol["channel number"]))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
                 self.object_list.append(Tank(self, _id=tnk["id"], position=QPoint(tnk["pos"]["x"], tnk["pos"]["y"]),
                                              fluid=tnk["fluid"], width=tnk["width"], height=tnk["height"],
                                              name=tnk["name"], scale=tnk["scale"],
-                                             avionics_number=tnk["avionics number"], short_name=tnk["short name"],
+                                             serial_number=tnk["serial number"],
                                              long_name=tnk["long name"], is_vertical=tnk["is vertical"],
                                              locked=tnk["is locked"], position_locked=tnk["is pos locked"],
-                                             short_name_label_pos=tnk["short name label"]["pos string"],
-                                             short_name_label_font_size=tnk["short name label"]["font size"],
-                                             short_name_label_local_pos=QPoint(tnk["short name label"]["local pos"]["x"], tnk["short name label"]["local pos"]["y"]),
+                                             serial_number_label_pos=tnk["serial number label"]["pos string"],
+                                             serial_number_label_font_size=tnk["serial number label"]["font size"],
+                                             serial_number_label_local_pos=QPoint(tnk["serial number label"]["local pos"]["x"], tnk["serial number label"]["local pos"]["y"]),
                                              long_name_label_pos=tnk["long name label"]["pos string"],
                                              long_name_label_font_size=tnk["long name label"]["font size"],
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
@@ -379,29 +379,29 @@ class ControlsWidget(QWidget):
                 self.object_list.append(GenSensor(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
                                                  fluid=pt["fluid"], width=pt["width"], height=pt["height"],
                                                  name=pt["name"], scale=pt["scale"],
-                                                 avionics_number=pt["avionics number"], short_name=pt["short name"],
+                                                 serial_number=pt["serial number"],
                                                  long_name=pt["long name"], is_vertical=pt["is vertical"],
                                                  locked=pt["is locked"], position_locked=pt["is pos locked"],
-                                                 short_name_label_pos=pt["short name label"]["pos string"],
-                                                 short_name_label_font_size=pt["short name label"]["font size"],
-                                                 short_name_label_local_pos=QPoint(pt["short name label"]["local pos"]["x"], pt["short name label"]["local pos"]["y"]),
+                                                 serial_number_label_pos=pt["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=pt["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(pt["serial number label"]["local pos"]["x"], pt["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=pt["long name label"]["pos string"],
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 sensor_type=pt["sensor type"]))
+                                                 sensor_type=pt["sensor type"], channel_number=pt["channel number"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
                 self.object_list.append(Chamber(self, _id=idx["id"], position=QPoint(idx["pos"]["x"], idx["pos"]["y"]),
                                                 fluid=idx["fluid"], width=idx["width"], height=idx["height"],
                                                 name=idx["name"], scale=idx["scale"],
-                                                avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                serial_number=idx["serial number"],
                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
                                                 locked=idx["is locked"], position_locked=idx["is pos locked"],
-                                                short_name_label_pos=idx["short name label"]["pos string"],
-                                                short_name_label_font_size=idx["short name label"]["font size"],
-                                                short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"], idx["short name label"]["local pos"]["y"]),
+                                                serial_number_label_pos=idx["serial number label"]["pos string"],
+                                                serial_number_label_font_size=idx["serial number label"]["font size"],
+                                                serial_number_label_local_pos=QPoint(idx["serial number label"]["local pos"]["x"], idx["serial number label"]["local pos"]["y"]),
                                                 long_name_label_pos=idx["long name label"]["pos string"],
                                                 long_name_label_font_size=idx["long name label"]["font size"],
                                                 long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
@@ -412,12 +412,12 @@ class ControlsWidget(QWidget):
                 self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
                                                  name=idx["name"],scale=idx["scale"],
-                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 serial_number=idx["serial number"],
                                                  long_name=idx["long name"], is_vertical=idx["is vertical"],
                                                  locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 short_name_label_pos=idx["short name label"]["pos string"],
-                                                 short_name_label_font_size=idx["short name label"]["font size"],
-                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
@@ -428,12 +428,12 @@ class ControlsWidget(QWidget):
                 self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
                                                  name=idx["name"],scale=idx["scale"],
-                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 serial_number=idx["serial number"],
                                                  long_name=idx["long name"], is_vertical=idx["is vertical"],
                                                  locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 short_name_label_pos=idx["short name label"]["pos string"],
-                                                 short_name_label_font_size=idx["short name label"]["font size"],
-                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
@@ -444,12 +444,12 @@ class ControlsWidget(QWidget):
                 self.object_list.append(HeatEx(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
                                                  name=idx["name"],scale=idx["scale"],
-                                                 avionics_number=idx["avionics number"], short_name=idx["short name"],
+                                                 serial_number=idx["serial number"],
                                                  long_name=idx["long name"], is_vertical=idx["is vertical"],
                                                  locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 short_name_label_pos=idx["short name label"]["pos string"],
-                                                 short_name_label_font_size=idx["short name label"]["font size"],
-                                                 short_name_label_local_pos=QPoint(idx["short name label"]["local pos"]["x"],idx["short name label"]["local pos"]["y"]),
+                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
