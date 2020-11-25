@@ -101,21 +101,15 @@ class Solenoid(BaseObject):
         # = 0 -> Draw horizontally
         if self.is_vertical == 0:
             path.lineTo(0,self.height)  # Straight Down
-            path.lineTo(self.width,0)  # Diag to upper right
+            path.lineTo(self.width, 0)  # Diag to upper right
             path.lineTo(self.width, self.height)  # Straight Up
             path.lineTo(0, 0)
 
-            # TODO: Implement three way Solenoid
-            # path.moveTo(self.width/2, self.height/2)
-            # path.lineTo((self.width/2) - (self.height/2), (self.height/2) - (self.width /2))
-            # path.lineTo((self.width/2) + (self.height/2), (self.height/2) - (self.width /2))
-            # path.lineTo(self.width/2, self.height/2)
         else:  # Draw vertically
             path.lineTo(self.width, 0)
             path.lineTo(0, self.height)
             path.lineTo(self.width, self.height)
             path.lineTo(0, 0)
-
 
         path.translate(self.position.x(), self.position.y())
 

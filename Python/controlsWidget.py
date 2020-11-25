@@ -83,14 +83,6 @@ class ControlsWidget(QWidget):
         # TODO: move these somewhere when file system is initiated
         self.loadData()
 
-        # TODO: Move this button to the edit menu bar
-        self.edit_button = QPushButton("EDIT", self)
-        self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
-                              30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.show()
-
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
         # TODO: Move this to the main window instead of the widget
@@ -135,10 +127,8 @@ class ControlsWidget(QWidget):
         """
         self.window.is_editing = not self.window.is_editing
 
-        if self.window.is_editing:
-            self.edit_button.setText("SAVE")
-        else:
-            self.edit_button.setText("EDIT")
+        # Leaving edit mode, nothing to do when entering
+        if not self.window.is_editing:
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.removeEditingObject()
             if self.parent.window.fileName != "":

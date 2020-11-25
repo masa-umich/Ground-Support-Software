@@ -7,11 +7,13 @@ from PyQt5.QtGui import *
 from controlsWindow import ControlsWindow
 from constants import Constants
 
-
+from run import Run
 
 """
 Program start point. This class handles all child windows of the gui
 """
+
+
 class GUI:
     def __init__(self):
         # Get the screen resolution of the user
@@ -21,7 +23,8 @@ class GUI:
         self.pixel_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
 
         # Add in fonts
-        QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/Montserrat/ontserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
 
         if sys.platform == "win32":
             self.platform = "Windows"
@@ -38,11 +41,12 @@ class GUI:
             self.font_scale_ratio = 1
 
             Constants.line_width = 2
+
+        # This variable holds the current Run class that is being used to conduct the test
+        self.run = Run()
+
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
-
-
-
 
 
 if __name__ == '__main__':

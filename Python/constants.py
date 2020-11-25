@@ -5,6 +5,7 @@ from PyQt5.QtGui import QColor
 Class to hold any constant value that is important to the entire program
 """
 
+
 class Constants:
 
     # Dict of fluids. Example call: fluid["HE"] -> Returns 0
@@ -24,7 +25,6 @@ class Constants:
 
     line_width = 2
 
-    
     BG_color = QColor(0, 22, 44)
     MASA_Blue_color = QColor(0, 39, 76)
     MASA_Beige_color = QColor(238, 238, 234)
@@ -32,6 +32,7 @@ class Constants:
     MASA_Maize_color = QColor(255, 203, 5)
 
     default_font = "Montserrat"
+    monospace_font = "Roboto Mono"
 
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]
