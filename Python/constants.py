@@ -26,10 +26,14 @@ class Constants:
     line_width = 2
 
     BG_color = QColor(0, 22, 44)
+    Board_color = QColor(24, 156, 12, 255)
+    Indicator_Green_color = QColor(35, 136, 35, 255)
+    Indicator_Yellow_color = QColor(255, 191, 0, 255)
+    Indicator_Red_color = QColor(210, 34, 45, 255)
     MASA_Blue_color = QColor(0, 39, 76)
     MASA_Beige_color = QColor(238, 238, 234)
     MASA_Scarlet_color = QColor(242, 46, 0)
-    MASA_Maize_color = QColor(255, 203, 5)
+    MASA_Maize_color = QColor(255, 203, 5)  # #ffcb05
 
     default_font = "Montserrat"
     monospace_font = "Roboto Mono"
@@ -37,7 +41,8 @@ class Constants:
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]
 
-    # Dict of fluid colors. Number on left should match value of fluid dict above. Example call: fluidColor[0] -> Returns Qt.white
+    # Dict of fluid colors. Number on left should match value of fluid dict above.
+    # Example call: fluidColor[0] -> Returns Qt.white
     fluidColor = {
         "HE": QColor(255,255,255,255),
         0: QColor(255,255,255,255),

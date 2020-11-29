@@ -8,8 +8,6 @@ from missionWidget import MissionWidget
 
 from overrides import overrides
 
-from run import Run
-
 """
 This file contains the class to create the main window
 """
@@ -163,6 +161,7 @@ class ControlsWindow(QMainWindow):
         If not already editing, calls toggle edit to enter edit mode
         """
         if not self.centralWidget.is_editing:
+            #self.centralWidget.controlsPanelWidget.show()
             self.centralWidget.controlsWidget.toggleEdit()
             self.enterEditAct.setDisabled(True)
             self.exitEditAct.setEnabled(True)
@@ -173,6 +172,7 @@ class ControlsWindow(QMainWindow):
         """
         if self.centralWidget.is_editing:
             self.centralWidget.controlsWidget.toggleEdit()
+            #self.centralWidget.controlsPanelWidget.hide()
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
 
@@ -197,7 +197,7 @@ class ControlsWindow(QMainWindow):
         formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
 
         # Create a regular expression validator for the QLineEdit to make sure only characters we want are accepted
-        reg_exp = QRegExp("[a-zA-Z0-9 ]+")  # Lower and capital letters, numbers, and spaces, at any length (+)
+        reg_exp = QRegExp("[a-zA-Z0-9 -]+")  # Lower and capital letters, numbers,-, and spaces, at any length (+)
         reg_exp_validator = QRegExpValidator(reg_exp)
 
         # Add in the textbox to give run a title

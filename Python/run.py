@@ -1,5 +1,3 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 import time
@@ -18,6 +16,8 @@ class Run(QObject):  #
     # TODO: Currently the Gui will have to be closed and reopened to allow for a new run
 
     # Signals for this class
+    runStartSignal = pyqtSignal()
+    runEndSignal = pyqtSignal()
     updateMETSignal = pyqtSignal(int)
 
     def __init__(self):
@@ -59,20 +59,28 @@ class Run(QObject):  #
         self.thread = RunBackgroundThread(self)
         self.thread.start()
 
+        self.runStartSignal.emit()
+
     def endRun(self):
         """
         End the current run
         """
+        # Want to update MET one last time to get final MET before run ends
+        self.updateMET()
         self.is_active = False
+        self.runEndSignal.emit()
 
     def updateMET(self):
         """
         This function updates the MET time for the run. Should be called whenever the MET being accurate is critical
         """
-        # Set the MET, note the msecTo function returns negative for times in the past
-        self.MET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
-        # Emit the signal that will allow other parts of the GUI to update with this data
-        self.updateMETSignal.emit(self.MET)
+        # Have to double check this here because thread is still in loop when run ends and one last MET update occurs
+        if self.is_active:
+            # Set the MET, note the msecTo function returns negative for times in the past
+            self.MET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
+            # Emit the signal that will allow other parts of the GUI to update with this data
+            self.updateMETSignal.emit(self.MET)
+
 
 class RunBackgroundThread(QThread):
     """
@@ -97,7 +105,3 @@ class RunBackgroundThread(QThread):
             # Update the MET every second, this can be increased but seems unnecessary
             time.sleep(1)
             self.run.updateMET()
-
-
-
-

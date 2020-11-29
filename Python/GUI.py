@@ -23,8 +23,12 @@ class GUI:
         self.pixel_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
 
         # Add in fonts
-        QFontDatabase.addApplicationFont("Fonts/Montserrat/ontserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
         QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Light.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Thin.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         if sys.platform == "win32":
             self.platform = "Windows"
