@@ -3,13 +3,16 @@ import serial
 import time
 import threading
 
-import telemParse import TelemParse
+from telemParse import TelemParse
 
 class S2_Interface:
-    nonlocal ser, ports_box, serial_name
-    global parser = TelemParse()    # Contains all telem data
+    def __init__(self):
+        self.ser            = None
+        self.ports_box      = []
+        self.serial_name    = ""
+        self.parser         = TelemParse()    # Contains all telem data
 
-    def scan():
+    def scan(self):
         ports = [p.device for p in serial.tools.list_ports.comports()]
         return ports
 
@@ -19,14 +22,14 @@ class S2_Interface:
         baud (integer)      - baud rate     ex: 115200
         timeout (decimal)   - time before timing out    ex: 0.5
     """
-    def connect(port_name, baud, timeout):
-        if ser.isOpen():
-            ser.close()
+    def connect(self, port_name, baud, timeout):
+        if self.ser.isOpen():
+            self.ser.close()
         try:
-            ser = serial.Serial(port=port_name, baud, timeout)
-            ser.open()
-            ser.readline()
-            serial_name = str(port_name) # assign port name
+            self.ser = serial.Serial(port=port_name, baud_rate=baud, timeout=timeout)
+            self.ser.open()
+            self.ser.readline()
+            self.serial_name = str(port_name) # assign port name
             print("Connection established on %s" % str(port_name))
         except:
             print("Unable to connect to selected port or no ports available")
@@ -40,21 +43,21 @@ class S2_Interface:
     """
 
     # Updates global parser variable for python gui to use
-    def parse_serial():
+    def parse_serial(self):
         try:
-            if (ser.is_open):
-                packet = ser.readLine()
+            if (self.ser.is_open):
+                packet = self.ser.readLine()
                 print(len(packet))
 
-	            packet = unstuff_packet(packet)
+                packet = unstuff_packet(packet)
                 try:
-                    parser.parse_packet(packet)
+                    self.parser.parse_packet(packet)
                 except:
                     print("Packet lost")
-        Exception as e:
+        except Exception as e:
             print(e)
 
-    def unstuff_packet(packet):
+    def unstuff_packet(self, packet):
         unstuffed = b''
         index = int(packet[0])
         for n in range(1, len(packet)):
