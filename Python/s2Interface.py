@@ -7,7 +7,7 @@ from telemParse import TelemParse
 
 class S2_Interface:
     def __init__(self):
-        self.ser            = None
+        self.ser            = serial.Serial(port=None)
         self.ports_box      = []
         self.serial_name    = ""
         self.parser         = TelemParse()    # Contains all telem data
@@ -26,13 +26,14 @@ class S2_Interface:
         if self.ser.isOpen():
             self.ser.close()
         try:
-            self.ser = serial.Serial(port=port_name, baud_rate=baud, timeout=timeout)
-            self.ser.open()
-            self.ser.readline()
+            self.ser = serial.Serial(port=port_name, baudrate=baud, bytesize=8,
+                                timeout=timeout, stopbits=serial.STOPBITS_ONE)
+            if not self.ser.isOpen():
+                self.ser.open()
             self.serial_name = str(port_name) # assign port name
             print("Connection established on %s" % str(port_name))
-        except:
-            print("Unable to connect to selected port or no ports available")
+        except Exception as e:
+            print("Unable to connect to selected port ", e)
 
     """
     experimental multithreading
@@ -46,25 +47,29 @@ class S2_Interface:
     def parse_serial(self):
         try:
             if (self.ser.is_open):
-                packet = self.ser.readLine()
-                print(len(packet))
+                packet = self.ser.read_until()
+                if len(packet) > 0:
+                    print(len(packet))
+                    packet = self.unstuff_packet(packet)
+                    print("decoded packet ", packet)
+                    try:
+                        self.parser.parse_packet(packet)
+                    except:
+                        print("Packet lost")
 
-                packet = unstuff_packet(packet)
-                try:
-                    self.parser.parse_packet(packet)
-                except:
-                    print("Packet lost")
         except Exception as e:
             print(e)
 
     def unstuff_packet(self, packet):
         unstuffed = b''
+        replacement = 1
         index = int(packet[0])
+        #print("packet ", index)
         for n in range(1, len(packet)):
             temp = packet[n:n+1]
             if(n == index):
                 index = int(packet[n])+n
-                temp = b'\n'
+                temp = bytes(replacement) # creates zero byte of integer size 1
             unstuffed = unstuffed + temp
         packet = unstuffed
         return packet
