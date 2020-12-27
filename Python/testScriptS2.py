@@ -9,4 +9,8 @@ print(ports)
 
 s2_interface.connect("/dev/cu.usbmodem11203", 115200, 2)
 while(1):
-    s2_interface.parse_serial()
+    parse_status = 0
+    parse_status = s2_interface.parse_serial()
+    if parse_status == 1:
+        print(s2_interface.parser.dict)
+

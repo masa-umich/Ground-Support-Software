@@ -1,4 +1,14 @@
+"""
+	Class to handle receiving telemetry and sending commands to boards
+
+    Michigan Aeronautical Science Association
+    Authors: Arthur Zhang (arthurzh@umich.edu) and Nathaniel Kalantar (nkalan@umich.edu)
+    Modified from Engine Controller 3 code
+    Created: December 24, 2020
+"""
+
 import os
+import sys
 import serial
 import time
 import threading
@@ -44,6 +54,8 @@ class S2_Interface:
     """
 
     # Updates global parser variable for python gui to use
+    # @returns: 0 if unsuccessful parse and 1 for successful parse
+    #       
     def parse_serial(self):
         try:
             if (self.ser.is_open):
@@ -51,14 +63,14 @@ class S2_Interface:
                 if len(packet) > 0:
                     print(len(packet))
                     packet = self.unstuff_packet(packet)
-                    print("decoded packet ", packet)
                     try:
                         self.parser.parse_packet(packet)
-                    except:
-                        print("Packet lost")
-
+                        return 1
+                    except Exception as e:
+                        print("Packet lost with error ", e)
         except Exception as e:
             print(e)
+        return 0
 
     def unstuff_packet(self, packet):
         unstuffed = b''
