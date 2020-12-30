@@ -9,7 +9,7 @@ def client_command(clientid, command, args=()):
 
     return command_dict
 
-host = '100.64.7.195'
+host = 'masadataserver.local'
 #host = socket.gethostbyname(socket.gethostname())
 port = 6969
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

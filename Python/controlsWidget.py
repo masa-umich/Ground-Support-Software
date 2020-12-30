@@ -14,6 +14,8 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
+from hotfire_packet import ECParse
+#from datetime import datetime
 
 from termcolor import colored
 
@@ -40,7 +42,12 @@ class ControlsWidget(QWidget):
         self.parent = parent
         self.window = parent.window
         self.gui = parent.gui
+        
         self.client = self.window.client_dialog.client
+        self.parser = ECParse()
+        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
+        #self.starttime = datetime.now().timestamp()
+
 
         #self.client = gui.client
         #print(self.parent)
@@ -112,7 +119,6 @@ class ControlsWidget(QWidget):
             self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
                                    (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
-
 
     # TODO: Almost anything but this, that being said it works
     def finalizeInit(self):
@@ -473,9 +479,7 @@ class ControlsWidget(QWidget):
         self.last_packet = self.client.cycle()
         #print(self.last_packet)
         if self.client.is_connected:
-            self.last_packet["time"] -= self.starttime # time to elapsed
-            #last_frame = pd.DataFrame(self.last_packet, index = [0])
-            #self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(int(15*60*1000/self.cycle_time))
-
-
-
+            #self.last_packet["time"] -= self.starttime # time to elapsed
+            for obj in self.object_list:
+                if type(obj) == GenSensor:
+                    print(obj)
