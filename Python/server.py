@@ -14,6 +14,8 @@ from datetime import datetime
 from hotfire_packet import ECParse
 import queue
 
+threading.stack_size(134217728)
+
 # init variables
 packet_num = 0
 packet_size = 0
@@ -55,8 +57,8 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
-top.setFixedWidth(1200)
-top.setFixedHeight(800)
+top.setFixedWidth(800)
+top.setFixedHeight(500)
 
 # server log
 log_box = QtGui.QTextEdit()
@@ -182,9 +184,9 @@ def client_handler(clientsocket, addr):
                 break
             print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
             counter += 1
-
     clientsocket.close()
     send_to_log("Closing connection to " + addr[0])
+    t.join()
 
 # main server target function
 def server_handler():
@@ -192,7 +194,7 @@ def server_handler():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
     port = 6969
-    s.bind((host, port))
+    s.bind(("masadataserver.local", port))
 
     # wait
     send_to_log('Server initialized. Waiting for clients to connect...')

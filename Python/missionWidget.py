@@ -32,7 +32,7 @@ class MissionWidget(QWidget):
         self.controlsWidget = self.centralWidget.controlsWidget
         self.controlsPanelWidget = self.centralWidget.controlsPanelWidget
         self.window = self.centralWidget.window
-        self.gui = self.centralWidget.parent
+        self.gui = self.centralWidget.gui
 
         # Thread
         self.thread = MissionWidgetBackgroundThread(self)

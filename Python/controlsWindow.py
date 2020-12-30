@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
 from missionWidget import MissionWidget
+from ClientWidget import ClientWidget, ClientDialog
 
 from overrides import overrides
 
@@ -19,12 +20,13 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('M_icon.png'))
-        self.centralWidget = ControlsCentralWidget(self.gui, self)
+        self.client_dialog = ClientDialog(True) # control client
+        self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
-
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
+
 
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
         exitAct = QAction('&Save and Quit', self)
@@ -78,6 +80,10 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
 
+        # CONNECTION -> Connection Settings
+        connect = QAction("&Connection Settings", self)
+        connect.triggered.connect(self.client_dialog.show)
+        
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -85,6 +91,7 @@ class ControlsWindow(QMainWindow):
         edit_menu = menuBar.addMenu('Edit')
         view_menu = menuBar.addMenu('View')
         run_menu = menuBar.addMenu('Run')
+        connection_menu = menuBar.addMenu('Connection')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -101,11 +108,15 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
 
+        # add connection actions
+        connection_menu.addAction(connect)
+
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       "View": view_menu,
-                      "Run":  run_menu}
+                      "Run":  run_menu,
+                      "Connection": connection_menu}
         
         self.showMaximized()
 
@@ -258,6 +269,9 @@ class ControlsWindow(QMainWindow):
         """
         dialog.done(1)  # This 1 is arbitrary
 
+    def update(self):
+        self.centralWidget.update()
+
 class ControlsCentralWidget(QWidget):
     """
     Window to house the controls and editing Widgets
@@ -266,7 +280,7 @@ class ControlsCentralWidget(QWidget):
     def __init__(self, parent=None, window=None):
         super().__init__()
         self.parent = parent
-        self.gui = self.parent
+        self.gui = parent.gui
         self.window = window
 
         # Below numbers are arbitrary
