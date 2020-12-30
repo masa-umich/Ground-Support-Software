@@ -55,6 +55,7 @@ class BaseObject:
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
+        self.central_widget = self.widget_parent.parent
         self.gui = self.widget_parent.gui
         if _id is not None:
             self._id = _id
@@ -238,12 +239,12 @@ class BaseObject:
         """
 
         # If the widget is in edit mode and an object is clicked, toggle if it is editing or now
-        if self.widget_parent.window.is_editing:
+        if self.central_widget.is_editing:
             if self.is_being_edited:
-                self.widget_parent.controlsPanel.removeEditingObject()
+                self.central_widget.controlsPanelWidget.removeEditingObject()
 
             else:
-                self.widget_parent.controlsPanel.addEditingObject(self)
+                self.central_widget.controlsPanelWidget.addEditingObject(self)
 
         # Tells widget painter to update screen
         self.widget_parent.update()
