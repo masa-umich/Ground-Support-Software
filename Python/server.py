@@ -10,9 +10,11 @@ import threading
 import ctypes
 import os
 import sys
-from datetime import datetime
-from hotfire_packet import ECParse
 import queue
+from datetime import datetime
+from telemParse import TelemParse
+from s2Interface import S2_Interface
+
 
 threading.stack_size(134217728)
 
@@ -26,7 +28,8 @@ threads = []
 command_queue = queue.Queue()
 
 # initialize parser
-parser = ECParse()
+parser = TelemParse()
+s2_interface = S2_Interface()
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
