@@ -3,7 +3,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
-from constants import Constants
 from object import BaseObject
 
 
@@ -18,8 +17,8 @@ class GenSensor(BaseObject):
                  locked: bool = False, position_locked: bool = False, _id: int = None,
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 23,
-                 long_name_label_rows: int = 1,sensor_type: str = "Static Pressure" ):
+                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
+                 long_name_label_rows: int = 1,sensor_type: str = "Static Pressure", channel_number: str = '0'):
 
         """
         Initializer for genSensor
@@ -44,6 +43,7 @@ class GenSensor(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
+        :param channel_number: the specific channel the device is plugged into
         """
 
         # Initialize base classes
@@ -58,9 +58,10 @@ class GenSensor(BaseObject):
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows)
 
-        # TODO: Grab height and width from csv file
-        # TODO: Grab object scale from widget_parent
+        self.widget_parent = widget_parent  # Important for drawing icon
+        self.gui = self.widget_parent.gui
         self.sensor_type = sensor_type
+        self.channel_number = channel_number
         self.measurement = 0
         self.measurement_label = QLabel(self.widget_parent)
         self.setUnits(self.sensor_type)
@@ -69,7 +70,6 @@ class GenSensor(BaseObject):
     def _initMeasurementLabel(self):
         """
         Inits the measurement label
-        :return:
         """
         self.measurement_label.setFixedSize(QSize(self.width, self.height))
         self.measurement_label.move(self.position.x(), self.position.y())
@@ -94,6 +94,13 @@ class GenSensor(BaseObject):
         """
         self.measurement = measurement
         self.measurement_label.setText(str(self.measurement)+self.units)
+
+    def setChannel(self, channel: str):
+        """
+        Sets channel of object
+        :param channel: channel of the object
+        """
+        self.channel_number = channel
     
     def setUnits(self,text):
         """
@@ -136,6 +143,28 @@ class GenSensor(BaseObject):
         super().onClick()
 
     @overrides
+    def setScale(self, scale):
+        """
+        Called when the Sensor is clicked
+        """
+        font = self.measurement_label.font()
+        size = font.pointSizeF()
+        if scale < self.scale:
+            font.setPointSizeF((size-1) * self.gui.font_scale_ratio)
+        else:
+            font.setPointSizeF((size + 1) * self.gui.font_scale_ratio)
+
+        self.measurement_label.setFont(font)
+
+        super().setScale(scale)
+
+        self.measurement_label.setFixedSize(QSize(self.width, self.height))
+        self.measurement_label.move(self.position.x(), self.position.y())
+        self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+
+
+
+    @overrides
     def draw(self):
         """
         Draws the Sensor icon on screen
@@ -154,33 +183,24 @@ class GenSensor(BaseObject):
         del self.measurement_label
 
         super().deleteSelf()
-    
+
     @overrides
     def generateSaveDict(self):
         """
-        Overrides definition in object.py
-        Here is where an objects data is moved into a dict, it will be combined with all the other objects data and
-        saved to a json file. Unfortuantely for any data to be saved it must be manually inserted here and also manually
-        pulled from the load function. It has the benefit of being easily readable though
+        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
+        info needs to be saved is added here.
         """
+
+        # Gets the BaseObject data that needs to be saved
+        super_dict = super().generateSaveDict()
+
+        # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            self.object_name + " " + str(self._id): {
-                "id": self._id,
-                "pos": {"x": self.position.x(), "y": self.position.y()},
-                "fluid": self.fluid,
-                "width": self.width/self.gui.pixel_scale_ratio[0],
-                "height": self.height/self.gui.pixel_scale_ratio[0],
-                "name": self.name,
-                "scale": self.scale,
-                "serial number": self.serial_number,
-                "long name": self.long_name,
-                "is vertical": self.is_vertical,
-                "is locked": self.locked,
-                "is pos locked": self.position_locked,
-                "serial number label": self.serial_number_label.generateSaveDict(),
-                "long name label": self.long_name_label.generateSaveDict(),
-                "sensor type": self.sensor_type,
-            }
+            'sensor type': self.sensor_type,
+            "channel number": self.channel_number
         }
 
-        return save_dict
+        # Update the super_dict under the solenoid entry with the solenoid specific data
+        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
+
+        return super_dict

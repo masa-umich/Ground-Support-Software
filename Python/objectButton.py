@@ -5,16 +5,16 @@ from PyQt5.QtCore import *
 from overrides import overrides
 
 
-class PlotButton(QPushButton):
+class ObjectButton(QPushButton):
     """
     Button class that holds a data file
     """
 
-    ## Allowed data types, including solenoid state (0 or 1)
+    # Allowed data types, including solenoid state (0 or 1)
     allowed_data_types = ['Force','Temperature','Pressure','State']
     def __init__(self, name, object_, dataFile, dataType, parent=None):
         """
-        Init for PlotButton
+        Init for ObjectButton
 
         :param name: name on button
         :param object_: object button is assigned to
@@ -29,9 +29,25 @@ class PlotButton(QPushButton):
         self.dataFile = dataFile
         self.dataType = dataType
 
-
         # Make sure button has no label
         self.setText("")
+
+        # No background/ border and allow for custom right click options
+        self.setStyleSheet("background-color:transparent;border:0;")
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+
+        self.setToolTip("SN: " + self.object_.serial_number)
+
+        self.resize(self.object_.width, self.object_.height)
+        self.move(self.object_.position.x(), self.object_.position.y())
+
+        # HMM: I feel strange about the fact the button is connecting to inside the object class
+        # Connect click action to onClick function inside object class
+        self.clicked.connect(lambda: self.object_.onClick())
+
+        self.show()
+        # Raise button above label
+        self.raise_()
 
         assert dataType in self.allowed_data_types
 
@@ -62,8 +78,8 @@ class PlotButton(QPushButton):
         target_button = Qt.LeftButton
         if self.parent.gui.platform == "Windows":
             target_button = Qt.NoButton
-
-        if event.button() == target_button and self.object_.is_being_edited:
+        # Only drag if the right button is pressed, the object is being edited, and position is not locked
+        if event.button() == target_button and self.object_.is_being_edited and not self.object_.position_locked:
             # I have no idea where the 22 comes from
             # 22 is for non full screen on my (all?) macs
             # HMM: Elegant Solution?
@@ -97,7 +113,7 @@ class PlotButton(QPushButton):
             super().mouseReleaseEvent(event)
 
             # Makes sure that the button is still checked as editing and edit panel does not disappear
-            self.parent.controlsPanel.addEditingObjects(self.object_)
+            self.parent.controlsPanel.addEditingObject(self.object_)
             self.object_.is_being_dragged = False
         else:
             super().mouseReleaseEvent(event)

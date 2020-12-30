@@ -150,9 +150,9 @@ class ControlsWidget(QWidget):
         else:
             self.edit_button.setText("EDIT")
             self.controlsPanel.edit_frame.hide()
-            self.controlsPanel.save()
-            if self.parent.parent.fileName != "":
-                self.saveData(self.parent.parent.fileName)
+            self.controlsPanel.removeEditingObject()
+            if self.parent.window.fileName != "":
+                self.saveData(self.parent.window.fileName)
             else:
                 self.parent.parent.saveFileDialog()
 
@@ -223,8 +223,8 @@ class ControlsWidget(QWidget):
         #If 'r' key is pressed:
         elif e.key() == 82:
             #Calls rotate method on last object in editing list
-            if len(self.controlsPanel.objects_editing) != 0:
-                self.controlsPanel.objects_editing[-1].rotate()
+            if self.controlsPanel.object_editing is not None:
+                self.controlsPanel.object_editing.rotate()
                 self.update()
 
 
@@ -269,7 +269,7 @@ class ControlsWidget(QWidget):
 
         # If we are not expecting a release don't remove all objects
         if not self.should_ignore_mouse_release:
-            self.controlsPanel.removeAllEditingObjects()
+            self.controlsPanel.removeEditingObject()
         else:
             self.should_ignore_mouse_release = False
 
@@ -290,7 +290,7 @@ class ControlsWidget(QWidget):
 
             # Below ifs creates new objects at the point where the right click
             if action is not None:
-                self.controlsPanel.removeAllEditingObjects()
+                self.controlsPanel.removeEditingObject()
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
@@ -313,7 +313,7 @@ class ControlsWidget(QWidget):
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
-                self.controlsPanel.addEditingObjects(self.object_list[-1])
+                self.controlsPanel.addEditingObject(self.object_list[-1])
 
             self.update()
 
@@ -366,7 +366,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel_number=sol["channel number"]))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
@@ -399,7 +399,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 sensor_type=pt["sensor type"]))
+                                                 sensor_type=pt["sensor type"], channel_number=pt["channel number"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
