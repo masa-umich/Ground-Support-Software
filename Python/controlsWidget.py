@@ -40,6 +40,7 @@ class ControlsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
+        self.centralWidget = parent
         self.window = parent.window
         self.gui = parent.gui
         
@@ -94,14 +95,6 @@ class ControlsWidget(QWidget):
         # TODO: move these somewhere when file system is initiated
         self.loadData()
 
-        # TODO: Move this button to the edit menu bar
-        self.edit_button = QPushButton("EDIT", self)
-        self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.move(self.gui.screenResolution[0] - self.parent.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
-                              30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.show()
-
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
         # TODO: Move this to the main window instead of the widget
@@ -145,16 +138,14 @@ class ControlsWidget(QWidget):
         """
         self.parent.is_editing = not self.parent.is_editing
 
-        if self.parent.is_editing:
-            self.edit_button.setText("SAVE")
-        else:
-            self.edit_button.setText("EDIT")
+        # Leaving edit mode, nothing to do when entering
+        if not self.centralWidget.is_editing:
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.removeEditingObject()
-            if self.parent.window.fileName != "":
+            if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
-                self.parent.parent.saveFileDialog()
+                self.parent.saveFileDialog()
 
         # Tells painter to update screen
         self.update()
