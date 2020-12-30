@@ -272,7 +272,7 @@ class BaseObject:
         self.widget_parent.painter.setPen(pen)
 
         # While editing draws small anchor points (6x6 box) on the object to help user with alignment
-        if self.widget_parent.window.is_editing:
+        if self.widget_parent.parent.is_editing:
             self.showAnchorPoints()
             for point in self.anchor_points:
                 self.widget_parent.painter.setPen(pen)
