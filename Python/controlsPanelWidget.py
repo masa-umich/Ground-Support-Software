@@ -86,7 +86,7 @@ class ControlsPanelWidget(QWidget):
         self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
-                            self.channels)  # Put in channel list here
+                            self.channels)
         self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
                             ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
         self.edit_form_layout.addRow(QLabel(""))

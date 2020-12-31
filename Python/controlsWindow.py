@@ -8,6 +8,8 @@ from missionWidget import MissionWidget
 from ClientWidget import ClientWidget, ClientDialog
 
 from overrides import overrides
+import os
+import ctypes
 
 """
 This file contains the class to create the main window
@@ -26,6 +28,12 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
+
+        appid = 'MASA.GUI' # arbitrary string
+        if os.name == 'nt': # Bypass command because it is not supported on Linux 
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
+        else:
+            pass
 
 
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
