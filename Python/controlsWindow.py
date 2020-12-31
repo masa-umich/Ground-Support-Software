@@ -306,6 +306,9 @@ class ControlsCentralWidget(QWidget):
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
 
+    def update(self):
+        self.controlsWidget.update()
+
     @overrides
     def resizeEvent(self, e: QResizeEvent):
         """

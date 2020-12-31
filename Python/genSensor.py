@@ -43,6 +43,7 @@ class GenSensor(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
+        :param sensor_type: type of physical sensor
         :param channel_number: the specific channel the device is plugged into
         """
 

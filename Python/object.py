@@ -55,7 +55,7 @@ class BaseObject:
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
-        self.central_widget = self.widget_parent.parent
+        self.central_widget = self.widget_parent.centralWidget
         self.gui = self.widget_parent.gui
         if _id is not None:
             self._id = _id

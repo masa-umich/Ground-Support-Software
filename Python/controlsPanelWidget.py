@@ -3,6 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
+from telemParse import TelemParse
+
 
 class ControlsPanelWidget(QWidget):
     """
@@ -17,6 +19,9 @@ class ControlsPanelWidget(QWidget):
         self.controls = self.parent.controlsWidget
 
         self.gui = self.parent.gui
+
+        self.parser = TelemParse()
+        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
@@ -81,7 +86,7 @@ class ControlsPanelWidget(QWidget):
         self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
-                            ["0", "1", "2", "3"])  # Put in channel list here
+                            self.channels)  # Put in channel list here
         self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
                             ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
         self.edit_form_layout.addRow(QLabel(""))

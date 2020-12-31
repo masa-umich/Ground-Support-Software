@@ -15,7 +15,6 @@ from datetime import datetime
 from telemParse import TelemParse
 from s2Interface import S2_Interface
 
-
 threading.stack_size(134217728)
 
 # init variables
@@ -30,6 +29,12 @@ command_queue = queue.Queue()
 # initialize parser
 parser = TelemParse()
 s2_interface = S2_Interface()
+dataframe["commander"] = None
+dataframe["packet_num"] = 0
+dataframe["time"] = datetime.now().timestamp()
+for i in parser.items:
+    dataframe[i] = 0
+
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -60,8 +65,10 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
-top.setFixedWidth(800)
-top.setFixedHeight(500)
+base_size = 800
+AR = 1.5 #H/W
+top.setFixedWidth(AR*base_size)
+top.setFixedHeight(base_size)
 
 # server log
 log_box = QtGui.QTextEdit()
@@ -197,7 +204,8 @@ def server_handler():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
     port = 6969
-    s.bind(("masadataserver.local", port))
+    #s.bind(("masadataserver.local", port))
+    s.bind((host, port))
 
     # wait
     send_to_log('Server initialized. Waiting for clients to connect...')

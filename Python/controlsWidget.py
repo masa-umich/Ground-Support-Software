@@ -14,7 +14,7 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
-from hotfire_packet import ECParse
+from telemParse import TelemParse
 #from datetime import datetime
 
 from termcolor import colored
@@ -45,11 +45,9 @@ class ControlsWidget(QWidget):
         self.gui = parent.gui
         
         self.client = self.window.client_dialog.client
-        self.parser = ECParse()
+        self.parser = TelemParse()
         self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
         #self.starttime = datetime.now().timestamp()
-
-
         #self.client = gui.client
         #print(self.parent)
 
@@ -473,4 +471,7 @@ class ControlsWidget(QWidget):
             #self.last_packet["time"] -= self.starttime # time to elapsed
             for obj in self.object_list:
                 if type(obj) == GenSensor:
-                    print(obj)
+                    this_channel = obj.channel_number
+                    if this_channel in self.channels:
+                        obj.setMeasurement(self.last_packet[this_channel])
+                        #print(this_channel + str())
