@@ -277,7 +277,10 @@ class ControlsWindow(QMainWindow):
         """
         dialog.done(1)  # This 1 is arbitrary
 
+    @overrides
     def update(self):
+        super().update()
+
         self.centralWidget.update()
 
 class ControlsCentralWidget(QWidget):
@@ -314,7 +317,11 @@ class ControlsCentralWidget(QWidget):
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
 
+    @overrides
     def update(self):
+
+        super().update()
+
         self.controlsWidget.update()
 
     @overrides
