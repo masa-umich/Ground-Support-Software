@@ -14,7 +14,7 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
-from telemParse import TelemParse
+from s2Interface import S2_Interface
 #from datetime import datetime
 
 from termcolor import colored
@@ -45,8 +45,8 @@ class ControlsWidget(QWidget):
         self.gui = parent.gui
         
         self.client = self.window.client_dialog.client
-        self.parser = TelemParse()
-        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
+        self.interface = S2_Interface()
+        self.channels = self.interface.channels()
         #self.starttime = datetime.now().timestamp()
         #self.client = gui.client
         #print(self.parent)

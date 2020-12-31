@@ -71,13 +71,13 @@ class ControlsPanelWidget(QWidget):
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
         
-        #
+        # fonts
         title_font = QFont()
         title_font.setBold(True)
         title_font.setUnderline(True)
 
         # Component Parameters
-        label = QLabel("Component Parameters:                                                                  ")
+        label = QLabel("Component Parameters:                                                                  ") # TODO: jankity jank jank
         label.setFont(title_font)
         self.edit_form_layout.addRow(label)
         self.createLineEdit(self.component_name_textbox, "Component Name", "Component Name:")
@@ -324,10 +324,3 @@ class ControlsPanelWidget(QWidget):
             self.object_editing.setIsEditing(False)
             self.object_editing = None
             self.edit_frame.hide()
-
-
-
-
-
-
-

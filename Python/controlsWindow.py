@@ -326,4 +326,3 @@ class ControlsCentralWidget(QWidget):
         """
         self.width = self.size().width()
         self.height = self.size().height()
-

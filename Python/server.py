@@ -27,16 +27,14 @@ threads = []
 command_queue = queue.Queue()
 
 # initialize parser
-parser = TelemParse()
 interface = S2_Interface()
 
 # init empty dataframe (mainly for debugging)
 dataframe["commander"] = None
 dataframe["packet_num"] = 0
 dataframe["time"] = datetime.now().timestamp()
-for i in parser.items:
+for i in interface.parser.items:
     dataframe[i] = 0
-
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -49,7 +47,7 @@ data_log = open('data/'+starttime+"/"+starttime+"_data_log.csv", "w+")
 command_log = open('data/'+starttime+"/"+starttime+"_command_log.csv", "w+")
 command_log.write("Time, Command/info\n")
 serial_log.write("Time, Packet\n")
-data_log.write(parser.csv_header)
+data_log.write(interface.parser.csv_header)
 
 # initialize application
 app = QtWidgets.QApplication([])
@@ -85,7 +83,7 @@ def send_to_log(text):
     server_log.write(time + text + "\n")
 
 # scan com ports
-ports = [p.device for p in serial.tools.list_ports.comports()]
+ports = interface.scan()
 
 # connect to com port
 # ser = serial.Serial(port=None, baudrate=int(alias["BAUDRATE"]), timeout=0.2)
@@ -107,7 +105,7 @@ def connect():
 # scan for com ports
 def scan():
     global ports_box, ports
-    ports = [p.device for p in serial.tools.list_ports.comports()]
+    ports = interface.scan()
     ports_box.clear()
     ports_box.addItems(ports)
 
@@ -274,22 +272,10 @@ def update():
             packet_size = len(serial_packet)
             packet_size_label.setText("Last Packet Size: %s" % packet_size)
 
-            # unstuff the packet
-            unstuffed = b''
-            index = int(serial_packet[0])
-            for n in range(1, len(serial_packet)):
-                temp = serial_packet[n:n+1]
-                if(n == index):
-                    index = int(serial_packet[n])+n
-                    temp = b'\n'
-                unstuffed = unstuffed + temp
-            serial_packet = unstuffed
-
             # parse packet
-            parser.parse_packet(serial_packet)
-            dataframe = parser.dict
+            dataframe = interface.parser.dict
             dataframe["time"] = datetime.now().timestamp()
-            data_log.write(parser.log_string+'\n')
+            data_log.write(interface.parser.log_string+'\n')
 
     except Exception as e:
         # print(e)
