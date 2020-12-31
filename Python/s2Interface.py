@@ -65,12 +65,33 @@ class S2_Interface:
                     packet = self.unstuff_packet(packet)
                     try:
                         self.parser.parse_packet(packet)
+                        self.unpack_valves()
                         return 1
                     except Exception as e:
                         print("Packet lost with error ", e)
         except Exception as e:
             print(e)
         return 0
+
+    # Unpack valves and generates valves key in dict
+    def unpack_valves(self):
+        valve_prefix = "valves_states"
+        match = {key:val for key, val in self.parser.dict.items()
+                            if key.startswith(valve_prefix)}
+        match_name = list(match.keys())[0]  # gets dict key for valves
+        num_valves = int(match_name.split('_')[2]) # gets third item (vlv num)
+        valve_states = int(self.parser.dict[match_name]) 
+
+        mask = 1
+        for n in range(0, num_valves): # off by one error
+            state = 0
+            if (mask & valve_states):
+                state = 1
+            
+            valve_name = 'vlv' + str(n) + '.en'
+            self.parser.dict[valve_name] = state
+            mask = mask << 1
+
 
     def unstuff_packet(self, packet):
         unstuffed = b''
