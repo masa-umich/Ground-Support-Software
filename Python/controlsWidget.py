@@ -143,7 +143,7 @@ class ControlsWidget(QWidget):
             if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
-                self.parent.saveFileDialog()
+                self.window.saveFileDialog()
 
         # Tells painter to update screen
         self.update()

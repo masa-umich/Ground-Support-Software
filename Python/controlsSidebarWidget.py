@@ -16,15 +16,16 @@ class ControlsSidebarWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.window = parent
-        self.controlsWidget = self.window.controlsWidget
-        self.gui = self.window.parent
+        self.centralWidget = parent
+        self.window = parent.window
+        self.controlsWidget = self.centralWidget.controlsWidget
+        self.gui = self.centralWidget.gui
 
         # Defines placement and size of control panel
-        self.left = self.gui.screenResolution[0] - self.window.panel_width
+        self.left = self.gui.screenResolution[0] - self.centralWidget.panel_width
         self.top = 0
 
-        self.width = self.window.panel_width
+        self.width = self.centralWidget.panel_width
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -38,7 +39,32 @@ class ControlsSidebarWidget(QWidget):
 
         self.show()
 
-        self.board = Board(self)
+        # Create the label that will hold the status label, displays what task is being performed
+        title_font = QFont()
+        title_font.setStyleStrategy(QFont.PreferAntialias)
+        title_font.setFamily(Constants.monospace_font)
+        title_font.setPointSizeF(48 * self.gui.font_scale_ratio)
+        self.title_label = QLabel(self)
+        self.title_label.setFont(title_font)
+        self.title_label.setText("Avionics")
+        self.title_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
+        self.title_label.setFixedWidth(self.width)
+        self.title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
+        self.title_label.show()
+
+        # Create dummy boards
+        # TODO: Make this a dropdown
+        # self.board = Board(self, "Flight Computer")
+        # self.board.move(2, self.title_label.y() + self.title_label.height()+1)
+        # self.board1 = Board(self, "Engine Controller")
+        # self.board1.move(2, self.board.pos().y() + self.board.height())
+        self.board2 = Board(self, "Pressurization Controller")
+        self.board2.move(2, self.title_label.y() + self.title_label.height()+1)
+        # self.board3 = Board(self, "Recovery Controller")
+        # self.board3.move(2, self.board2.pos().y() + self.board.height())
+        # self.board4 = Board(self, "GSE Controller")
+        # self.board4.move(2, self.board3.pos().y() + self.board.height())
 
     @overrides
     def paintEvent(self, e):
@@ -62,8 +88,10 @@ class ControlsSidebarWidget(QWidget):
         # path.moveTo(0, 75 * self.gui.pixel_scale_ratio[1]-1)  # Bottom left corner
         # path.lineTo(self.width, 75 * self.gui.pixel_scale_ratio[1]-1)  # Straight across
 
-        path.moveTo(0, 0)
-        path.lineTo(0, self.height)
+        path.moveTo(1, 0)
+        path.lineTo(1, self.height)
+        path.moveTo(1, 75 * self.gui.pixel_scale_ratio[1]-1)
+        path.lineTo(self.width, 75 * self.gui.pixel_scale_ratio[1]-1)
 
         self.painter.drawPath(path)
 
