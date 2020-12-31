@@ -75,23 +75,28 @@ class S2_Interface:
 
     # Unpack valves and generates valves key in dict
     def unpack_valves(self):
-        valve_prefix = "valves_states"
-        match = {key:val for key, val in self.parser.dict.items()
+        valve_prefix = "vlv"
+        vlvs_list = {key:val for key, val in self.parser.dict.items()
                             if key.startswith(valve_prefix)}
-        match_name = list(match.keys())[0]  # gets dict key for valves
-        num_valves = int(match_name.split('_')[2]) # gets third item (vlv num)
-        valve_states = int(self.parser.dict[match_name]) 
+        num_valves = 0
+        for key in vlvs_list: # dont assume greatest vlv in list is last
+            vlv_num = str(key)[3:4] # get vlv num
+            vlv_num = int(vlv_num)
+            if (vlv_num > num_valves):
+                num_valves = vlv_num
+        valve_states = int(self.parser.dict["valve_states"]) 
 
         mask = 1
-        for n in range(0, num_valves): # off by one error
+        for n in range(0, num_valves+1): # off by one error
             state = 0
             if (mask & valve_states):
                 state = 1
             
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.dict[valve_name] = state
+            self.parser.items.insert(self.parser.num_items, valve_name)
+            self.parser.num_items += 1 # update num items in array
             mask = mask << 1
-
 
     def unstuff_packet(self, packet):
         unstuffed = b''
