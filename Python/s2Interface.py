@@ -14,7 +14,6 @@ import time
 import threading
 
 from telemParse import TelemParse
-
 class S2_Interface:
     def __init__(self):
         self.ser            = serial.Serial(port=None)
@@ -22,6 +21,8 @@ class S2_Interface:
         self.serial_name    = ""
         self.parser         = TelemParse()    # Contains all telem data
 
+    ## TODO: add close function
+    ## TODO: add write function
     def scan(self):
         ports = [p.device for p in serial.tools.list_ports.comports()]
         return ports
