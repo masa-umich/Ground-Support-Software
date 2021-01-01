@@ -30,6 +30,8 @@ class ControlsWindow(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
 
+        self.last_packet = {}
+
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
@@ -283,7 +285,7 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
-
+        self.last_packet = self.client_dialog.client.cycle()
         self.centralWidget.update()
 
 class ControlsCentralWidget(QWidget):
@@ -323,10 +325,10 @@ class ControlsCentralWidget(QWidget):
 
     @overrides
     def update(self):
-
         super().update()
-
         self.controlsWidget.update()
+        self.controlsSidebarWidget.update()
+        #self.missionWidget.update()
 
     @overrides
     def resizeEvent(self, e: QResizeEvent):

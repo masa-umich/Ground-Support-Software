@@ -96,3 +96,10 @@ class ControlsSidebarWidget(QWidget):
         self.painter.drawPath(path)
 
         self.painter.end()
+
+    @overrides
+    def update(self):
+        super().update()
+        self.last_packet = self.window.last_packet
+        if self.last_packet:
+            self.board2.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet

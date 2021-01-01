@@ -469,11 +469,11 @@ class ControlsWidget(QWidget):
 
         super().update() #lol
 
-        self.last_packet = self.client.cycle()
+        self.last_packet = self.window.last_packet
         #print(self.last_packet)
         if self.client.is_connected:
             #self.last_packet["time"] -= self.starttime # time to elapsed
-            for obj in self.object_list:
+            for obj in self.object_list: # update objects
                 if type(obj) == GenSensor:
                     this_channel = obj.channel_number
                     if this_channel in self.channels:

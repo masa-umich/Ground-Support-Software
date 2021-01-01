@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -42,
-				"y": 108
+				"x": -99,
+				"y": 244
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -53,8 +53,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -42,
-				"y": 108
+				"x": -99,
+				"y": 244
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -88,8 +88,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -39,
-				"y": 72
+				"x": -92,
+				"y": 163
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -123,8 +123,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 2,
-				"y": 21
+				"x": 0,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -132,10 +132,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6,
-				"y": -33
+				"x": -37,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -160,7 +160,7 @@
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 3,
-				"y": 21
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -168,10 +168,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6,
-				"y": -33
+				"x": -38,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -195,8 +195,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 2,
-				"y": 21
+				"x": 0,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -204,10 +204,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -4,
-				"y": -33
+				"x": -32,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -231,8 +231,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 1,
-				"y": 21
+				"x": -2,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -240,10 +240,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -4,
-				"y": -33
+				"x": -31,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "2"
@@ -268,7 +268,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 78
+				"y": 181
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -279,7 +279,7 @@
 				"x": 4,
 				"y": 164
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -303,7 +303,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 19
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -314,7 +314,7 @@
 				"x": -42,
 				"y": 8
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -338,7 +338,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 87
+				"y": 202
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -346,8 +346,8 @@
 		"long name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 17,
-				"y": 181
+				"x": 29,
+				"y": 411
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -372,8 +372,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -381,8 +381,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 0,
-				"y": -18
+				"x": -7,
+				"y": -49
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -409,8 +409,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 18,
-				"y": 21
+				"x": 45,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -418,8 +418,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -10,
-				"y": -18
+				"x": -32,
+				"y": -49
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -445,7 +445,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 42
+				"y": 100
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -453,10 +453,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -4,
-				"y": -33
+				"x": -37,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -479,8 +479,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -488,10 +488,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 26,
+				"x": 63,
 				"y": -3
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
@@ -516,8 +516,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -525,7 +525,7 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 26,
+				"x": 63,
 				"y": -3
 			},
 			"rows": 1,
@@ -553,8 +553,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 14,
-				"y": 15
+				"x": 37,
+				"y": 31
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -562,10 +562,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 14,
+				"x": 37,
 				"y": -3
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
@@ -590,8 +590,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 18,
-				"y": 21
+				"x": 45,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -599,10 +599,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 7,
-				"y": -18
+				"x": 14,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -626,7 +626,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 14
+				"y": 36
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -637,7 +637,7 @@
 				"x": 13,
 				"y": 4
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -662,7 +662,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 14
+				"y": 36
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -670,10 +670,10 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 18,
-				"y": -1
+				"x": 37,
+				"y": 13
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -698,7 +698,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 14
+				"y": 36
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -706,10 +706,10 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 18,
-				"y": -1
+				"x": 37,
+				"y": 13
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -733,8 +733,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 18,
-				"y": 21
+				"x": 45,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -742,10 +742,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -12,
-				"y": -18
+				"x": -38,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -769,8 +769,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 18,
-				"y": 21
+				"x": 45,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -778,10 +778,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -12,
-				"y": -18
+				"x": -37,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -805,8 +805,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -814,10 +814,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -10,
-				"y": -33
+				"x": -89,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
@@ -842,8 +842,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -851,10 +851,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 13,
-				"y": -18
+				"x": 29,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
@@ -879,8 +879,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 18,
-				"y": 21
+				"x": 45,
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -888,8 +888,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -7,
-				"y": -18
+				"x": -25,
+				"y": -49
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -903,7 +903,7 @@
 			"y": 316
 		},
 		"fluid": 2,
-		"width": 114.40000000000002,
+		"width": 114.40000000000003,
 		"height": 221.0,
 		"name": "Tank",
 		"scale": 1.3,
@@ -916,7 +916,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 114
+				"y": 263
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -924,10 +924,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 30,
-				"y": -33
+				"x": 43,
+				"y": -49
 			},
-			"rows": 2.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -950,8 +950,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -959,14 +959,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -16,
-				"y": -18
+				"x": -51,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "3"
+		"channel number": "pressure[0]"
 	},
 	"Solenoid 27": {
 		"id": 27,
@@ -988,7 +988,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 19
+				"y": 46
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -996,10 +996,10 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 21,
-				"y": 11
+				"x": 46,
+				"y": 23
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"channel number": "0"
@@ -1024,7 +1024,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 87
+				"y": 202
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1032,10 +1032,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 29,
-				"y": -18
+				"x": 63,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		}
 	},
@@ -1058,8 +1058,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 26,
-				"y": 24
+				"x": 63,
+				"y": 51
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1067,10 +1067,10 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 6,
-				"y": -18
+				"x": 8,
+				"y": -49
 			},
-			"rows": 1.0,
+			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Differential Pressure",
