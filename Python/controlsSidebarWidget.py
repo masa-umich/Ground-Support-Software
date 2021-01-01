@@ -55,11 +55,12 @@ class ControlsSidebarWidget(QWidget):
 
         # Create dummy boards
         # TODO: Make this a dropdown
-        # self.board = Board(self, "Flight Computer")
-        # self.board.move(2, self.title_label.y() + self.title_label.height()+1)
+        #self.board = Board(self, "Flight Computer")
+        #self.board.move(2, self.title_label.y() + self.title_label.height()+1)
         # self.board1 = Board(self, "Engine Controller")
         # self.board1.move(2, self.board.pos().y() + self.board.height())
-        self.board2 = Board(self, "Pressurization Controller")
+        #self.board2 = Board(self, "Pressurization Controller")
+        self.board2 = Board(self, "Flight Computer")
         self.board2.move(2, self.title_label.y() + self.title_label.height()+1)
         # self.board3 = Board(self, "Recovery Controller")
         # self.board3.move(2, self.board2.pos().y() + self.board.height())

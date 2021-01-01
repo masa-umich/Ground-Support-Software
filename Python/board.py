@@ -65,7 +65,7 @@ class Board(QWidget):
         self.data_frame.resize(self.width() - (self.board_pos.x() + self.board_width)+10*self.gui.pixel_scale_ratio[0],
                                 self.height() - (self.name_label.pos().y() + self.name_label.height()))
         self.data_frame.setLayout(self.data_form_layout)
-        self.data_frame.move((self.board_pos.x() + self.board_width)-10*self.gui.pixel_scale_ratio[0],
+        self.data_frame.move((self.board_pos.x() + self.board_width)-2*self.gui.pixel_scale_ratio[0],
                              (self.name_label.pos().y() + self.name_label.height())-8*self.gui.pixel_scale_ratio[1])
 
         # Create the labels for the data form
@@ -111,7 +111,7 @@ class Board(QWidget):
         # Move to position
         state_form_label.move(self.board_pos.x(), self.board_pos.y()+self.board_height + 8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.board_pos.y()+self.board_height + 8 * self.gui.pixel_scale_ratio[1])
-
+        
         self.show()
 
     @staticmethod
@@ -128,6 +128,7 @@ class Board(QWidget):
         label = QLabel(text)
         label.setFixedHeight(14)
         label.setFont(font)
+        label.setStyleSheet("color: white")
 
         return label
 
@@ -206,12 +207,23 @@ class Board(QWidget):
 
         self.painter.end()
     @overrides
-    def update(self, ebatt, ibus, state, flash, LPT, adc_rate, telem_rate):
+    def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate):
+        """
+        Function to update board state
+        :param ebatt: bus voltage
+        :param ibatt: bus current
+        :param state: board state
+        :param flash: flash state
+        :param LPT: timestamp of last ping
+        :param adc_rate: adc sample rate
+        :param telem_rate: telem packet rate
+        :return: None
+        """
         super().update()
-        self.Ebatt_label.setText(str(ebatt))
-        self.amp_label.setText(str(ibus))
-        self.state_label.setText(str(state))
-        self.flash_label.setText(str(flash))
+        self.Ebatt_label.setText(str(ebatt) + " V")
+        self.amp_label.setText(str(ibatt) + " A")
+        self.state_label.setText(str(state)) # todo: state parsing
+        self.flash_label.setText(str(flash)) # todo: flash state parsing
         self.LPT_label.setText(str(LPT))
-        self.adcrate_label.setText(str(adc_rate))
-        self.telemrate_label.setText(str(telem_rate))
+        self.adcrate_label.setText(str(adc_rate) + " Hz")
+        self.telemrate_label.setText(str(telem_rate) + " Hz")
