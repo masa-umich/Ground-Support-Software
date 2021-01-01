@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 
 from constants import Constants
 from objectButton import ObjectButton
-from customLabel import CustomLabel
+from objectLabel import ObjectLabel
 from anchorPoint import AnchorPoint
 
 
@@ -78,12 +78,12 @@ class BaseObject:
         self.position_locked = position_locked
         self.context_menu = QMenu(self.widget_parent)
         self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
-        self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+        self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
                                            position_string=long_name_label_pos, rows=long_name_label_rows)
 
-        self.serial_number_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+        self.serial_number_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                             is_vertical=False, font_size=serial_number_label_font_size,
                                             text=self.serial_number, local_pos=serial_number_label_local_pos,
                                             position_string=serial_number_label_pos)
@@ -273,23 +273,22 @@ class BaseObject:
         self.widget_parent.painter.setPen(pen)
 
         # While editing draws small anchor points (6x6 box) on the object to help user with alignment
-        if self.widget_parent.parent.is_editing:
+        if self.central_widget.is_editing:
             self.showAnchorPoints()
             for point in self.anchor_points:
                 self.widget_parent.painter.setPen(pen)
                 point.draw()
+            # If object is selected, a thin yellow box is drawn to indicate so
+            if self.is_being_edited:
+                self.highlight(pen)
         else:
             self.hideAnchorPoints()
-        
-        # If object is selected, a thin yellow box is drawn to idicate so
-        if self.is_being_edited:
-            self.highlight(pen)
             
     def highlight(self, pen):
         """
-        Draws a thin box around selected object
+        Draws a thin yellow box around selected object
         :param pen: Pen that will be used to draw
-        """
+        """ 
         buffer = 8  # Space between the object and the highlight line
         pen.setStyle(Qt.DotLine)
         pen.setWidth(1)

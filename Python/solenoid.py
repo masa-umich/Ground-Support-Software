@@ -115,7 +115,31 @@ class Solenoid(BaseObject):
 
         self.widget_parent.painter.drawPath(path)
 
-        self.widget_parent.painter.setBrush(0)
+        # path = QPainterPath()
+        # if self.is_vertical == 0:
+        #     path = QPainterPath()
+        #     path.moveTo(2*self.width/7, 0)  # Top left corner
+        #     #path.lineTo(0,self.height)  # Straight Down
+        #     #path.lineTo(self.width, 0)  # Diag to upper right
+        #     path.lineTo(5*self.width/7, self.height)  # Straight Up
+        #     #path.lineTo(0, 0)
+        #     path.moveTo(5 * self.width / 7, 0)
+        #     path.lineTo(2*self.width / 7, self.height)  # Straight Up
+        #     pen = self.widget_parent.painter.pen()
+        #     pen.setWidth(Constants.line_width+2)
+        #     pen.setColor(Constants.MASA_Maize_color)
+        #     self.widget_parent.painter.setPen(pen)
+        #     path.translate(self.position.x(), self.position.y())
+        #
+        #     self.widget_parent.painter.drawPath(path)
+        #
+        # pen = self.widget_parent.painter.pen()
+        # self.widget_parent.painter.setPen(Qt.NoPen)
+        # self.widget_parent.painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
+        # self.widget_parent.painter.drawEllipse(QPoint(self.position.x() + self.width/2, self.position.y() + self.height/2-8), 3, 3)
+        # self.widget_parent.painter.setPen(pen)
+
+        self.widget_parent.painter.setBrush(Qt.NoBrush)
 
         super().draw()
 

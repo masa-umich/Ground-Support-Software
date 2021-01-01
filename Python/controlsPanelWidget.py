@@ -26,7 +26,7 @@ class ControlsPanelWidget(QWidget):
         # Keeps track of all the objects currently being edited
         self.object_editing = None
 
-        #Defines placement and size of control panel
+        # Defines placement and size of control panel
         self.left = self.gui.screenResolution[0] - self.parent.panel_width
         self.top = 0
 
@@ -34,7 +34,7 @@ class ControlsPanelWidget(QWidget):
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        #Sets color of control panel
+        # Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.darkGray)
@@ -43,7 +43,7 @@ class ControlsPanelWidget(QWidget):
         # Inits widgets for edit frame
         self.initEditFrame()
 
-        self.show()
+        self.hide()
 
     def initEditFrame(self):
         """
@@ -253,8 +253,6 @@ class ControlsPanelWidget(QWidget):
             self.sensor_type_combobox.setCurrentText(object_.sensor_type)
         else:
             self.sensor_type_combobox.setDisabled(True)
-
-
 
     def updateEditingObjectFields(self, text, identifier):
         """
