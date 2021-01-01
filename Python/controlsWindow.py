@@ -285,11 +285,7 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
-<<<<<<< HEAD
-
-=======
         self.last_packet = self.client_dialog.client.cycle()
->>>>>>> feature-backend-hooks
         self.centralWidget.update()
 
 class ControlsCentralWidget(QWidget):
