@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
+from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from ClientWidget import ClientWidget, ClientDialog
 
@@ -180,7 +181,8 @@ class ControlsWindow(QMainWindow):
         If not already editing, calls toggle edit to enter edit mode
         """
         if not self.centralWidget.is_editing:
-            #self.centralWidget.controlsPanelWidget.show()
+            self.centralWidget.controlsPanelWidget.show()
+            self.centralWidget.controlsSidebarWidget.hide()
             self.centralWidget.controlsWidget.toggleEdit()
             self.enterEditAct.setDisabled(True)
             self.exitEditAct.setEnabled(True)
@@ -191,7 +193,8 @@ class ControlsWindow(QMainWindow):
         """
         if self.centralWidget.is_editing:
             self.centralWidget.controlsWidget.toggleEdit()
-            #self.centralWidget.controlsPanelWidget.hide()
+            self.centralWidget.controlsPanelWidget.hide()
+            self.centralWidget.controlsSidebarWidget.show()
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
 
@@ -277,7 +280,10 @@ class ControlsWindow(QMainWindow):
         """
         dialog.done(1)  # This 1 is arbitrary
 
+    @overrides
     def update(self):
+        super().update()
+
         self.centralWidget.update()
 
 class ControlsCentralWidget(QWidget):
@@ -309,12 +315,17 @@ class ControlsCentralWidget(QWidget):
 
         self.controlsWidget = ControlsWidget(self)
         self.controlsPanelWidget = ControlsPanelWidget(self)
+        self.controlsSidebarWidget = ControlsSidebarWidget(self)
         self.missionWidget = MissionWidget(self)
 
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
 
+    @overrides
     def update(self):
+
+        super().update()
+
         self.controlsWidget.update()
 
     @overrides

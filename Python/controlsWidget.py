@@ -143,7 +143,7 @@ class ControlsWidget(QWidget):
             if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
-                self.parent.saveFileDialog()
+                self.window.saveFileDialog()
 
         # Tells painter to update screen
         self.update()
@@ -464,7 +464,11 @@ class ControlsWidget(QWidget):
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
 
+    @overrides
     def update(self):
+
+        super().update() #lol
+
         self.last_packet = self.client.cycle()
         #print(self.last_packet)
         if self.client.is_connected:
