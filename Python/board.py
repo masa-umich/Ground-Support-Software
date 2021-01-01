@@ -205,3 +205,14 @@ class Board(QWidget):
         self.painter.drawPath(path)
 
         self.painter.end()
+
+    @overrides
+    def update(self, ebatt, ibus, state, flash, LPT, adc_rate, telem_rate):
+        super().update()
+        self.Ebatt_label.setText(str(ebatt))
+        self.amp_label.setText(str(ibus))
+        self.state_label.setText(str(state))
+        self.flash_label.setText(str(flash))
+        self.LPT_label.setText(str(LPT))
+        self.adcrate_label.setText(str(adc_rate))
+        self.telemrate_label.setText(str(telem_rate))

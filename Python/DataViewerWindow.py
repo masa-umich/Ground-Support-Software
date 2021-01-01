@@ -55,8 +55,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up environment and database
         self.interface = S2_Interface()
-        self.parser = self.interface.parser
-        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
+        self.channels = self.interface.channels()
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         
