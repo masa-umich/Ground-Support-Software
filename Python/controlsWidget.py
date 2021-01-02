@@ -355,7 +355,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
+                                                 normally_open=sol['normally open']))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
