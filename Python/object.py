@@ -398,7 +398,7 @@ class BaseObject:
         :return:
         """
         # If window is in edit mode
-        if self.widget_parent.window.is_editing:
+        if self.central_widget.is_editing:
             action = self.context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
