@@ -6,6 +6,7 @@ from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
 from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
+from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
 
@@ -93,7 +94,11 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
 
-        # CONNECTION -> Connection Settings
+        # Run -> Add Boards
+        self.addAvionicsAct = QAction('&Add Avionics', self)
+        self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
+
+        # Run -> Connection Settings
         connect = QAction("&Connection Settings", self)
         connect.triggered.connect(self.client_dialog.show)
         
@@ -104,7 +109,6 @@ class ControlsWindow(QMainWindow):
         edit_menu = menuBar.addMenu('Edit')
         view_menu = menuBar.addMenu('View')
         run_menu = menuBar.addMenu('Run')
-        connection_menu = menuBar.addMenu('Connection')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -120,16 +124,14 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-
-        # add connection actions
-        connection_menu.addAction(connect)
+        run_menu.addAction(connect)
+        run_menu.addAction(self.addAvionicsAct)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       "View": view_menu,
-                      "Run":  run_menu,
-                      "Connection": connection_menu}
+                      "Run":  run_menu}
         
         self.showMaximized()
 
@@ -213,41 +215,58 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450, 80)
-        dialog.setMinimumWidth(450)
-        dialog.setFixedHeight(80)
+        dialog.resize(500*self.gui.pixel_scale_ratio[0], 80*self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(500*self.gui.pixel_scale_ratio[0])
         dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
 
         # Create the form layout that will hold the text box
-        formLayout = QFormLayout(dialog)
+        formLayout = QFormLayout()
         formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+        verticalLayout.addLayout(formLayout)
 
         # Create a regular expression validator for the QLineEdit to make sure only characters we want are accepted
         reg_exp = QRegExp("[a-zA-Z0-9 -]+")  # Lower and capital letters, numbers,-, and spaces, at any length (+)
         reg_exp_validator = QRegExpValidator(reg_exp)
 
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
         # Add in the textbox to give run a title
         textbox = QLineEdit(dialog)
         textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
         textbox.setValidator(reg_exp_validator)
-        formLayout.addRow("Run Title:", textbox)
+        textbox.setFont(font)
+        label = QLabel("Run Title:")
+        label.setFont(font)
+        formLayout.addRow(label, textbox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
         
         # Create the buttons, make sure there is no default option, and connect to functions
-        cancel_button = QPushButton("Cancel", dialog)
+        cancel_button = QPushButton("Cancel")
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: self.startRunCanceled(dialog))
+        cancel_button.setFont(font)
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        start_button = QPushButton("Start Run", dialog)
+        start_button = QPushButton("Start Run")
         start_button.setDefault(False)
         start_button.setAutoDefault(False)
         start_button.clicked.connect(lambda: self.startRun(dialog, textbox.text()))
+        start_button.setFont(font)
+        start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        # Move the buttons into position, and show them
-        cancel_button.move((dialog.width() - 2 * cancel_button.width()) / 2, dialog.height() - cancel_button.height() - 3)
-        start_button.move(dialog.width()/2, dialog.height() - start_button.height() - 3)
-        cancel_button.show()
-        start_button.show()
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(start_button)
+
+        verticalLayout.addLayout(buttonLayout)
 
         dialog.show()
 
@@ -284,11 +303,160 @@ class ControlsWindow(QMainWindow):
         """
         dialog.done(1)  # This 1 is arbitrary
 
+    def showAvionicsDialog(self):
+        """
+        Show the dialog to configure the avionics that will be connected for the test
+        """
+
+        # Create the dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Add Avionics")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
+        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14*self.gui.font_scale_ratio)
+
+        # Add in all the dropdowns
+        dropdown1 = QComboBox(dialog)
+        dropdown1.setFont(font)
+        dropdown1.addItems(["None"] + Constants.boards)
+        dropdown2 = QComboBox(dialog)
+        dropdown2.setFont(font)
+        dropdown2.addItems(["None"] + Constants.boards)
+        dropdown3 = QComboBox(dialog)
+        dropdown3.setFont(font)
+        dropdown3.addItems(["None"] + Constants.boards)
+        dropdown4 = QComboBox(dialog)
+        dropdown4.setFont(font)
+        dropdown4.addItems(["None"] + Constants.boards)
+        dropdown5 = QComboBox(dialog)
+        dropdown5.setFont(font)
+        dropdown5.addItems(["None"] + Constants.boards)
+
+        # Array of all the dropdowns
+        dropdowns = [dropdown1, dropdown2, dropdown3, dropdown4, dropdown5]
+
+        # If boards are already set, populate the dropdowns
+        if self.gui.run.boards:
+            for i in range(len(self.gui.run.boards)):
+                dropdowns[i].setCurrentText(self.gui.run.boards[i])
+
+        # Callback functions
+        dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1, 1))
+        dropdown2.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown2, 2))
+        dropdown3.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown3, 3))
+        dropdown4.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown4, 4))
+        dropdown5.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown5, 5))
+
+        label1 = QLabel("Board 1:")
+        label1.setFont(font)
+        label2 = QLabel("Board 2:")
+        label2.setFont(font)
+        label3 = QLabel("Board 3:")
+        label3.setFont(font)
+        label4 = QLabel("Board 4:")
+        label4.setFont(font)
+        label5 = QLabel("Board 5:")
+        label5.setFont(font)
+
+        # Add to the layout
+        formLayout.addRow(label1, dropdown1)
+        formLayout.addRow(label2, dropdown2)
+        formLayout.addRow(label3, dropdown3)
+        formLayout.addRow(label4, dropdown4)
+        formLayout.addRow(label5, dropdown5)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: self.avionicsDialogSave(dropdowns, dialog))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+    @staticmethod
+    def updateAvionicsDialog(dropdowns: [], currentDropdown: QComboBox, boxNumber: int):
+        """
+        This function updates the avionics dialog dropdowns that appears when selecting which boards will be connected
+        the run. It ensures that only one of each board is selections, and updates the dropdowns to the available
+        boards when possible. This function is called anytime one of the dialog changes
+        :param dropdowns: The 5 different dropdowns shown in the dialog
+        :param currentDropdown: The current dropdown that was changed
+        :param boxNumber: The number of the dropdown that was changed, 1-5
+        :return: Returns out when necessary, no return value
+        """
+
+        # Checks to make sure a selection is skipped, if it is set the box back to none and return out
+        if boxNumber > 1:
+            if dropdowns[boxNumber-2].currentIndex() is 0:
+                currentDropdown.setCurrentIndex(0)  # 'None' index
+                return
+
+        # Every time a dropdown changes, make sure all the ones below them are reset
+        for i in range(boxNumber, 5):
+                dropdowns[i].clear()
+                dropdowns[i].addItems(["None"] + Constants.boards)
+
+        # For each dropdown below the current dropdown, remove any options that have already been selected
+        for i in range(5):
+            if i > boxNumber-1:
+                for j in range(boxNumber):
+                    dropdowns[i].removeItem(dropdowns[j].currentIndex())
+
+    def avionicsDialogSave(self, dropdowns, dialog):
+        boards = []
+        for i in range(5):
+            if dropdowns[i].currentIndex() is not 0:
+                boards.append(dropdowns[i].currentText())
+
+        # If array is empty
+        if not boards:
+            return  # Do nothing if the user selected nothing
+
+        # Set the run to have these boards attached
+        self.gui.run.boards = boards
+
+        self.centralWidget.controlsSidebarWidget.addBoards(boards)
+        dialog.done(2)
+
     @overrides
     def update(self):
         super().update()
         self.last_packet = self.client_dialog.client.cycle()
         self.centralWidget.update()
+
 
 class ControlsCentralWidget(QWidget):
     """

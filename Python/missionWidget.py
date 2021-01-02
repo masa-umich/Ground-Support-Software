@@ -41,7 +41,7 @@ class MissionWidget(QWidget):
 
         # Set Geometry
         self.width = self.centralWidget.width - self.controlsPanelWidget.width
-        self.mainHeight = 75 * self.gui.pixel_scale_ratio[1]
+        self.mainHeight = 80 * self.gui.pixel_scale_ratio[1]
         self.underBarHeight = 25 * self.gui.pixel_scale_ratio[1]
         self.height = self.mainHeight+self.underBarHeight
         self.left = 0
@@ -70,6 +70,7 @@ class MissionWidget(QWidget):
         MET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
         self.MET_label.setFont(MET_font)
         self.MET_label.setText("MET-00:00:00")
+        self.MET_label.setStyleSheet("color: white")
         self.MET_label.setFixedHeight(self.mainHeight)
         self.MET_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.MET_label.move(0, 0-4*self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
@@ -90,6 +91,7 @@ class MissionWidget(QWidget):
         self.dateTimeLabel = QLabel(self)
         monospace_light_font.setPointSizeF(16 * self.gui.font_scale_ratio)
         self.dateTimeLabel.setFont(monospace_light_font)
+        self.dateTimeLabel.setStyleSheet("color: white")
         self.dateTimeLabel.setText("November 25th 2020, 05:52pm")
         self.dateTimeLabel.setFixedHeight(self.underBarHeight)
         self.dateTimeLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -136,6 +138,7 @@ class MissionWidget(QWidget):
         self.status_label = QLabel(self)
         self.status_label.setFont(MET_font)
         self.status_label.setText("Pre-run Checkouts")
+        self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
         self.status_label.setFixedWidth(self.width - (self.stateIndicator.pos().x() + self.stateIndicator.width()))
         self.status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -237,7 +240,7 @@ class MissionWidget(QWidget):
 
         # Border around the date time label
         path = QPainterPath()
-        pen.setWidth(1)
+        pen.setWidth(Constants.line_width/2)
         self.painter.setPen(pen)
         path.moveTo(0, self.height - 1)
         path.lineTo(self.dateTimeLabel.width() + self.underBarWBuffer, self.height - 1)

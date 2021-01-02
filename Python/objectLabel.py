@@ -20,6 +20,9 @@ class ObjectLabel(CustomLabel):
         self.is_vertical = is_vertical
         self.position_string = position_string
         self.local_pos = local_pos
+        # Have to scale it, not sure if this is best location
+        self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
+        self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])
         self.rows = rows
 
         # Need to init values before you call super
@@ -196,7 +199,7 @@ class ObjectLabel(CustomLabel):
     def generateSaveDict(self):
         save_dict = {
             "pos string": self.position_string,
-            "local pos": {"x": self.local_pos.x(), "y": self.local_pos.y()},
+            "local pos": {"x": self.local_pos.x()/self.gui.pixel_scale_ratio[0], "y": self.local_pos.y()/self.gui.pixel_scale_ratio[1]},
             "rows": self.rows,
             "font size": self.getFontSize()
         }

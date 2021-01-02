@@ -63,6 +63,9 @@ class BaseObject:
             # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
             self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
+        # Have to scale it, not sure if this is best location
+        self.position.setX(self.position.x() * self.gui.pixel_scale_ratio[0])
+        self.position.setY(self.position.y() * self.gui.pixel_scale_ratio[1])
         self.fluid = fluid
         self.width = width * self.widget_parent.gui.pixel_scale_ratio[0]
         self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
@@ -289,12 +292,13 @@ class BaseObject:
         Draws a thin yellow box around selected object
         :param pen: Pen that will be used to draw
         """ 
-        buffer = 8  # Space between the object and the highlight line
+        wbuffer = 8 * self.gui.pixel_scale_ratio[0]  # Space between the object and the highlight line
+        hbuffer = 8 * self.gui.pixel_scale_ratio[1]
         pen.setStyle(Qt.DotLine)
-        pen.setWidth(1)
-        pen.setColor(QColor(255,255,0))
+        pen.setWidth(Constants.line_width-1)
+        pen.setColor(QColor(255, 255, 0))
         self.widget_parent.painter.setPen(pen)
-        self.widget_parent.painter.drawRect(QRect(self.position.x()-buffer/2, self.position.y()-buffer/2, self.width+buffer, self.height+buffer))
+        self.widget_parent.painter.drawRect(QRect(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
     def move(self, point: QPoint):
         """

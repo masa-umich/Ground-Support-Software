@@ -31,7 +31,7 @@ class IndicatorLightWidget(QWidget):
         self.missionWidget = parent
         self.gui = self.missionWidget.gui
         self.labelText = labelText
-        self.circle_radius = circleRadius
+        self.circle_radius = circleRadius * self.gui.pixel_scale_ratio[0]
         self.fontSize = fontSize
         self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
         self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
@@ -48,8 +48,9 @@ class IndicatorLightWidget(QWidget):
 
         # Declare the label and set it parameters
         self.label = QLabel(self)
-        monospace_light_font.setPointSizeF(self.fontSize * self.gui.font_scale_ratio)
+        monospace_light_font.setPointSize(self.fontSize * self.gui.font_scale_ratio)
         self.label.setFont(monospace_light_font)
+        self.label.setStyleSheet("color: white")
         self.label.setText(self.labelText)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.label.adjustSize()
@@ -83,7 +84,7 @@ class IndicatorLightWidget(QWidget):
 
         # Default pen qualities
         pen = QPen()
-        pen.setWidth(1)
+        pen.setWidth(Constants.line_width/2)
         pen.setColor(Constants.MASA_Beige_color)
         self.painter.setPen(pen)
 
