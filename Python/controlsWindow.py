@@ -419,7 +419,7 @@ class ControlsWindow(QMainWindow):
 
         # Checks to make sure a selection is skipped, if it is set the box back to none and return out
         if boxNumber > 1:
-            if dropdowns[boxNumber-2].currentIndex() is 0:
+            if dropdowns[boxNumber-2].currentIndex() == 0:
                 currentDropdown.setCurrentIndex(0)  # 'None' index
                 return
 
@@ -437,7 +437,7 @@ class ControlsWindow(QMainWindow):
     def avionicsDialogSave(self, dropdowns, dialog):
         boards = []
         for i in range(5):
-            if dropdowns[i].currentIndex() is not 0:
+            if dropdowns[i].currentIndex() != 0:
                 boards.append(dropdowns[i].currentText())
 
         # If array is empty
@@ -497,7 +497,7 @@ class ControlsCentralWidget(QWidget):
         super().update()
         self.controlsWidget.update()
         self.controlsSidebarWidget.update()
-        #self.missionWidget.update()
+        self.missionWidget.update()
 
     @overrides
     def resizeEvent(self, e: QResizeEvent):
