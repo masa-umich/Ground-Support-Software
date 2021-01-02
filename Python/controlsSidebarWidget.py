@@ -53,18 +53,30 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         self.title_label.show()
 
-        # Create dummy boards
-        # TODO: Make this a dropdown
-        # self.board = Board(self, "Flight Computer")
-        # self.board.move(2, self.title_label.y() + self.title_label.height()+1)
-        # self.board1 = Board(self, "Engine Controller")
-        # self.board1.move(2, self.board.pos().y() + self.board.height())
-        self.board2 = Board(self, "Pressurization Controller")
-        self.board2.move(2, self.title_label.y() + self.title_label.height()+1)
-        # self.board3 = Board(self, "Recovery Controller")
-        # self.board3.move(2, self.board2.pos().y() + self.board.height())
-        # self.board4 = Board(self, "GSE Controller")
-        # self.board4.move(2, self.board3.pos().y() + self.board.height())
+        self.board_objects = []  # An empty array to start
+
+    def addBoards(self, boardNames: []):
+        """
+        Add in boards to be shown on the sidebar. Only need to pass in the name
+        :param boardNames: A list of board names that needs to be passed
+        """
+        y_pos = self.title_label.y() + self.title_label.height()+1
+
+        # Delete all the current shown boards, if any
+        # TODO: Make this feel better because this is a lazy way to do it
+        for board in self.board_objects:
+            board.deleteLater()
+            board = None
+            del board
+        self.board_objects.clear()
+
+        # Add in all the boards, update the next position to insert them
+        for name in boardNames:
+            board = Board(self, name)
+            board.move(2, y_pos)
+            self.board_objects.append(board)
+            y_pos = board.pos().y() + board.height()
+
 
     @overrides
     def paintEvent(self, e):
@@ -96,7 +108,6 @@ class ControlsSidebarWidget(QWidget):
         self.painter.drawPath(path)
 
         self.painter.end()
-
 
     @overrides
     def update(self):

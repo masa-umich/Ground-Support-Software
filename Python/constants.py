@@ -23,6 +23,9 @@ class Constants:
         4: "Exhaust"
     }
 
+    boards = ["Engine Controller", "Flight Computer", "Pressurization Controller",
+              "Recovery Controller", "GSE Controller"]
+
     line_width = 2
 
     BG_color = QColor(0, 22, 44)

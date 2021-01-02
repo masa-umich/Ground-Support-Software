@@ -6,6 +6,7 @@ from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
 from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
+from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 
 from overrides import overrides
@@ -91,7 +92,11 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
 
-        # CONNECTION -> Connection Settings
+        # Run -> Add Boards
+        self.addAvionicsAct = QAction('&Add Avionics', self)
+        self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
+
+        # Run -> Connection Settings
         connect = QAction("&Connection Settings", self)
         connect.triggered.connect(self.client_dialog.show)
         
@@ -102,7 +107,6 @@ class ControlsWindow(QMainWindow):
         edit_menu = menuBar.addMenu('Edit')
         view_menu = menuBar.addMenu('View')
         run_menu = menuBar.addMenu('Run')
-        connection_menu = menuBar.addMenu('Connection')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -118,16 +122,14 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-
-        # add connection actions
-        connection_menu.addAction(connect)
+        run_menu.addAction(connect)
+        run_menu.addAction(self.addAvionicsAct)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       "View": view_menu,
-                      "Run":  run_menu,
-                      "Connection": connection_menu}
+                      "Run":  run_menu}
         
         self.showMaximized()
 
@@ -282,11 +284,141 @@ class ControlsWindow(QMainWindow):
         """
         dialog.done(1)  # This 1 is arbitrary
 
+    def showAvionicsDialog(self):
+        """
+        Show the dialog to configure the avionics that will be connected for the test
+        """
+
+        # Create the dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Add Avionics")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450, 240)
+        dialog.setMinimumWidth(450)
+        dialog.setMinimumWidth(240)
+        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout(dialog)
+        formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+
+        # Add in all the dropdowns
+        dropdown1 = QComboBox(dialog)
+        dropdown1.addItems(["None"] + Constants.boards)
+        dropdown1.setFixedWidth(300)
+        dropdown1.view().setFixedWidth(300)
+        dropdown2 = QComboBox(dialog)
+        dropdown2.addItems(["None"] + Constants.boards)
+        dropdown2.setFixedWidth(300)
+        dropdown2.view().setFixedWidth(300)
+        dropdown3 = QComboBox(dialog)
+        dropdown3.addItems(["None"] + Constants.boards)
+        dropdown3.setFixedWidth(300)
+        dropdown3.view().setFixedWidth(300)
+        dropdown4 = QComboBox(dialog)
+        dropdown4.addItems(["None"] + Constants.boards)
+        dropdown4.setFixedWidth(300)
+        dropdown4.view().setFixedWidth(300)
+        dropdown5 = QComboBox(dialog)
+        dropdown5.addItems(["None"] + Constants.boards)
+        dropdown5.setFixedWidth(300)
+        dropdown5.view().setFixedWidth(300)
+
+        # Array of all the dropdowns
+        dropdowns = [dropdown1, dropdown2, dropdown3, dropdown4, dropdown5]
+
+        # If boards are already set, populate the dropdowns
+        if self.gui.run.boards:
+            for i in range(len(self.gui.run.boards)):
+                dropdowns[i].setCurrentText(self.gui.run.boards[i])
+
+        # Callback functions
+        dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1,1))
+        dropdown2.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown2,2))
+        dropdown3.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown3,3))
+        dropdown4.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown4,4))
+        dropdown5.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown5,5))
+
+        # Add to the layout
+        formLayout.addRow("Board 1:", dropdown1)
+        formLayout.addRow("Board 2:", dropdown2)
+        formLayout.addRow("Board 3:", dropdown3)
+        formLayout.addRow("Board 4:", dropdown4)
+        formLayout.addRow("Board 5:", dropdown5)
+
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel", dialog)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+
+        save_button = QPushButton("Save", dialog)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: self.avionicsDialogSave(dropdowns, dialog))
+
+        # Move the buttons into position, and show them
+        cancel_button.move((dialog.width() - 2 * cancel_button.width()) / 2,
+                           dialog.height() - cancel_button.height() - 3)
+        save_button.move(dialog.width() / 2, dialog.height() - save_button.height() - 3)
+        cancel_button.show()
+        save_button.show()
+
+        dialog.show()
+
+    @staticmethod
+    def updateAvionicsDialog(dropdowns: [], currentDropdown: QComboBox, boxNumber: int):
+        """
+        This function updates the avionics dialog dropdowns that appears when selecting which boards will be connected
+        the run. It ensures that only one of each board is selections, and updates the dropdowns to the available
+        boards when possible. This function is called anytime one of the dialog changes
+        :param dropdowns: The 5 different dropdowns shown in the dialog
+        :param currentDropdown: The current dropdown that was changed
+        :param boxNumber: The number of the dropdown that was changed, 1-5
+        :return: Returns out when necessary, no return value
+        """
+
+        # Checks to make sure a selection is skipped, if it is set the box back to none and return out
+        if boxNumber > 1:
+            if dropdowns[boxNumber-2].currentIndex() is 0:
+                currentDropdown.setCurrentIndex(0)  # 'None' index
+                return
+
+        # Every time a dropdown changes, make sure all the ones below them are reset
+        for i in range(boxNumber, 5):
+                dropdowns[i].clear()
+                dropdowns[i].addItems(["None"] + Constants.boards)
+
+        # For each dropdown below the current dropdown, remove any options that have already been selected
+        for i in range(5):
+            if i > boxNumber-1:
+                for j in range(boxNumber):
+                    dropdowns[i].removeItem(dropdowns[j].currentIndex())
+
+    def avionicsDialogSave(self, dropdowns, dialog):
+        boards = []
+        for i in range(5):
+            if dropdowns[i].currentIndex() is not 0:
+                boards.append(dropdowns[i].currentText())
+
+        # If array is empty
+        if not boards:
+            return  # Do nothing if the user selected nothing
+
+        # Set the run to have these boards attached
+        self.gui.run.boards = boards
+
+        self.centralWidget.controlsSidebarWidget.addBoards(boards)
+        dialog.done(2)
+
     @overrides
     def update(self):
         super().update()
         self.last_packet = self.client_dialog.client.cycle()
         self.centralWidget.update()
+
 
 class ControlsCentralWidget(QWidget):
     """
