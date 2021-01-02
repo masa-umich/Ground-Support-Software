@@ -211,3 +211,17 @@ class Solenoid(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
         return super_dict
+    
+    def setState(self, state):
+        """
+        Set the state of the solenoid
+        """
+
+        if state == 1:
+            self.state = 1
+            self.setToolTip_("State: Open")
+        elif state == 0:
+            self.state = 0
+            self.setToolTip_("State: Closed")
+        else:
+            print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")

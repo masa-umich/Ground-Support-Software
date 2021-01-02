@@ -114,4 +114,6 @@ class ControlsSidebarWidget(QWidget):
         super().update()
         self.last_packet = self.window.last_packet
         if self.last_packet:
-            self.board2.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet
+            for board in self.board_objects:
+                ## TODO: update board based on name with right values
+                board.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet

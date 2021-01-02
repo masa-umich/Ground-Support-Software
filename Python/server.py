@@ -35,6 +35,7 @@ dataframe["packet_num"] = 0
 dataframe["time"] = datetime.now().timestamp()
 for i in interface.parser.items:
     dataframe[i] = 0
+dataframe["vlv3.en"] = 1
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
