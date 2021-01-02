@@ -18,13 +18,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -40.0,
 				"y": 123.42857142857143
-=======
-				"x": -45,
-				"y": 124
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -58,13 +53,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -40.0,
 				"y": 123.42857142857143
-=======
-				"x": -45,
-				"y": 124
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -98,13 +88,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -37.14285714285714,
 				"y": 82.28571428571429
-=======
-				"x": -42,
-				"y": 83
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -138,13 +123,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 1.9047619047619047,
 				"y": 24.0
-=======
-				"x": 3,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -152,13 +132,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -10.476190476190476,
 				"y": -20.571428571428573
-=======
-				"x": -11,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -186,13 +161,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 2.857142857142857,
 				"y": 24.0
-=======
-				"x": 4,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -200,13 +170,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -11.428571428571429,
 				"y": -20.571428571428573
-=======
-				"x": -12,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -234,13 +199,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 1.9047619047619047,
 				"y": 24.0
-=======
-				"x": 3,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -248,13 +208,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -9.523809523809524,
 				"y": -20.571428571428573
-=======
-				"x": -9,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -282,13 +237,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 0.9523809523809523,
 				"y": 24.0
-=======
-				"x": 2,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -296,13 +246,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -8.571428571428571,
 				"y": -20.571428571428573
-=======
-				"x": -9,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -330,13 +275,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 89.14285714285714
-=======
-				"x": -8,
-				"y": 89
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -370,13 +310,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 21.714285714285715
-=======
-				"x": -8,
-				"y": 22
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -410,13 +345,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 99.42857142857143
-=======
-				"x": -8,
-				"y": 100
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -424,13 +354,8 @@
 		"long name label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 16.19047619047619,
 				"y": 206.85714285714286
-=======
-				"x": 21,
-				"y": 207
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -455,13 +380,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -469,24 +389,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 0.0,
 				"y": -20.571428571428573
-=======
-				"x": 2,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-<<<<<<< Python/data_file.json
 		"channel": "Undefined",
 		"board": "Undefined"
-=======
-		"channel number": "vlv8.e"
->>>>>>> Python/data_file.json
 	},
 	"Throttle Valve 11": {
 		"id": 11,
@@ -507,13 +418,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 24.0
-=======
-				"x": 21,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -521,13 +427,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -9.523809523809524,
 				"y": -20.571428571428573
-=======
-				"x": -9,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -552,13 +453,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 48.0
-=======
-				"x": -8,
-				"y": 49
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -566,13 +462,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -10.476190476190476,
 				"y": -20.571428571428573
-=======
-				"x": -11,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -597,13 +488,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -611,13 +497,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": -3.4285714285714284
-=======
-				"x": 30,
-				"y": -3
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -645,13 +526,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -659,13 +535,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": -3.4285714285714284
-=======
-				"x": 30,
-				"y": -3
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -693,13 +564,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 13.333333333333332,
 				"y": 17.142857142857142
-=======
-				"x": 17,
-				"y": 17
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -707,24 +573,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 13.333333333333332,
 				"y": -3.4285714285714284
-=======
-				"x": 17,
-				"y": -3
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-<<<<<<< Python/data_file.json
 		"channel": "Undefined",
 		"board": "Undefined"
-=======
-		"channel number": "pressure[2]"
->>>>>>> Python/data_file.json
 	},
 	"Throttle Valve 16": {
 		"id": 16,
@@ -745,13 +602,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 24.0
-=======
-				"x": 21,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -759,13 +611,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 6.666666666666666,
 				"y": -20.571428571428573
-=======
-				"x": 9,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -790,13 +637,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 16.0
-=======
-				"x": -8,
-				"y": 17
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -833,13 +675,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 16.0
-=======
-				"x": -8,
-				"y": 17
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -847,13 +684,8 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 8.0
-=======
-				"x": 20,
-				"y": 9
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -881,13 +713,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 16.0
-=======
-				"x": -8,
-				"y": 17
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -895,13 +722,8 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 8.0
-=======
-				"x": 20,
-				"y": 9
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -929,13 +751,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 24.0
-=======
-				"x": 21,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -943,13 +760,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -11.428571428571429,
 				"y": -20.571428571428573
-=======
-				"x": -12,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -977,13 +789,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 24.0
-=======
-				"x": 21,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -991,13 +798,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -11.428571428571429,
 				"y": -20.571428571428573
-=======
-				"x": -11,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1025,13 +827,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1039,13 +836,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -28.57142857142857,
 				"y": -20.571428571428573
-=======
-				"x": -30,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1073,13 +865,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1087,13 +874,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 12.38095238095238,
 				"y": -20.571428571428573
-=======
-				"x": 16,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1121,13 +903,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 17.142857142857142,
 				"y": 24.0
-=======
-				"x": 21,
-				"y": 24
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1135,13 +912,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -6.666666666666666,
 				"y": -20.571428571428573
-=======
-				"x": -6,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1169,13 +941,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 130.28571428571428
-=======
-				"x": -8,
-				"y": 130
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1183,13 +950,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 22.857142857142858,
 				"y": -20.571428571428573
-=======
-				"x": 30,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1214,13 +976,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1228,13 +985,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -15.238095238095237,
 				"y": -20.571428571428573
-=======
-				"x": -15,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1262,13 +1014,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 21.714285714285715
-=======
-				"x": -8,
-				"y": 22
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1276,13 +1023,8 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 20.0,
 				"y": 12.571428571428571
-=======
-				"x": 24,
-				"y": 14
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1310,13 +1052,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": -7.619047619047619,
 				"y": 99.42857142857143
-=======
-				"x": -8,
-				"y": 100
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1324,13 +1061,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 27.619047619047617,
 				"y": -20.571428571428573
-=======
-				"x": 34,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1355,13 +1087,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 24.76190476190476,
 				"y": 27.428571428571427
-=======
-				"x": 30,
-				"y": 27
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1369,60 +1096,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-<<<<<<< Python/data_file.json
 				"x": 5.714285714285714,
 				"y": -20.571428571428573
-=======
-				"x": 8,
-				"y": -19
->>>>>>> Python/data_file.json
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Differential Pressure",
-<<<<<<< Python/data_file.json
 		"channel": "Undefined",
 		"board": "Undefined"
-=======
-		"channel number": "do_cobbs"
-	},
-	"Solenoid 30": {
-		"id": 30,
-		"pos": {
-			"x": 1005,
-			"y": 743
-		},
-		"fluid": 0,
-		"width": 40.0,
-		"height": 18.0,
-		"name": "Solenoid",
-		"scale": 1.0,
-		"serial number": "",
-		"long name": "Solenoid",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"serial number label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 21,
-				"y": 24
-			},
-			"rows": 1,
-			"font size": 10.0
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -6,
-				"y": -19
-			},
-			"rows": 1,
-			"font size": 12.0
-		},
-		"channel number": "0"
->>>>>>> Python/data_file.json
 	},
 	"Tube 0": {
 		"tube id": 0,
