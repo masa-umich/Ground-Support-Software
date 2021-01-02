@@ -274,7 +274,6 @@ class MissionWidget(QWidget):
             self.connectionIndicator.setIndicatorColor("Green")
             self.connectionIndicator.setToolTip("Connected")
         else:
-            print(0)
             self.connectionIndicator.setIndicatorColor("Red")
             self.connectionIndicator.setToolTip("No connection")
         
