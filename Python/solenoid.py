@@ -171,7 +171,7 @@ class Solenoid(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), int(new_state)]
                 }
-                print(cmd_dict)
+                #print(cmd_dict)
                 self.client.command(3, cmd_dict)
             
 

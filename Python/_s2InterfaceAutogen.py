@@ -170,19 +170,19 @@ class _S2_InterfaceAutogen:
 		arr (integer array)  - Byte packet to be COBS encoded
 		separator (integer)  - Packet delimiter. Should be using 0, but has the option to use any number
 	"""
-	def stuff_array(arr, separator=0):
+	def stuff_array(self, arr, separator=0):
 		arr.append(0)
 		arr.insert(0, 0)
 		first_sep = 1
 		for x in arr[1:]:
-			if x == seperator:
+			if x == separator:
 				break
 			first_sep += 1
 		index = 1
 		while(index < len(arr)-1):
-			if(arr[index] == seperator):
+			if(arr[index] == separator):
 				offset = 1
-				while(arr[index+offset] != seperator):
+				while(arr[index+offset] != separator):
 					offset += 1
 				arr[index] = offset
 				index += offset
