@@ -18,7 +18,8 @@ class GenSensor(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1,sensor_type: str = "Static Pressure", channel_number: str = '0'):
+                 long_name_label_rows: int = 1,sensor_type: str = "Static Pressure", channel: str = 'Undefined',
+                 board: str = 'Undefined'):
 
         """
         Initializer for genSensor
@@ -44,7 +45,8 @@ class GenSensor(BaseObject):
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
         :param sensor_type: type of physical sensor
-        :param channel_number: the specific channel the device is plugged into
+        :param channel: the specific channel the device is plugged into
+        :param board: the avionics board the device is plugged into
         """
 
         # Initialize base classes
@@ -62,7 +64,8 @@ class GenSensor(BaseObject):
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
         self.sensor_type = sensor_type
-        self.channel_number = channel_number
+        self.channel = channel
+        self.avionics_board = board
         self.measurement = 0
         self.measurement_label = QLabel(self.widget_parent)
         self.setUnits(self.sensor_type)
@@ -96,12 +99,19 @@ class GenSensor(BaseObject):
         self.measurement = measurement
         self.measurement_label.setText(str(self.measurement)+self.units)
 
+    def setAvionicsBoard(self, board: str):
+        """
+        Sets the avionics board the object is connected to
+        :param board: string name of board object is connected to
+        """
+        self.avionics_board = board
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
-        self.channel_number = channel
+        self.channel = channel
     
     def setUnits(self,text):
         """
@@ -198,7 +208,8 @@ class GenSensor(BaseObject):
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
             'sensor type': self.sensor_type,
-            "channel number": self.channel_number
+            "channel": self.channel,
+            "board": self.avionics_board
         }
 
         # Update the super_dict under the solenoid entry with the solenoid specific data

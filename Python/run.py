@@ -38,10 +38,11 @@ class Run(QObject):  #
 
         # All of these are set to none to make sure if someone access before it is created it fails
         self.title = None
-        self.is_active = False # Use this to check if the run is running
+        self.is_active = False  # Use this to check if the run is running
         self.startDateTime = None
         self.MET = None
         self.saveName = None
+        self.boards = None  # TODO: This really should not go here because it is a part of the configuration
         self.thread = None
 
     def startRun(self, title: str):

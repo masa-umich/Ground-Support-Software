@@ -23,7 +23,8 @@ class S2_Interface:
         self.serial_name    = ""
         self.parser         = TelemParse()    # Contains all telem data
         self.helper         = _S2_InterfaceAutogen()
-
+        self.last_raw_packet = None
+        self.init_valves()
 
     ## TODO: add close function
     ## TODO: add write function
@@ -65,8 +66,9 @@ class S2_Interface:
         try:
             if (self.ser.is_open):
                 packet = self.ser.read_until()
+                self.last_raw_packet = packet
                 if len(packet) > 0:
-                    print(len(packet))
+                    #print(len(packet))
                     packet = self.unstuff_packet(packet)
                     try:
                         self.parser.parse_packet(packet)
@@ -78,31 +80,43 @@ class S2_Interface:
             print(e)
         return 0
 
-    # Unpack valves and generates valves key in dict
-    def unpack_valves(self):
+    # initializes valve states in dict and item list
+    def init_valves(self):
         valve_prefix = "vlv"
-        vlvs_list = {key:val for key, val in self.parser.dict.items()
-                            if key.startswith(valve_prefix)}
+        vlvs_list = [key for key in self.parser.items
+                            if key.startswith(valve_prefix)]
         num_valves = 0
         for key in vlvs_list: # dont assume greatest vlv in list is last
             vlv_num = str(key)[3:4] # get vlv num
             vlv_num = int(vlv_num)
             if (vlv_num > num_valves):
                 num_valves = vlv_num
-        valve_states = int(self.parser.dict["valve_states"]) 
 
+        num_valves += 1
+        self.num_valves = num_valves
+        self.parser.num_items += num_valves # update num items in array
+        for n in range(0, num_valves):
+            valve_name = 'vlv' + str(n) + '.en'
+            self.parser.items.append(valve_name)
+    
+    # Unpack valves and generates valves key in dict
+    def unpack_valves(self):
+        valve_states = int(self.parser.dict["valve_states"]) 
         mask = 1
-        for n in range(0, num_valves+1): # off by one error
+        for n in range(0, self.num_valves):
             state = 0
             if (mask & valve_states):
                 state = 1
-            
+
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.dict[valve_name] = state
-            self.parser.items.insert(self.parser.num_items, valve_name)
-            self.parser.num_items += 1 # update num items in array
+            
             mask = mask << 1
-    
+
+    # returns list of channels, cleaned up
+    def channels(self):
+        return [item for item in self.parser.items if (item != 'zero' and item != '')]
+
     """
     Decodes a COBS-encoded packet
     """
