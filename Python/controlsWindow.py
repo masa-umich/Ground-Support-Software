@@ -215,7 +215,6 @@ class ControlsWindow(QMainWindow):
         # Set dialog size and place in middle of window
         dialog.resize(500*self.gui.pixel_scale_ratio[0], 80*self.gui.pixel_scale_ratio[1])
         dialog.setMinimumWidth(500*self.gui.pixel_scale_ratio[0])
-        dialog.setFixedHeight(80*self.gui.pixel_scale_ratio[1])
         dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
 
         # Create the form layout that will hold the text box
