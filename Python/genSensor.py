@@ -5,6 +5,8 @@ from PyQt5.QtCore import *
 from overrides import overrides
 from object import BaseObject
 
+from constants import Constants
+
 
 class GenSensor(BaseObject):
 
@@ -70,6 +72,8 @@ class GenSensor(BaseObject):
         self.measurement_label = QLabel(self.widget_parent)
         self.setUnits(self.sensor_type)
         self._initMeasurementLabel()
+
+        #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
     def _initMeasurementLabel(self):
         """
