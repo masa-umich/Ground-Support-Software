@@ -55,6 +55,7 @@ class Board(QWidget):
         # Board name label
         self.name_label = CustomLabel(self, self.gui, text=self.name)
         self.name_label.setFontSize(16 * self.gui.font_scale_ratio)
+        self.name_label.setStyleSheet("color: white")
         self.name_label.setFixedHeight(self.connectionIndicator.circle_radius*2)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.name_label.move(self.board_pos.x(), self.connectionIndicator.pos().y()+self.connectionIndicator.hBuffer)
@@ -62,14 +63,15 @@ class Board(QWidget):
         # Set up the data name label
         self.data_frame = QFrame(self)
         self.data_form_layout = QFormLayout(self)
-        self.data_frame.resize(self.width() - (self.board_pos.x() + self.board_width)+10*self.gui.pixel_scale_ratio[0],
+        self.data_frame.resize(self.width() - (self.board_pos.x() + self.board_width)+5*self.gui.pixel_scale_ratio[0],
                                 self.height() - (self.name_label.pos().y() + self.name_label.height()))
         self.data_frame.setLayout(self.data_form_layout)
-        self.data_frame.move((self.board_pos.x() + self.board_width)-10*self.gui.pixel_scale_ratio[0],
-                             (self.name_label.pos().y() + self.name_label.height())-8*self.gui.pixel_scale_ratio[1])
+        self.data_frame.move((self.board_pos.x() + self.board_width)-5*self.gui.pixel_scale_ratio[0],
+                             (self.name_label.pos().y() + self.name_label.height())-11*self.gui.pixel_scale_ratio[1])
 
         # Create the labels for the data form
         self.data_form_layout.setLabelAlignment(Qt.AlignLeft)
+        self.data_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         EBatt_form_label = self.createDataFormLayoutLabel("EBatt:")
         self.Ebatt_label = self.createDataFormLayoutLabel("11.1V")
 
@@ -80,7 +82,7 @@ class Board(QWidget):
         # self.temp_label = self.createDataFormLayoutLabel("--K")
 
         flash_form_label = self.createDataFormLayoutLabel("Flash:")
-        self.flash_label = self.createDataFormLayoutLabel("Active")
+        self.flash_label = self.createDataFormLayoutLabel("Inactive")
 
         LPT_form_label = self.createDataFormLayoutLabel("LP Time:")
         self.LPT_label = self.createDataFormLayoutLabel("247ms")
@@ -114,8 +116,7 @@ class Board(QWidget):
 
         self.show()
 
-    @staticmethod
-    def createDataFormLayoutLabel(text: str):
+    def createDataFormLayoutLabel(self, text: str):
         """
         Quick helper method that creates the labels used for the data of this widget
         :param text: label text
@@ -124,9 +125,11 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
+        font.setPointSize(13 * self.gui.font_scale_ratio)
 
         label = QLabel(text)
-        label.setFixedHeight(14)
+        label.setFixedHeight(14 * self.gui.pixel_scale_ratio[1])
+        label.setStyleSheet("color: white")
         label.setFont(font)
 
         return label

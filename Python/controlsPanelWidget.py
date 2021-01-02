@@ -78,10 +78,15 @@ class ControlsPanelWidget(QWidget):
         title_font = QFont()
         title_font.setBold(True)
         title_font.setUnderline(True)
+        title_font.setPointSize(13 * self.gui.font_scale_ratio)
+
+        self.default_font = QFont()
+        self.default_font.setPointSize(13 * self.gui.font_scale_ratio)
 
         # Component Parameters
         label = QLabel("Component Parameters:                                                                  ") # TODO: jankity jank jank
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.createLineEdit(self.component_name_textbox, "Component Name", "Component Name:")
         self.createLineEdit(self.serial_number_textbox, "Serial Number", "Serial Number:")
@@ -99,6 +104,7 @@ class ControlsPanelWidget(QWidget):
         # Component Label Parameters
         label = QLabel("Component Name Label:                                                                  ")
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.long_name_visibility_group = self.createTFRadioButtons("Component Name Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.long_name_position_combobox, "Component Name Position", "Position:", ["Top","Right","Bottom","Left", "Custom"])
@@ -109,6 +115,7 @@ class ControlsPanelWidget(QWidget):
         # Serial Label Parameters
         label = QLabel("Serial Number Label:                                                                  ")
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.serial_number_visibility_group = self.createTFRadioButtons("Serial Number Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
@@ -125,7 +132,11 @@ class ControlsPanelWidget(QWidget):
         :param validator: validator used to make sure text entered is int, double etc.
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
+
         lineEdit.textChanged.connect(lambda : self.updateEditingObjectFields(lineEdit.text(), identifier))
+        lineEdit.setFont(self.default_font)
         if validator is not None:
             lineEdit.setValidator(validator)
 
@@ -144,12 +155,17 @@ class ControlsPanelWidget(QWidget):
         :return group: Returns the group holding the true/false buttons, true is always first button
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
 
         group = QButtonGroup(self)
 
         hbox = QHBoxLayout()
         true_button = QRadioButton(true_btn_label)
         false_button = QRadioButton(false_btn_label)
+
+        true_button.setFont(self.default_font)
+        false_button.setFont(self.default_font)
 
         p = true_button.palette()
         p.setColor(QPalette.Button, Qt.red)
@@ -200,10 +216,13 @@ class ControlsPanelWidget(QWidget):
         :param items: list of strings user can select in drop-down
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
         
         #I removed this so that I could use sizeHint() method on comboboxes in control panel
         #comboBox.setFixedWidth(100)
         comboBox.addItems(items)
+        comboBox.setFont(self.default_font)
         comboBox.currentIndexChanged.connect(lambda: self.updateEditingObjectFields(comboBox.currentText(), identifier))
 
         self.edit_form_layout.addRow(identifier_label, comboBox)
@@ -241,9 +260,13 @@ class ControlsPanelWidget(QWidget):
         :param step: amount value increases or decreases by then the arrows are used
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
+
         spinBox.setMinimum(min)
         spinBox.setMaximum(max)
         spinBox.setSingleStep(step)
+        spinBox.setFont(self.default_font)
 
         spinBox.valueChanged.connect(lambda: self.updateEditingObjectFields(spinBox.value(), identifier))
 

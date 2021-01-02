@@ -46,6 +46,7 @@ class ControlsSidebarWidget(QWidget):
         title_font.setPointSizeF(48 * self.gui.font_scale_ratio)
         self.title_label = QLabel(self)
         self.title_label.setFont(title_font)
+        self.title_label.setStyleSheet("color: white")
         self.title_label.setText("Avionics")
         self.title_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
         self.title_label.setFixedWidth(self.width)
@@ -60,7 +61,7 @@ class ControlsSidebarWidget(QWidget):
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
         """
-        y_pos = self.title_label.y() + self.title_label.height()+1
+        y_pos = 80 * self.gui.pixel_scale_ratio[1] + 1
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it
@@ -76,7 +77,6 @@ class ControlsSidebarWidget(QWidget):
             board.move(2, y_pos)
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
-
 
     @overrides
     def paintEvent(self, e):
@@ -102,8 +102,8 @@ class ControlsSidebarWidget(QWidget):
 
         path.moveTo(1, 0)
         path.lineTo(1, self.height)
-        path.moveTo(1, 75 * self.gui.pixel_scale_ratio[1]-1)
-        path.lineTo(self.width, 75 * self.gui.pixel_scale_ratio[1]-1)
+        path.moveTo(1, 80 * self.gui.pixel_scale_ratio[1]-1)
+        path.lineTo(self.width, 80 * self.gui.pixel_scale_ratio[1]-1)
 
         self.painter.drawPath(path)
 

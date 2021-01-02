@@ -26,7 +26,7 @@ class Constants:
     boards = ["Engine Controller", "Flight Computer", "Pressurization Controller",
               "Recovery Controller", "GSE Controller"]
 
-    line_width = 2
+    line_width = 2 # This is actually overiden lol
 
     BG_color = QColor(0, 22, 44)
     Board_color = QColor(24, 156, 12, 255)

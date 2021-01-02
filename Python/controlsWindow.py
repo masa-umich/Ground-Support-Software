@@ -213,41 +213,59 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450, 80)
-        dialog.setMinimumWidth(450)
-        dialog.setFixedHeight(80)
+        dialog.resize(500*self.gui.pixel_scale_ratio[0], 80*self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(500*self.gui.pixel_scale_ratio[0])
+        dialog.setFixedHeight(80*self.gui.pixel_scale_ratio[1])
         dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
 
         # Create the form layout that will hold the text box
-        formLayout = QFormLayout(dialog)
+        formLayout = QFormLayout()
         formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+        verticalLayout.addLayout(formLayout)
 
         # Create a regular expression validator for the QLineEdit to make sure only characters we want are accepted
         reg_exp = QRegExp("[a-zA-Z0-9 -]+")  # Lower and capital letters, numbers,-, and spaces, at any length (+)
         reg_exp_validator = QRegExpValidator(reg_exp)
 
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
         # Add in the textbox to give run a title
         textbox = QLineEdit(dialog)
         textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
         textbox.setValidator(reg_exp_validator)
-        formLayout.addRow("Run Title:", textbox)
+        textbox.setFont(font)
+        label = QLabel("Run Title:")
+        label.setFont(font)
+        formLayout.addRow(label, textbox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
         
         # Create the buttons, make sure there is no default option, and connect to functions
-        cancel_button = QPushButton("Cancel", dialog)
+        cancel_button = QPushButton("Cancel")
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: self.startRunCanceled(dialog))
+        cancel_button.setFont(font)
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        start_button = QPushButton("Start Run", dialog)
+        start_button = QPushButton("Start Run")
         start_button.setDefault(False)
         start_button.setAutoDefault(False)
         start_button.clicked.connect(lambda: self.startRun(dialog, textbox.text()))
+        start_button.setFont(font)
+        start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        # Move the buttons into position, and show them
-        cancel_button.move((dialog.width() - 2 * cancel_button.width()) / 2, dialog.height() - cancel_button.height() - 3)
-        start_button.move(dialog.width()/2, dialog.height() - start_button.height() - 3)
-        cancel_button.show()
-        start_button.show()
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(start_button)
+
+        verticalLayout.addLayout(buttonLayout)
 
         dialog.show()
 
@@ -295,36 +313,40 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450, 240)
-        dialog.setMinimumWidth(450)
-        dialog.setMinimumWidth(240)
+        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
         dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
 
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
         # Create the form layout that will hold the text box
-        formLayout = QFormLayout(dialog)
-        formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14*self.gui.font_scale_ratio)
 
         # Add in all the dropdowns
         dropdown1 = QComboBox(dialog)
+        dropdown1.setFont(font)
         dropdown1.addItems(["None"] + Constants.boards)
-        dropdown1.setFixedWidth(300)
-        dropdown1.view().setFixedWidth(300)
         dropdown2 = QComboBox(dialog)
+        dropdown2.setFont(font)
         dropdown2.addItems(["None"] + Constants.boards)
-        dropdown2.setFixedWidth(300)
-        dropdown2.view().setFixedWidth(300)
         dropdown3 = QComboBox(dialog)
+        dropdown3.setFont(font)
         dropdown3.addItems(["None"] + Constants.boards)
-        dropdown3.setFixedWidth(300)
-        dropdown3.view().setFixedWidth(300)
         dropdown4 = QComboBox(dialog)
+        dropdown4.setFont(font)
         dropdown4.addItems(["None"] + Constants.boards)
-        dropdown4.setFixedWidth(300)
-        dropdown4.view().setFixedWidth(300)
         dropdown5 = QComboBox(dialog)
+        dropdown5.setFont(font)
         dropdown5.addItems(["None"] + Constants.boards)
-        dropdown5.setFixedWidth(300)
-        dropdown5.view().setFixedWidth(300)
 
         # Array of all the dropdowns
         dropdowns = [dropdown1, dropdown2, dropdown3, dropdown4, dropdown5]
@@ -335,36 +357,51 @@ class ControlsWindow(QMainWindow):
                 dropdowns[i].setCurrentText(self.gui.run.boards[i])
 
         # Callback functions
-        dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1,1))
-        dropdown2.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown2,2))
-        dropdown3.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown3,3))
-        dropdown4.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown4,4))
-        dropdown5.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown5,5))
+        dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1, 1))
+        dropdown2.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown2, 2))
+        dropdown3.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown3, 3))
+        dropdown4.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown4, 4))
+        dropdown5.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown5, 5))
+
+        label1 = QLabel("Board 1:")
+        label1.setFont(font)
+        label2 = QLabel("Board 2:")
+        label2.setFont(font)
+        label3 = QLabel("Board 3:")
+        label3.setFont(font)
+        label4 = QLabel("Board 4:")
+        label4.setFont(font)
+        label5 = QLabel("Board 5:")
+        label5.setFont(font)
 
         # Add to the layout
-        formLayout.addRow("Board 1:", dropdown1)
-        formLayout.addRow("Board 2:", dropdown2)
-        formLayout.addRow("Board 3:", dropdown3)
-        formLayout.addRow("Board 4:", dropdown4)
-        formLayout.addRow("Board 5:", dropdown5)
+        formLayout.addRow(label1, dropdown1)
+        formLayout.addRow(label2, dropdown2)
+        formLayout.addRow(label3, dropdown3)
+        formLayout.addRow(label4, dropdown4)
+        formLayout.addRow(label5, dropdown5)
 
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
         # Create the buttons, make sure there is no default option, and connect to functions
-        cancel_button = QPushButton("Cancel", dialog)
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        save_button = QPushButton("Save", dialog)
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.avionicsDialogSave(dropdowns, dialog))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
 
-        # Move the buttons into position, and show them
-        cancel_button.move((dialog.width() - 2 * cancel_button.width()) / 2,
-                           dialog.height() - cancel_button.height() - 3)
-        save_button.move(dialog.width() / 2, dialog.height() - save_button.height() - 3)
-        cancel_button.show()
-        save_button.show()
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
 
         dialog.show()
 
