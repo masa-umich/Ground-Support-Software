@@ -265,7 +265,7 @@ def update():
                 #print("commanding")
                 cmd = command_queue.get()
                 print(cmd)
-                interface.ser.write(cmd)
+                interface.s2_command(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
 
             # read in packet from EC

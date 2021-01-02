@@ -91,7 +91,6 @@ class S2_Interface:
             vlv_num = int(vlv_num)
             if (vlv_num > num_valves):
                 num_valves = vlv_num
-
         num_valves += 1
         self.num_valves = num_valves
         self.parser.num_items += num_valves # update num items in array
@@ -107,10 +106,8 @@ class S2_Interface:
             state = 0
             if (mask & valve_states):
                 state = 1
-
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.dict[valve_name] = state
-            
             mask = mask << 1
 
     # returns list of channels, cleaned up
@@ -153,10 +150,21 @@ class S2_Interface:
     """
     def get_cmd_names_dict(self):
         return helper.cmd_names_dict
-
+    
     """
     Getter function that returns a dictionary mapping a command's packet_type ID to a list of tuples
     containing function arguments in the order (arg_name, arg_type, xmit_scale)
     """
     def get_cmd_args_dict(self):
         return helper.cmd_args_dict
+    
+    def getBoardAddr(self, name):
+        mapping = {
+            "Engine Controller": 2, 
+            "Flight Computer": 1, 
+            "Pressurization Controller": 3, 
+            "Recovery Controller": 4, 
+            "GSE Controller": 0, 
+            "Black Box": 5
+        }
+        return mapping[name]

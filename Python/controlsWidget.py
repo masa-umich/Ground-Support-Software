@@ -484,7 +484,7 @@ class ControlsWidget(QWidget):
                         channel_name = "vlv" + str(obj.channel)
                         state = self.last_packet[channel_name + ".en"]
                         obj.setState(state)
-                        print(channel_name)
+                        #print(channel_name)
                     
 
 

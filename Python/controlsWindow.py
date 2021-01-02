@@ -26,14 +26,13 @@ class ControlsWindow(QMainWindow):
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('M_icon.png'))
         self.client_dialog = ClientDialog(True) # control client
+        self.last_packet = {}
         self.interface = S2_Interface()
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
-
-        self.last_packet = {}
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
