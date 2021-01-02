@@ -473,9 +473,21 @@ class ControlsWidget(QWidget):
         #print(self.last_packet)
         if self.client.is_connected:
             #self.last_packet["time"] -= self.starttime # time to elapsed
+            # update objects
             for obj in self.object_list: # update objects
                 if type(obj) == GenSensor:
                     this_channel = obj.channel
                     if this_channel in self.channels:
                         obj.setMeasurement(self.last_packet[this_channel])
                         #print(this_channel + str())
+                if type(obj) == Solenoid:
+                    board = obj.avionics_board
+                    # TODO: board prefixes
+                    if obj.channel != "Undefined":
+                        channel_name = "vlv" + str(obj.channel)
+                        state = self.last_packet[channel_name + ".en"]
+                        obj.setState(state)
+                        #print(channel_name)
+                    
+
+

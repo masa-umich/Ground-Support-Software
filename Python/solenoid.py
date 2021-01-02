@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from datetime import datetime
 from overrides import overrides
 
 from constants import Constants
@@ -94,6 +95,7 @@ class Solenoid(BaseObject):
         # self.energized_label.adjustSize()
         # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
 
+        self.client = self.widget_parent.window.client_dialog.client
 
     @overrides
     def draw(self):
@@ -171,7 +173,20 @@ class Solenoid(BaseObject):
 
         if not self.widget_parent.parent.is_editing:
             # Toggle state of solenoid
-            self.toggle()
+            if self.state == 0:
+                new_state = 1
+            elif self.state == 1:
+                new_state = 0
+            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                cmd_dict = {
+                    "function_name": "set_vlv",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), int(new_state)]
+                }
+                #print(cmd_dict)
+                self.client.command(3, cmd_dict)
+            
 
         # Tells widget painter to update screen
         self.widget_parent.update()

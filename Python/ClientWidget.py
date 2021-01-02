@@ -87,10 +87,15 @@ class ClientWidget(QtWidgets.QWidget):
 
         msg = pickle.dumps(command_dict)
         #print(msg)
-        self.command_queue.put(msg)
 
         if command != 0:
             print(command_dict)
+        
+        # add to queue
+        if self.is_connected:
+            self.command_queue.put(msg)
+
+        
 
     def connect(self):
         # try to make a connection with server

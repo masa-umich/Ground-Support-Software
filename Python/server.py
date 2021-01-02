@@ -35,6 +35,7 @@ dataframe["packet_num"] = 0
 dataframe["time"] = datetime.now().timestamp()
 for i in interface.parser.items:
     dataframe[i] = 0
+dataframe["vlv3.en"] = 1
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -264,7 +265,7 @@ def update():
                 #print("commanding")
                 cmd = command_queue.get()
                 print(cmd)
-                interface.ser.write(cmd)
+                interface.s2_command(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
 
             # read in packet from EC
