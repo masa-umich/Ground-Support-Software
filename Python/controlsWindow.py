@@ -432,7 +432,8 @@ class ControlsWindow(QMainWindow):
         for i in range(5):
             if i > boxNumber-1:
                 for j in range(boxNumber):
-                    dropdowns[i].removeItem(dropdowns[j].currentIndex())
+                    if dropdowns[j].currentIndex() != 0:
+                        dropdowns[i].removeItem(dropdowns[j].currentIndex())
 
     def avionicsDialogSave(self, dropdowns, dialog):
         boards = []
