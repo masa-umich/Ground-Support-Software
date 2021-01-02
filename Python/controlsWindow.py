@@ -8,6 +8,7 @@ from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
+from s2Interface import S2_Interface
 
 from overrides import overrides
 import os
@@ -25,6 +26,7 @@ class ControlsWindow(QMainWindow):
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('M_icon.png'))
         self.client_dialog = ClientDialog(True) # control client
+        self.interface = S2_Interface()
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
