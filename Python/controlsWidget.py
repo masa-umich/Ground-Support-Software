@@ -14,7 +14,6 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
-from s2Interface import S2_Interface
 #from datetime import datetime
 
 from termcolor import colored
@@ -45,7 +44,7 @@ class ControlsWidget(QWidget):
         self.gui = parent.gui
         
         self.client = self.window.client_dialog.client
-        self.interface = S2_Interface()
+        self.interface = self.window.interface
         self.channels = self.interface.channels()
         #self.starttime = datetime.now().timestamp()
         #self.client = gui.client

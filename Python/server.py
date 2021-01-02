@@ -50,6 +50,8 @@ serial_log.write("Time, Packet\n")
 data_log.write(interface.parser.csv_header)
 
 # initialize application
+QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 app = QtWidgets.QApplication([])
 appid = 'MASA.Server' # arbitrary string
 if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -65,7 +67,7 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
-base_size = 800
+base_size = 500
 AR = 1.5 #H/W
 top.setFixedWidth(int(AR*base_size))
 top.setFixedHeight(int(base_size))
