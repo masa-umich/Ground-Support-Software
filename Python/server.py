@@ -10,9 +10,10 @@ import threading
 import ctypes
 import os
 import sys
-from datetime import datetime
-from hotfire_packet import ECParse
 import queue
+from datetime import datetime
+from telemParse import TelemParse
+from s2Interface import S2_Interface
 
 threading.stack_size(134217728)
 
@@ -26,7 +27,16 @@ threads = []
 command_queue = queue.Queue()
 
 # initialize parser
-parser = ECParse()
+parser = TelemParse()
+interface = S2_Interface()
+
+# init empty dataframe (mainly for debugging)
+dataframe["commander"] = None
+dataframe["packet_num"] = 0
+dataframe["time"] = datetime.now().timestamp()
+for i in parser.items:
+    dataframe[i] = 0
+
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -57,8 +67,10 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
-top.setFixedWidth(800)
-top.setFixedHeight(500)
+base_size = 800
+AR = 1.5 #H/W
+top.setFixedWidth(int(AR*base_size))
+top.setFixedHeight(int(base_size))
 
 # server log
 log_box = QtGui.QTextEdit()
@@ -77,17 +89,19 @@ ports = [p.device for p in serial.tools.list_ports.comports()]
 
 # connect to com port
 # ser = serial.Serial(port=None, baudrate=int(alias["BAUDRATE"]), timeout=0.2)
-ser = serial.Serial(port=None, baudrate=57600, timeout=0.2)
+# ser = serial.Serial(port=None, baudrate=57600, timeout=0.2)
 def connect():
-    global ser, ports_box
-    if ser.isOpen():
-        ser.close()
+    global ports_box, interface
     try:
-        ser.port = str(ports_box.currentText())
-        ser.open()
-        ser.readline()
-        send_to_log("Connection established on %s" % str(ports_box.currentText()))
+        port = str(ports_box.currentText())
+        interface.connect(port, 57600, 0.2)
+        interface.parse_serial()
     except:
+        pass
+
+    if interface.ser.isOpen():
+        send_to_log("Connection established on %s" % port)
+    else:
         send_to_log("Unable to connect to selected port or no ports available")
 
 # scan for com ports
@@ -194,7 +208,8 @@ def server_handler():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
     port = 6969
-    s.bind(("masadataserver.local", port))
+    #s.bind(("masadataserver.local", port))
+    s.bind((host, port))
 
     # wait
     send_to_log('Server initialized. Waiting for clients to connect...')
@@ -225,7 +240,7 @@ file_menu = main_menu.addMenu('&File')
 
 # quit application function
 def exit():
-    ser.close()
+    interface.ser.close()
     server_log.close()
     serial_log.close()
     command_log.close()
@@ -244,16 +259,16 @@ def update():
     global packet_num, commander_label, dataframe
     
     try:
-        if ser.is_open:
+        if interface.ser.is_open:
             if not command_queue.empty():
                 #print("commanding")
                 cmd = command_queue.get()
                 print(cmd)
-                ser.write(cmd)
+                interface.ser.write(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
 
             # read in packet from EC
-            serial_packet = ser.readline()
+            serial_packet = interface.parse_serial()
             serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(serial_packet)+ '\n')
             # print(len(serial_packet))
             packet_size = len(serial_packet)
