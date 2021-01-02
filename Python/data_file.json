@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -99,
-				"y": 244
+				"x": -42,
+				"y": 108
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -53,8 +53,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -99,
-				"y": 244
+				"x": -42,
+				"y": 108
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -88,8 +88,8 @@
 		"serial number label": {
 			"pos string": "Left",
 			"local pos": {
-				"x": -92,
-				"y": 163
+				"x": -39,
+				"y": 72
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -123,8 +123,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 0,
-				"y": 46
+				"x": 2,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -132,13 +132,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -37,
-				"y": -49
+				"x": -11,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 4": {
 		"id": 4,
@@ -160,7 +161,7 @@
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 3,
-				"y": 46
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -168,13 +169,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -38,
-				"y": -49
+				"x": -12,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 5": {
 		"id": 5,
@@ -195,8 +197,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 0,
-				"y": 46
+				"x": 2,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -204,13 +206,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -32,
-				"y": -49
+				"x": -10,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 6": {
 		"id": 6,
@@ -231,8 +234,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": -2,
-				"y": 46
+				"x": 1,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -240,13 +243,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -31,
-				"y": -49
+				"x": -9,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "2"
+		"channel": "Undefined",
+		"board": "Flight Computer"
 	},
 	"Chamber 7": {
 		"id": 7,
@@ -268,7 +272,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 181
+				"y": 78
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -303,7 +307,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 46
+				"y": 19
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -338,7 +342,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 202
+				"y": 87
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -346,8 +350,8 @@
 		"long name label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 29,
-				"y": 411
+				"x": 17,
+				"y": 181
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -372,8 +376,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -381,14 +385,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -7,
-				"y": -49
+				"x": 0,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "2"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Throttle Valve 11": {
 		"id": 11,
@@ -409,8 +414,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 45,
-				"y": 46
+				"x": 18,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -418,8 +423,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -32,
-				"y": -49
+				"x": -10,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -445,7 +450,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 100
+				"y": 42
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -453,8 +458,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -37,
-				"y": -49
+				"x": -11,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -479,8 +484,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -488,14 +493,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 63,
+				"x": 26,
 				"y": -3
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "2"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Generic Sensor 14": {
 		"id": 14,
@@ -516,8 +522,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -525,14 +531,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 63,
+				"x": 26,
 				"y": -3
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "2"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Generic Sensor 15": {
 		"id": 15,
@@ -553,8 +560,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 37,
-				"y": 31
+				"x": 14,
+				"y": 15
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -562,14 +569,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 37,
+				"x": 14,
 				"y": -3
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "2"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Throttle Valve 16": {
 		"id": 16,
@@ -590,8 +598,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 45,
-				"y": 46
+				"x": 18,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -599,8 +607,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 14,
-				"y": -49
+				"x": 7,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -626,7 +634,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 36
+				"y": 14
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -640,7 +648,8 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 18": {
 		"id": 18,
@@ -662,7 +671,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 36
+				"y": 14
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -670,13 +679,14 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 37,
-				"y": 13
+				"x": 18,
+				"y": 7
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 19": {
 		"id": 19,
@@ -698,7 +708,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 36
+				"y": 14
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -706,13 +716,14 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 37,
-				"y": 13
+				"x": 18,
+				"y": 7
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 20": {
 		"id": 20,
@@ -733,8 +744,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 45,
-				"y": 46
+				"x": 18,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -742,13 +753,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -38,
-				"y": -49
+				"x": -12,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 21": {
 		"id": 21,
@@ -769,8 +781,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 45,
-				"y": 46
+				"x": 18,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -778,13 +790,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -37,
-				"y": -49
+				"x": -12,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Generic Sensor 22": {
 		"id": 22,
@@ -805,8 +818,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -814,14 +827,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -89,
-				"y": -49
+				"x": -30,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Generic Sensor 23": {
 		"id": 23,
@@ -842,8 +856,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -851,14 +865,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 29,
-				"y": -49
+				"x": 13,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Solenoid 25": {
 		"id": 25,
@@ -879,8 +894,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 45,
-				"y": 46
+				"x": 18,
+				"y": 21
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -888,13 +903,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -25,
-				"y": -49
+				"x": -7,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Tank 25": {
 		"id": 25,
@@ -916,7 +932,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 263
+				"y": 114
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -924,8 +940,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 43,
-				"y": -49
+				"x": 24,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -950,8 +966,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -959,14 +975,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -51,
-				"y": -49
+				"x": -16,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Static Pressure",
-		"channel number": "pressure[0]"
+		"channel": "pressure[0]",
+		"board": "Undefined"
 	},
 	"Solenoid 27": {
 		"id": 27,
@@ -988,7 +1005,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 46
+				"y": 19
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -996,13 +1013,14 @@
 		"long name label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 46,
-				"y": 23
+				"x": 21,
+				"y": 11
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
-		"channel number": "0"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Tank 28": {
 		"id": 28,
@@ -1024,7 +1042,7 @@
 			"pos string": "Left",
 			"local pos": {
 				"x": -8,
-				"y": 202
+				"y": 87
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1032,8 +1050,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 63,
-				"y": -49
+				"x": 29,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -1058,8 +1076,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 63,
-				"y": 51
+				"x": 26,
+				"y": 24
 			},
 			"rows": 1,
 			"font size": 10.0
@@ -1067,14 +1085,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 8,
-				"y": -49
+				"x": 6,
+				"y": -18
 			},
 			"rows": 1,
 			"font size": 12.0
 		},
 		"sensor type": "Differential Pressure",
-		"channel number": "1"
+		"channel": "Undefined",
+		"board": "Undefined"
 	},
 	"Tube 0": {
 		"tube id": 0,

@@ -23,7 +23,7 @@ class Solenoid(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, channel_number: str = '0'):
+                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined'):
 
         """
         Initializer for Solenoid
@@ -48,7 +48,8 @@ class Solenoid(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
-        :param channel_number: the specific channel the device is plugged into
+        :param channel: the specific channel the device is plugged into
+        :param board: the avionics board the device is plugged into
         """
 
         # TODO: Still bleah, should have a way to rotate or something
@@ -80,7 +81,8 @@ class Solenoid(BaseObject):
 
         # State tracks whether the solenoid is open or closed
         self.state = 0
-        self.channel_number = channel_number
+        self.channel = channel
+        self.avionics_board = board
 
     @overrides
     def draw(self):
@@ -161,12 +163,19 @@ class Solenoid(BaseObject):
         # Tells widget painter to update screen
         self.widget_parent.update()
 
+    def setAvionicsBoard(self, board: str):
+        """
+        Sets the avionics board the object is connected to
+        :param board: string name of board object is connected to
+        """
+        self.avionics_board = board
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
-        self.channel_number = channel
+        self.channel = channel
 
     def toggle(self):
         """
@@ -194,7 +203,8 @@ class Solenoid(BaseObject):
 
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            "channel number": self.channel_number
+            "channel": self.channel,
+            "board": self.avionics_board
         }
 
         # Update the super_dict under the solenoid entry with the solenoid specific data
