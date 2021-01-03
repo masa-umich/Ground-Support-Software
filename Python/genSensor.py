@@ -127,7 +127,11 @@ class GenSensor(BaseObject):
         """
         unit_dict = self.interface.parser.units
         if self.channel in self.interface.channels():
-            self.units = unit_dict[self.channel]
+            units = unit_dict[self.channel]
+            if units == 'ul':
+                self.units = ''
+            else:
+                self.units = units
             self.measurement_label.setText(str(self.measurement) + " " + self.units)
             
     @overrides
@@ -220,7 +224,5 @@ class GenSensor(BaseObject):
         """
 
         text = ""
-        
         text += self.channel
-
         self.setToolTip_(text)
