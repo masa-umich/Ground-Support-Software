@@ -125,7 +125,7 @@ class S2_Interface:
         replacement = 1
         index = int(packet[0])
         #print("packet ", index)
-        for n in range(1, len(packet)):
+        for n in range(0, len(packet)):
             temp = packet[n:n+1]
             if(n == index):
                 index = int(packet[n])+n

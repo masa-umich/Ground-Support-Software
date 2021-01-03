@@ -9,17 +9,17 @@ class _S2_InterfaceAutogen:
 	def __init__(self):
 		# A dictionary mapping command name to packet_type (command ID)
 		self.cmd_names_dict = {
-			set_vlv	:	8,
-			send_telem_short	:	9,
-			send_telem_all	:	10,
-			set_stepper_period	:	11,
-			set_stepper_direction	:	12,
-			set_kp	:	13,
-			set_ki	:	14,
-			set_kd	:	15,
-			set_control_calc_period	:	16,
-			set_state	:	17,
-			move_stepper_degrees	:	18
+			"set_vlv"	:	8,
+			"send_telem_short"	:	9,
+			"send_telem_all"	:	10,
+			"set_stepper_period"	:	11,
+			"set_stepper_direction"	:	12,
+			"set_kp"	:	13,
+			"set_ki"	:	14,
+			"set_kd"	:	15,
+			"set_control_calc_period"	:	16,
+			"set_state"	:	17,
+			"move_stepper_degrees"	:	18
 		}
 
 		# A dictionary mapping packet_type (command ID) to a list of function argument information.
