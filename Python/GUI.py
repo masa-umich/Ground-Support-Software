@@ -40,7 +40,7 @@ class GUI:
             # Once again the font scale is 1 on Mac and smaller for windows. This should produce identical results
             self.font_scale_ratio = 0.82
 
-            Constants.line_width = 2
+            Constants.line_width = 4
         elif self.platform == "OSX":
             self.font_scale_ratio = 1
 
@@ -58,8 +58,9 @@ class GUI:
 
 
 if __name__ == '__main__':
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     app = QApplication(sys.argv)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     gui = GUI()
 
     #timer and tick updates

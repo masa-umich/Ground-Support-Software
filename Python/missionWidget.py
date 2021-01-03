@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from constants import Constants
 from overrides import overrides
+from indicatorLightWidget import IndicatorLightWidget
 
 import math
 import time
@@ -40,7 +41,7 @@ class MissionWidget(QWidget):
 
         # Set Geometry
         self.width = self.centralWidget.width - self.controlsPanelWidget.width
-        self.mainHeight = 75 * self.gui.pixel_scale_ratio[1]
+        self.mainHeight = 80 * self.gui.pixel_scale_ratio[1]
         self.underBarHeight = 25 * self.gui.pixel_scale_ratio[1]
         self.height = self.mainHeight+self.underBarHeight
         self.left = 0
@@ -69,6 +70,7 @@ class MissionWidget(QWidget):
         MET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
         self.MET_label.setFont(MET_font)
         self.MET_label.setText("MET-00:00:00")
+        self.MET_label.setStyleSheet("color: white")
         self.MET_label.setFixedHeight(self.mainHeight)
         self.MET_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.MET_label.move(0, 0-4*self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
@@ -89,6 +91,7 @@ class MissionWidget(QWidget):
         self.dateTimeLabel = QLabel(self)
         monospace_light_font.setPointSizeF(16 * self.gui.font_scale_ratio)
         self.dateTimeLabel.setFont(monospace_light_font)
+        self.dateTimeLabel.setStyleSheet("color: white")
         self.dateTimeLabel.setText("November 25th 2020, 05:52pm")
         self.dateTimeLabel.setFixedHeight(self.underBarHeight)
         self.dateTimeLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -125,7 +128,7 @@ class MissionWidget(QWidget):
 
         self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Red", 14, 20, 5, 1)
         self.systemIndicator.move(self.commandIndicator.pos().x() + self.commandIndicator.width(), 0)
-        self.systemIndicator.setToolTip("System not connected")
+        self.systemIndicator.setToolTip("He Tank Overpressure\n No pneumatic pressure")
 
         self.stateIndicator = IndicatorLightWidget(self, 'State', 20, "Red", 14, 20, 5, 2)
         self.stateIndicator.move(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
@@ -135,6 +138,7 @@ class MissionWidget(QWidget):
         self.status_label = QLabel(self)
         self.status_label.setFont(MET_font)
         self.status_label.setText("Pre-run Checkouts")
+        self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
         self.status_label.setFixedWidth(self.width - (self.stateIndicator.pos().x() + self.stateIndicator.width()))
         self.status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -223,7 +227,6 @@ class MissionWidget(QWidget):
         pen.setWidth(Constants.line_width)
         pen.setColor(Constants.MASA_Beige_color)
         self.painter.setPen(pen)
-
         # Draw the bottom border on the widget
         path = QPainterPath()
         path.moveTo(0, self.mainHeight-1)  # Bottom left corner
@@ -237,7 +240,7 @@ class MissionWidget(QWidget):
 
         # Border around the date time label
         path = QPainterPath()
-        pen.setWidth(1)
+        pen.setWidth(Constants.line_width/2)
         self.painter.setPen(pen)
         path.moveTo(0, self.height - 1)
         path.lineTo(self.dateTimeLabel.width() + self.underBarWBuffer, self.height - 1)
@@ -287,102 +290,4 @@ class MissionWidgetBackgroundThread(QThread):
             time.sleep(1)
             self.missionWidget.updateDateTimeLabel()
 
-
-class IndicatorLightWidget(QWidget):
-    """
-    Small class to define an indicator light, essentially a colored circle with some text below that can display
-    different colors to display status
-    """
-
-    def __init__(self, parent, labelText: str, circleRadius: int, indicatorColor: str, fontSize: int = 14,
-                 Wbuffer: int = 0, Hbuffer: int = 0, LBuffer: int = 0):
-        """
-        Initialize the widget
-        :param parent: parent of this widget, is the missionWidget
-        :param labelText: the text that will be displayed under the indicator light
-        :param circleRadius: the radius of the indicator circle
-        :param indicatorColor: the indicator color
-        :param fontSize: the font size of the indicator label
-        :param Wbuffer: width buffer on the circle, pixels buffer on one side
-        :param Hbuffer: height buffer on the top of the circle, pixels buffer on one side
-        :param LBuffer: height buffer between the label and the circle
-        """
-        super().__init__(parent)
-
-        # Basic setup
-        self.missionWidget = parent
-        self.gui = self.missionWidget.gui
-        self.labelText = labelText
-        self.circle_radius = circleRadius
-        self.fontSize = fontSize
-        self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
-        self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
-        self.lBuffer = LBuffer * self.gui.pixel_scale_ratio[1]
-        # Painter controls the drawing of everything on the widget
-        self.painter = QPainter()
-        self.indicatorColor = indicatorColor
-
-        # Define the font for the widget
-        monospace_light_font = QFont()
-        monospace_light_font.setStyleStrategy(QFont.PreferAntialias)
-        monospace_light_font.setFamily(Constants.monospace_font)
-        monospace_light_font.setWeight(QFont.Light)
-
-        # Declare the label and set it parameters
-        self.label = QLabel(self)
-        monospace_light_font.setPointSizeF(self.fontSize * self.gui.font_scale_ratio)
-        self.label.setFont(monospace_light_font)
-        self.label.setText(self.labelText)
-        self.label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.label.adjustSize()
-        self.label.setFixedHeight(self.label.fontMetrics().boundingRect(self.label.text()).height())
-        self.label.show()
-
-        # Resize the widget to fit exactly the circle and the label
-        self.resize(self.circle_radius*2 + 2*self.wBuffer, self.circle_radius*2 + self.hBuffer + self.label.height() + self.lBuffer)
-
-        # Move the label to be centered on the circle
-        self.label.move(self.circle_radius + self.wBuffer - self.label.width()/2, self.circle_radius*2 + self.hBuffer + self.lBuffer)
-        self.show()
-
-    def setIndicatorColor(self, color: str):
-        """
-        Set the Indicator color for the widget
-        :param color: Color as string, Green, Yellow, or Red
-        """
-        self.indicatorColor = color
-
-    @overrides
-    def paintEvent(self, e):
-        """
-        This event is called automatically in the background by pyQt. It is used to update the drawing on screen
-        This function calls the objects own drawing methods to perform the actual drawing calculations
-        """
-        self.painter.begin(self)
-
-        # This makes the objects onscreen more crisp
-        self.painter.setRenderHint(QPainter.HighQualityAntialiasing)
-
-        # Default pen qualities
-        pen = QPen()
-        pen.setWidth(1)
-        pen.setColor(Constants.MASA_Beige_color)
-        self.painter.setPen(pen)
-
-        # Set the brush color to the indicator color
-        if self.indicatorColor is "Green":
-            self.painter.setBrush(QBrush(Constants.Indicator_Green_color, Qt.SolidPattern))
-        elif self.indicatorColor is "Yellow":
-            self.painter.setBrush(QBrush(Constants.Indicator_Yellow_color, Qt.SolidPattern))
-        elif self.indicatorColor is "Red":
-            self.painter.setBrush(QBrush(Constants.Indicator_Red_color, Qt.SolidPattern))
-        else:
-            self.painter.setBrush(Qt.NoBrush)
-
-        # Draw the ellipse with a beige border, buffers on width and height
-        self.painter.drawEllipse(QPoint(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
-                                 self.circle_radius, self.circle_radius)
-        self.painter.setBrush(Qt.NoBrush)
-
-        self.painter.end()
 
