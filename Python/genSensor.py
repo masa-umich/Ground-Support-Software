@@ -20,7 +20,7 @@ class GenSensor(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1,sensor_type: str = "Static Pressure", channel: str = 'Undefined',
+                 long_name_label_rows: int = 1, units: str = "psi", channel: str = 'Undefined',
                  board: str = 'Undefined'):
 
         """
@@ -46,7 +46,7 @@ class GenSensor(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
-        :param sensor_type: type of physical sensor
+        :param units: sensor units
         :param channel: the specific channel the device is plugged into
         :param board: the avionics board the device is plugged into
         """
@@ -65,12 +65,12 @@ class GenSensor(BaseObject):
 
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
-        self.sensor_type = sensor_type
+        self.units = units
         self.channel = channel
         self.avionics_board = board
         self.measurement = 0
         self.measurement_label = QLabel(self.widget_parent)
-        self.setUnits(self.sensor_type)
+        self.setUnits(self.units)
         self._initMeasurementLabel()
 
         #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
@@ -81,7 +81,7 @@ class GenSensor(BaseObject):
         """
         self.measurement_label.setFixedSize(QSize(self.width, self.height))
         self.measurement_label.move(self.position.x(), self.position.y())
-        self.measurement_label.setText(str(self.measurement) + self.units)
+        self.measurement_label.setText(str(self.measurement) + " " + self.units)
         self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
         self.measurement_label.setStyleSheet('color: white')
 
@@ -101,7 +101,7 @@ class GenSensor(BaseObject):
         :param measurement: new measurement
         """
         self.measurement = measurement
-        self.measurement_label.setText(str(self.measurement)+self.units)
+        self.measurement_label.setText(str(self.measurement)+ " " + self.units)
 
     def setAvionicsBoard(self, board: str):
         """
@@ -119,22 +119,10 @@ class GenSensor(BaseObject):
     
     def setUnits(self,text):
         """
-        Uses text (sensor type) to assign units to sensor label
+        Sets units from textbox until config based system is done
         """
-        self.sensor_type = text
-        
-        if text == "Static Pressure":
-            self.units = "psi"
-        elif text == "Differential Pressure":
-            self.units = "psid"
-        elif text == "Temperature":
-            self.units = "K"
-        elif text == "Force":
-            self.units = "lbf"
-        elif text == "Valve Position":
-            self.units = "%"
-        
-        self.measurement_label.setText(str(self.measurement)+self.units)
+        self.units = text
+        self.measurement_label.setText(str(self.measurement) + " " + self.units)
             
     @overrides
     def move(self, point: QPoint):
@@ -211,7 +199,7 @@ class GenSensor(BaseObject):
 
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            'sensor type': self.sensor_type,
+            'units': self.units,
             "channel": self.channel,
             "board": self.avionics_board
         }

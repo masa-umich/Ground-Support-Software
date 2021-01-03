@@ -69,7 +69,7 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_position_combobox = QComboBox(self)
         self.serial_number_font_size_spinbox = QDoubleSpinBox(self)
         self.scale_spinbox = QDoubleSpinBox(self)
-        self.sensor_type_combobox = QComboBox(self)
+        self.sensor_type_textbox = QLineEdit(self)
         self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
@@ -97,8 +97,7 @@ class ControlsPanelWidget(QWidget):
                             ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
-        self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
-                            ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
+        self.createLineEdit(self.sensor_type_textbox, "Sensor Units", "Sensor Units:") #["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"]
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -307,12 +306,12 @@ class ControlsPanelWidget(QWidget):
             self.channel_combobox.setDisabled(True)
             self.board_combobox.setDisabled(True)
 
-        # Enables the sensor type box and sets it value
+        # Enables the units box and sets it value
         if object_.object_name == "Generic Sensor":
-            self.sensor_type_combobox.setEnabled(True)
-            self.sensor_type_combobox.setCurrentText(object_.sensor_type)
+            self.sensor_type_textbox.setEnabled(True)
+            self.sensor_type_textbox.setText(object_.units)
         else:
-            self.sensor_type_combobox.setDisabled(True)
+            self.sensor_type_textbox.setDisabled(True)
 
     def updateEditingObjectFields(self, text, identifier):
         """
@@ -341,7 +340,7 @@ class ControlsPanelWidget(QWidget):
                 object_.setAvionicsBoard(text)
             elif identifier == "Channel":
                 object_.setChannel(text)
-            elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
+            elif identifier == "Sensor Units" and object_.object_name == "Generic Sensor":
                 object_.setUnits(text)
 
             # Component Label Parameters
