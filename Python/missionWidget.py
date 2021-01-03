@@ -138,7 +138,7 @@ class MissionWidget(QWidget):
         # Create the label that will hold the status label, displays what task is being performed
         self.status_label = QLabel(self)
         self.status_label.setFont(MET_font)
-        self.status_label.setText("Pre-run Checkouts")
+        self.status_label.setText("GUI Configuration")
         self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
         self.status_label.setFixedWidth(self.width - (self.stateIndicator.pos().x() + self.stateIndicator.width()))
@@ -163,6 +163,21 @@ class MissionWidget(QWidget):
 
         # Updating Label text
         self.MET_label.setText("MET-" + qtime.toString("hh:mm:ss"))
+
+    def updateStatusLabel(self, status: str, is_warning: bool = False):
+        """
+        Update the status label
+        :param status: new status to display
+        :param is_warning: optional argument to pass that will show the status in red instead of the normal white
+        """
+
+        self.status_label.setText(status)
+
+        if is_warning:
+            self.status_label.setStyleSheet("color:" + Constants.MASA_Maize_color.name())
+        else:
+            self.status_label.setStyleSheet("color: white")
+
 
     def updateDateTimeLabel(self):
         """

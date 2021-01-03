@@ -172,20 +172,24 @@ class Solenoid(BaseObject):
         super().onClick()
 
         if not self.widget_parent.parent.is_editing:
-            # Toggle state of solenoid
-            if self.state == 0:
-                new_state = 1
-            elif self.state == 1:
-                new_state = 0
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
-                cmd_dict = {
-                    "function_name": "set_vlv",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
-                    "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), int(new_state)]
-                }
-                #print(cmd_dict)
-                self.client.command(3, cmd_dict)
+
+            if self.gui.debug_mode == False:
+                # Toggle state of solenoid
+                if self.state == 0:
+                    new_state = 1
+                elif self.state == 1:
+                    new_state = 0
+                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                    cmd_dict = {
+                        "function_name": "set_vlv",
+                        "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                        "timestamp": int(datetime.now().timestamp()),
+                        "args": [int(self.channel), int(new_state)]
+                    }
+                    #print(cmd_dict)
+                    self.client.command(3, cmd_dict)
+            else:
+                self.toggle()
             
 
         # Tells widget painter to update screen

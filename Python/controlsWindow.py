@@ -70,6 +70,17 @@ class ControlsWindow(QMainWindow):
         saveAsAct.setShortcut('Ctrl+Shift+S')
         saveAsAct.triggered.connect(self.saveFileDialog)
 
+        # FILE -> Enter Debug Mode
+        self.debugAct = QAction('&Enter Debug Mode', self)
+        self.debugAct.setShortcut('Ctrl+D')
+        self.debugAct.triggered.connect(self.enterDebug)
+
+        # FILE -> Exit Debug Mode
+        self.exitDebugAct = QAction('&Leave Debug Mode', self)
+        self.exitDebugAct.setShortcut('Ctrl+Shift+D')
+        self.exitDebugAct.triggered.connect(self.exitDebug)
+        self.exitDebugAct.setDisabled(True)
+
         # TODO: We should have exit and enter as options only when possible, ie can't exit if u haven't started
         # EDIT -> Enter Edit Mode
         self.enterEditAct = QAction('&Enter Edit Mode', self)
@@ -115,6 +126,8 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(saveAct)
         file_menu.addAction(saveAsAct)
         file_menu.addAction(exitAct)
+        file_menu.addAction(self.debugAct)
+        file_menu.addAction(self.exitDebugAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -191,6 +204,8 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsWidget.toggleEdit()
             self.enterEditAct.setDisabled(True)
             self.exitEditAct.setEnabled(True)
+            self.debugAct.setDisabled(True)
+            self.exitDebugAct.setDisabled(True)
 
     def exitEdit(self):
         """
@@ -202,6 +217,31 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsSidebarWidget.show()
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
+            self.debugAct.setEnabled(True)
+            self.exitDebugAct.setEnabled(True)
+
+    def enterDebug(self):
+        """
+        Enter debug mode which overrides the gui to attempt to send commands and instead shows what you would see in
+        a test
+        """
+        self.gui.debug_mode = True
+        self.debugAct.setDisabled(True)
+        self.exitDebugAct.setEnabled(True)
+        self.startRunAct.setDisabled(True)
+
+        self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
+
+    def exitDebug(self):
+        """
+        Exit debug mode
+        """
+        self.gui.debug_mode = False
+        self.debugAct.setEnabled(True)
+        self.exitDebugAct.setDisabled(True)
+        self.startRunAct.setEnabled(True)
+
+        self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
 
     def showRunDialog(self):
         """

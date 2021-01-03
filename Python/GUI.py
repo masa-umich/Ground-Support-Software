@@ -49,6 +49,9 @@ class GUI:
         # This variable holds the current Run class that is being used to conduct the test
         self.run = Run()
 
+        # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
+        self.debug_mode = False
+
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
     
