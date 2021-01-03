@@ -12,5 +12,6 @@ while(1):
     parse_status = 0
     parse_status = s2_interface.parse_serial()
     if parse_status == 1:
-        print(s2_interface.parser.dict)
+        print(s2_interface.parser.dict) # get telem values
+        print(s2_interface.parser.units) # get units
 
