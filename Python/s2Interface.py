@@ -60,7 +60,7 @@ class S2_Interface:
     def parse_serial(self):
         try:
             if (self.ser.is_open):
-                packet = self.ser.read_until()
+                packet = self.ser.read_until(b'\x00')
                 if len(packet) > 0:
                     print(len(packet))
                     packet = self.unstuff_packet(packet)
