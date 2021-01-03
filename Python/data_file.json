@@ -28,7 +28,7 @@
 			"pos string": "Custom",
 			"local pos": {
 				"x": 25.0,
-				"y": 1.1111111111111112
+				"y": 0.0
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -108,7 +108,7 @@
 		"id": 3,
 		"pos": {
 			"x": 450.0,
-			"y": 221.11111111111111
+			"y": 220.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -146,7 +146,7 @@
 		"id": 4,
 		"pos": {
 			"x": 330.0,
-			"y": 221.11111111111111
+			"y": 220.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -184,7 +184,7 @@
 		"id": 5,
 		"pos": {
 			"x": 160.0,
-			"y": 221.11111111111111
+			"y": 220.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -222,7 +222,7 @@
 		"id": 6,
 		"pos": {
 			"x": 635.0,
-			"y": 221.11111111111111
+			"y": 220.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -295,7 +295,7 @@
 		"id": 8,
 		"pos": {
 			"x": 240.0,
-			"y": 772.2222222222222
+			"y": 771.1111111111111
 		},
 		"fluid": 1,
 		"width": 18.0,
@@ -320,7 +320,7 @@
 			"pos string": "Custom",
 			"local pos": {
 				"x": -40.0,
-				"y": 1.1111111111111112
+				"y": 0.0
 			},
 			"rows": 1,
 			"font size": 12.0
@@ -395,7 +395,6 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
@@ -438,7 +437,7 @@
 		"id": 12,
 		"pos": {
 			"x": 285.0,
-			"y": 562.2222222222222
+			"y": 561.1111111111111
 		},
 		"fluid": 0,
 		"width": 44.0,
@@ -503,8 +502,7 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
-		"channel": "Undefined",
+		"channel": "pressure[2]",
 		"board": "Undefined"
 	},
 	"Generic Sensor 14": {
@@ -541,8 +539,7 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
-		"channel": "Undefined",
+		"channel": "pressure[3]",
 		"board": "Undefined"
 	},
 	"Generic Sensor 15": {
@@ -579,7 +576,6 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
@@ -587,7 +583,7 @@
 		"id": 16,
 		"pos": {
 			"x": 140.0,
-			"y": 602.2222222222222
+			"y": 601.1111111111111
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -736,7 +732,7 @@
 		"id": 20,
 		"pos": {
 			"x": 160.0,
-			"y": 541.1111111111111
+			"y": 540.0
 		},
 		"fluid": 1,
 		"width": 40.0,
@@ -774,7 +770,7 @@
 		"id": 21,
 		"pos": {
 			"x": 500.0,
-			"y": 541.1111111111111
+			"y": 540.0
 		},
 		"fluid": 2,
 		"width": 40.0,
@@ -842,7 +838,6 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
@@ -880,8 +875,7 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
-		"channel": "Undefined",
+		"channel": "pressure[3]",
 		"board": "Undefined"
 	},
 	"Solenoid 25": {
@@ -991,7 +985,6 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psi",
 		"channel": "pressure[0]",
 		"board": "Undefined"
 	},
@@ -1102,15 +1095,14 @@
 			"rows": 1,
 			"font size": 12.0
 		},
-		"units": "psid",
-		"channel": "Undefined",
+		"channel": "pressure[1]",
 		"board": "Undefined"
 	},
 	"3 Way Valve 30": {
 		"id": 30,
 		"pos": {
 			"x": 1050.0,
-			"y": 831.1111111111111
+			"y": 830.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -1147,7 +1139,7 @@
 		"id": 31,
 		"pos": {
 			"x": 920.0,
-			"y": 743.3333333333334
+			"y": 742.2222222222222
 		},
 		"fluid": 0,
 		"width": 27.0,
@@ -1184,7 +1176,7 @@
 		"id": 32,
 		"pos": {
 			"x": 1050.0,
-			"y": 743.3333333333334
+			"y": 742.2222222222222
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -1221,7 +1213,7 @@
 		"id": 33,
 		"pos": {
 			"x": 920.0,
-			"y": 831.1111111111111
+			"y": 830.0
 		},
 		"fluid": 0,
 		"width": 27.0,

@@ -388,7 +388,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 units=pt["units"], channel=pt["channel"],board=pt["board"]))
+                                                 channel=pt["channel"],board=pt["board"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]

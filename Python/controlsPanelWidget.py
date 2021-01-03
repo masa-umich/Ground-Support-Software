@@ -19,10 +19,11 @@ class ControlsPanelWidget(QWidget):
         self.controls = self.parent.controlsWidget
 
         self.gui = self.parent.gui
+        self.interface = self.window.interface
+        self.parser = self.interface.parser
 
-        self.parser = TelemParse()
-        self.sensor_channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
-        self.valve_channels = [str(x) for x in range(0, 10)]  # TODO: Connect this to something meaningful
+        self.sensor_channels = self.interface.channels()
+        self.valve_channels = [str(x) for x in range(0, self.interface.num_valves)]  # TODO: how dafuq do we do board ids and vary valve channel numbers
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
@@ -69,7 +70,6 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_position_combobox = QComboBox(self)
         self.serial_number_font_size_spinbox = QDoubleSpinBox(self)
         self.scale_spinbox = QDoubleSpinBox(self)
-        self.sensor_type_textbox = QLineEdit(self)
         self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
@@ -97,7 +97,6 @@ class ControlsPanelWidget(QWidget):
                             ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
-        self.createLineEdit(self.sensor_type_textbox, "Sensor Units", "Sensor Units:") #["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"]
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -306,13 +305,6 @@ class ControlsPanelWidget(QWidget):
             self.channel_combobox.setDisabled(True)
             self.board_combobox.setDisabled(True)
 
-        # Enables the units box and sets it value
-        if object_.object_name == "Generic Sensor":
-            self.sensor_type_textbox.setEnabled(True)
-            self.sensor_type_textbox.setText(object_.units)
-        else:
-            self.sensor_type_textbox.setDisabled(True)
-
     def updateEditingObjectFields(self, text, identifier):
         """
         Called when user changes field of an object from the edit panel
@@ -340,8 +332,6 @@ class ControlsPanelWidget(QWidget):
                 object_.setAvionicsBoard(text)
             elif identifier == "Channel":
                 object_.setChannel(text)
-            elif identifier == "Sensor Units" and object_.object_name == "Generic Sensor":
-                object_.setUnits(text)
 
             # Component Label Parameters
             elif identifier == "Component Name Visibility":
