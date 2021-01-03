@@ -73,6 +73,8 @@ class GenSensor(BaseObject):
         self.setUnits(self.units)
         self._initMeasurementLabel()
 
+        self.updateToolTip()
+
         #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
     def _initMeasurementLabel(self):
@@ -116,6 +118,7 @@ class GenSensor(BaseObject):
         :param channel: channel of the object
         """
         self.channel = channel
+        self.updateToolTip()
     
     def setUnits(self,text):
         """
@@ -208,3 +211,14 @@ class GenSensor(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
         return super_dict
+
+    def updateToolTip(self):
+        """
+        Called to update the tooltip of the sensor
+        """
+
+        text = ""
+        
+        text += self.channel
+
+        self.setToolTip_(text)

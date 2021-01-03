@@ -80,11 +80,15 @@ class ThreeWayValve(BaseObject):
 
         # State tracks whether the ThreeWayValve is open or closed
         self.state = 0
+        self.voltage = 0
+        self.current = 0
         self.sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
         self.setAnchorPoints()
         self.channel = channel
         self.avionics_board = board
         self.client = self.widget_parent.window.client_dialog.client
+
+        self.updateToolTip()
         
     @overrides
     def draw(self):
@@ -241,12 +245,14 @@ class ThreeWayValve(BaseObject):
         """
         self.channel = channel
     
-    def setState(self, state: bool):
+    def setState(self, state: bool, voltage: float, current: float):
         """
         Set the state of the solenoid
         """
 
         self.state = state
+        self.voltage = voltage
+        self.current = current
         self.updateToolTip()
 
     def updateToolTip(self):
@@ -260,7 +266,9 @@ class ThreeWayValve(BaseObject):
             text += "State: Energized\n"
         else:
             text += "State: De-energized\n"
-
+        
+        text += "Voltage: %s V\nCurrent: %s A" % (self.voltage, self.current)
+        
         # if self.normally_open:
         #     text += "Normally Open"
         # else:

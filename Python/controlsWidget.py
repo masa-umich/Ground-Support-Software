@@ -480,13 +480,15 @@ class ControlsWidget(QWidget):
                     if this_channel in self.channels:
                         obj.setMeasurement(self.last_packet[this_channel])
                         #print(this_channel + str())
-                if type(obj) == Solenoid:
+                if type(obj) == Solenoid or type(obj) == ThreeWayValve:
                     board = obj.avionics_board
                     # TODO: board prefixes
                     if obj.channel != "Undefined":
                         channel_name = "vlv" + str(obj.channel)
                         state = self.last_packet[channel_name + ".en"]
-                        obj.setState(state)
+                        voltage = self.last_packet[channel_name + ".e"]
+                        current = self.last_packet[channel_name + ".i"]
+                        obj.setState(state, voltage, current)
                         #print(channel_name)
                     
 
