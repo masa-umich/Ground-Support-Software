@@ -279,7 +279,7 @@ class ControlsPanelWidget(QWidget):
         """
 
         # Updates the available values for the channels for solenoids and generic sensors
-        if object_.object_name == "Solenoid":
+        if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
         elif object_.object_name == "Generic Sensor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)
@@ -298,7 +298,7 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_font_size_spinbox.setValue(object_.serial_number_label.getFontSize())
 
         # Enables the board and channel box and sets there values
-        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid":
+        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.channel_combobox.setEnabled(True)
             self.channel_combobox.setCurrentText(object_.channel)
             self.board_combobox.setEnabled(True)
