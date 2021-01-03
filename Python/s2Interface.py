@@ -65,14 +65,14 @@ class S2_Interface:
     def parse_serial(self):
         try:
             if (self.ser.is_open):
-                packet = self.ser.read_until()
+                packet = self.ser.read_until(b'\x00')
                 self.last_raw_packet = packet
                 if len(packet) > 0:
-                    #print(len(packet))
                     packet = self.unstuff_packet(packet)
                     try:
                         self.parser.parse_packet(packet)
                         self.unpack_valves()
+                        #print(self.parser.dict)
                         return 1
                     except Exception as e:
                         print("Packet lost with error ", e)
@@ -122,7 +122,7 @@ class S2_Interface:
         replacement = 1
         index = int(packet[0])
         #print("packet ", index)
-        for n in range(1, len(packet)):
+        for n in range(0, len(packet)):
             temp = packet[n:n+1]
             if(n == index):
                 index = int(packet[n])+n
