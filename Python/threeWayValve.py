@@ -106,16 +106,16 @@ class ThreeWayValve(BaseObject):
         
         if self.is_vertical == 0: # Draw horizontally
             # Draw port 1
-            self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
+            self.widget_parent.painter.setBrush(fill[0])
             path.lineTo(0,self.sec_width) 
             path.lineTo(self.width/2,self.sec_width/2)
             path.lineTo(0, 0)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)               
             
-            path = QPainterPath()
             # Draw port 2
-            self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
+            path = QPainterPath()
+            self.widget_parent.painter.setBrush(fill[1])
             path.moveTo(self.width/2,self.sec_width/2)
             path.lineTo((self.width-self.sec_width)/2,self.height)
             path.lineTo((self.width+self.sec_width)/2,self.height)

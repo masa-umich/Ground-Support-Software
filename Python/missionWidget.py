@@ -42,7 +42,7 @@ class MissionWidget(QWidget):
 
         # Set Geometry
         self.width = self.centralWidget.width - self.controlsPanelWidget.width
-        self.mainHeight = 80 * self.gui.pixel_scale_ratio[1]
+        self.mainHeight = 85 * self.gui.pixel_scale_ratio[1]
         self.underBarHeight = 25 * self.gui.pixel_scale_ratio[1]
         self.height = self.mainHeight+self.underBarHeight
         self.left = 0
