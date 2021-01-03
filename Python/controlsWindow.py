@@ -494,7 +494,11 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
-        self.last_packet = self.client_dialog.client.cycle()
+
+        packet = self.client_dialog.client.cycle()
+        if packet != None: # on exception
+            self.last_packet = packet
+        
         self.centralWidget.update()
 
 

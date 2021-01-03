@@ -283,6 +283,7 @@ class MissionWidget(QWidget):
     
     @overrides
     def update(self):
+        super().update()
         # connection
         if self.client.is_connected:
             self.connectionIndicator.setIndicatorColor("Green")

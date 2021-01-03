@@ -109,6 +109,7 @@ class ClientWidget(QtWidgets.QWidget):
     def disconnect(self):
         # send disconnect message
         self.command(4)
+        self.is_connected = False
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -123,12 +124,13 @@ class ClientWidget(QtWidgets.QWidget):
             if self.command_queue.empty():
                 self.command(0)
 
-            # send next command
-            self.s.sendall(self.command_queue.get())
+            if self.is_connected:
+                # send next command
+                self.s.sendall(self.command_queue.get())
 
-            # get data
-            data = self.s.recv(4096*4)
-            packet = pickle.loads(data) # TODO: change to json
+                # get data
+                data = self.s.recv(4096*4)
+                packet = pickle.loads(data)
             
             # update command status
             if packet["commander"] == self.clientid:
@@ -140,6 +142,7 @@ class ClientWidget(QtWidgets.QWidget):
             return packet
         
         except:
+            self.is_connected = False
             return None
 
 if __name__ == "__main__":
