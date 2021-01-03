@@ -102,8 +102,8 @@ class ControlsSidebarWidget(QWidget):
 
         path.moveTo(1, 0)
         path.lineTo(1, self.height)
-        path.moveTo(1, 80 * self.gui.pixel_scale_ratio[1]-1)
-        path.lineTo(self.width, 80 * self.gui.pixel_scale_ratio[1]-1)
+        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1]-1)
+        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1]-1)
 
         self.painter.drawPath(path)
 
