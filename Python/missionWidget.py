@@ -34,6 +34,7 @@ class MissionWidget(QWidget):
         self.controlsPanelWidget = self.centralWidget.controlsPanelWidget
         self.window = self.centralWidget.window
         self.gui = self.centralWidget.gui
+        self.client = self.window.client_dialog.client
 
         # Thread
         self.thread = MissionWidgetBackgroundThread(self)
@@ -41,7 +42,7 @@ class MissionWidget(QWidget):
 
         # Set Geometry
         self.width = self.centralWidget.width - self.controlsPanelWidget.width
-        self.mainHeight = 80 * self.gui.pixel_scale_ratio[1]
+        self.mainHeight = 85 * self.gui.pixel_scale_ratio[1]
         self.underBarHeight = 25 * self.gui.pixel_scale_ratio[1]
         self.height = self.mainHeight+self.underBarHeight
         self.left = 0
@@ -122,7 +123,7 @@ class MissionWidget(QWidget):
         self.connectionIndicator.move(self.runIndicator.pos().x() + self.runIndicator.width(), 0)
         self.connectionIndicator.setToolTip("No connection")
 
-        self.commandIndicator = IndicatorLightWidget(self, 'Command', 20, "Green", 14, 20, 5, 2)
+        self.commandIndicator = IndicatorLightWidget(self, 'Command', 20, "Red", 14, 20, 5, 2)
         self.commandIndicator.move(self.connectionIndicator.pos().x() + self.connectionIndicator.width(), 0)
         self.commandIndicator.setToolTip("In command")
 
@@ -137,7 +138,7 @@ class MissionWidget(QWidget):
         # Create the label that will hold the status label, displays what task is being performed
         self.status_label = QLabel(self)
         self.status_label.setFont(MET_font)
-        self.status_label.setText("Pre-run Checkouts")
+        self.status_label.setText("GUI Configuration")
         self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
         self.status_label.setFixedWidth(self.width - (self.stateIndicator.pos().x() + self.stateIndicator.width()))
@@ -162,6 +163,21 @@ class MissionWidget(QWidget):
 
         # Updating Label text
         self.MET_label.setText("MET-" + qtime.toString("hh:mm:ss"))
+
+    def updateStatusLabel(self, status: str, is_warning: bool = False):
+        """
+        Update the status label
+        :param status: new status to display
+        :param is_warning: optional argument to pass that will show the status in red instead of the normal white
+        """
+
+        self.status_label.setText(status)
+
+        if is_warning:
+            self.status_label.setStyleSheet("color:" + Constants.MASA_Maize_color.name())
+        else:
+            self.status_label.setStyleSheet("color: white")
+
 
     def updateDateTimeLabel(self):
         """
@@ -264,6 +280,25 @@ class MissionWidget(QWidget):
         # Draw path and end
         self.painter.drawPath(path)
         self.painter.end()
+    
+    @overrides
+    def update(self):
+        super().update()
+        # connection
+        if self.client.is_connected:
+            self.connectionIndicator.setIndicatorColor("Green")
+            self.connectionIndicator.setToolTip("Connected")
+        else:
+            self.connectionIndicator.setIndicatorColor("Red")
+            self.connectionIndicator.setToolTip("No connection")
+        
+        # commander
+        if self.client.is_commander:
+            self.commandIndicator.setIndicatorColor("Green")
+            self.commandIndicator.setToolTip("In Command")
+        else:
+            self.commandIndicator.setIndicatorColor("Red")
+            self.commandIndicator.setToolTip("No Command Authority")
 
 
 class MissionWidgetBackgroundThread(QThread):

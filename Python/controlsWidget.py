@@ -354,7 +354,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
+                                                 normally_open=sol['normally open']))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
@@ -387,7 +388,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 sensor_type=pt["sensor type"], channel=pt["channel"],board=pt["board"]))
+                                                 units=pt["units"], channel=pt["channel"],board=pt["board"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
@@ -459,7 +460,8 @@ class ControlsWidget(QWidget):
                 # First pull all the point data out and put it in an array
                 points = []
                 for j in tube["bend positions"]:
-                    points.append(QPoint(tube["bend positions"][j]["x"], tube["bend positions"][j]["y"]))
+                    points.append(QPoint(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
+                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
 
@@ -471,9 +473,21 @@ class ControlsWidget(QWidget):
         #print(self.last_packet)
         if self.client.is_connected:
             #self.last_packet["time"] -= self.starttime # time to elapsed
+            # update objects
             for obj in self.object_list: # update objects
                 if type(obj) == GenSensor:
                     this_channel = obj.channel
                     if this_channel in self.channels:
                         obj.setMeasurement(self.last_packet[this_channel])
                         #print(this_channel + str())
+                if type(obj) == Solenoid:
+                    board = obj.avionics_board
+                    # TODO: board prefixes
+                    if obj.channel != "Undefined":
+                        channel_name = "vlv" + str(obj.channel)
+                        state = self.last_packet[channel_name + ".en"]
+                        obj.setState(state)
+                        #print(channel_name)
+                    
+
+

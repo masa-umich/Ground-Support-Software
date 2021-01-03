@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from datetime import datetime
 from overrides import overrides
 
 from constants import Constants
@@ -23,7 +24,8 @@ class Solenoid(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined'):
+                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
+                 normally_open: bool = 0):
 
         """
         Initializer for Solenoid
@@ -83,6 +85,17 @@ class Solenoid(BaseObject):
         self.state = 0
         self.channel = channel
         self.avionics_board = board
+        self.normally_open = bool(normally_open)
+
+        self.updateToolTip()
+
+        # self.energized_label = QLabel(self.widget_parent)
+        # self.energized_label.setText("⚡️")
+        # self.energized_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        # self.energized_label.adjustSize()
+        # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
+
+        self.client = self.widget_parent.window.client_dialog.client
 
     @overrides
     def draw(self):
@@ -93,9 +106,11 @@ class Solenoid(BaseObject):
         # Holds the path of lines to draw
         path = QPainterPath()
 
-        # If solenoid is open color it in
-        if self.state == 1:
+        # If solenoid is normally closed and energized color it in, or if it is NO and de-energized
+        if self.state == 1 and self.normally_open is False:
             self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])  # This function colors in a path
+        elif self.state == 0 and self.normally_open is True:
+            self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
 
         # Move path to starting position
         path.moveTo(0, 0)  # Top left corner
@@ -157,8 +172,25 @@ class Solenoid(BaseObject):
         super().onClick()
 
         if not self.widget_parent.parent.is_editing:
-            # Toggle state of solenoid
-            self.toggle()
+
+            if self.gui.debug_mode == False:
+                # Toggle state of solenoid
+                if self.state == 0:
+                    new_state = 1
+                elif self.state == 1:
+                    new_state = 0
+                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                    cmd_dict = {
+                        "function_name": "set_vlv",
+                        "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                        "timestamp": int(datetime.now().timestamp()),
+                        "args": [int(self.channel), int(new_state)]
+                    }
+                    #print(cmd_dict)
+                    self.client.command(3, cmd_dict)
+            else:
+                self.toggle()
+            
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -183,13 +215,38 @@ class Solenoid(BaseObject):
         """
 
         if self.state == 0:
-            self.state = 1
-            self.setToolTip_("State: Open")
+            self.setState(1)
         elif self.state == 1:
-            self.state = 0
-            self.setToolTip_("State: Closed")
+            self.setState(0)
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
+
+    def setState(self, state: bool):
+        """
+        Set the state of the solenoid
+        """
+
+        self.state = state
+        self.updateToolTip()
+
+    def updateToolTip(self):
+        """
+        Called to update the tooltip of the solenoid
+        """
+
+        text = ""
+
+        if self.state == 1:
+            text += "State: Energized\n"
+        else:
+            text += "State: De-energized\n"
+
+        if self.normally_open:
+            text += "Normally Open"
+        else:
+            text += "Normally Closed"
+
+        self.setToolTip_(text)
 
     @overrides
     def generateSaveDict(self):
@@ -204,7 +261,8 @@ class Solenoid(BaseObject):
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
             "channel": self.channel,
-            "board": self.avionics_board
+            "board": self.avionics_board,
+            "normally open": self.normally_open
         }
 
         # Update the super_dict under the solenoid entry with the solenoid specific data

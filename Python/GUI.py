@@ -40,7 +40,7 @@ class GUI:
             # Once again the font scale is 1 on Mac and smaller for windows. This should produce identical results
             self.font_scale_ratio = 0.82
 
-            Constants.line_width = 4
+            Constants.line_width = 2
         elif self.platform == "OSX":
             self.font_scale_ratio = 1
 
@@ -48,6 +48,9 @@ class GUI:
 
         # This variable holds the current Run class that is being used to conduct the test
         self.run = Run()
+
+        # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
+        self.debug_mode = False
 
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)

@@ -26,14 +26,13 @@ class ControlsWindow(QMainWindow):
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('M_icon.png'))
         self.client_dialog = ClientDialog(True) # control client
+        self.last_packet = {}
         self.interface = S2_Interface()
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
-
-        self.last_packet = {}
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -70,6 +69,17 @@ class ControlsWindow(QMainWindow):
         saveAsAct = QAction('&Save As', self)
         saveAsAct.setShortcut('Ctrl+Shift+S')
         saveAsAct.triggered.connect(self.saveFileDialog)
+
+        # FILE -> Enter Debug Mode
+        self.debugAct = QAction('&Enter Debug Mode', self)
+        self.debugAct.setShortcut('Ctrl+D')
+        self.debugAct.triggered.connect(self.enterDebug)
+
+        # FILE -> Exit Debug Mode
+        self.exitDebugAct = QAction('&Leave Debug Mode', self)
+        self.exitDebugAct.setShortcut('Ctrl+Shift+D')
+        self.exitDebugAct.triggered.connect(self.exitDebug)
+        self.exitDebugAct.setDisabled(True)
 
         # TODO: We should have exit and enter as options only when possible, ie can't exit if u haven't started
         # EDIT -> Enter Edit Mode
@@ -116,6 +126,8 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(saveAct)
         file_menu.addAction(saveAsAct)
         file_menu.addAction(exitAct)
+        file_menu.addAction(self.debugAct)
+        file_menu.addAction(self.exitDebugAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -192,6 +204,8 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsWidget.toggleEdit()
             self.enterEditAct.setDisabled(True)
             self.exitEditAct.setEnabled(True)
+            self.debugAct.setDisabled(True)
+            self.exitDebugAct.setDisabled(True)
 
     def exitEdit(self):
         """
@@ -203,6 +217,31 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsSidebarWidget.show()
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
+            self.debugAct.setEnabled(True)
+            self.exitDebugAct.setEnabled(True)
+
+    def enterDebug(self):
+        """
+        Enter debug mode which overrides the gui to attempt to send commands and instead shows what you would see in
+        a test
+        """
+        self.gui.debug_mode = True
+        self.debugAct.setDisabled(True)
+        self.exitDebugAct.setEnabled(True)
+        self.startRunAct.setDisabled(True)
+
+        self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
+
+    def exitDebug(self):
+        """
+        Exit debug mode
+        """
+        self.gui.debug_mode = False
+        self.debugAct.setEnabled(True)
+        self.exitDebugAct.setDisabled(True)
+        self.startRunAct.setEnabled(True)
+
+        self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
 
     def showRunDialog(self):
         """
@@ -420,7 +459,7 @@ class ControlsWindow(QMainWindow):
 
         # Checks to make sure a selection is skipped, if it is set the box back to none and return out
         if boxNumber > 1:
-            if dropdowns[boxNumber-2].currentIndex() is 0:
+            if dropdowns[boxNumber-2].currentIndex() == 0:
                 currentDropdown.setCurrentIndex(0)  # 'None' index
                 return
 
@@ -433,12 +472,13 @@ class ControlsWindow(QMainWindow):
         for i in range(5):
             if i > boxNumber-1:
                 for j in range(boxNumber):
-                    dropdowns[i].removeItem(dropdowns[j].currentIndex())
+                    if dropdowns[j].currentIndex() != 0:
+                        dropdowns[i].removeItem(dropdowns[j].currentIndex())
 
     def avionicsDialogSave(self, dropdowns, dialog):
         boards = []
         for i in range(5):
-            if dropdowns[i].currentIndex() is not 0:
+            if dropdowns[i].currentIndex() != 0:
                 boards.append(dropdowns[i].currentText())
 
         # If array is empty
@@ -454,7 +494,11 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
-        self.last_packet = self.client_dialog.client.cycle()
+
+        packet = self.client_dialog.client.cycle()
+        if packet != None: # on exception
+            self.last_packet = packet
+        
         self.centralWidget.update()
 
 
@@ -498,7 +542,7 @@ class ControlsCentralWidget(QWidget):
         super().update()
         self.controlsWidget.update()
         self.controlsSidebarWidget.update()
-        #self.missionWidget.update()
+        self.missionWidget.update()
 
     @overrides
     def resizeEvent(self, e: QResizeEvent):
