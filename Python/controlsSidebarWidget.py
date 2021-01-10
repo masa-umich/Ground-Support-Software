@@ -102,8 +102,8 @@ class ControlsSidebarWidget(QWidget):
 
         path.moveTo(1, 0)
         path.lineTo(1, self.height)
-        path.moveTo(1, 80 * self.gui.pixel_scale_ratio[1]-1)
-        path.lineTo(self.width, 80 * self.gui.pixel_scale_ratio[1]-1)
+        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1]-1)
+        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1]-1)
 
         self.painter.drawPath(path)
 
@@ -114,4 +114,6 @@ class ControlsSidebarWidget(QWidget):
         super().update()
         self.last_packet = self.window.last_packet
         if self.last_packet:
-            self.board2.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet
+            for board in self.board_objects:
+                ## TODO: update board based on name with right values
+                board.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet

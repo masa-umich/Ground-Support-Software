@@ -69,6 +69,8 @@ class Tank(BaseObject):
         # Tracks the percentage of fluid in the tank
         self.fillPercent = 0
 
+        #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
+
     @overrides
     def onClick(self):
         """
@@ -142,7 +144,7 @@ class Tank(BaseObject):
         # Fill in tank body
         # Maps fill percentage to the height of the body to fill
         bodyFillHeight = MathHelper.mapValue(self.fillPercent, arcHeight / self.height, 1 - arcHeight / self.height, 0,
-                                       self.height - 2 * arcHeight)
+                                       self.height - 2 * arcHeight +1)
 
         self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y() - arcHeight + self.height - bodyFillHeight, self.width, bodyFillHeight), Constants.fluidColor[self.fluid])
         # End fill in tank body

@@ -13,10 +13,6 @@ class Tube:
         self.parent = parent
         self.widget_parent = parent
         self.points = points
-        # Apply pixel scaling
-        for point in self.points:
-            point.setX(point.x() * self.parent.gui.pixel_scale_ratio[0])
-            point.setY(point.y() * self.parent.gui.pixel_scale_ratio[1])
         if tube_id is not None:
             self.tube_id = tube_id
         else:

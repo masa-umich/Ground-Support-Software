@@ -128,7 +128,7 @@ class BaseObject:
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip(self.serial_number + "\n" + text)
+        self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
@@ -298,7 +298,7 @@ class BaseObject:
         pen.setWidth(Constants.line_width-1)
         pen.setColor(QColor(255, 255, 0))
         self.widget_parent.painter.setPen(pen)
-        self.widget_parent.painter.drawRect(QRect(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
+        self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
     def move(self, point: QPoint):
         """
@@ -433,7 +433,7 @@ class BaseObject:
         save_dict = {
             self.object_name + " " + str(self._id): {
                 "id": self._id,
-                "pos": {"x": self.position.x(), "y": self.position.y()},
+                "pos": {"x": self.position.x()/self.gui.pixel_scale_ratio[0], "y": self.position.y()/self.gui.pixel_scale_ratio[1]},
                 "fluid": self.fluid,
                 "width": self.width/self.gui.pixel_scale_ratio[0],
                 "height": self.height/self.gui.pixel_scale_ratio[0],

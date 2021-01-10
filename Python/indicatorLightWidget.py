@@ -89,11 +89,11 @@ class IndicatorLightWidget(QWidget):
         self.painter.setPen(pen)
 
         # Set the brush color to the indicator color
-        if self.indicatorColor is "Green":
+        if self.indicatorColor == "Green":
             self.painter.setBrush(QBrush(Constants.Indicator_Green_color, Qt.SolidPattern))
-        elif self.indicatorColor is "Yellow":
+        elif self.indicatorColor == "Yellow":
             self.painter.setBrush(QBrush(Constants.Indicator_Yellow_color, Qt.SolidPattern))
-        elif self.indicatorColor is "Red":
+        elif self.indicatorColor == "Red":
             self.painter.setBrush(QBrush(Constants.Indicator_Red_color, Qt.SolidPattern))
         else:
             self.painter.setBrush(Qt.NoBrush)
