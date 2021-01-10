@@ -14,6 +14,7 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
+#from datetime import datetime
 
 from termcolor import colored
 
@@ -38,13 +39,21 @@ class ControlsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.window = parent
-        self.gui = self.window.parent
+        self.centralWidget = parent
+        self.window = parent.window
+        self.gui = parent.gui
+        
+        self.client = self.window.client_dialog.client
+        self.interface = self.window.interface
+        self.channels = self.interface.channels()
+        #self.starttime = datetime.now().timestamp()
+        #self.client = gui.client
+        #print(self.parent)
 
         self.left = 0
         self.top = 0
 
-        self.width = self.gui.screenResolution[0] - self.window.panel_width
+        self.width = self.gui.screenResolution[0] - self.parent.panel_width
         self.height = self.gui.screenResolution[1]
 
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -83,14 +92,6 @@ class ControlsWidget(QWidget):
         # TODO: move these somewhere when file system is initiated
         self.loadData()
 
-        # TODO: Move this button to the edit menu bar
-        self.edit_button = QPushButton("EDIT", self)
-        self.edit_button.clicked.connect(lambda: self.toggleEdit())
-        self.edit_button.resize(70 * self.gui.pixel_scale_ratio[0], 30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.move(self.gui.screenResolution[0] - self.window.panel_width - self.edit_button.width() - 30 * self.gui.pixel_scale_ratio[0],
-                              30 * self.gui.pixel_scale_ratio[1])
-        self.edit_button.show()
-
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
         # TODO: Move this to the main window instead of the widget
@@ -109,13 +110,12 @@ class ControlsWidget(QWidget):
                                    (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
 
-
     # TODO: Almost anything but this, that being said it works
     def finalizeInit(self):
         """
         There simply must be an elegant solution to this
         """
-        self.controlsPanel = self.window.controlsPanelWidget
+        self.controlsPanel = self.parent.controlsPanelWidget
 
     def initContextMenu(self):
         """
@@ -133,18 +133,16 @@ class ControlsWidget(QWidget):
         """
         Toggles if the window is in edit mode or not
         """
-        self.window.is_editing = not self.window.is_editing
+        self.parent.is_editing = not self.parent.is_editing
 
-        if self.window.is_editing:
-            self.edit_button.setText("SAVE")
-        else:
-            self.edit_button.setText("EDIT")
+        # Leaving edit mode, nothing to do when entering
+        if not self.centralWidget.is_editing:
             self.controlsPanel.edit_frame.hide()
             self.controlsPanel.removeEditingObject()
-            if self.parent.window.fileName != "":
+            if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
-                self.parent.window.saveFileDialog()
+                self.window.saveFileDialog()
 
         # Tells painter to update screen
         self.update()
@@ -275,7 +273,7 @@ class ControlsWidget(QWidget):
         """
 
         # If window is in edit mode
-        if self.window.is_editing:
+        if self.parent.is_editing:
             action = self.context_menu.exec_(self.mapToGlobal(point))
 
             # Below ifs creates new objects at the point where the right click
@@ -356,7 +354,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=sol["long name label"]["pos string"],
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"], channel_number=sol["channel number"]))
+                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
+                                                 normally_open=sol['normally open']))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
@@ -389,7 +388,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 sensor_type=pt["sensor type"], channel_number=pt["channel number"]))
+                                                 units=pt["units"], channel=pt["channel"],board=pt["board"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
@@ -461,9 +460,34 @@ class ControlsWidget(QWidget):
                 # First pull all the point data out and put it in an array
                 points = []
                 for j in tube["bend positions"]:
-                    points.append(QPoint(tube["bend positions"][j]["x"], tube["bend positions"][j]["y"]))
+                    points.append(QPoint(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
+                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
 
+    @overrides
+    def update(self):
+
+        super().update() #lol
+        self.last_packet = self.window.last_packet
+        #print(self.last_packet)
+        if self.client.is_connected:
+            #self.last_packet["time"] -= self.starttime # time to elapsed
+            # update objects
+            for obj in self.object_list: # update objects
+                if type(obj) == GenSensor:
+                    this_channel = obj.channel
+                    if this_channel in self.channels:
+                        obj.setMeasurement(self.last_packet[this_channel])
+                        #print(this_channel + str())
+                if type(obj) == Solenoid:
+                    board = obj.avionics_board
+                    # TODO: board prefixes
+                    if obj.channel != "Undefined":
+                        channel_name = "vlv" + str(obj.channel)
+                        state = self.last_packet[channel_name + ".en"]
+                        obj.setState(state)
+                        #print(channel_name)
+                    
 
 

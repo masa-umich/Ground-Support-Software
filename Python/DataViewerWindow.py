@@ -5,7 +5,7 @@ import ctypes
 import os
 import pandas as pd
 from DataViewer import DataViewer
-from hotfire_packet import ECParse
+from s2Interface import S2_Interface
 from ClientWidget import ClientWidget, ClientDialog
 import sys
 import json
@@ -54,8 +54,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.options_menu.addAction(self.quit)
 
         # set up environment and database
-        self.parser = ECParse()
-        self.channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
+        self.interface = S2_Interface()
+        self.channels = self.interface.channels()
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         

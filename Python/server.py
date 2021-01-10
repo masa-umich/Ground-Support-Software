@@ -10,9 +10,16 @@ import threading
 import ctypes
 import os
 import sys
-from datetime import datetime
-from hotfire_packet import ECParse
 import queue
+from datetime import datetime
+from telemParse import TelemParse
+from s2Interface import S2_Interface
+
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
+threading.stack_size(134217728)
 
 # init variables
 packet_num = 0
@@ -24,7 +31,15 @@ threads = []
 command_queue = queue.Queue()
 
 # initialize parser
-parser = ECParse()
+interface = S2_Interface()
+
+# init empty dataframe (mainly for debugging)
+dataframe["commander"] = None
+dataframe["packet_num"] = 0
+dataframe["time"] = datetime.now().timestamp()
+for i in interface.parser.items:
+    dataframe[i] = 0
+dataframe["vlv3.en"] = 1
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -37,9 +52,11 @@ data_log = open('data/'+starttime+"/"+starttime+"_data_log.csv", "w+")
 command_log = open('data/'+starttime+"/"+starttime+"_command_log.csv", "w+")
 command_log.write("Time, Command/info\n")
 serial_log.write("Time, Packet\n")
-data_log.write(parser.csv_header)
+data_log.write(interface.parser.csv_header)
 
 # initialize application
+QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 app = QtWidgets.QApplication([])
 appid = 'MASA.Server' # arbitrary string
 if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -55,43 +72,60 @@ w = QtWidgets.QWidget()
 top.setCentralWidget(w)
 top_layout = QtWidgets.QGridLayout()
 w.setLayout(top_layout)
-top.setFixedWidth(1200)
-top.setFixedHeight(800)
+base_size = 500
+AR = 1.5 #H/W
+top.setFixedWidth(int(AR*base_size))
+top.setFixedHeight(int(base_size))
 
 # server log
+tab = QTabWidget()
+
 log_box = QtGui.QTextEdit()
 log_box.setReadOnly(True)
-top_layout.addWidget(log_box, 2, 0)
+
+data_box = QtGui.QTextEdit()
+data_box.setReadOnly(True)
+data_box.setLineWrapMode(QTextEdit.NoWrap)
+
+command_textedit = QtGui.QTextEdit()
+command_textedit.setReadOnly(True)
+
+tab.addTab(log_box, "Server Log")
+tab.addTab(data_box, "Packet Log")
+tab.addTab(command_textedit, "Command Log")
+top_layout.addWidget(tab, 2, 0)
 
 # send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
-def send_to_log(text):
+def send_to_log(textedit: QTextEdit, text:str):
     time_obj = datetime.now().time()
     time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
-    log_box.append(time + text)
+    textedit.append(time + text)
     server_log.write(time + text + "\n")
 
 # scan com ports
-ports = [p.device for p in serial.tools.list_ports.comports()]
+ports = interface.scan()
 
 # connect to com port
 # ser = serial.Serial(port=None, baudrate=int(alias["BAUDRATE"]), timeout=0.2)
-ser = serial.Serial(port=None, baudrate=57600, timeout=0.2)
+# ser = serial.Serial(port=None, baudrate=57600, timeout=0.2)
 def connect():
-    global ser, ports_box
-    if ser.isOpen():
-        ser.close()
+    global ports_box, interface
     try:
-        ser.port = str(ports_box.currentText())
-        ser.open()
-        ser.readline()
-        send_to_log("Connection established on %s" % str(ports_box.currentText()))
+        port = str(ports_box.currentText())
+        interface.connect(port, 115200, 0.2)
+        interface.parse_serial()
     except:
-        send_to_log("Unable to connect to selected port or no ports available")
+        pass
+
+    if interface.ser.isOpen():
+        send_to_log(log_box,"Connection established on %s" % port)
+    else:
+        send_to_log(log_box,"Unable to connect to selected port or no ports available")
 
 # scan for com ports
 def scan():
     global ports_box, ports
-    ports = [p.device for p in serial.tools.list_ports.comports()]
+    ports = interface.scan()
     ports_box.clear()
     ports_box.addItems(ports)
 
@@ -99,12 +133,12 @@ def scan():
 def set_commander(clientid, ip):
     global commander
     commander = clientid
-    send_to_log("New commander: " + str(clientid) + " (" + str(ip) + ")")
+    send_to_log(log_box, "New commander: " + str(clientid) + " (" + str(ip) + ")")
 
 # remove current commander
 def override_commander():
     global commander
-    send_to_log("Clearing commander")
+    send_to_log(log_box, "Clearing commander")
     commander = None
 
 # connection box (add to top_layout)
@@ -182,9 +216,9 @@ def client_handler(clientsocket, addr):
                 break
             print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
             counter += 1
-
     clientsocket.close()
-    send_to_log("Closing connection to " + addr[0])
+    send_to_log(log_box, "Closing connection to " + addr[0])
+    t.join()
 
 # main server target function
 def server_handler():
@@ -192,18 +226,19 @@ def server_handler():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     host = socket.gethostbyname(socket.gethostname())
     port = 6969
+    #s.bind(("masadataserver.local", port))
     s.bind((host, port))
 
     # wait
-    send_to_log('Server initialized. Waiting for clients to connect...')
-    send_to_log("Listening on %s:%s" % (host, port))
+    send_to_log(log_box,'Server initialized. Waiting for clients to connect...')
+    send_to_log(log_box,"Listening on %s:%s" % (host, port))
     s.listen(5)
     
     # create connection
     while True:
         # establish connection with client
         c, addr = s.accept() 
-        send_to_log('Got connection from ' + addr[0])
+        send_to_log(log_box,'Got connection from ' + addr[0])
         # create thread to handle client
         t = threading.Thread(target=client_handler, args=(c,addr), daemon=True)
         t.start()
@@ -223,7 +258,7 @@ file_menu = main_menu.addMenu('&File')
 
 # quit application function
 def exit():
-    ser.close()
+    interface.ser.close()
     server_log.close()
     serial_log.close()
     command_log.close()
@@ -242,40 +277,35 @@ def update():
     global packet_num, commander_label, dataframe
     
     try:
-        if ser.is_open:
+        if interface.ser.is_open:
             if not command_queue.empty():
-                #print("commanding")
                 cmd = command_queue.get()
-                print(cmd)
-                ser.write(cmd)
+                send_to_log(command_textedit, str(cmd))
+                interface.s2_command(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
 
             # read in packet from EC
-            serial_packet = ser.readline()
-            serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(serial_packet)+ '\n')
-            # print(len(serial_packet))
-            packet_size = len(serial_packet)
-            packet_size_label.setText("Last Packet Size: %s" % packet_size)
+            could_parse = interface.parse_serial()
 
-            # unstuff the packet
-            unstuffed = b''
-            index = int(serial_packet[0])
-            for n in range(1, len(serial_packet)):
-                temp = serial_packet[n:n+1]
-                if(n == index):
-                    index = int(serial_packet[n])+n
-                    temp = b'\n'
-                unstuffed = unstuffed + temp
-            serial_packet = unstuffed
+            if could_parse:
+                #print("PARSER WORKED")
+                raw_packet = interface.last_raw_packet
+                serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
 
-            # parse packet
-            parser.parse_packet(serial_packet)
-            dataframe = parser.dict
-            dataframe["time"] = datetime.now().timestamp()
-            data_log.write(parser.log_string+'\n')
+                raw_packet_size = len(raw_packet)
+                packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
+                send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
+
+                # parse packet
+                dataframe = interface.parser.dict
+                #print(dataframe)
+                dataframe["time"] = datetime.now().timestamp()
+                data_log.write(interface.parser.log_string+'\n')
+            else:
+                send_to_log(data_box, "PARSER FAILED")
 
     except Exception as e:
-        # print(e)
+        print(e)
         pass
     
     # update server state

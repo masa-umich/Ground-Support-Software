@@ -4,7 +4,7 @@ import pyqtgraph as pg
 import sys
 import os
 import ctypes
-from hotfire_packet import ECParse
+from s2Interface import S2_Interface
 from LedIndicatorWidget import LedIndicator
 from ClientWidget import ClientWidget, ClientDialog
 import random
@@ -94,8 +94,8 @@ class LimitWidget(QtWidgets.QWidget):
         self.setLayout(self.layout)
         self.setStyleSheet("")
 
-        self.parser = ECParse()
-        self.channels = [item for item in self.parser.items if (item is not 'zero' and item is not '')]
+        self.interface = S2_Interface()
+        self.channels = self.interface.channels()
         self.num_channels = num_channels
 
         self.limits_box = QtWidgets.QWidget()

@@ -23,7 +23,7 @@ class ThreeWayValve(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined'):
 
         """
         Initializer for ThreeWayValve
@@ -48,6 +48,8 @@ class ThreeWayValve(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
+        :param channel: the specific channel the device is plugged into
+        :param board: the avionics board the device is plugged into
         """
 
         if is_vertical:
@@ -80,6 +82,9 @@ class ThreeWayValve(BaseObject):
         self.state = 0
         self.sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
         self.setAnchorPoints()
+        self.channel = channel
+        self.avionics_board = board
+        self.client = self.widget_parent.window.client_dialog.client
         
     @overrides
     def draw(self):
@@ -91,33 +96,37 @@ class ThreeWayValve(BaseObject):
         
         #Sets the two brush types for each valve path based on whether the valve is energized or not
         if self.state == 1:
-            fill = [QBrush(Constants.fluidColor[self.fluid],Qt.SolidPattern),QBrush(0)]
+            fill = [QBrush(Constants.fluidColor[self.fluid],Qt.SolidPattern),QBrush(Constants.fluidColor[self.fluid],Qt.SolidPattern), QBrush(0)]
         else:
-            fill = [QBrush(0),QBrush(Constants.fluidColor[self.fluid],Qt.Dense5Pattern)]
+            fill = [QBrush(0),QBrush(Constants.fluidColor[self.fluid],Qt.Dense5Pattern),QBrush(Constants.fluidColor[self.fluid],Qt.Dense5Pattern)]
 
         # Move path to starting position
         path.moveTo(0, 0)  # Top left corner
 
         
         if self.is_vertical == 0: # Draw horizontally
-            #Draws 1st and 3rd ports
-            self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
+            # Draw port 1
+            self.widget_parent.painter.setBrush(fill[0])
             path.lineTo(0,self.sec_width) 
-            path.lineTo(self.width,0) 
-            path.lineTo(self.width, self.sec_width)  
+            path.lineTo(self.width/2,self.sec_width/2)
             path.lineTo(0, 0)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)               
             
+            # Draw port 2
             path = QPainterPath()
-            #Draws 3rd port, and draws over 2nd port again (with new brush)
-            self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
+            self.widget_parent.painter.setBrush(fill[1])
             path.moveTo(self.width/2,self.sec_width/2)
             path.lineTo((self.width-self.sec_width)/2,self.height)
             path.lineTo((self.width+self.sec_width)/2,self.height)
             path.lineTo(self.width/2,self.sec_width/2)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)
             
-            #Re-draw 2nd port to make sure it has the correct brush
+            # Draw port 3
+            path = QPainterPath()
+            self.widget_parent.painter.setBrush(fill[2])
+            path.moveTo(self.width/2,self.sec_width/2) 
             path.lineTo(self.width,0)
             path.lineTo(self.width, self.sec_width)
             path.lineTo(self.width/2,self.sec_width/2)
@@ -125,26 +134,30 @@ class ThreeWayValve(BaseObject):
             self.widget_parent.painter.drawPath(path)
 
         else:  # Draw vertically
-            #Draws 1st and 3rd ports
-            self.widget_parent.painter.setBrush(fill[0])            #Sets brush for 1st and 2nd ports
+            # Draw port 1
+            self.widget_parent.painter.setBrush(fill[0])
             path.lineTo(self.sec_width, 0)
-            path.lineTo(0, self.height)
-            path.lineTo(self.sec_width, self.height)
+            path.lineTo(self.sec_width/2, self.height/2)
             path.lineTo(0, 0)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)    
             
+            # Draw port 2
             path = QPainterPath()
-            #Draws 3rd port, and draws over 2nd port again (with new brush)
-            self.widget_parent.painter.setBrush(fill[1])            #Sets brush for 3rd and 2nd ports
+            self.widget_parent.painter.setBrush(fill[1])
             path.moveTo(self.sec_width/2,self.height/2)
             path.lineTo(self.width,(self.height-self.sec_width)/2)
             path.lineTo(self.width,(self.height+self.sec_width)/2)
             path.lineTo(self.sec_width/2,self.height/2)
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path) 
             
-            #Re-draw 2nd port to make sure it has the correct brush
-            path.lineTo(0,0)
-            path.lineTo(self.sec_width, 0)
+            # Draw port 3
+            path = QPainterPath()
+            self.widget_parent.painter.setBrush(fill[2])
+            path.moveTo(self.sec_width/2,self.height/2) 
+            path.lineTo(0, self.height)
+            path.lineTo(self.sec_width, self.height)
             path.lineTo(self.sec_width/2,self.height/2)
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
@@ -176,9 +189,26 @@ class ThreeWayValve(BaseObject):
 
         super().onClick()
 
-        if not self.widget_parent.window.is_editing:
-            # Toggle state of ThreeWayValve
-            self.toggle()
+        if not self.widget_parent.parent.is_editing:
+    
+            if self.gui.debug_mode == False:
+                # Toggle state of 3-way
+                if self.state == 0:
+                    new_state = 1
+                elif self.state == 1:
+                    new_state = 0
+                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                    cmd_dict = {
+                        "function_name": "set_vlv",
+                        "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                        "timestamp": int(datetime.now().timestamp()),
+                        "args": [int(self.channel), int(new_state)]
+                    }
+                    #print(cmd_dict)
+                    self.client.command(3, cmd_dict)
+            else:
+                self.toggle()
+            
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -196,24 +226,67 @@ class ThreeWayValve(BaseObject):
             self.setToolTip_("State: Closed")
         else:
             print("WARNING STATE OF ThreeWayValve " + str(self._id) + " IS NOT PROPERLY DEFINED")
+    
+    def setAvionicsBoard(self, board: str):
+        """
+        Sets the avionics board the object is connected to
+        :param board: string name of board object is connected to
+        """
+        self.avionics_board = board
+
+    def setChannel(self, channel: str):
+        """
+        Sets channel of object
+        :param channel: channel of the object
+        """
+        self.channel = channel
+    
+    def setState(self, state: bool):
+        """
+        Set the state of the solenoid
+        """
+
+        self.state = state
+        self.updateToolTip()
+
+    def updateToolTip(self):
+        """
+        Called to update the tooltip of the solenoid
+        """
+
+        text = ""
+
+        if self.state == 1:
+            text += "State: Energized\n"
+        else:
+            text += "State: De-energized\n"
+
+        # if self.normally_open:
+        #     text += "Normally Open"
+        # else:
+        #     text += "Normally Closed"
+
+        self.setToolTip_(text)
 
     # There is currently no ThreeWayValve specific data that needs to be persistent but if some ever does it goes here
-    # @overrides
-    # def generateSaveDict(self):
-    #     """
-    #     Generates dict of data to save. Most of the work happens in the object class but whatever ThreeWayValve specific
-    #     info needs to be saved is added here.
-    #     """
-    #
-    #     # Gets the BaseObject data that needs to be saved
-    #     super_dict = super().generateSaveDict()
-    #
-    #     # Extra data the ThreeWayValve contains that needs to be saved
-    #     save_dict = {
-    #         "state": self.state
-    #     }
-    #
-    #     # Update the super_dict under the ThreeWayValve entry with the ThreeWayValve specific data
-    #     super_dict['ThreeWayValve'].update(save_dict)
-    #
-    #     return super_dict
+    @overrides
+    def generateSaveDict(self):
+        """
+        Generates dict of data to save. Most of the work happens in the object class but whatever ThreeWayValve specific
+        info needs to be saved is added here.
+        """
+    
+        # Gets the BaseObject data that needs to be saved
+        super_dict = super().generateSaveDict()
+    
+        # Extra data the ThreeWayValve contains that needs to be saved
+        save_dict = {
+            "channel": self.channel,
+            "board": self.avionics_board,
+            # "normally open": self.normally_open
+        }
+    
+        # Update the super_dict under the ThreeWayValve entry with the ThreeWayValve specific data
+        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
+    
+        return super_dict

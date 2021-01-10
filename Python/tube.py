@@ -75,7 +75,11 @@ class Tube:
         self.widget_parent.update()
 
     def draw(self):
-        self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width/2)
+        pen.setColor(Constants.fluidColor[self.fluid])
+        self.widget_parent.painter.setPen(pen)
 
         path = QPainterPath()
 
@@ -97,7 +101,7 @@ class Tube:
         points_dict = {}
         i = 0
         for point in self.points:
-            points_dict[i] = {"x": point.x(), "y": point.y()}
+            points_dict[i] = {"x": point.x()/self.parent.gui.pixel_scale_ratio[0], "y": point.y()/self.parent.gui.pixel_scale_ratio[1]}
             i = i + 1
 
         # Put it all together

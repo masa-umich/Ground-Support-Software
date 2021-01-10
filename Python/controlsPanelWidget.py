@@ -3,6 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
+from telemParse import TelemParse
+
 
 class ControlsPanelWidget(QWidget):
     """
@@ -12,24 +14,28 @@ class ControlsPanelWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.window = parent
+        self.window = parent.window
         # TODO: Rename the controls because it is weird
-        self.controls = self.window.controlsWidget
+        self.controls = self.parent.controlsWidget
 
-        self.gui = self.window.parent
+        self.gui = self.parent.gui
+
+        self.parser = TelemParse()
+        self.sensor_channels = [item for item in self.parser.items if (item != 'zero' and item != '')]
+        self.valve_channels = [str(x) for x in range(0, 10)]  # TODO: Connect this to something meaningful
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
 
-        #Defines placement and size of control panel
-        self.left = self.gui.screenResolution[0] - self.window.panel_width
+        # Defines placement and size of control panel
+        self.left = self.gui.screenResolution[0] - self.parent.panel_width
         self.top = 0
 
-        self.width = self.window.panel_width
+        self.width = self.parent.panel_width
         self.height = self.gui.screenResolution[1]
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        #Sets color of control panel
+        # Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.darkGray)
@@ -38,7 +44,7 @@ class ControlsPanelWidget(QWidget):
         # Inits widgets for edit frame
         self.initEditFrame()
 
-        self.show()
+        self.hide()
 
     def initEditFrame(self):
         """
@@ -47,6 +53,7 @@ class ControlsPanelWidget(QWidget):
         # Frames and layouts that holds everything in it and can be hidden / shown
         self.edit_frame = QFrame(self)
         self.edit_form_layout = QFormLayout(self)
+        self.edit_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         self.edit_frame.resize(300 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1])
         self.edit_frame.setLayout(self.edit_form_layout)
 
@@ -62,33 +69,41 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_position_combobox = QComboBox(self)
         self.serial_number_font_size_spinbox = QDoubleSpinBox(self)
         self.scale_spinbox = QDoubleSpinBox(self)
-        self.sensor_type_combobox = QComboBox(self)
+        self.sensor_type_textbox = QLineEdit(self)
+        self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
         
-        #
+        # fonts
         title_font = QFont()
         title_font.setBold(True)
         title_font.setUnderline(True)
+        title_font.setPointSize(13 * self.gui.font_scale_ratio)
+
+        self.default_font = QFont()
+        self.default_font.setPointSize(13 * self.gui.font_scale_ratio)
 
         # Component Parameters
-        label = QLabel("Component Parameters:                                                                  ")
+        label = QLabel("Component Parameters:                                                                  ") # TODO: jankity jank jank
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.createLineEdit(self.component_name_textbox, "Component Name", "Component Name:")
         self.createLineEdit(self.serial_number_textbox, "Serial Number", "Serial Number:")
         self.is_pos_locked_group = self.createTFRadioButtons("Component Fixed?", "Position:", "Locked", "Unlocked", False)
         self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
+        self.createComboBox(self.board_combobox, "Board", "Board:",
+                            ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
-                            ["0", "1", "2", "3"])  # Put in channel list here
-        self.createComboBox(self.sensor_type_combobox, "Sensor Type", "Sensor Type:",
-                            ["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"])
+                            ["Undefined"] + self.sensor_channels)
+        self.createLineEdit(self.sensor_type_textbox, "Sensor Units", "Sensor Units:") #["Static Pressure", "Differential Pressure", "Temperature", "Force", "Valve Position"]
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
         label = QLabel("Component Name Label:                                                                  ")
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.long_name_visibility_group = self.createTFRadioButtons("Component Name Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.long_name_position_combobox, "Component Name Position", "Position:", ["Top","Right","Bottom","Left", "Custom"])
@@ -99,6 +114,7 @@ class ControlsPanelWidget(QWidget):
         # Serial Label Parameters
         label = QLabel("Serial Number Label:                                                                  ")
         label.setFont(title_font)
+        label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(label)
         self.serial_number_visibility_group = self.createTFRadioButtons("Serial Number Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
@@ -115,7 +131,11 @@ class ControlsPanelWidget(QWidget):
         :param validator: validator used to make sure text entered is int, double etc.
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
+
         lineEdit.textChanged.connect(lambda : self.updateEditingObjectFields(lineEdit.text(), identifier))
+        lineEdit.setFont(self.default_font)
         if validator is not None:
             lineEdit.setValidator(validator)
 
@@ -134,12 +154,17 @@ class ControlsPanelWidget(QWidget):
         :return group: Returns the group holding the true/false buttons, true is always first button
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
 
         group = QButtonGroup(self)
 
         hbox = QHBoxLayout()
         true_button = QRadioButton(true_btn_label)
         false_button = QRadioButton(false_btn_label)
+
+        true_button.setFont(self.default_font)
+        false_button.setFont(self.default_font)
 
         p = true_button.palette()
         p.setColor(QPalette.Button, Qt.red)
@@ -190,15 +215,38 @@ class ControlsPanelWidget(QWidget):
         :param items: list of strings user can select in drop-down
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
         
         #I removed this so that I could use sizeHint() method on comboboxes in control panel
         #comboBox.setFixedWidth(100)
         comboBox.addItems(items)
+        comboBox.setFont(self.default_font)
         comboBox.currentIndexChanged.connect(lambda: self.updateEditingObjectFields(comboBox.currentText(), identifier))
 
         self.edit_form_layout.addRow(identifier_label, comboBox)
 
         comboBox.resize(comboBox.sizeHint())
+
+    @staticmethod
+    def comboBoxReplaceFields(comboBox: QComboBox, items: []):
+        """
+        Takes in a combo box and replaces the current fields with new fields
+        :param comboBox: Combo box to perform action on
+        :param items: new list of fields
+        """
+
+        # When clear and items are called, the combobox is updated so it calls currentIndexChanged, as a result this
+        # triggers the updateEditingObjectFields function and overwrites the value for the combobox that is being
+        # replaced. As a result we need to block all signals from it temporarily to perform the action
+        comboBox.blockSignals(True)
+
+        # Replace the fields
+        comboBox.clear()
+        comboBox.addItems(items)
+
+        # Enable signals again
+        comboBox.blockSignals(False)
 
     def createSpinbox(self, spinBox: QSpinBox, identifier: str, label_text: str, min:int = 0, max:int = 100, step:float = 1):
         """
@@ -211,9 +259,13 @@ class ControlsPanelWidget(QWidget):
         :param step: amount value increases or decreases by then the arrows are used
         """
         identifier_label = QLabel(label_text)
+        identifier_label.setStyleSheet("color: white")
+        identifier_label.setFont(self.default_font)
+
         spinBox.setMinimum(min)
         spinBox.setMaximum(max)
         spinBox.setSingleStep(step)
+        spinBox.setFont(self.default_font)
 
         spinBox.valueChanged.connect(lambda: self.updateEditingObjectFields(spinBox.value(), identifier))
 
@@ -224,6 +276,13 @@ class ControlsPanelWidget(QWidget):
         Updates the various fields in the edit frame when a new object is selected for editing
         :param object_: the object that is selected for editing
         """
+
+        # Updates the available values for the channels for solenoids and generic sensors
+        if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
+            self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
+        elif object_.object_name == "Generic Sensor":
+            self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)
+
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
         self.setTFRadioButtonValue(self.long_name_visibility_group, object_.long_name_label.isVisible())
@@ -237,19 +296,22 @@ class ControlsPanelWidget(QWidget):
         self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
         self.serial_number_font_size_spinbox.setValue(object_.serial_number_label.getFontSize())
 
-        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid":
+        # Enables the board and channel box and sets there values
+        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.channel_combobox.setEnabled(True)
-            self.channel_combobox.setCurrentText(object_.channel_number)
+            self.channel_combobox.setCurrentText(object_.channel)
+            self.board_combobox.setEnabled(True)
+            self.board_combobox.setCurrentText(object_.avionics_board)
         else:
             self.channel_combobox.setDisabled(True)
+            self.board_combobox.setDisabled(True)
 
+        # Enables the units box and sets it value
         if object_.object_name == "Generic Sensor":
-            self.sensor_type_combobox.setEnabled(True)
-            self.sensor_type_combobox.setCurrentText(object_.sensor_type)
+            self.sensor_type_textbox.setEnabled(True)
+            self.sensor_type_textbox.setText(object_.units)
         else:
-            self.sensor_type_combobox.setDisabled(True)
-
-
+            self.sensor_type_textbox.setDisabled(True)
 
     def updateEditingObjectFields(self, text, identifier):
         """
@@ -274,9 +336,11 @@ class ControlsPanelWidget(QWidget):
                 object_.setScale(text)
             elif identifier == "Component Fluid":
                 object_.setFluid(text)
+            elif identifier == "Board":
+                object_.setAvionicsBoard(text)
             elif identifier == "Channel":
                 object_.setChannel(text)
-            elif identifier == "Sensor Type" and object_.object_name == "Generic Sensor":
+            elif identifier == "Sensor Units" and object_.object_name == "Generic Sensor":
                 object_.setUnits(text)
 
             # Component Label Parameters
@@ -319,10 +383,3 @@ class ControlsPanelWidget(QWidget):
             self.object_editing.setIsEditing(False)
             self.object_editing = None
             self.edit_frame.hide()
-
-
-
-
-
-
-

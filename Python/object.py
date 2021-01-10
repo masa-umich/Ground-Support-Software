@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 
 from constants import Constants
 from objectButton import ObjectButton
-from customLabel import CustomLabel
+from objectLabel import ObjectLabel
 from anchorPoint import AnchorPoint
 
 
@@ -55,6 +55,7 @@ class BaseObject:
         super().__init__()
 
         self.widget_parent = parent  # Important for drawing icon
+        self.central_widget = self.widget_parent.centralWidget
         self.gui = self.widget_parent.gui
         if _id is not None:
             self._id = _id
@@ -62,6 +63,9 @@ class BaseObject:
             # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
             self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         self.position = position
+        # Have to scale it, not sure if this is best location
+        self.position.setX(self.position.x() * self.gui.pixel_scale_ratio[0])
+        self.position.setY(self.position.y() * self.gui.pixel_scale_ratio[1])
         self.fluid = fluid
         self.width = width * self.widget_parent.gui.pixel_scale_ratio[0]
         self.height = height * self.widget_parent.gui.pixel_scale_ratio[0]
@@ -77,12 +81,12 @@ class BaseObject:
         self.position_locked = position_locked
         self.context_menu = QMenu(self.widget_parent)
         self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
-        self.long_name_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+        self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
                                            position_string=long_name_label_pos, rows=long_name_label_rows)
 
-        self.serial_number_label = CustomLabel(widget_parent=self.widget_parent, object_=self,
+        self.serial_number_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                             is_vertical=False, font_size=serial_number_label_font_size,
                                             text=self.serial_number, local_pos=serial_number_label_local_pos,
                                             position_string=serial_number_label_pos)
@@ -124,7 +128,7 @@ class BaseObject:
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip(self.serial_number + "\n" + text)
+        self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
@@ -238,12 +242,12 @@ class BaseObject:
         """
 
         # If the widget is in edit mode and an object is clicked, toggle if it is editing or now
-        if self.widget_parent.window.is_editing:
+        if self.central_widget.is_editing:
             if self.is_being_edited:
-                self.widget_parent.controlsPanel.removeEditingObject()
+                self.central_widget.controlsPanelWidget.removeEditingObject()
 
             else:
-                self.widget_parent.controlsPanel.addEditingObject(self)
+                self.central_widget.controlsPanelWidget.addEditingObject(self)
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -272,29 +276,29 @@ class BaseObject:
         self.widget_parent.painter.setPen(pen)
 
         # While editing draws small anchor points (6x6 box) on the object to help user with alignment
-        if self.widget_parent.window.is_editing:
+        if self.central_widget.is_editing:
             self.showAnchorPoints()
             for point in self.anchor_points:
                 self.widget_parent.painter.setPen(pen)
                 point.draw()
+            # If object is selected, a thin yellow box is drawn to indicate so
+            if self.is_being_edited:
+                self.highlight(pen)
         else:
             self.hideAnchorPoints()
-        
-        # If object is selected, a thin yellow box is drawn to idicate so
-        if self.is_being_edited:
-            self.highlight(pen)
             
     def highlight(self, pen):
         """
-        Draws a thin box around selected object
+        Draws a thin yellow box around selected object
         :param pen: Pen that will be used to draw
-        """
-        buffer = 8  # Space between the object and the highlight line
+        """ 
+        wbuffer = 8 * self.gui.pixel_scale_ratio[0]  # Space between the object and the highlight line
+        hbuffer = 8 * self.gui.pixel_scale_ratio[1]
         pen.setStyle(Qt.DotLine)
-        pen.setWidth(1)
-        pen.setColor(QColor(255,255,0))
+        pen.setWidth(Constants.line_width-1)
+        pen.setColor(QColor(255, 255, 0))
         self.widget_parent.painter.setPen(pen)
-        self.widget_parent.painter.drawRect(QRect(self.position.x()-buffer/2, self.position.y()-buffer/2, self.width+buffer, self.height+buffer))
+        self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
     def move(self, point: QPoint):
         """
@@ -394,7 +398,7 @@ class BaseObject:
         :return:
         """
         # If window is in edit mode
-        if self.widget_parent.window.is_editing:
+        if self.central_widget.is_editing:
             action = self.context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
@@ -429,7 +433,7 @@ class BaseObject:
         save_dict = {
             self.object_name + " " + str(self._id): {
                 "id": self._id,
-                "pos": {"x": self.position.x(), "y": self.position.y()},
+                "pos": {"x": self.position.x()/self.gui.pixel_scale_ratio[0], "y": self.position.y()/self.gui.pixel_scale_ratio[1]},
                 "fluid": self.fluid,
                 "width": self.width/self.gui.pixel_scale_ratio[0],
                 "height": self.height/self.gui.pixel_scale_ratio[0],

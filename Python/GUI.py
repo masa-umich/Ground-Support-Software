@@ -7,11 +7,13 @@ from PyQt5.QtGui import *
 from controlsWindow import ControlsWindow
 from constants import Constants
 
-
+from run import Run
 
 """
 Program start point. This class handles all child windows of the gui
 """
+
+
 class GUI:
     def __init__(self):
         # Get the screen resolution of the user
@@ -22,6 +24,11 @@ class GUI:
 
         # Add in fonts
         QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Light.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Medium.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Thin.ttf")
+        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         if sys.platform == "win32":
             self.platform = "Windows"
@@ -38,16 +45,31 @@ class GUI:
             self.font_scale_ratio = 1
 
             Constants.line_width = 2
+
+        # This variable holds the current Run class that is being used to conduct the test
+        self.run = Run()
+
+        # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
+        self.debug_mode = False
+
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
-
-
+    
+    def update(self):
+        self.controlsWindow.update()
 
 
 
 if __name__ == '__main__':
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     app = QApplication(sys.argv)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     gui = GUI()
+
+    #timer and tick updates
+    cycle_time = 200 # in ms
+    timer = QTimer()
+    timer.timeout.connect(gui.update)
+    timer.start(cycle_time)
 
     sys.exit(app.exec_())
