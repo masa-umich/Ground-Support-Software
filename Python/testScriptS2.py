@@ -7,7 +7,7 @@ s2_interface = S2_Interface()
 ports = s2_interface.scan()
 print(ports)
 
-s2_interface.connect("/dev/cu.usbmodem11203", 115200, 2)
+s2_interface.connect("/dev/tty.usbmodem11303", 115200, 2)
 while(1):
     parse_status = 0
     parse_status = s2_interface.parse_serial()
