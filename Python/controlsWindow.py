@@ -9,6 +9,7 @@ from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
+from Flash import *
 
 from overrides import overrides
 import os
@@ -33,6 +34,7 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
+        self.flash_dialog = FlashDialog(self.client_dialog.client)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -111,6 +113,10 @@ class ControlsWindow(QMainWindow):
         # Run -> Connection Settings
         connect = QAction("&Connection Settings", self)
         connect.triggered.connect(self.client_dialog.show)
+
+        # Run -> Flash
+        connect = QAction("&Flash", self)
+        connect.triggered.connect(self.flash_dialog.show)
         
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
