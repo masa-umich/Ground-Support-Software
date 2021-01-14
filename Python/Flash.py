@@ -33,8 +33,9 @@ class FlashController(QtWidgets.QWidget):
 
         # logo
         self.logo = QtGui.QLabel()
-        pixmap_scaled = QtGui.QPixmap("flash.png").scaled(400, 400, QtCore.Qt.KeepAspectRatio)
-        self.logo.setPixmap(pixmap_scaled)
+        pixmap = QtGui.QPixmap("flash.png")
+        #pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+        self.logo.setPixmap(pixmap)
         self.logo.setAlignment(QtCore.Qt.AlignCenter)
 
         self.board_selector = QtWidgets.QComboBox()
