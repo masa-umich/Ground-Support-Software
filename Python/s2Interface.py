@@ -98,6 +98,7 @@ class S2_Interface:
         for n in range(0, num_valves):
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.items.append(valve_name)
+            self.parser.units[valve_name] = 'ul'
     
     # Unpack valves and generates valves key in dict
     def unpack_valves(self):

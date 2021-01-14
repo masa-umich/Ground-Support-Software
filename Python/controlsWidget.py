@@ -388,7 +388,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 units=pt["units"], channel=pt["channel"],board=pt["board"]))
+                                                 channel=pt["channel"],board=pt["board"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
@@ -480,13 +480,15 @@ class ControlsWidget(QWidget):
                     if this_channel in self.channels:
                         obj.setMeasurement(self.last_packet[this_channel])
                         #print(this_channel + str())
-                if type(obj) == Solenoid:
+                if type(obj) == Solenoid or type(obj) == ThreeWayValve:
                     board = obj.avionics_board
                     # TODO: board prefixes
                     if obj.channel != "Undefined":
                         channel_name = "vlv" + str(obj.channel)
                         state = self.last_packet[channel_name + ".en"]
-                        obj.setState(state)
+                        voltage = self.last_packet[channel_name + ".e"]
+                        current = self.last_packet[channel_name + ".i"]
+                        obj.setState(state, voltage, current)
                         #print(channel_name)
                     
 
