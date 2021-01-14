@@ -75,6 +75,7 @@ class S2_Interface:
                         #print(self.parser.dict)
                         return 1
                     except Exception as e:
+
                         print("Packet lost with error ", e)
         except Exception as e:
             print(e)
@@ -122,9 +123,10 @@ class S2_Interface:
         unstuffed = b''
         replacement = 1
         index = int(packet[0])
-        #print("packet ", index)
-        for n in range(0, len(packet)):
+        for n in range(1, len(packet)):
             temp = packet[n:n+1]
+            if (temp == 0):
+                break # early return on zero
             if(n == index):
                 index = int(packet[n])+n
                 temp = bytes(replacement) # creates zero byte of integer size 1
