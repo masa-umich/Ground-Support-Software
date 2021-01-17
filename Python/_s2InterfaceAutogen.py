@@ -154,7 +154,7 @@ class _S2_InterfaceAutogen:
 
 		# Encode the packet with COBS
 		self.stuff_array(packet)
-
+		print("packet ", bytes(packet))
 		# Write the bytes to serial
 		ser.write(bytes(packet))
 
