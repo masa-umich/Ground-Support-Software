@@ -9,7 +9,7 @@ from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
-from Flash import *
+from Flash import FlashDialog
 
 from overrides import overrides
 import os
@@ -111,12 +111,12 @@ class ControlsWindow(QMainWindow):
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
 
         # Run -> Connection Settings
-        connect = QAction("&Connection Settings", self)
-        connect.triggered.connect(self.client_dialog.show)
+        self.connect = QAction("&Connection Settings", self)
+        self.connect.triggered.connect(self.client_dialog.show)
 
         # Run -> Flash
-        connect = QAction("&Flash", self)
-        connect.triggered.connect(self.flash_dialog.show)
+        self.flashsettings = QAction("&Flash", self)
+        self.flashsettings.triggered.connect(self.flash_dialog.show)
         
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
@@ -142,8 +142,9 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-        run_menu.addAction(connect)
+        run_menu.addAction(self.connect)
         run_menu.addAction(self.addAvionicsAct)
+        run_menu.addAction(self.flashsettings)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
