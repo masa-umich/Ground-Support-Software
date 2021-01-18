@@ -20,7 +20,7 @@ class GenSensor(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, units: str = "psi", channel: str = 'Undefined',
+                 long_name_label_rows: int = 1, channel: str = 'Undefined',
                  board: str = 'Undefined'):
 
         """
@@ -46,7 +46,6 @@ class GenSensor(BaseObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
-        :param units: sensor units
         :param channel: the specific channel the device is plugged into
         :param board: the avionics board the device is plugged into
         """
@@ -65,13 +64,16 @@ class GenSensor(BaseObject):
 
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
-        self.units = units
+        self.interface = self.widget_parent.window.interface
+        self.units = "psi"
         self.channel = channel
         self.avionics_board = board
         self.measurement = 0
         self.measurement_label = QLabel(self.widget_parent)
-        self.setUnits(self.units)
+        self.setUnits()
         self._initMeasurementLabel()
+
+        self.updateToolTip()
 
         #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
@@ -116,13 +118,21 @@ class GenSensor(BaseObject):
         :param channel: channel of the object
         """
         self.channel = channel
+        self.setUnits()
+        self.updateToolTip()
     
-    def setUnits(self,text):
+    def setUnits(self):
         """
-        Sets units from textbox until config based system is done
+        Sets units from config
         """
-        self.units = text
-        self.measurement_label.setText(str(self.measurement) + " " + self.units)
+        unit_dict = self.interface.parser.units
+        if self.channel in self.interface.channels():
+            units = unit_dict[self.channel]
+            if units == 'ul':
+                self.units = ''
+            else:
+                self.units = units
+            self.measurement_label.setText(str(self.measurement) + " " + self.units)
             
     @overrides
     def move(self, point: QPoint):
@@ -199,7 +209,6 @@ class GenSensor(BaseObject):
 
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            'units': self.units,
             "channel": self.channel,
             "board": self.avionics_board
         }
@@ -208,3 +217,12 @@ class GenSensor(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
         return super_dict
+
+    def updateToolTip(self):
+        """
+        Called to update the tooltip of the sensor
+        """
+
+        text = ""
+        text += self.channel
+        self.setToolTip_(text)
