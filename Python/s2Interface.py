@@ -70,6 +70,7 @@ class S2_Interface:
                 if len(packet) > 0:
                     packet = self.unstuff_packet(packet)
                     try:
+                        print("packet ", packet)
                         self.parser.parse_packet(packet)
                         self.unpack_valves()
                         #print(self.parser.dict)
@@ -146,7 +147,7 @@ class S2_Interface:
 			"args"              : list of arguments to send to the function (list)
 	"""
     def s2_command(self, cmd_info):
-        helper.s2_command(self, self.ser, cmd_info)
+        self.helper.s2_command(self.ser, cmd_info)
 
     """
     Getter function that returns a dictionary mapping a command name to its packet_type ID
