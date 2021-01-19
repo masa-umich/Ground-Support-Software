@@ -70,11 +70,13 @@ class S2_Interface:
                 if len(packet) > 0:
                     packet = self.unstuff_packet(packet)
                     try:
+                        print("packet ", packet)
                         self.parser.parse_packet(packet)
                         self.unpack_valves()
                         #print(self.parser.dict)
                         return 1
                     except Exception as e:
+
                         print("Packet lost with error ", e)
         except Exception as e:
             print(e)
@@ -97,6 +99,7 @@ class S2_Interface:
         for n in range(0, num_valves):
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.items.append(valve_name)
+            self.parser.units[valve_name] = 'ul'
     
     # Unpack valves and generates valves key in dict
     def unpack_valves(self):
@@ -121,9 +124,10 @@ class S2_Interface:
         unstuffed = b''
         replacement = 1
         index = int(packet[0])
-        #print("packet ", index)
-        for n in range(0, len(packet)):
+        for n in range(1, len(packet)):
             temp = packet[n:n+1]
+            if (temp == 0):
+                break # early return on zero
             if(n == index):
                 index = int(packet[n])+n
                 temp = bytes(replacement) # creates zero byte of integer size 1
@@ -143,7 +147,7 @@ class S2_Interface:
 			"args"              : list of arguments to send to the function (list)
 	"""
     def s2_command(self, cmd_info):
-        helper.s2_command(self, self.ser, cmd_info)
+        self.helper.s2_command(self.ser, cmd_info)
 
     """
     Getter function that returns a dictionary mapping a command name to its packet_type ID
