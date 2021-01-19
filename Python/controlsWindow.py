@@ -170,7 +170,7 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, 'Save File', self.fileName, "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, 'Save File', self.gui.workspace_path, "JSON Files (*.json)", options=options)
         if fileName:
             if fileName.find(".json") == -1:
                 fileName = fileName + ".json"
@@ -183,7 +183,7 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", self.gui.workspace_path, "JSON Files (*.json)", options=options)
         if fileName:
             self.newFile()
             self.fileName = fileName

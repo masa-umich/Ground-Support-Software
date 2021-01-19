@@ -19,7 +19,7 @@ Program start point. This class handles all child windows of the gui
 class GUI:
 
     EXIT_CODE_REBOOT = -52
-    EXIT_CODE_NOMINAL = 1
+    EXIT_CODE_NOMINAL = 0
     EXIT_CODE_ERROR = -1
     LAUNCH_DIRECTORY = "LaunchFiles/"
 
