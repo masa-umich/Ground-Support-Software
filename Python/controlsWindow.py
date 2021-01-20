@@ -53,22 +53,22 @@ class ControlsWindow(QMainWindow):
         # The third line of each segment calls a function, defined below, that carries out the action of the button
 
         # FILE -> New
-        newAct = QAction('&New', self)
+        newAct = QAction('&New Configuration', self)
         newAct.setShortcut('Ctrl+N')
         newAct.triggered.connect(self.newFile)
 
         # FILE -> Open
-        openAct = QAction('&Open', self)
+        openAct = QAction('&Open Configuration', self)
         openAct.setShortcut('Ctrl+O')
         openAct.triggered.connect(self.openFileDialog)
 
         # FILE -> Save
-        saveAct = QAction('&Save', self)
+        saveAct = QAction('&Save Configuration', self)
         saveAct.setShortcut('Ctrl+S')
         saveAct.triggered.connect(self.saveRegular)
 
         # FILE -> Save As
-        saveAsAct = QAction('&Save As', self)
+        saveAsAct = QAction('&Save Configuration As', self)
         saveAsAct.setShortcut('Ctrl+Shift+S')
         saveAsAct.triggered.connect(self.saveFileDialog)
 

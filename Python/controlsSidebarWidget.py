@@ -61,7 +61,7 @@ class ControlsSidebarWidget(QWidget):
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
         """
-        y_pos = 80 * self.gui.pixel_scale_ratio[1] + 1
+        y_pos = 85 * self.gui.pixel_scale_ratio[1] + 1
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it

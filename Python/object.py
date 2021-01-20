@@ -57,11 +57,16 @@ class BaseObject:
         self.widget_parent = parent  # Important for drawing icon
         self.central_widget = self.widget_parent.centralWidget
         self.gui = self.widget_parent.gui
+
+        # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         if _id is not None:
             self._id = _id
+            self.widget_parent.last_object_id = max(self.widget_parent.last_object_id, self._id)
         else:
-            # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
-            self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
+            self._id = self.widget_parent.last_object_id + 1
+            self.widget_parent.last_object_id = self._id
+
+
         self.position = position
         # Have to scale it, not sure if this is best location
         self.position.setX(self.position.x() * self.gui.pixel_scale_ratio[0])

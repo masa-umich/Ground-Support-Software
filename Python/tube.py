@@ -13,10 +13,14 @@ class Tube:
         self.parent = parent
         self.widget_parent = parent
         self.points = points
+
         if tube_id is not None:
             self.tube_id = tube_id
+            self.widget_parent.last_tube_id = max(self.widget_parent.last_tube_id, self.tube_id)
         else:
-            self.tube_id = len(self.widget_parent.tube_list)
+            self.tube_id = self.widget_parent.last_tube_id + 1
+            self.widget_parent.last_tube_id = self.tube_id
+
         self.fluid = fluid
         self.is_being_drawn = False
         self.draw_direction = "None"  # Either "Horizontal" or "Vertical"

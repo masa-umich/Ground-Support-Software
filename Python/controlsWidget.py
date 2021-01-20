@@ -67,7 +67,13 @@ class ControlsWidget(QWidget):
         # Object Tracker
         self.object_list = []
 
+        # Object Id Tracker
+        self.last_object_id = 0
+
+        # Tube tracker
         self.tube_list = []
+
+        self.last_tube_id = 0
 
         self.setMouseTracking(True)
 
