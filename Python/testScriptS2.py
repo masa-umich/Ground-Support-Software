@@ -14,13 +14,13 @@ cmd_info = {
     "timestamp": 100,
     "args": [1, 1]
 }
-s2_interface.s2_command(cmd_info)
+#s2_interface.s2_command(cmd_info)
 
-# while(1):
-#     parse_status = 0
-#     parse_status = s2_interface.parse_serial()
-#     if parse_status == 1:
-#         print(s2_interface.parser.dict) # get telem values
-#         print(s2_interface.parser.units) # get units
+while(1):
+    parse_status = 0
+    parse_status = s2_interface.parse_serial()
+    if parse_status == 1:
+        print(s2_interface.parser.dict) # get telem values
+        print(s2_interface.parser.units) # get units
 
 
