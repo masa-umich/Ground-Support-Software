@@ -83,6 +83,7 @@ class TelemParse:
 		self.units[self.items[3]] = "ul"
 		self.units[self.items[4]] = "ul"
 		self.units[self.items[5]] = "ul"
+		self.units[self.items[6]] = "ul"
 		self.units[self.items[7]] = "ul"
 		self.units[self.items[8]] = "psi"
 		self.units[self.items[9]] = "psi"

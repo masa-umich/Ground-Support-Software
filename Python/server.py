@@ -90,9 +90,17 @@ data_box.setLineWrapMode(QTextEdit.NoWrap)
 command_textedit = QtGui.QTextEdit()
 command_textedit.setReadOnly(True)
 
+data_table = QtGui.QTableWidget()
+data_table.setRowCount(interface.parser.num_items)
+data_table.setColumnCount(3)
+for n in range(interface.parser.num_items):
+    data_table.setItem(n,0, QtGui.QTableWidgetItem(interface.parser.items[n]))
+    data_table.setItem(n,2, QtGui.QTableWidgetItem(interface.parser.units[interface.parser.items[n]]))
+
 tab.addTab(log_box, "Server Log")
 tab.addTab(data_box, "Packet Log")
 tab.addTab(command_textedit, "Command Log")
+tab.addTab(data_table, "Last Packet")
 top_layout.addWidget(tab, 2, 0)
 
 # send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
@@ -300,6 +308,10 @@ def update():
                 dataframe = interface.parser.dict
                 #print(dataframe)
                 dataframe["time"] = datetime.now().timestamp()
+                for i in range(interface.parser.num_items):
+                    key = interface.parser.items[i]
+                    data_table.setItem(i, 1, QtGui.QTableWidgetItem(dataframe[key]))
+
                 data_log.write(interface.parser.log_string+'\n')
             else:
                 send_to_log(data_box, "PARSER FAILED")
