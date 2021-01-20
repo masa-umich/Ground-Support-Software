@@ -411,6 +411,7 @@ class ControlsWindow(QMainWindow):
         if self.gui.run.boards:
             for i in range(len(self.gui.run.boards)):
                 dropdowns[i].setCurrentText(self.gui.run.boards[i])
+                self.updateAvionicsDialog(dropdowns, dropdowns[i], i+1)
 
         # Callback functions
         dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1, 1))
@@ -601,7 +602,7 @@ class ControlsWindow(QMainWindow):
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
-        save_button.clicked.connect(lambda: self.updateScreenDrawSettings(pixel_spinBox.value(), font_spinBox.value(), line_spinBox.value()))
+        save_button.clicked.connect(lambda: self.updateScreenDrawSettings(dialog, pixel_spinBox.value(), font_spinBox.value(), line_spinBox.value()))
         save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
 
         buttonLayout.addWidget(cancel_button)
@@ -611,7 +612,7 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
-    def updateScreenDrawSettings(self, new_pixel_scale, new_font_scale, new_line_scale):
+    def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """
         This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
         file and then calls for a reboot
@@ -619,6 +620,8 @@ class ControlsWindow(QMainWindow):
         :param new_font_scale: new font scale
         :param new_line_scale: new line width value
         """
+        # Close dialog
+        dialog.done(2)
 
         # The user only updates the x pixel scale ratio, must keep things square so this updates y
         pixel_scale_change = self.gui.pixel_scale_ratio[0]/new_pixel_scale * self.gui.pixel_scale_ratio[1]

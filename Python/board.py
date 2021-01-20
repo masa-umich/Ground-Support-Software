@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from datetime import datetime
+
 from overrides import overrides
 from constants import Constants
 from customLabel import CustomLabel
@@ -22,8 +24,9 @@ class Board(QWidget):
         self.controlsSidebarWidget = parent
         self.gui = self.controlsSidebarWidget.gui
         self.painter = QPainter()
+        self.client = self.controlsSidebarWidget.window.client_dialog.client
 
-        self.setGeometry(0, 0, self.controlsSidebarWidget.width, 150*self.gui.pixel_scale_ratio[1])
+        self.setGeometry(0, 0, self.controlsSidebarWidget.width, 200*self.gui.pixel_scale_ratio[1])
 
         # Set background color to match
         self.setAutoFillBackground(True)
@@ -34,13 +37,14 @@ class Board(QWidget):
         # Define geometric of board
         self.board_pos = QPointF(10*self.gui.pixel_scale_ratio[0], 38*self.gui.pixel_scale_ratio[1])
         self.board_width = 150 * self.gui.pixel_scale_ratio[0]
-        self.board_height = 80 * self.gui.pixel_scale_ratio[1]
+        # Board height is programmatically set later, initialized here for clarity
+        self.board_height = 0 * self.gui.pixel_scale_ratio[1]
 
         # Temp holder values
         self.name = name
         self.EBatt = 0
         self.amps = 0
-        self.state = "Manual Control"
+        self.state = 0 # Not sure if this is good to start like this
         self.temp = 273
         self.flash = False
         self.LPT = 0 #Last Ping Time
@@ -64,7 +68,7 @@ class Board(QWidget):
         self.data_frame = QFrame(self)
         self.data_form_layout = QFormLayout(self)
         self.data_frame.resize(self.width() - (self.board_pos.x() + self.board_width)+5*self.gui.pixel_scale_ratio[0],
-                                self.height() - (self.name_label.pos().y() + self.name_label.height()))
+                                150*self.gui.pixel_scale_ratio[1] - (self.name_label.pos().y() + self.name_label.height()))
         self.data_frame.setLayout(self.data_form_layout)
         self.data_frame.move((self.board_pos.x() + self.board_width)-5*self.gui.pixel_scale_ratio[0],
                              (self.name_label.pos().y() + self.name_label.height())-11*self.gui.pixel_scale_ratio[1])
@@ -75,7 +79,7 @@ class Board(QWidget):
         EBatt_form_label = self.createDataFormLayoutLabel("EBatt:")
         self.Ebatt_label = self.createDataFormLayoutLabel("11.1V")
 
-        amp_form_label = self.createDataFormLayoutLabel("Amps:")
+        amp_form_label = self.createDataFormLayoutLabel("iBatt:")
         self.amp_label = self.createDataFormLayoutLabel("2.2a")
 
         # temp_form_label = self.createDataFormLayoutLabel("Temp:")
@@ -102,19 +106,73 @@ class Board(QWidget):
         self.data_form_layout.addRow(adcrate_form_label, self.adcrate_label)
         self.data_form_layout.addRow(telemrate_form_label, self.telemrate_label)
 
-        # State label to go below board
+        # State label to go below buttons
         state_form_label = self.createDataFormLayoutLabel("State:")
-        self.state_label = self.createDataFormLayoutLabel(self.state)
+        self.state_label = self.createDataFormLayoutLabel("Aggressively long string don't change")
 
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
         state_form_label.adjustSize()
-        # Move to position
-        state_form_label.move(self.board_pos.x(), self.board_pos.y()+self.board_height + 8 * self.gui.pixel_scale_ratio[1])
-        self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.board_pos.y()+self.board_height + 8 * self.gui.pixel_scale_ratio[1])
-        
-        self.show()
+
+        self.state_frame = QFrame(self)
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout(self.state_frame)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(13 * self.gui.font_scale_ratio)
+
+        # Create the buttons, make sure there is no default option, and connect to functions
+        self.arm_button = QPushButton("Arm")
+        self.arm_button.setDefault(False)
+        self.arm_button.setAutoDefault(False)
+        self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm-Disarm"))
+        self.arm_button.setFont(font)
+        self.arm_button.setFixedWidth(self.width() / 3 * 0.95)
+
+        self.fire_button = QPushButton("")
+        self.fire_button.setDefault(False)
+        self.fire_button.setAutoDefault(False)
+        self.fire_button.setDisabled(True)
+        self.fire_button.clicked.connect(lambda: self.sendBoardState("Run"))
+        self.fire_button.setFont(font)
+        self.fire_button.setFixedWidth(self.width() / 3 * 0.95)
+
+        abort_button = QPushButton("Abort")
+        abort_button.setDefault(False)
+        abort_button.setAutoDefault(False)
+        abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
+        abort_button.setFont(font)
+        abort_button.setFixedWidth(self.width() / 3 * 0.95)
+
+        # Set text depening on board
+        if self.name == "Engine Controller":
+            self.fire_button.setText("Hotfire")
+        elif self.name == "Pressurization Controller":
+            self.fire_button.setText("Pressurize")
+        elif self.name == "Flight Computer":
+            self.fire_button.setText("Launch")
+        else:
+            self.fire_button.setText("Order 66")
+
+        buttonLayout.addWidget(self.arm_button)
+        buttonLayout.addWidget(self.fire_button)
+        buttonLayout.addWidget(abort_button)
+
+        self.show()  # Need to show before able to access some data_frame values
+        self.setBoardState(self.state)
+
+        # Set the board height to be the same size as the text because it looks good
+        self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
+
+        # Update the frame geometry
+        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), self.height()-(state_form_label.height() + self.board_height + self.board_pos.y()))
+
+        # Move to position, little dirty atm
+        state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+        self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
 
     def createDataFormLayoutLabel(self, text: str):
         """
@@ -134,6 +192,75 @@ class Board(QWidget):
         label.setStyleSheet("color: white")
 
         return label
+
+    def sendBoardState(self, identifier: str):
+        """
+        Send the board state, if not in debug mode will send to the connected board
+        :param identifier: string used to determine state to send
+        :return: only returns if a new state can't be found, this is an error but prevents the gui from crashing in
+        a critical moment
+        """
+
+        newState = None
+
+        # If arm/disarmed command is sent toggle, only toggle if state is manual to arm, otherwise always disarm
+        if identifier == "Arm-Disarm":
+            if self.state == 0:
+                newState = 1
+            else:
+                newState = 0
+        # If state is armed, allow for state to be run
+        elif identifier == "Run":
+            if self.state == 1:
+                newState = 2
+        # Anytime can call an abort to abort out
+        elif identifier == "Abort":
+                newState = 3
+        else:
+            return
+
+        # If in debug mode don't send and just update
+        if self.gui.debug_mode:
+            self.setBoardState(newState)
+        else:
+            cmd_dict = {
+                "function_name": "set_state",
+                "target_board_addr": self.controlsSidebarWidget.window.interface.getBoardAddr(self.name),
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [int(newState)]
+            }
+            self.client.command(3, cmd_dict)
+
+    def setBoardState(self, state: int):
+        """
+        Sets the current board state, updates all the buttons and state labels
+        :param state: state to set
+        """
+
+        # Set state
+        self.state = state
+
+        # Map of state
+        stateMap = {
+            -1: "",
+            0: "Manual",
+            1: "Armed",
+            2: "Run",
+            3: "Abort"
+        }
+
+        # Update labels
+        self.state_label.setText(stateMap[self.state])
+
+        if self.state is not 0:
+            self.arm_button.setText("Disarm")
+            self.fire_button.setEnabled(True)
+        else:
+            self.arm_button.setText("Arm")
+            self.fire_button.setEnabled(False)
+
+        if self.state is 3:
+            self.fire_button.setEnabled(False)
 
     @overrides
     def paintEvent(self, e):
@@ -226,8 +353,8 @@ class Board(QWidget):
         super().update()
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
-        self.state_label.setText(str(state)) # todo: state parsing
-        self.flash_label.setText(str(flash)) # todo: flash state parsing
+        self.setBoardState(str(state))
+        self.flash_label.setText(str(flash))  # todo: flash state parsing
         self.LPT_label.setText(str(LPT))
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
