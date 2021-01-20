@@ -83,7 +83,10 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.triggered.connect(self.exitDebug)
         self.exitDebugAct.setDisabled(True)
 
-        # TODO: We should have exit and enter as options only when possible, ie can't exit if u haven't started
+        # Run -> Add Boards
+        self.screenSettingsAct = QAction('&Screen Draw Settings', self)
+        self.screenSettingsAct.triggered.connect(self.showDrawingSettingsDialog)
+
         # EDIT -> Enter Edit Mode
         self.enterEditAct = QAction('&Enter Edit Mode', self)
         self.enterEditAct.setShortcut('Ctrl+E')
@@ -132,8 +135,11 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(saveAct)
         file_menu.addAction(saveAsAct)
         file_menu.addAction(exitAct)
+        file_menu.addSeparator()
         file_menu.addAction(self.debugAct)
         file_menu.addAction(self.exitDebugAct)
+        file_menu.addSeparator()
+        file_menu.addAction(self.screenSettingsAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -326,6 +332,7 @@ class ControlsWindow(QMainWindow):
         self.exitEditAct.setDisabled(True)
         self.startRunAct.setDisabled(True)
         self.endRunAct.setEnabled(True)
+        self.screenSettingsAct.setDisabled(True)
 
         self.gui.run.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
@@ -341,6 +348,8 @@ class ControlsWindow(QMainWindow):
         # Allow editing to happen when run is not active
         self.enterEditAct.setEnabled(True)
         self.endRunAct.setDisabled(True)
+        self.screenSettingsAct.setEnabled(True)
+        self.screenSettingsAct.setEnabled(True)
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -497,6 +506,131 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.controlsSidebarWidget.addBoards(boards)
         dialog.done(2)
+
+    def showDrawingSettingsDialog(self):
+        """
+        Show the dialog to configure the avionics that will be connected for the test
+        """
+
+        # Create the dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Screen Drawing Settings")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
+        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14*self.gui.font_scale_ratio)
+
+        # Create labels and spin boxes
+        warningLabel = QLabel("WARNING: REQUIRES GUI REBOOT")
+        warningLabel.setStyleSheet("color: red")
+        warningLabel.setAlignment(Qt.AlignCenter)
+        font2 = QFont()
+        font2.setStyleStrategy(QFont.PreferAntialias)
+        font2.setFamily(Constants.default_font)
+        font2.setBold(True)
+        font2.setPointSizeF(20*self.gui.font_scale_ratio)
+        warningLabel.setFont(font2)
+
+        font_label = QLabel("Font Scale:")
+        font_label.setStyleSheet("color: white")
+        font_label.setFont(font)
+
+        font_spinBox = QDoubleSpinBox(self)
+        font_spinBox.setMinimum(.1)
+        font_spinBox.setMaximum(5)
+        font_spinBox.setSingleStep(.1)
+        font_spinBox.setFont(font)
+        font_spinBox.setValue(self.gui.font_scale_ratio)
+
+        pixel_label = QLabel("Pixel Scale:")
+        pixel_label.setStyleSheet("color: white")
+        pixel_label.setFont(font)
+
+        pixel_spinBox = QDoubleSpinBox(self)
+        pixel_spinBox.setMinimum(.1)
+        pixel_spinBox.setMaximum(5)
+        pixel_spinBox.setSingleStep(.1)
+        pixel_spinBox.setFont(font)
+        pixel_spinBox.setValue(self.gui.pixel_scale_ratio[0])
+
+        line_label = QLabel("Line Width:")
+        line_label.setStyleSheet("color: white")
+        line_label.setFont(font)
+
+        line_spinBox = QSpinBox(self)
+        line_spinBox.setMinimum(1)
+        line_spinBox.setMaximum(6)
+        line_spinBox.setSingleStep(1)
+        line_spinBox.setFont(font)
+        line_spinBox.setValue(Constants.line_width)
+
+        formLayout.addRow(warningLabel)
+        formLayout.addRow(pixel_label,pixel_spinBox)
+        formLayout.addRow(font_label, font_spinBox)
+        formLayout.addRow(line_label,line_spinBox)
+
+        # TODO: Make a little viewer to see the changes before applying them
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        save_button = QPushButton("Reboot")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: self.updateScreenDrawSettings(pixel_spinBox.value(), font_spinBox.value(), line_spinBox.value()))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+    def updateScreenDrawSettings(self, new_pixel_scale, new_font_scale, new_line_scale):
+        """
+        This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
+        file and then calls for a reboot
+        :param new_pixel_scale: new scale for pixels on screen
+        :param new_font_scale: new font scale
+        :param new_line_scale: new line width value
+        """
+
+        # The user only updates the x pixel scale ratio, must keep things square so this updates y
+        pixel_scale_change = self.gui.pixel_scale_ratio[0]/new_pixel_scale * self.gui.pixel_scale_ratio[1]
+        self.gui.pixel_scale_ratio = [new_pixel_scale, pixel_scale_change]
+
+        # Update other visual settings
+        self.gui.font_scale_ratio = new_font_scale
+        Constants.line_width = new_line_scale
+
+        # Save the gui preferences and reboot
+        self.gui.savePreferences()
+        QCoreApplication.exit(self.gui.EXIT_CODE_REBOOT)
 
     @overrides
     def update(self):
