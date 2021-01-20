@@ -70,7 +70,7 @@ class S2_Interface:
                 if len(packet) > 0:
                     packet = self.unstuff_packet(packet)
                     try:
-                        print("packet ", packet)
+                        #print("packet ", packet)
                         self.parser.parse_packet(packet)
                         self.unpack_valves()
                         #print(self.parser.dict)

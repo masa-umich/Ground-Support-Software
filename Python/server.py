@@ -132,7 +132,7 @@ def connect():
     global ports_box, interface
     try:
         port = str(ports_box.currentText())
-        interface.connect(port, 115200, 0.2)
+        interface.connect(port, 115200, 0.3)
         interface.parse_serial()
     except:
         pass
@@ -294,7 +294,7 @@ file_menu.addAction(quit)
 
 # main update loop
 def update():
-    global packet_num, commander_label, dataframe
+    global packet_num, commander_label, dataframe, data_table
     
     try:
         if interface.ser.is_open:
@@ -320,9 +320,10 @@ def update():
                 dataframe = interface.parser.dict
                 #print(dataframe)
                 dataframe["time"] = datetime.now().timestamp()
-                for i in range(interface.parser.num_items):
-                    key = interface.parser.items[i]
-                    data_table.setItem(i, 1, QtGui.QTableWidgetItem(dataframe[key]))
+                for n in range(interface.parser.num_items):
+                    key = interface.parser.items[n]
+                    data_table.setItem(n,1, QtGui.QTableWidgetItem(str(dataframe[key])))
+                    #print([n, key, dataframe[key]])
 
                 data_log.write(interface.parser.log_string+'\n')
             else:
