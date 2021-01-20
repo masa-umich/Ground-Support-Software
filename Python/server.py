@@ -98,6 +98,7 @@ data_table = QtGui.QTableWidget()
 data_table.setRowCount(interface.parser.num_items)
 data_table.setColumnCount(3)
 data_table.horizontalHeader().setStretchLastSection(True)
+data_table.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
 for n in range(interface.parser.num_items):
     data_table.setItem(n,0, QtGui.QTableWidgetItem(interface.parser.items[n]))
     data_table.setItem(n,2, QtGui.QTableWidgetItem(interface.parser.units[interface.parser.items[n]]))
