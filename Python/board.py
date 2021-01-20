@@ -76,10 +76,10 @@ class Board(QWidget):
         # Create the labels for the data form
         self.data_form_layout.setLabelAlignment(Qt.AlignLeft)
         self.data_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        EBatt_form_label = self.createDataFormLayoutLabel("eBatt:")
+        EBatt_form_label = self.createDataFormLayoutLabel("ebatt:")
         self.Ebatt_label = self.createDataFormLayoutLabel("11.1V")
 
-        amp_form_label = self.createDataFormLayoutLabel("iBatt:")
+        amp_form_label = self.createDataFormLayoutLabel("ibatt:")
         self.amp_label = self.createDataFormLayoutLabel("2.2a")
 
         # temp_form_label = self.createDataFormLayoutLabel("Temp:")
