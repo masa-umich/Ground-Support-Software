@@ -83,6 +83,10 @@ tab = QTabWidget()
 log_box = QtGui.QTextEdit()
 log_box.setReadOnly(True)
 
+packet_widget = QtGui.QWidget()
+packet_layout = QtGui.QHBoxLayout()
+packet_widget.setLayout(packet_layout)
+
 data_box = QtGui.QTextEdit()
 data_box.setReadOnly(True)
 data_box.setLineWrapMode(QTextEdit.NoWrap)
@@ -93,14 +97,17 @@ command_textedit.setReadOnly(True)
 data_table = QtGui.QTableWidget()
 data_table.setRowCount(interface.parser.num_items)
 data_table.setColumnCount(3)
+data_table.horizontalHeader().setStretchLastSection(True)
 for n in range(interface.parser.num_items):
     data_table.setItem(n,0, QtGui.QTableWidgetItem(interface.parser.items[n]))
     data_table.setItem(n,2, QtGui.QTableWidgetItem(interface.parser.units[interface.parser.items[n]]))
 
+packet_layout.addWidget(data_box)
+packet_layout.addWidget(data_table)
+
 tab.addTab(log_box, "Server Log")
-tab.addTab(data_box, "Packet Log")
+tab.addTab(packet_widget, "Packet Log")
 tab.addTab(command_textedit, "Command Log")
-tab.addTab(data_table, "Last Packet")
 top_layout.addWidget(tab, 2, 0)
 
 # send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
