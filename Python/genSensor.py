@@ -65,7 +65,7 @@ class GenSensor(BaseObject):
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
         self.interface = self.widget_parent.window.interface
-        self.units = "psi"
+        self.units = ""
         self.channel = channel
         self.avionics_board = board
         self.measurement = 0

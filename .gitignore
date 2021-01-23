@@ -16,6 +16,7 @@ __pycache__/
 data/
 Python/data/
 Python/oldgui/
+Python/flash_dump/
 
 # GUI Local files
 Python/LaunchFiles
