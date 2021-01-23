@@ -9,6 +9,8 @@ from PyQt5.QtGui import *
 from controlsWindow import ControlsWindow
 from constants import Constants
 
+from configurationManager import ConfigurationManager
+
 from run import Run
 
 """
@@ -48,6 +50,9 @@ class GUI:
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 
+            os.mkdir(path=self.workspace_path + "/Configurations/")
+            os.mkdir(path=self.workspace_path + "/Run_Data/")
+
             os.mkdir(path=GUI.LAUNCH_DIRECTORY)
             readMe = open(GUI.LAUNCH_DIRECTORY+"README.txt", "x")
             readMe.write("This is the directory that the GUI pulls startup files from, do not delete, "
@@ -81,6 +86,7 @@ class GUI:
 
         # This variable holds the current Run class that is being used to conduct the test
         self.run = Run()
+        #self.configuration = ConfigurationManager(self)
 
         # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
         self.debug_mode = False
