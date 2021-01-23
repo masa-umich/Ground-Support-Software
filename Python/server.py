@@ -29,6 +29,8 @@ dataframe = {}
 starttime = datetime.now().strftime("%Y%m%d%H%M")
 threads = []
 command_queue = queue.Queue()
+do_flash_dump = False
+dump_addr = None
 
 # initialize parser
 interface = S2_Interface()
@@ -193,7 +195,7 @@ command_layout.addWidget(override_button, 0, 4)
 
 # client handler
 def client_handler(clientsocket, addr):
-    global commander, dataframe
+    global commander, dataframe, do_flash_dump, dump_addr
     counter = 0
     last_uuid = None
     while True:
@@ -218,6 +220,11 @@ def client_handler(clientsocket, addr):
                 elif (command["command"] == 3 and commander == command["clientid"]): # send command
                     print(command)
                     command_queue.put(command["args"])
+                elif (command["command"] == 5 and commander == command["clientid"]): # flash dump
+                    print(command)
+                    do_flash_dump = True
+                    dump_addr = command["args"]
+
                 elif (command["command"] == 4): # close connection
                     print(command)
                     if commander == command["clientid"]:
@@ -294,7 +301,7 @@ file_menu.addAction(quit)
 
 # main update loop
 def update():
-    global packet_num, commander_label, dataframe, data_table
+    global packet_num, commander_label, dataframe, data_table, do_flash_dump
     
     try:
         if interface.ser.is_open:
@@ -303,31 +310,38 @@ def update():
                 send_to_log(command_textedit, str(cmd))
                 interface.s2_command(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
-
-            # read in packet from EC
-            could_parse = interface.parse_serial()
-
-            if could_parse:
-                #print("PARSER WORKED")
-                raw_packet = interface.last_raw_packet
-                serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
-
-                raw_packet_size = len(raw_packet)
-                packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
-                send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
-
-                # parse packet
-                dataframe = interface.parser.dict
-                #print(dataframe)
-                dataframe["time"] = datetime.now().timestamp()
-                for n in range(interface.parser.num_items):
-                    key = interface.parser.items[n]
-                    data_table.setItem(n,1, QtGui.QTableWidgetItem(str(dataframe[key])))
-                    #print([n, key, dataframe[key]])
-
-                data_log.write(interface.parser.log_string+'\n')
+            
+            if do_flash_dump:
+                send_to_log(log_box, "Taking a dump. Be out in just a sec")
+                interface.download_flash(dump_addr, int(datetime.now().timestamp()), command_log, "")
+                do_flash_dump = False
+                send_to_log(log_box, "Dump Complete.")
+            
             else:
-                send_to_log(data_box, "PARSER FAILED")
+                # read in packet from EC
+                could_parse = interface.parse_serial()
+
+                if could_parse:
+                    #print("PARSER WORKED")
+                    raw_packet = interface.last_raw_packet
+                    serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
+
+                    raw_packet_size = len(raw_packet)
+                    packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
+                    send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
+
+                    # parse packet
+                    dataframe = interface.parser.dict
+                    #print(dataframe)
+                    dataframe["time"] = datetime.now().timestamp()
+                    for n in range(interface.parser.num_items):
+                        key = interface.parser.items[n]
+                        data_table.setItem(n,1, QtGui.QTableWidgetItem(str(dataframe[key])))
+                        #print([n, key, dataframe[key]])
+
+                    data_log.write(interface.parser.log_string+'\n')
+                else:
+                    send_to_log(data_box, "PARSER FAILED")
 
     except Exception as e:
         print(e)
