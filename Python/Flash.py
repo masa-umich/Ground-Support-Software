@@ -3,17 +3,10 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import sys
 import os
+from datetime import datetime
 
 from constants import Constants
 from s2Interface import S2_Interface
-
-#import socket
-#import json
-#import pickle
-#import time
-#import uuid
-#import queue
-#from LedIndicatorWidget import LedIndicator
 
 class FlashDialog(QtWidgets.QDialog):
     def __init__(self, client):
@@ -41,7 +34,7 @@ class FlashController(QtWidgets.QWidget):
         self.board_selector = QtWidgets.QComboBox()
         self.file_selector = QtWidgets.QLineEdit()
         self.file_button = QtWidgets.QPushButton("Select")
-        self.download_button = QtWidgets.QPushButton("Download")
+        self.download_button = QtWidgets.QPushButton("Dump Flash")
         self.wipe_button = QtWidgets.QPushButton("Wipe Flash")
         self.start_button = QtWidgets.QPushButton("Start Logging")
         self.stop_button = QtWidgets.QPushButton("Stop Logging")
@@ -60,6 +53,10 @@ class FlashController(QtWidgets.QWidget):
         self.board_selector.addItems(Constants.boards)
 
         self.file_button.clicked.connect(self.select_file)
+        self.download_button.clicked.connect(self.dump)
+        self.wipe_button.clicked.connect(self.wipe)
+        self.start_button.clicked.connect(self.start_logging)
+        self.stop_button.clicked.connect(self.stop_logging)
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
@@ -67,18 +64,40 @@ class FlashController(QtWidgets.QWidget):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self,"Select Dump File","","Text Files (*.csv);;All Files (*)", options=options)
         if filename:
             self.file_selector.setText(filename)
+    
+    def get_addr(self):
+        name = self.board_selector.currentText()
+        return self.interface.getBoardAddr(name)
 
     def dump(self):
-        return
+        self.client.command(5, self.get_addr())
     
     def wipe(self):
-        return
+        cmd_dict = {
+            "function_name": "wipe_flash",
+            "target_board_addr": self.get_addr(),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        self.client.command(3, cmd_dict)
     
     def stop_logging(self):
-        return
+        cmd_dict = {
+            "function_name": "stop_logging",
+            "target_board_addr": self.get_addr(),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        self.client.command(3, cmd_dict)
 
     def start_logging(self):
-        return
+        cmd_dict = {
+            "function_name": "start_logging",
+            "target_board_addr": self.get_addr(),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        self.client.command(3, cmd_dict)
 
 
     
