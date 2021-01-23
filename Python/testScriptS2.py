@@ -38,12 +38,12 @@ erase = {
 }
 #s2_interface.s2_command(set_vlv)
 #$time.sleep(1)
-#s2_interface.s2_command(erase)
-#time.sleep(5)
-#s2_interface.s2_command(start)
-#time.sleep(1)
-#s2_interface.s2_command(stop)
-#time.sleep(1)
+# s2_interface.s2_command(erase)
+# time.sleep(5)
+# s2_interface.s2_command(start)
+# time.sleep(1)
+# s2_interface.s2_command(stop)
+# time.sleep(1)
 s2_interface.download_flash(3, 103)
 
 """
