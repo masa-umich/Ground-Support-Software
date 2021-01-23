@@ -367,7 +367,7 @@ def update():
 
                     data_log.write(interface.parser.log_string+'\n')
                 else:
-                    send_to_log(data_box, "PARSER FAILED")
+                    send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
 
     except Exception as e:
         print(e)

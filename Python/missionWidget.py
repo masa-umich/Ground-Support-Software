@@ -225,6 +225,9 @@ class MissionWidget(QWidget):
         """
         self.runIndicator.setIndicatorColor("Red")
         self.runIndicator.setToolTip("Run has stopped")
+         # Add in title label
+        self.titleLabel.setText("")
+        self.titleLabel.adjustSize()
         self.update()
 
     @overrides
