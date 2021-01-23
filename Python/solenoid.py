@@ -99,6 +99,10 @@ class Solenoid(BaseObject):
 
         self.client = self.widget_parent.window.client_dialog.client
 
+    # TODO: Use this withe new configuration manager
+    # @classmethod
+    # def initFromObject(cls, object):
+
     @overrides
     def draw(self):
         """
