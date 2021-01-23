@@ -134,8 +134,8 @@ class S2_Interface:
     """
     def unstuff_packet(self, packet):
         try:
-            print(self.bytes_to_array(packet))
-            print('\n\n')
+            #print(self.bytes_to_array(packet))
+            #print('\n\n')
             unstuffed = b''
             replacement = 1
             index = int(packet[0])
@@ -147,7 +147,7 @@ class S2_Interface:
                     index = int(packet[n])+n
                     temp = bytes(replacement) # creates zero byte of integer size 1
                 unstuffed = unstuffed + temp
-            print(self.bytes_to_array(unstuffed))
+            #print(self.bytes_to_array(unstuffed))
             packet = unstuffed
             return packet
         except Exception as e:
@@ -217,17 +217,19 @@ class S2_Interface:
                 readfile = True                
                 self.s2_command(cmd_info)                           # Send command to download flash
                 while(readfile):                            
-                    # Read the packet header (11 bytes), flash page (2048 bytes), and COBS packet delimiters (2)
-                    ser_page = self.ser.read(2048 + 11 + 2)
+                    # Read the packet header (11 bytes), flash page (2048 bytes)
+                    ser_page = self.ser.read(2048 + 11)
                     #if (len(ser_page) > 0):
                     # Check that packet_type in the CLB header is 1 (flash data)
                     #if (ser_page[0] != 1):
-                    if (len(ser_page) != 2048 + 11 + 2):
+                    if (len(ser_page) != 2048 + 11):
                         readfile = False
                     else:
-                        # Unencode COBS
-                        self.unstuff_packet(ser_page)
-                        binfile.write(bytes(ser_page))  # Log to bin
+                        # Unencode COBS # Update: no cobs anymore
+                        #self.unstuff_packet(ser_page)
+                        #TODO get rid off "11:" once the firmware no longer sends a packet header during a flash data dump
+                        print(self.bytes_to_array(ser_page[11:]))
+                        binfile.write(bytes(ser_page[11:]))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
 
