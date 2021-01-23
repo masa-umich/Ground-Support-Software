@@ -36,15 +36,37 @@ erase = {
     "timestamp":102,
     "args": []
 }
+
+zero_stepper = {
+    "function_name": "set_stepper_zero",
+    "target_board_addr": 3,
+    "timestamp": 103,
+    "args": [1]
+}
+
+move_stepper = {
+    "function_name": "set_stepper_pos",
+    "target_board_addr": 3,
+    "timestamp": 103,
+    "args": [1, 90]
+}
+s2_interface.s2_command(move_stepper)
+time.sleep(2)
+s2_interface.s2_command(zero_stepper)
+time.sleep(2)
+s2_interface.s2_command(move_stepper)
+
 #s2_interface.s2_command(set_vlv)
 #$time.sleep(1)
-# s2_interface.s2_command(erase)
-# time.sleep(5)
-# s2_interface.s2_command(start)
-# time.sleep(1)
-# s2_interface.s2_command(stop)
-# time.sleep(1)
+"""
+s2_interface.s2_command(erase)
+time.sleep(5)
+s2_interface.s2_command(start)
+time.sleep(1)
+s2_interface.s2_command(stop)
+time.sleep(1)
 s2_interface.download_flash(3, 103)
+"""
 
 """
 while(1):
