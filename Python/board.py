@@ -125,12 +125,19 @@ class Board(QWidget):
         font.setPointSize(13 * self.gui.font_scale_ratio)
 
         # Create the buttons, make sure there is no default option, and connect to functions
+        self.manual_button = QPushButton("Manual")
+        self.manual_button.setDefault(False)
+        self.manual_button.setAutoDefault(False)
+        self.manual_button.clicked.connect(lambda: self.sendBoardState("Manual-Disarm"))
+        self.manual_button.setFont(font)
+        self.manual_button.setFixedWidth(self.width() / 4 * 1)
+
         self.arm_button = QPushButton("Arm")
         self.arm_button.setDefault(False)
         self.arm_button.setAutoDefault(False)
-        self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm-Disarm"))
+        self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm"))
         self.arm_button.setFont(font)
-        self.arm_button.setFixedWidth(self.width() / 3 * 0.95)
+        self.arm_button.setFixedWidth(self.width() / 4 * 1)
 
         self.fire_button = QPushButton("")
         self.fire_button.setDefault(False)
@@ -138,25 +145,26 @@ class Board(QWidget):
         self.fire_button.setDisabled(True)
         self.fire_button.clicked.connect(lambda: self.sendBoardState("Run"))
         self.fire_button.setFont(font)
-        self.fire_button.setFixedWidth(self.width() / 3 * 0.95)
+        self.fire_button.setFixedWidth(self.width() / 4 * 1)
 
         abort_button = QPushButton("Abort")
         abort_button.setDefault(False)
         abort_button.setAutoDefault(False)
         abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         abort_button.setFont(font)
-        abort_button.setFixedWidth(self.width() / 3 * 0.95)
+        abort_button.setFixedWidth(self.width() / 4 * 1)
 
-        # Set text depening on board
+        # Set text depending on board
         if self.name == "Engine Controller":
             self.fire_button.setText("Hotfire")
         elif self.name == "Pressurization Controller":
-            self.fire_button.setText("Pressurize")
+            self.fire_button.setText("Press")
         elif self.name == "Flight Computer":
             self.fire_button.setText("Launch")
         else:
             self.fire_button.setText("Order 66")
 
+        buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
         buttonLayout.addWidget(abort_button)
@@ -204,18 +212,17 @@ class Board(QWidget):
         newState = None
 
         # If arm/disarmed command is sent toggle, only toggle if state is manual to arm, otherwise always disarm
-        if identifier == "Arm-Disarm":
-            if self.state == 0:
-                newState = 1
-            else:
-                newState = 0
+        if identifier == "Manual-Disarm":
+            newState = 0
+        elif identifier == "Arm":
+            newState = 1
         # If state is armed, allow for state to be run
         elif identifier == "Run":
             if self.state == 1:
                 newState = 2
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
-                newState = 3
+            newState = 3
         else:
             return
 
@@ -252,14 +259,11 @@ class Board(QWidget):
         # Update labels
         self.state_label.setText(stateMap[self.state])
 
-        if self.state is not 0:
-            self.arm_button.setText("Disarm")
+        if self.state is 1:
+            self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
         else:
-            self.arm_button.setText("Arm")
-            self.fire_button.setEnabled(False)
-
-        if self.state is 3:
+            self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
 
     @overrides
@@ -353,7 +357,7 @@ class Board(QWidget):
         super().update()
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
-        self.setBoardState(str(state))
+        self.setBoardState(int(state))
         self.flash_label.setText(str(flash))  # todo: flash state parsing
         self.LPT_label.setText(str(LPT))
         self.adcrate_label.setText(str(adc_rate) + " Hz")
