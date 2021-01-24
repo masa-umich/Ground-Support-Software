@@ -97,7 +97,7 @@ class ControlsWidget(QWidget):
         self.setPalette(p)
 
         # TODO: move these somewhere when file system is initiated
-        self.loadData()
+        #self.loadData()
 
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
@@ -364,7 +364,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=sol["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
-                                                 normally_open=sol['normally open']))
+                                                 normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
+                                                 serial_number_visible=sol["serial number label"]["is visible"]))
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
@@ -380,7 +381,8 @@ class ControlsWidget(QWidget):
                                              long_name_label_pos=tnk["long name label"]["pos string"],
                                              long_name_label_font_size=tnk["long name label"]["font size"],
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
-                                             long_name_label_rows=tnk["long name label"]["rows"]))
+                                             long_name_label_rows=tnk["long name label"]["rows"],long_name_visible=tnk["long name label"]["is visible"],
+                                             serial_number_visible=tnk["serial number label"]["is visible"]))
             if i.split()[0] == "Motor":
                 motor = data[i]
                 self.object_list.append(Motor(self, _id=motor["id"], position=QPoint(motor["pos"]["x"],motor["pos"]["y"]),
@@ -395,7 +397,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=motor["long name label"]["pos string"],
                                                  long_name_label_font_size=motor["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(motor["long name label"]["local pos"]["x"],motor["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"]))
+                                                 long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"],long_name_visible=motor["long name label"]["is visible"],
+                                                 serial_number_visible=motor["serial number label"]["is visible"]))
 
             if i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
                 pt = data[i]
@@ -412,7 +415,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=pt["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=pt["long name label"]["rows"],
-                                                 channel=pt["channel"],board=pt["board"]))
+                                                 channel=pt["channel"],board=pt["board"],long_name_visible=pt["long name label"]["is visible"],
+                                                 serial_number_visible=pt["serial number label"]["is visible"]))
             
             if i.split()[0] == "Chamber":
                 idx = data[i]
