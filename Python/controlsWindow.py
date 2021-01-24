@@ -550,7 +550,6 @@ class ControlsWindow(QMainWindow):
         warningLabel.setFont(font2)
 
         font_label = QLabel("Font Scale:")
-        font_label.setStyleSheet("color: white")
         font_label.setFont(font)
 
         font_spinBox = QDoubleSpinBox(self)
@@ -561,7 +560,6 @@ class ControlsWindow(QMainWindow):
         font_spinBox.setValue(self.gui.font_scale_ratio)
 
         pixel_label = QLabel("Pixel Scale:")
-        pixel_label.setStyleSheet("color: white")
         pixel_label.setFont(font)
 
         pixel_spinBox = QDoubleSpinBox(self)
@@ -572,7 +570,6 @@ class ControlsWindow(QMainWindow):
         pixel_spinBox.setValue(self.gui.pixel_scale_ratio[0])
 
         line_label = QLabel("Line Width:")
-        line_label.setStyleSheet("color: white")
         line_label.setFont(font)
 
         line_spinBox = QSpinBox(self)
