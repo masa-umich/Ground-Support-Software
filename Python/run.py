@@ -44,6 +44,7 @@ class Run(QObject):  #
         self.saveName = None
         self.boards = None  # TODO: This really should not go here because it is a part of the configuration
         self.thread = None
+        self.client = None
 
     def startRun(self, title: str):
         """
@@ -52,6 +53,10 @@ class Run(QObject):  #
         :return:
         """
         self.title = title
+
+        if self.client:
+            self.client.command(6, str(title)) #TODO: input validation 
+
         self.is_active = True
         self.startDateTime = QDateTime.currentDateTime()
         self.MET = 0
@@ -70,6 +75,8 @@ class Run(QObject):  #
         self.updateMET()
         self.is_active = False
         self.runEndSignal.emit()
+        if self.client:
+            self.client.command(6, None)
 
     def updateMET(self):
         """
@@ -81,6 +88,9 @@ class Run(QObject):  #
             self.MET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
             # Emit the signal that will allow other parts of the GUI to update with this data
             self.updateMETSignal.emit(self.MET)
+    
+    def setClient(self, client):
+        self.client = client
 
 
 class RunBackgroundThread(QThread):
