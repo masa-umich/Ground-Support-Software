@@ -241,7 +241,7 @@ class Motor(BaseObject):
         IPointBox.setValue(self.Iconstant)
         IPointBox.setDecimals(1)
         IPointBox.setFont(font)
-        
+
         DPointBox = QDoubleSpinBox()
         DPointBox.setMaximum(599.99)
         DPointBox.setValue(self.Dconstant)

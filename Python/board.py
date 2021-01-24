@@ -361,6 +361,8 @@ class Board(QWidget):
         self.amp_label.setText(str(ibatt) + " A")
         self.setBoardState(int(state))
         self.flash_label.setText(str(flash))  # todo: flash state parsing
-        self.LPT_label.setText(str(LPT))
+        self.LPT_label.setText(str(LPT-self.LPT))
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
+
+        self.LPT = LPT
