@@ -3,9 +3,6 @@ import pickle
 import socket
 import serial
 import serial.tools.list_ports
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt
-import pyqtgraph as pg
 import threading
 import ctypes
 import os
@@ -18,6 +15,9 @@ from s2Interface import S2_Interface
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtCore import Qt
+import pyqtgraph as pg
 
 threading.stack_size(134217728)
 
@@ -26,9 +26,16 @@ packet_num = 0
 packet_size = 0
 commander = None
 dataframe = {}
-starttime = datetime.now().strftime("%Y%m%d%H%M")
+starttime = datetime.now().strftime("%Y%m%d%H%M%S")
 threads = []
 command_queue = queue.Queue()
+do_flash_dump = False
+dump_addr = None
+
+server_log = None
+serial_log = None
+data_log = None
+command_log  = None
 
 # initialize parser
 interface = S2_Interface()
@@ -41,18 +48,28 @@ for i in interface.parser.items:
     dataframe[i] = 0
 dataframe["vlv3.en"] = 1
 
-# make data folder
-if not os.path.exists("data/" + starttime + "/"):
-    os.makedirs("data/" + starttime + "/")
+def open_log(runname):
+    global server_log, serial_log, data_log, command_log
+    # make data folder
+    if not os.path.exists("data/" + runname + "/"):
+        os.makedirs("data/" + runname + "/")
 
-# log file init and headers
-server_log = open('data/'+starttime+"/"+starttime+"_server_log.txt", "w+")
-serial_log = open('data/'+starttime+"/"+starttime+"_serial_log.csv", "w+")
-data_log = open('data/'+starttime+"/"+starttime+"_data_log.csv", "w+")
-command_log = open('data/'+starttime+"/"+starttime+"_command_log.csv", "w+")
-command_log.write("Time, Command/info\n")
-serial_log.write("Time, Packet\n")
-data_log.write(interface.parser.csv_header)
+    # log file init and headers
+    server_log = open('data/'+runname+"/"+runname+"_server_log.txt", "w+")
+    serial_log = open('data/'+runname+"/"+runname+"_serial_log.csv", "w+")
+    data_log = open('data/'+runname+"/"+runname+"_data_log.csv", "w+")
+    command_log = open('data/'+runname+"/"+runname+"_command_log.csv", "w+")
+    command_log.write("Time, Command/info\n")
+    serial_log.write("Time, Packet\n")
+    data_log.write(interface.parser.csv_header)
+
+def close_log():
+    server_log.close()
+    serial_log.close()
+    command_log.close()
+    data_log.close()
+
+open_log(starttime) # start initial run
 
 # initialize application
 QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -110,6 +127,7 @@ for n in range(interface.parser.num_items):
 packet_layout.addWidget(data_box)
 packet_layout.addWidget(data_table)
 
+
 tab.addTab(log_box, "Server Log")
 tab.addTab(packet_widget, "Packet Log")
 tab.addTab(command_textedit, "Command Log")
@@ -120,7 +138,10 @@ def send_to_log(textedit: QTextEdit, text:str):
     time_obj = datetime.now().time()
     time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
     textedit.append(time + text)
-    server_log.write(time + text + "\n")
+    if textedit is log_box:
+        server_log.write(time + text + "\n")
+
+send_to_log(data_box, "Packet log disabled") # please ask Alex before reenabling, need to add circular buffer
 
 # scan com ports
 ports = interface.scan()
@@ -132,7 +153,7 @@ def connect():
     global ports_box, interface
     try:
         port = str(ports_box.currentText())
-        interface.connect(port, 115200, 0.2)
+        interface.connect(port, 115200, 0.3)
         interface.parse_serial()
     except:
         pass
@@ -193,7 +214,7 @@ command_layout.addWidget(override_button, 0, 4)
 
 # client handler
 def client_handler(clientsocket, addr):
-    global commander, dataframe
+    global commander, dataframe, do_flash_dump, dump_addr
     counter = 0
     last_uuid = None
     while True:
@@ -223,6 +244,21 @@ def client_handler(clientsocket, addr):
                     if commander == command["clientid"]:
                         override_commander()
                     break
+                elif (command["command"] == 5 and commander == command["clientid"]): # flash dump
+                    print(command)
+                    do_flash_dump = True
+                    dump_addr = command["args"]
+                #elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
+                elif (command["command"] == 6): # checkpoint logs
+                    print(command)
+                    runname = command["args"]
+                    if runname == None or runname == ():
+                        runname = datetime.now().strftime("%Y%m%d%H%M%S")
+                    elif type(runname) == str:
+                        runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + runname
+                    close_log()
+                    open_log(runname)
+                    send_to_log(log_box, "Checkpoint Created: %s" % runname)
                 else:
                     print("WARNING: Unhandled command")
                 
@@ -279,10 +315,7 @@ file_menu = main_menu.addMenu('&File')
 # quit application function
 def exit():
     interface.ser.close()
-    server_log.close()
-    serial_log.close()
-    command_log.close()
-    data_log.close()
+    close_log()
     app.quit()
     sys.exit()
 
@@ -294,7 +327,7 @@ file_menu.addAction(quit)
 
 # main update loop
 def update():
-    global packet_num, commander_label, dataframe
+    global packet_num, commander_label, dataframe, data_table, do_flash_dump
     
     try:
         if interface.ser.is_open:
@@ -303,30 +336,38 @@ def update():
                 send_to_log(command_textedit, str(cmd))
                 interface.s2_command(cmd)
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd)+ '\n')
-
-            # read in packet from EC
-            could_parse = interface.parse_serial()
-
-            if could_parse:
-                #print("PARSER WORKED")
-                raw_packet = interface.last_raw_packet
-                serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
-
-                raw_packet_size = len(raw_packet)
-                packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
-                send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
-
-                # parse packet
-                dataframe = interface.parser.dict
-                #print(dataframe)
-                dataframe["time"] = datetime.now().timestamp()
-                for i in range(interface.parser.num_items):
-                    key = interface.parser.items[i]
-                    data_table.setItem(i, 1, QtGui.QTableWidgetItem(dataframe[key]))
-
-                data_log.write(interface.parser.log_string+'\n')
+            
+            if do_flash_dump:
+                send_to_log(log_box, "Taking a dump. Be out in just a sec")
+                interface.download_flash(dump_addr, int(datetime.now().timestamp()), command_log, "")
+                do_flash_dump = False
+                send_to_log(log_box, "Dump Complete.")
+            
             else:
-                send_to_log(data_box, "PARSER FAILED")
+                # read in packet from EC
+                could_parse = interface.parse_serial()
+
+                if could_parse:
+                    #print("PARSER WORKED")
+                    raw_packet = interface.last_raw_packet
+                    serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
+
+                    raw_packet_size = len(raw_packet)
+                    packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
+                    # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) # disabled to stop server logs becoming massive, see just below send_to_log
+
+                    # parse packet
+                    dataframe = interface.parser.dict
+                    #print(dataframe)
+                    dataframe["time"] = datetime.now().timestamp()
+                    for n in range(interface.parser.num_items):
+                        key = interface.parser.items[n]
+                        data_table.setItem(n,1, QtGui.QTableWidgetItem(str(dataframe[key])))
+                        #print([n, key, dataframe[key]])
+
+                    data_log.write(interface.parser.log_string+'\n')
+                else:
+                    send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
 
     except Exception as e:
         print(e)
@@ -339,7 +380,7 @@ def update():
 # timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(50) # 20hz
+timer.start(20) # 50hz
 
 # run
 top.show()

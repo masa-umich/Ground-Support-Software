@@ -26,7 +26,7 @@ class Tank(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0 , 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True):
         """
         Initializer for Solenoid
 
@@ -61,7 +61,7 @@ class Tank(BaseObject):
                          serial_number_label_font_size=serial_number_label_font_size,
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows)
+                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible, serial_number_visible=serial_number_visible)
 
         # TODO: Grab height and width from csv file
         # TODO: Grab object scale from widget_parent

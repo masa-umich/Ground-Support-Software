@@ -27,7 +27,7 @@ class BaseObject:
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, long_name_visible: bool = True, serial_number_visible: bool = True):
         """
         Initializer for Solenoid
 
@@ -89,17 +89,19 @@ class BaseObject:
         self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
-                                           position_string=long_name_label_pos, rows=long_name_label_rows)
+                                           position_string=long_name_label_pos, rows=long_name_label_rows,
+                                           is_visible=long_name_visible)
 
         self.serial_number_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                             is_vertical=False, font_size=serial_number_label_font_size,
                                             text=self.serial_number, local_pos=serial_number_label_local_pos,
-                                            position_string=serial_number_label_pos)
+                                            position_string=serial_number_label_pos,is_visible=serial_number_visible)
 
         self.anchor_points = []
 
         self._initAnchorPoints()
         self._initContextMenu()
+        self._initToolTip()
 
     def _initAnchorPoints(self):
         """
@@ -123,6 +125,16 @@ class BaseObject:
         self.context_menu.addAction("Delete Object")
         # Connect Context menu to button right click
         self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
+
+    def _initToolTip(self):
+        """
+        Initialize the font for the tooltip
+        """
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSizeF(12 * self.gui.font_scale_ratio)
+        QToolTip.setFont(font)
 
     """----------------------------------------------------------------------------------------------------------------
     GETTERS and SETTERS

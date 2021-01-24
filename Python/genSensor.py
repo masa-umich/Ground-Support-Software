@@ -21,7 +21,7 @@ class GenSensor(BaseObject):
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined',
-                 board: str = 'Undefined'):
+                 board: str = 'Undefined', long_name_visible:bool = True, serial_number_visible:bool = True):
 
         """
         Initializer for genSensor
@@ -60,12 +60,13 @@ class GenSensor(BaseObject):
                          serial_number_label_font_size=serial_number_label_font_size,
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows)
+                         long_name_label_rows=long_name_label_rows,long_name_visible= long_name_visible,
+                         serial_number_visible = serial_number_visible)
 
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
         self.interface = self.widget_parent.window.interface
-        self.units = "psi"
+        self.units = ""
         self.channel = channel
         self.avionics_board = board
         self.measurement = 0
@@ -151,7 +152,8 @@ class GenSensor(BaseObject):
         Called when the Sensor is clicked
         """
         if not self.widget_parent.parent.is_editing:
-            self.setMeasurement(self.measurement + 200)
+            if self.gui.debug_mode:
+                self.setMeasurement(self.measurement + 50)
 
         super().onClick()
 

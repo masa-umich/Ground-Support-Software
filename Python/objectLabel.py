@@ -12,7 +12,8 @@ Provides custom functionality for labels specific to objects
 class ObjectLabel(CustomLabel):
 
     def __init__(self, widget_parent, gui, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name"):
+                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
+                 is_visible: bool = True):
 
         self.widget = widget_parent
         self.gui = gui
@@ -35,6 +36,8 @@ class ObjectLabel(CustomLabel):
         self.setFontSize(font_size)
         self.setText(text)
         self.show()
+
+        self.setVisible(is_visible)
 
     @overrides
     def setText(self, p_str):
@@ -201,6 +204,7 @@ class ObjectLabel(CustomLabel):
             "pos string": self.position_string,
             "local pos": {"x": self.local_pos.x()/self.gui.pixel_scale_ratio[0], "y": self.local_pos.y()/self.gui.pixel_scale_ratio[1]},
             "rows": self.rows,
-            "font size": self.getFontSize()
+            "font size": self.getFontSize(),
+            "is visible": self.isVisible()
         }
         return save_dict

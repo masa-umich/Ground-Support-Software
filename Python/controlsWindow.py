@@ -176,7 +176,7 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, 'Save File', self.gui.workspace_path, "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, 'Save Configuration', self.gui.workspace_path+"/Configurations", "JSON Files (*.json)", options=options)
         if fileName:
             if fileName.find(".json") == -1:
                 fileName = fileName + ".json"
@@ -189,9 +189,10 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", self.gui.workspace_path, "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open Configuration", self.gui.workspace_path+"/Configurations", "JSON Files (*.json)", options=options)
         if fileName:
             self.newFile()
+            #self.gui.configuration.setFilename(fileName)
             self.fileName = fileName
             self.centralWidget.controlsWidget.loadData(fileName)
 
@@ -202,7 +203,6 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
-            print(self.centralWidget.controlsWidget.object_list[0].serial_number)
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
         self.centralWidget.controlsWidget.tube_list = []
@@ -348,6 +348,7 @@ class ControlsWindow(QMainWindow):
         # Allow editing to happen when run is not active
         self.enterEditAct.setEnabled(True)
         self.endRunAct.setDisabled(True)
+        self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
 
@@ -549,7 +550,6 @@ class ControlsWindow(QMainWindow):
         warningLabel.setFont(font2)
 
         font_label = QLabel("Font Scale:")
-        font_label.setStyleSheet("color: white")
         font_label.setFont(font)
 
         font_spinBox = QDoubleSpinBox(self)
@@ -560,7 +560,6 @@ class ControlsWindow(QMainWindow):
         font_spinBox.setValue(self.gui.font_scale_ratio)
 
         pixel_label = QLabel("Pixel Scale:")
-        pixel_label.setStyleSheet("color: white")
         pixel_label.setFont(font)
 
         pixel_spinBox = QDoubleSpinBox(self)
@@ -571,7 +570,6 @@ class ControlsWindow(QMainWindow):
         pixel_spinBox.setValue(self.gui.pixel_scale_ratio[0])
 
         line_label = QLabel("Line Width:")
-        line_label.setStyleSheet("color: white")
         line_label.setFont(font)
 
         line_spinBox = QSpinBox(self)

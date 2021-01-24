@@ -26,6 +26,7 @@ class Board(QWidget):
         self.painter = QPainter()
         self.client = self.controlsSidebarWidget.window.client_dialog.client
 
+        # The height value is updated later
         self.setGeometry(0, 0, self.controlsSidebarWidget.width, 200*self.gui.pixel_scale_ratio[1])
 
         # Set background color to match
@@ -113,7 +114,6 @@ class Board(QWidget):
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
-        state_form_label.adjustSize()
 
         self.state_frame = QFrame(self)
         # Horizontal button layout
@@ -124,13 +124,25 @@ class Board(QWidget):
         font.setFamily(Constants.default_font)
         font.setPointSize(13 * self.gui.font_scale_ratio)
 
+        if self.gui.platform == "OSX":
+            fwidth = self.width()/4 * 1
+        else:
+            fwidth = self.width()/4 * .85
+
         # Create the buttons, make sure there is no default option, and connect to functions
+        self.manual_button = QPushButton("Manual")
+        self.manual_button.setDefault(False)
+        self.manual_button.setAutoDefault(False)
+        self.manual_button.clicked.connect(lambda: self.sendBoardState("Manual-Disarm"))
+        self.manual_button.setFont(font)
+        self.manual_button.setFixedWidth(fwidth)
+
         self.arm_button = QPushButton("Arm")
         self.arm_button.setDefault(False)
         self.arm_button.setAutoDefault(False)
-        self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm-Disarm"))
+        self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm"))
         self.arm_button.setFont(font)
-        self.arm_button.setFixedWidth(self.width() / 3 * 0.95)
+        self.arm_button.setFixedWidth(fwidth)
 
         self.fire_button = QPushButton("")
         self.fire_button.setDefault(False)
@@ -138,25 +150,26 @@ class Board(QWidget):
         self.fire_button.setDisabled(True)
         self.fire_button.clicked.connect(lambda: self.sendBoardState("Run"))
         self.fire_button.setFont(font)
-        self.fire_button.setFixedWidth(self.width() / 3 * 0.95)
+        self.fire_button.setFixedWidth(fwidth)
 
         abort_button = QPushButton("Abort")
         abort_button.setDefault(False)
         abort_button.setAutoDefault(False)
         abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         abort_button.setFont(font)
-        abort_button.setFixedWidth(self.width() / 3 * 0.95)
+        abort_button.setFixedWidth(fwidth)
 
-        # Set text depening on board
+        # Set text depending on board
         if self.name == "Engine Controller":
             self.fire_button.setText("Hotfire")
         elif self.name == "Pressurization Controller":
-            self.fire_button.setText("Pressurize")
+            self.fire_button.setText("Press")
         elif self.name == "Flight Computer":
             self.fire_button.setText("Launch")
         else:
             self.fire_button.setText("Order 66")
 
+        buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
         buttonLayout.addWidget(abort_button)
@@ -167,9 +180,12 @@ class Board(QWidget):
         # Set the board height to be the same size as the text because it looks good
         self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
 
-        # Update the frame geometry
-        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), self.height()-(state_form_label.height() + self.board_height + self.board_pos.y()))
 
+        # Update the frame geometry
+        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 60*self.gui.pixel_scale_ratio[1])
+        # Make sure the buttons don't clip
+        if self.state_frame.height() + self.state_frame.y() > self.height() -state_form_label.height():
+            self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
@@ -180,15 +196,9 @@ class Board(QWidget):
         :param text: label text
         :return: the label that is created
         """
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(13 * self.gui.font_scale_ratio)
 
-        label = QLabel(text)
-        label.setFixedHeight(14 * self.gui.pixel_scale_ratio[1])
-        label.setStyleSheet("color: white")
-        label.setFont(font)
+        label = CustomLabel(None, self.gui, text = text)
+        label.setFontSize(13)  # Don't need font size scalar because it is already defined in CustomLabel
         label.setStyleSheet("color: white")
 
         return label
@@ -204,18 +214,17 @@ class Board(QWidget):
         newState = None
 
         # If arm/disarmed command is sent toggle, only toggle if state is manual to arm, otherwise always disarm
-        if identifier == "Arm-Disarm":
-            if self.state == 0:
-                newState = 1
-            else:
-                newState = 0
+        if identifier == "Manual-Disarm":
+            newState = 0
+        elif identifier == "Arm":
+            newState = 1
         # If state is armed, allow for state to be run
         elif identifier == "Run":
             if self.state == 1:
                 newState = 2
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
-                newState = 3
+            newState = 3
         else:
             return
 
@@ -252,14 +261,11 @@ class Board(QWidget):
         # Update labels
         self.state_label.setText(stateMap[self.state])
 
-        if self.state is not 0:
-            self.arm_button.setText("Disarm")
+        if self.state is 1:
+            self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
         else:
-            self.arm_button.setText("Arm")
-            self.fire_button.setEnabled(False)
-
-        if self.state is 3:
+            self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
 
     @overrides
@@ -353,8 +359,10 @@ class Board(QWidget):
         super().update()
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
-        self.setBoardState(str(state))
+        self.setBoardState(int(state))
         self.flash_label.setText(str(flash))  # todo: flash state parsing
-        self.LPT_label.setText(str(LPT))
+        self.LPT_label.setText(str(int((LPT-self.LPT)/1000)) + "ms")
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
+
+        self.LPT = LPT
