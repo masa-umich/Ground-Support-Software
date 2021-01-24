@@ -48,13 +48,13 @@ move_stepper = {
     "function_name": "set_stepper_pos",
     "target_board_addr": 3,
     "timestamp": 103,
-    "args": [1, 90]
+    "args": [1, -200]
 }
 s2_interface.s2_command(move_stepper)
-time.sleep(2)
-s2_interface.s2_command(zero_stepper)
-time.sleep(2)
-s2_interface.s2_command(move_stepper)
+#time.sleep(2)
+# s2_interface.s2_command(zero_stepper)
+# time.sleep(2)
+# s2_interface.s2_command(move_stepper)
 
 #s2_interface.s2_command(set_vlv)
 #$time.sleep(1)

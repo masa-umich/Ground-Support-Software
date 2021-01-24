@@ -14,7 +14,7 @@ while True:
 	b = file.read(1)
 	# print(b)
 	if not b:
-		break;
+		break
 	if b == b'\x00':
 		n += 1
 		packets.append(this_line)
@@ -23,9 +23,13 @@ while True:
 		this_line += b
 
 print(n)
+print(len(packets))
+#print(packets[-1])
 
 for packet in packets:
-	unstuffed = interface.unstuff_packet(packet)
+	print(len(packet))
+	print(bytes(packet))
+	unstuffed = interface.unstuff_packet(bytes(packet))
 	try:
 		parser.parse_packet(unstuffed)
 	except:

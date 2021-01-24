@@ -380,7 +380,7 @@ def update():
 # timer and tick updates
 timer = QtCore.QTimer()
 timer.timeout.connect(update)
-timer.start(50) # 20hz
+timer.start(20) # 50hz
 
 # run
 top.show()
