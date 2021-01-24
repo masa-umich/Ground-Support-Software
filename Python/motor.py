@@ -226,6 +226,7 @@ class Motor(BaseObject):
         # Create spin boxes
         setPointBox = QDoubleSpinBox()
         setPointBox.setDecimals(1)
+        setPointBox.setMinimum(-2999.9)
         setPointBox.setMaximum(2999.9)
         setPointBox.setValue(self.setPoint)
         setPointBox.setFont(font)
@@ -233,19 +234,19 @@ class Motor(BaseObject):
         PPointBox = QDoubleSpinBox()
         PPointBox.setMaximum(599.99)
         PPointBox.setValue(self.Pconstant)
-        PPointBox.setDecimals(1)
+        PPointBox.setDecimals(2)
         PPointBox.setFont(font)
 
         IPointBox = QDoubleSpinBox()
         IPointBox.setMaximum(599.99)
         IPointBox.setValue(self.Iconstant)
-        IPointBox.setDecimals(1)
+        IPointBox.setDecimals(2)
         IPointBox.setFont(font)
 
         DPointBox = QDoubleSpinBox()
         DPointBox.setMaximum(599.99)
         DPointBox.setValue(self.Dconstant)
-        DPointBox.setDecimals(1)
+        DPointBox.setDecimals(2)
         DPointBox.setFont(font)
 
 
