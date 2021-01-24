@@ -105,7 +105,7 @@ class Tube:
         points_dict = {}
         i = 0
         for point in self.points:
-            points_dict[i] = {"x": point.x()/self.parent.gui.pixel_scale_ratio[0], "y": point.y()/self.parent.gui.pixel_scale_ratio[1]}
+            points_dict[i] = {"x": point.x()/self.parent.gui.pixel_scale_ratio[0], "y": point.y()/self.parent.gui.pixel_scale_ratio[0]}
             i = i + 1
 
         # Put it all together

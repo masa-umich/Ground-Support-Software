@@ -485,7 +485,7 @@ class ControlsWidget(QWidget):
                 points = []
                 for j in tube["bend positions"]:
                     points.append(QPoint(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
-                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
+                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[0]))
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
 
