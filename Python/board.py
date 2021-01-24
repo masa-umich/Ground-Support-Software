@@ -113,7 +113,6 @@ class Board(QWidget):
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
-        state_form_label.adjustSize()
 
         self.state_frame = QFrame(self)
         # Horizontal button layout
@@ -124,20 +123,25 @@ class Board(QWidget):
         font.setFamily(Constants.default_font)
         font.setPointSize(13 * self.gui.font_scale_ratio)
 
+        if self.gui.platform == "OSX":
+            fwidth = self.width()/4 * 1
+        else:
+            fwidth = self.width()/4 * .85
+
         # Create the buttons, make sure there is no default option, and connect to functions
         self.manual_button = QPushButton("Manual")
         self.manual_button.setDefault(False)
         self.manual_button.setAutoDefault(False)
         self.manual_button.clicked.connect(lambda: self.sendBoardState("Manual-Disarm"))
         self.manual_button.setFont(font)
-        self.manual_button.setFixedWidth(self.width() / 4 * 1)
+        self.manual_button.setFixedWidth(fwidth)
 
         self.arm_button = QPushButton("Arm")
         self.arm_button.setDefault(False)
         self.arm_button.setAutoDefault(False)
         self.arm_button.clicked.connect(lambda: self.sendBoardState("Arm"))
         self.arm_button.setFont(font)
-        self.arm_button.setFixedWidth(self.width() / 4 * 1)
+        self.arm_button.setFixedWidth(fwidth)
 
         self.fire_button = QPushButton("")
         self.fire_button.setDefault(False)
@@ -145,14 +149,14 @@ class Board(QWidget):
         self.fire_button.setDisabled(True)
         self.fire_button.clicked.connect(lambda: self.sendBoardState("Run"))
         self.fire_button.setFont(font)
-        self.fire_button.setFixedWidth(self.width() / 4 * 1)
+        self.fire_button.setFixedWidth(fwidth)
 
         abort_button = QPushButton("Abort")
         abort_button.setDefault(False)
         abort_button.setAutoDefault(False)
         abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         abort_button.setFont(font)
-        abort_button.setFixedWidth(self.width() / 4 * 1)
+        abort_button.setFixedWidth(fwidth)
 
         # Set text depending on board
         if self.name == "Engine Controller":
@@ -188,15 +192,9 @@ class Board(QWidget):
         :param text: label text
         :return: the label that is created
         """
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(13 * self.gui.font_scale_ratio)
 
-        label = QLabel(text)
-        label.setFixedHeight(14 * self.gui.pixel_scale_ratio[1])
-        label.setStyleSheet("color: white")
-        label.setFont(font)
+        label = CustomLabel(None, self.gui, text = text)
+        label.setFontSize(13)  # Don't need font size scalar because it is already defined in CustomLabel
         label.setStyleSheet("color: white")
 
         return label

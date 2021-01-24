@@ -26,7 +26,9 @@ class CustomLabel(QLabel):
         self.setFont_()
         self.setFontSize(font_size)
         self.setText(text)
-        self.show()
+
+        if self.widget is not None:
+            self.show()
 
     @overrides
     def setText(self, p_str, updateSize:bool = True):
