@@ -182,7 +182,7 @@ class Board(QWidget):
 
 
         # Update the frame geometry
-        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 47*self.gui.pixel_scale_ratio[1])
+        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 60*self.gui.pixel_scale_ratio[1])
         # Make sure the buttons don't clip
         if self.state_frame.height() + self.state_frame.y() > self.height() -state_form_label.height():
             self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())

@@ -225,21 +225,29 @@ class Motor(BaseObject):
 
         # Create spin boxes
         setPointBox = QDoubleSpinBox()
+        setPointBox.setDecimals(1)
+        setPointBox.setMaximum(2999.9)
         setPointBox.setValue(self.setPoint)
         setPointBox.setFont(font)
-        setPointBox.setMaximum(2999.9)
+
         PPointBox = QDoubleSpinBox()
-        PPointBox.setValue(self.Pconstant)
-        PPointBox.setFont(font)
         PPointBox.setMaximum(599.99)
+        PPointBox.setValue(self.Pconstant)
+        PPointBox.setDecimals(1)
+        PPointBox.setFont(font)
+
         IPointBox = QDoubleSpinBox()
-        IPointBox.setValue(self.Iconstant)
-        IPointBox.setFont(font)
         IPointBox.setMaximum(599.99)
+        IPointBox.setValue(self.Iconstant)
+        IPointBox.setDecimals(1)
+        IPointBox.setFont(font)
+        
         DPointBox = QDoubleSpinBox()
-        DPointBox.setValue(self.Dconstant)
-        DPointBox.setFont(font)
         DPointBox.setMaximum(599.99)
+        DPointBox.setValue(self.Dconstant)
+        DPointBox.setDecimals(1)
+        DPointBox.setFont(font)
+
 
         # Create zero button
         zeroBtn = QPushButton("Zero Now")
