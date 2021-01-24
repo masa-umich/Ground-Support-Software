@@ -26,6 +26,7 @@ class Board(QWidget):
         self.painter = QPainter()
         self.client = self.controlsSidebarWidget.window.client_dialog.client
 
+        # The height value is updated later
         self.setGeometry(0, 0, self.controlsSidebarWidget.width, 200*self.gui.pixel_scale_ratio[1])
 
         # Set background color to match
@@ -179,9 +180,12 @@ class Board(QWidget):
         # Set the board height to be the same size as the text because it looks good
         self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
 
-        # Update the frame geometry
-        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), self.height()-(state_form_label.height() + self.board_height + self.board_pos.y()))
 
+        # Update the frame geometry
+        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 47*self.gui.pixel_scale_ratio[1])
+        # Make sure the buttons don't clip
+        if self.state_frame.height() + self.state_frame.y() > self.height() -state_form_label.height():
+            self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])

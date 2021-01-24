@@ -227,19 +227,19 @@ class Motor(BaseObject):
         setPointBox = QDoubleSpinBox()
         setPointBox.setValue(self.setPoint)
         setPointBox.setFont(font)
-        setPointBox.setMaximum(9999)
+        setPointBox.setMaximum(2999.9)
         PPointBox = QDoubleSpinBox()
         PPointBox.setValue(self.Pconstant)
         PPointBox.setFont(font)
-        PPointBox.setMaximum(9999)
+        PPointBox.setMaximum(599.99)
         IPointBox = QDoubleSpinBox()
         IPointBox.setValue(self.Iconstant)
         IPointBox.setFont(font)
-        IPointBox.setMaximum(9999)
+        IPointBox.setMaximum(599.99)
         DPointBox = QDoubleSpinBox()
         DPointBox.setValue(self.Dconstant)
         DPointBox.setFont(font)
-        DPointBox.setMaximum(9999)
+        DPointBox.setMaximum(599.99)
 
         # Create zero button
         zeroBtn = QPushButton("Zero Now")
@@ -327,28 +327,28 @@ class Motor(BaseObject):
                     "function_name": "set_stepper_pos",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), int(setpoint*100)]
+                    "args": [int(self.channel), float(setpoint)]
                 }
                 self.client.command(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_kp",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), int(p * 100)]
+                    "args": [int(self.channel), float(p)]
                 }
                 self.client.command(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_ki",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), int(i * 100)]
+                    "args": [int(self.channel), float(i)]
                 }
                 self.client.command(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_kd",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), int(d * 100)]
+                    "args": [int(self.channel), float(d)]
                 }
                 self.client.command(3, cmd_dict)
         dialog.done(2)
