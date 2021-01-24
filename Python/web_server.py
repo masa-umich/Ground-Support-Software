@@ -19,7 +19,7 @@ import os
 import sys
 from datetime import datetime
 import time
-from hotfire_packet import ECParse
+#from hotfire_packet import ECParse
 import queue
 
 # init variables

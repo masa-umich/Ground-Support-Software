@@ -29,14 +29,16 @@ class CustomLabel(QLabel):
         self.show()
 
     @overrides
-    def setText(self, p_str):
+    def setText(self, p_str, updateSize:bool = True):
         """
         Overrides the default function to provide some more functionality
         :param p_str: string to set text to
+        :param updateSize: should the size of string be updated
         """
         super().setText(p_str)
         # Update the label size and make sure it is still centered
-        self.setFixedSize_()
+        if updateSize:
+            self.setFixedSize_()
 
     def setFont_(self, font: QFont = None):
 

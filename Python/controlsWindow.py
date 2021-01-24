@@ -192,7 +192,7 @@ class ControlsWindow(QMainWindow):
         fileName, _ = QFileDialog.getOpenFileName(self, "Open Configuration", self.gui.workspace_path+"/Configurations", "JSON Files (*.json)", options=options)
         if fileName:
             self.newFile()
-            self.gui.configuration.setFilename(fileName)
+            #self.gui.configuration.setFilename(fileName)
             self.fileName = fileName
             self.centralWidget.controlsWidget.loadData(fileName)
 
@@ -203,7 +203,6 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
-            print(self.centralWidget.controlsWidget.object_list[0].serial_number)
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
         self.centralWidget.controlsWidget.tube_list = []

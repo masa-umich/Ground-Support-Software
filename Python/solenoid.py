@@ -221,9 +221,9 @@ class Solenoid(BaseObject):
         """
 
         if self.state == 0:
-            self.setState(1)
+            self.setState(1, self.voltage, self.current)
         elif self.state == 1:
-            self.setState(0)
+            self.setState(0, self.voltage, self.current)
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
 

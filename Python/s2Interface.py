@@ -27,6 +27,7 @@ class S2_Interface:
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
         self.init_valves()
+        self.init_motors()
 
     ## TODO: add close function
     ## TODO: add write function
@@ -101,6 +102,19 @@ class S2_Interface:
             valve_name = 'vlv' + str(n) + '.en'
             self.parser.items.append(valve_name)
             self.parser.units[valve_name] = 'ul'
+
+    def init_motors(self):
+        motor_prefix = "mtr"
+        mtrs_list = [key for key in self.parser.items
+                            if key.startswith(motor_prefix)]
+        num_motors = 0
+        for key in mtrs_list: # dont assume greatest vlv in list is last
+            mtr_num = str(key)[3:4] # get vlv num
+            mtr_num = int(mtr_num)
+            if (mtr_num > num_motors):
+                num_motors = mtr_num
+        num_motors += 1
+        self.num_motors = num_motors
 
     
     # Unpack valves and generates valves key in dict

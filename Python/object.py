@@ -100,6 +100,7 @@ class BaseObject:
 
         self._initAnchorPoints()
         self._initContextMenu()
+        self._initToolTip()
 
     def _initAnchorPoints(self):
         """
@@ -123,6 +124,16 @@ class BaseObject:
         self.context_menu.addAction("Delete Object")
         # Connect Context menu to button right click
         self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
+
+    def _initToolTip(self):
+        """
+        Initialize the font for the tooltip
+        """
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSizeF(12 * self.gui.font_scale_ratio)
+        QToolTip.setFont(font)
 
     """----------------------------------------------------------------------------------------------------------------
     GETTERS and SETTERS

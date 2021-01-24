@@ -10,6 +10,7 @@ from throttleValve import ThrottleValve
 from threeWayValve import ThreeWayValve
 from heatEx import HeatEx
 from genSensor import GenSensor
+from motor import Motor
 from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
@@ -62,7 +63,7 @@ class ControlsWidget(QWidget):
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
         self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber,
-                                 ThrottleValve, HeatEx, Regulator, CheckValve]
+                                 ThrottleValve, HeatEx, Regulator, CheckValve, Motor]
 
         # Object Tracker
         self.object_list = []
@@ -294,6 +295,8 @@ class ControlsWidget(QWidget):
                     self.object_list.append(Tank(self, position=point, fluid=0))
                 elif action.text() == "New Generic Sensor":
                     self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Motor":
+                    self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=0))
                 elif action.text() == "New Chamber":
                     self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=1))
                 elif action.text() == "New Throttle Valve":
@@ -378,6 +381,21 @@ class ControlsWidget(QWidget):
                                              long_name_label_font_size=tnk["long name label"]["font size"],
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
                                              long_name_label_rows=tnk["long name label"]["rows"]))
+            if i.split()[0] == "Motor":
+                motor = data[i]
+                self.object_list.append(Motor(self, _id=motor["id"], position=QPoint(motor["pos"]["x"],motor["pos"]["y"]),
+                                                 fluid=motor["fluid"],width=motor["width"], height=motor["height"],
+                                                 name=motor["name"],scale=motor["scale"],
+                                                 serial_number=motor["serial number"],
+                                                 long_name=motor["long name"], is_vertical=motor["is vertical"],
+                                                 locked=motor["is locked"],position_locked=motor["is pos locked"],
+                                                 serial_number_label_pos=motor["serial number label"]["pos string"],
+                                                 serial_number_label_font_size=motor["serial number label"]["font size"],
+                                                 serial_number_label_local_pos=QPoint(motor["serial number label"]["local pos"]["x"],motor["serial number label"]["local pos"]["y"]),
+                                                 long_name_label_pos=motor["long name label"]["pos string"],
+                                                 long_name_label_font_size=motor["long name label"]["font size"],
+                                                 long_name_label_local_pos=QPoint(motor["long name label"]["local pos"]["x"],motor["long name label"]["local pos"]["y"]),
+                                                 long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"]))
 
             if i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
                 pt = data[i]
@@ -496,6 +514,17 @@ class ControlsWidget(QWidget):
                         current = self.last_packet[channel_name + ".i"]
                         obj.setState(state, voltage, current)
                         #print(channel_name)
-                    
+                if type(obj) == Motor:
+                    if obj.channel != "Undefined":
+                        channel_name = "mtr" + str(obj.channel)
+                        curra = self.last_packet[channel_name + ".ia"]
+                        currb = self.last_packet[channel_name + ".ib"]
+                        pos = self.last_packet[channel_name + ".pos"]
+                        set = self.last_packet[channel_name + ".set"]
+                        p = self.last_packet[channel_name + ".p"]
+                        i = self.last_packet[channel_name + ".i"]
+                        d = self.last_packet[channel_name + ".d"]
+                        obj.updateValues(curra,currb,pos,set,p,i,d)
+
 
 
