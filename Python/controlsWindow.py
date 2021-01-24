@@ -120,6 +120,11 @@ class ControlsWindow(QMainWindow):
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(self.flash_dialog.show)
+
+        # Run -> Checkpoint Log
+        self.checkpointAct = QAction('&Checkpoint Log', self)
+        self.checkpointAct.setShortcut('Ctrl+L')
+        self.checkpointAct.triggered.connect(self.checkpoint)
         
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
@@ -151,6 +156,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.connect)
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.flashsettings)
+        run_menu.addAction(self.checkpointAct)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -169,6 +175,10 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsWidget.saveData(self.fileName)
         else:
             self.saveFileDialog()
+    
+    def checkpoint(self):
+        if not self.gui.run.is_active:
+            self.client_dialog.client.command(6, None)
 
     def saveFileDialog(self):
         """
