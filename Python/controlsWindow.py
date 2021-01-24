@@ -349,6 +349,7 @@ class ControlsWindow(QMainWindow):
         # Allow editing to happen when run is not active
         self.enterEditAct.setEnabled(True)
         self.endRunAct.setDisabled(True)
+        self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
 
