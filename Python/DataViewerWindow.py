@@ -63,7 +63,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.viewers = [DataViewer(self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
         for i in range(rows):
             for j in range(cols):
-                idx = i*3+j
+                idx = i*cols+j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
         
         self.starttime = datetime.now().timestamp()
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
     # init window
     cycle_time = 250 # in ms
-    window = DataViewerWindow(num_channels=4, rows=3, cols=3, cycle_time=cycle_time)
+    window = DataViewerWindow(num_channels=4, rows=2, cols=2, cycle_time=cycle_time)
 
     #timer and tick updates
     timer = QtCore.QTimer()
