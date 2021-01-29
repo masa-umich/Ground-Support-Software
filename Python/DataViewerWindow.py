@@ -71,6 +71,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         
     # loop
     def update(self):
+        #super().update()
         self.last_packet = self.client_dialog.client.cycle()
         #print(self.last_packet)
         if self.client_dialog.client.is_connected:

@@ -171,6 +171,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.duration = int(self.duration_edit.text())
 
     def update(self, frame):
+        #super().update()
         # update dataviewer with new data
         points = int(self.duration*1000/self.cycle_time)
         data = frame.tail(points)

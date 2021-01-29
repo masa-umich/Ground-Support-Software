@@ -11,6 +11,7 @@ import queue
 from datetime import datetime
 from telemParse import TelemParse
 from s2Interface import S2_Interface
+from party import PartyParrot
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -131,7 +132,8 @@ packet_layout.addWidget(data_table)
 tab.addTab(log_box, "Server Log")
 tab.addTab(packet_widget, "Packet Log")
 tab.addTab(command_textedit, "Command Log")
-top_layout.addWidget(tab, 2, 0)
+#top_layout.addWidget(tab, 2, 0) # no parrot
+top_layout.addWidget(tab, 2, 0, 1, 2)
 
 # send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
 def send_to_log(textedit: QTextEdit, text:str):
@@ -198,12 +200,17 @@ connectButton = QtGui.QPushButton("Connect")
 connectButton.clicked.connect(connect)
 connection_layout.addWidget(connectButton, 0, 4)
 
+pp = PartyParrot()
+pp.setFixedSize(60, 60)
+top_layout.addWidget(pp, 0, 1)
+
 # populate port box
 scan()
 
 # commander status
 command_box = QtGui.QGroupBox("Command Status")
-top_layout.addWidget(command_box, 1, 0)
+#top_layout.addWidget(command_box, 1, 0) #no parrot
+top_layout.addWidget(command_box, 1, 0, 1, 2)
 command_layout = QtGui.QGridLayout()
 command_box.setLayout(command_layout)
 commander_label = QtGui.QLabel("Commander: None")
@@ -368,6 +375,7 @@ def update():
                     data_log.write(interface.parser.log_string+'\n')
                 else:
                     send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
+        pp.step()
 
     except Exception as e:
         print(e)
