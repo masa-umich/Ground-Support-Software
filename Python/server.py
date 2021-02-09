@@ -206,6 +206,7 @@ top_layout.addWidget(pp, 0, 1)
 
 # populate port box
 scan()
+connect()
 
 # commander status
 command_box = QtGui.QGroupBox("Command Status")
