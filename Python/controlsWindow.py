@@ -10,6 +10,7 @@ from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
 from Flash import FlashDialog
+from AbortButton import AbortButton
 
 from overrides import overrides
 import os
@@ -35,6 +36,7 @@ class ControlsWindow(QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
         self.flash_dialog = FlashDialog(self.client_dialog.client)
+        self.button_box = AbortButton(self.client_dialog.client)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -125,6 +127,11 @@ class ControlsWindow(QMainWindow):
         self.checkpointAct = QAction('&Checkpoint Log', self)
         self.checkpointAct.setShortcut('Ctrl+L')
         self.checkpointAct.triggered.connect(self.checkpoint)
+
+        # Run -> Checkpoint Log
+        self.buttonBoxAct = QAction('&Abort Button Config', self)
+        self.buttonBoxAct.setShortcut('Ctrl+B')
+        self.buttonBoxAct.triggered.connect(self.button_box.show)
         
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
@@ -157,6 +164,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.flashsettings)
         run_menu.addAction(self.checkpointAct)
+        run_menu.addAction(self.buttonBoxAct)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -652,6 +660,8 @@ class ControlsWindow(QMainWindow):
             self.last_packet = packet
         
         self.centralWidget.update()
+
+        self.button_box.cycle()
 
 
 class ControlsCentralWidget(QWidget):
