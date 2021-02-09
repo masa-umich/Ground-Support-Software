@@ -33,7 +33,9 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
         self.connection_layout = QtWidgets.QGridLayout()
         self.connection_widget.setLayout(self.connection_layout)
-        self.host = QtWidgets.QLineEdit()
+        self.host = QtWidgets.QComboBox()
+        self.host.addItems([socket.gethostbyname(socket.gethostname()), 'masadataserver'])
+        self.host.setEditable(True)
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
         self.connection_layout.addWidget(self.port, 0, 2)
@@ -74,7 +76,7 @@ class ClientWidget(QtWidgets.QWidget):
             self.layout.addWidget(self.command_widget)
 
         # populate host fields with local address
-        self.host.setText(socket.gethostbyname(socket.gethostname()))
+        #self.host.setText(socket.gethostbyname(socket.gethostname()))
         self.port.setText(str(6969))
     
     def command(self, command, args=()):
@@ -101,7 +103,7 @@ class ClientWidget(QtWidgets.QWidget):
         # try to make a connection with server
         try:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # setup socket interface
-            self.s.connect((self.host.text(), int(self.port.text()))) # connect to socket
+            self.s.connect((self.host.currentText(), int(self.port.text()))) # connect to socket
             self.is_connected = True # update status
         except:
             self.is_connected = False # update status
