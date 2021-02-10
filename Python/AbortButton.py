@@ -25,7 +25,8 @@ class AbortButton(QtWidgets.QDialog):
         self.port = None
         self.is_armed = False
         self.state = False # True is abort, False is no abort
-        self.last_abort_time = 0
+        self.last_state = False
+        self.last_abort_time = datetime.now().timestamp()
 
         # Board address selector
         self.board_selector = QtWidgets.QComboBox()
@@ -105,6 +106,8 @@ class AbortButton(QtWidgets.QDialog):
         # (mainly if you want to test if button works without calling an abort)
         if self.is_armed == False:
             self.is_armed = True
+            self.last_state = False # to ensure abort triggers if button already depressed
+            self.state = False
             self.arming_button.setText("Disable Button")
         else:
             self.is_armed = False
@@ -116,6 +119,7 @@ class AbortButton(QtWidgets.QDialog):
             try: # parse button state
                 self.ser.reset_input_buffer() # flush buffer b/c button sends update faster than GUI reads it
                 val = self.ser.readline().decode("utf-8")
+                self.last_state = self.state
                 self.state = bool(int(val[0]))
             except:
                 pass
@@ -123,10 +127,13 @@ class AbortButton(QtWidgets.QDialog):
         self.indicator.setChecked(self.state) # update state indicator
 
         if self.is_armed: # TODO: tune lockout time or come up with better method
-            if datetime.now().timestamp() - self.last_abort_time > 3 and self.state: # lock out time of N seconds before sending command again
+            if not self.last_state and self.state: # edge trigger
                 print("Manual Abort Triggered!")
                 self.abort() # trigger abort
-                self.last_abort_time = datetime.now().timestamp() # reset lockout
+            # if (datetime.now().timestamp() - self.last_abort_time < 2) and self.state: # periodic lockout
+            #     print("Manual Abort Triggered!")
+            #     self.abort() # trigger abort
+            #     self.last_abort_time = datetime.now().timestamp()
 
 
 if __name__ == "__main__":
