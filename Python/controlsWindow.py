@@ -118,6 +118,7 @@ class ControlsWindow(QMainWindow):
         # Run -> Connection Settings
         self.connect = QAction("&Connection Settings", self)
         self.connect.triggered.connect(self.client_dialog.show)
+        self.connect.setShortcut('Ctrl+S')
 
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
@@ -128,8 +129,8 @@ class ControlsWindow(QMainWindow):
         self.checkpointAct.setShortcut('Ctrl+L')
         self.checkpointAct.triggered.connect(self.checkpoint)
 
-        # Run -> Checkpoint Log
-        self.buttonBoxAct = QAction('&Abort Button Config', self)
+        # Run -> Abort Button Settings
+        self.buttonBoxAct = QAction('&Abort Button Settings', self)
         self.buttonBoxAct.setShortcut('Ctrl+B')
         self.buttonBoxAct.triggered.connect(self.button_box.show)
         
