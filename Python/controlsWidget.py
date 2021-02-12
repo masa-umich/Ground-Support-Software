@@ -510,17 +510,22 @@ class ControlsWidget(QWidget):
                         #print(this_channel + str())
                 if type(obj) == Solenoid or type(obj) == ThreeWayValve:
                     board = obj.avionics_board
+                    prefix = self.interface.getPrefix(board)
                     # TODO: board prefixes
                     if obj.channel != "Undefined":
                         channel_name = "vlv" + str(obj.channel)
+                        #channel_name = prefix + "vlv" + str(obj.channel)
                         state = self.last_packet[channel_name + ".en"]
                         voltage = self.last_packet[channel_name + ".e"]
                         current = self.last_packet[channel_name + ".i"]
                         obj.setState(state, voltage, current)
                         #print(channel_name)
                 if type(obj) == Motor:
+                    board = obj.avionics_board
+                    prefix = self.interface.getPrefix(board)
                     if obj.channel != "Undefined":
                         channel_name = "mtr" + str(obj.channel)
+                        #channel_name = prefix + "mtr" + str(obj.channel)
                         curra = self.last_packet[channel_name + ".ia"]
                         currb = self.last_packet[channel_name + ".ib"]
                         pos = self.last_packet[channel_name + ".pos"]

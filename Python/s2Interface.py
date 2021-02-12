@@ -311,3 +311,14 @@ class S2_Interface:
             "Black Box": 5
         }
         return mapping[name]
+    
+    def getPrefix(self, name):
+        mapping = {
+            "Engine Controller": "ec.", 
+            "Flight Computer": "fc.", 
+            "Pressurization Controller": "press.", 
+            "Recovery Controller": "rec.", 
+            "GSE Controller": "gse.", 
+            "Black Box": "bb."
+        }
+        return mapping[name]
