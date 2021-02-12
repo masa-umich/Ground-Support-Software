@@ -78,10 +78,12 @@ class S2_Interface:
                 self.last_raw_packet = packet
                 if len(packet) > 0:
                     packet = self.unstuff_packet(packet)
+                    # TODO: modify packet header to include origin packet 
+                    #board_addr = self.get_board_addr_from_packet(packet)
                     try:
                         # TODO: change this so that parse serial takes
                         self.board_parser[board_addr].parse_packet(packet)
-                        self.unpack_valves()
+                        self.unpack_valves(board_addr)
                         #print(self.parser.dict)
                         return 1
                     except Exception as e:
@@ -95,7 +97,7 @@ class S2_Interface:
     def init_valves(self):
         board_addr = 3
         valve_prefix = "vlv"
-        # TODO: change this to take in a board addr
+        # TODO: change this later to handle multiboard
         vlvs_list = [key for key in self.board_parser[board_addr].items
                             if key.startswith(valve_prefix)]
         num_valves = 0
@@ -128,8 +130,7 @@ class S2_Interface:
 
     
     # Unpack valves and generates valves key in dict
-    def unpack_valves(self):
-        board_addr = 3
+    def unpack_valves(self, board_addr):
         valve_states = int(self.board_parser[board_addr].dict["valve_states"]) 
         mask = 1
         for n in range(0, self.num_valves):
@@ -142,7 +143,7 @@ class S2_Interface:
 
     # returns list of channels, cleaned up
     def channels(self):
-        board_addr = 3
+        board_addr = 3 # TODO: change later to support multiboards
         return [item for item in self.board_parser[board_addr].items if (item != 'zero' and item != '')]
 
     """
@@ -155,6 +156,11 @@ class S2_Interface:
             array[i] = int(struct.unpack("<B", bytes[i:i+1])[0])
         
         return array
+
+    def get_board_addr_from_packet(self, packet):
+        board_addr = int((float(struct.unpack("<B", packet[1:2])[0]))/1)
+        print("addr ", board_addr)
+        return board_addr
 
     """
     Decodes a COBS-encoded packet
