@@ -45,7 +45,7 @@ interface = S2_Interface()
 dataframe["commander"] = None
 dataframe["packet_num"] = 0
 dataframe["time"] = datetime.now().timestamp()
-for i in interface.parser.items:
+for i in interface.parser.items: # hardcoded 
     dataframe[i] = 0
 dataframe["vlv3.en"] = 1
 
