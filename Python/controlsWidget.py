@@ -529,11 +529,11 @@ class ControlsWidget(QWidget):
                         curra = self.last_packet[channel_name + ".ia"]
                         currb = self.last_packet[channel_name + ".ib"]
                         pos = self.last_packet[channel_name + ".pos"]
-                        set = self.last_packet[channel_name + ".set"]
+                        setp = self.last_packet[channel_name + ".set"]
                         p = self.last_packet[channel_name + ".p"]
                         i = self.last_packet[channel_name + ".i"]
                         d = self.last_packet[channel_name + ".d"]
-                        obj.updateValues(curra,currb,pos,set,p,i,d)
+                        obj.updateValues(curra,currb,pos,setp,p,i,d)
 
 
 
