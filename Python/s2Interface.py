@@ -83,7 +83,7 @@ class S2_Interface:
                     try:
                         # TODO: change this so that parse serial takes
                         self.board_parser[board_addr].parse_packet(packet)
-                        self.unpack_valves(board_addr)
+                        self.unpack_valves()
                         #print(self.parser.dict)
                         return 1
                     except Exception as e:
@@ -130,7 +130,8 @@ class S2_Interface:
 
     
     # Unpack valves and generates valves key in dict
-    def unpack_valves(self, board_addr):
+    def unpack_valves(self):
+        board_addr = 3
         valve_states = int(self.board_parser[board_addr].dict["valve_states"]) 
         mask = 1
         for n in range(0, self.num_valves):
