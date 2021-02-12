@@ -9,6 +9,7 @@
 
 import os
 import sys
+import pdb
 import serial
 import time
 import threading
@@ -212,6 +213,11 @@ class S2_Interface:
         cmd_info["target_board_addr"] = target_board_addr
         cmd_info["timestamp"] = timestamp
         cmd_info["args"] = []
+        telem_info = dict()
+        telem_info["function_name"] = "set_telem"
+        telem_info["target_board_addr"] = target_board_addr
+        telem_info["timestamp"] = timestamp
+        telem_info["args"] = [1] # 1 stops telem
 
         # Double check the filepath works
         """
@@ -227,12 +233,19 @@ class S2_Interface:
         
         # Output file should have timestamp in name
         filename = "board_" + str(cmd_info["target_board_addr"]) + "_flash_data.bin"
-
+    
         try:
             with open(os.path.join(datadir, filename), "wb+") as binfile:   # Open the binary
                 readfile = True                
+                
+                self.s2_command(telem_info)
+                time.sleep(1)
+                self.ser.reset_input_buffer()
+                time.sleep(1)
                 self.s2_command(cmd_info)                           # Send command to download flash
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd_info)+ '\n')
+                # Serial checks first 11 bytes ()
+                
                 while(readfile):                            
                     # Read the packet header (11 bytes), flash page (2048 bytes)
                     ser_page = self.ser.read(2048 + 11)
@@ -245,11 +258,12 @@ class S2_Interface:
                         # Unencode COBS # Update: no cobs anymore
                         #self.unstuff_packet(ser_page)
                         #TODO get rid off "11:" once the firmware no longer sends a packet header during a flash data dump
-                        print(self.bytes_to_array(ser_page[11:]))
+                        #print(self.bytes_to_array(ser_page[11:]))
                         binfile.write(bytes(ser_page[11:]))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
-
+        telem_info["args"] = [0]
+        self.s2_command(telem_info)
         print("Finished downloading flash data to " + os.path.join(datadir, filename))
 
         # Convert binary file to csv
