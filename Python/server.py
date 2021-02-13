@@ -9,7 +9,7 @@ import os
 import sys
 import queue
 from datetime import datetime
-from telemParse import TelemParse
+#from telemParse import TelemParse
 from s2Interface import S2_Interface
 from party import PartyParrot
 
