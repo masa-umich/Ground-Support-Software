@@ -34,7 +34,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout = QtWidgets.QGridLayout()
         self.connection_widget.setLayout(self.connection_layout)
         self.host = QtWidgets.QComboBox()
-        self.host.addItems([socket.gethostbyname(socket.gethostname()), 'masadataserver'])
+        self.host.addItems([socket.gethostbyname(socket.gethostname()), '192.168.50.79', 'masadataserver'])
         self.host.setEditable(True)
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
