@@ -167,7 +167,7 @@ class S2_Interface:
         return array
 
     def get_board_addr_from_packet(self, packet):
-        board_addr = int((float(struct.unpack("<B", packet[3:4])[0]))/1)
+        board_addr = int((float(struct.unpack("<B", packet[2])[0]))/1)
         print("addr ", board_addr)
         return board_addr
 
