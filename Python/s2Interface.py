@@ -23,19 +23,20 @@ class S2_Interface:
         self.ser            = ser
         self.ports_box      = []
         self.serial_name    = ""
-        self.board_parser   = [ None, None, PressurizationController(),
+        self.board_parser   = [ None, None, PressurizationController(), # added duplicate just for testing
                                 PressurizationController(),
                                 None, None
                             ] # Maps board to associated packet parser
-        self.parser         = self.board_parser[3] # TODO remove this later
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
 
+        # init valves and motors
         self.num_valves = [0]*len(self.board_parser)
         self.num_motors = [0]*len(self.board_parser)
         self.init_valves()
         self.init_motors()
 
+        # compile channels from all parsers
         self.channels = []
         self.units = {}
         for i in range(len(self.board_parser)):

@@ -3,7 +3,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
-from telemParse import TelemParse
 
 
 class ControlsPanelWidget(QWidget):
@@ -20,10 +19,9 @@ class ControlsPanelWidget(QWidget):
 
         self.gui = self.parent.gui
         self.interface = self.window.interface
-        self.parser = self.interface.parser
 
         self.sensor_channels = self.interface.channels
-        self.valve_channels = []  # TODO: how dafuq do we do board ids and vary valve channel numbers
+        self.valve_channels = []
         self.motor_channels = []
 
         # Keeps track of all the objects currently being edited
