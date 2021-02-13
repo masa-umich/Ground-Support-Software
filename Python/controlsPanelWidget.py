@@ -23,8 +23,8 @@ class ControlsPanelWidget(QWidget):
         self.parser = self.interface.parser
 
         self.sensor_channels = self.interface.channels
-        self.valve_channels = [str(x) for x in range(0, self.interface.num_valves)]  # TODO: how dafuq do we do board ids and vary valve channel numbers
-        self.motor_channels = [str(x) for x in range(0, self.interface.num_motors)]
+        self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[3])]  # TODO: how dafuq do we do board ids and vary valve channel numbers
+        self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[3])]
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
@@ -98,6 +98,8 @@ class ControlsPanelWidget(QWidget):
                             ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
+        self.channel_combobox.setEditable(True)
+        self.channel_combobox.setCompleter(QCompleter(self.sensor_channels))
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -278,6 +280,13 @@ class ControlsPanelWidget(QWidget):
         """
 
         # Updates the available values for the channels for solenoids and generic sensors
+        # TODO: update vlv_nums/motor_nums based on selected board
+        board_name = object_.avionics_board
+        if board_name in Constants.boards:
+            addr = self.interface.getBoardAddr(board_name)
+            self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
+            self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
+
         if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
         elif object_.object_name == "Motor":
@@ -333,6 +342,7 @@ class ControlsPanelWidget(QWidget):
                 object_.setFluid(text)
             elif identifier == "Board":
                 object_.setAvionicsBoard(text)
+                self.updateEditPanelFields(object_) # lazy fix for valve numbers
             elif identifier == "Channel":
                 object_.setChannel(text)
 
