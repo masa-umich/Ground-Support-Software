@@ -299,6 +299,7 @@ class S2_Interface:
     Returns the board address given a board name
     """
     def getBoardAddr(self, name):
+        print(name)
         mapping = {
             "Engine Controller": 2, 
             "Flight Computer": 1, 

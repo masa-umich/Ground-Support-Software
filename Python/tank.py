@@ -88,12 +88,13 @@ class Tank(BaseObject):
         """
         super().onClick()
 
-        if not self.widget_parent.parent.is_editing:
+        if not self.widget_parent.parent.is_editing and self.gui.debug_mode:
             # This is for testing and will normally be used with capacitive level sensor
             self.fillPercent += .05
 
         # Tells widget painter to update screen
         self.widget_parent.update()
+        self.updateToolTip()
 
     @overrides
     def draw(self):
@@ -186,7 +187,7 @@ class Tank(BaseObject):
         # End fill in top arc
 
         super().draw()
-        
+
     def setAvionicsBoard(self, board: str):
         """
         Sets the avionics board the object is connected to
@@ -209,7 +210,7 @@ class Tank(BaseObject):
 
         text = ""
 
-        text += "Fill Level: " + str(self.fillPercent) + "%"
+        text += "Fill Level: " + str(int(self.fillPercent * 100)) + "%"
 
         if self.pressureSetPoint is not None:
             text += "\n"

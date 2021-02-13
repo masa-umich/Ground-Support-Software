@@ -15,6 +15,7 @@ from AbortButton import AbortButton
 from overrides import overrides
 import os
 import ctypes
+from datetime import datetime
 
 """
 This file contains the class to create the main window
@@ -133,7 +134,12 @@ class ControlsWindow(QMainWindow):
         self.buttonBoxAct = QAction('&Abort Button Settings', self)
         self.buttonBoxAct.setShortcut('Ctrl+B')
         self.buttonBoxAct.triggered.connect(self.button_box.show)
-        
+
+        self.ambientizeMenu = QMenu('&Ambientize',self)
+        self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
+        self.ambientizeMenu.addAction("Engine Controller")
+        self.ambientizeMenu.addAction("Pressurization Controller")
+
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -166,6 +172,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.flashsettings)
         run_menu.addAction(self.checkpointAct)
         run_menu.addAction(self.buttonBoxAct)
+        run_menu.addMenu(self.ambientizeMenu)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -628,6 +635,21 @@ class ControlsWindow(QMainWindow):
         verticalLayout.addLayout(buttonLayout)
 
         dialog.show()
+
+    def ambientizeCmd(self, action: QAction):
+        """
+        Sends command to ambientize pts
+        :param action: Qaction that was clicked
+        :return:
+        """
+        cmd_dict = {
+            "function_name": "ambientize_pressure_transducers",
+            "target_board_addr": self.interface.getBoardAddr(action.text()),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
 
     def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """
