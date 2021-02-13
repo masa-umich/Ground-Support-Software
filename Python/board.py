@@ -23,6 +23,7 @@ class Board(QWidget):
         super().__init__(parent)
         self.controlsSidebarWidget = parent
         self.gui = self.controlsSidebarWidget.gui
+        self.window = self.controlsSidebarWidget.window
         self.painter = QPainter()
         self.client = self.controlsSidebarWidget.window.client_dialog.client
 
@@ -189,6 +190,127 @@ class Board(QWidget):
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+
+        self.board_background_button = QPushButton(self)
+        self.board_background_button.setGeometry(self.board_pos.x(), self.board_pos.y(), self.board_width,self.board_height)
+        self.board_background_button.setStyleSheet("background-color:transparent;border:0;")
+        self.board_background_button.clicked.connect(self.onClick)
+        self.board_background_button.show()
+
+    def onClick(self):
+        print(self.name + " clicked! But doing nothing about it")
+        #self.showBoardSettingsDialog()
+
+    def showBoardSettingsDialog(self):
+        """
+        Shows a dialog when the motor is clicked. Allows the user to update the set point, zero and PID constants
+        """
+
+        # Right now only have settings for press board
+        if self.name != "Pressurization Controller":
+            return
+
+        # Create the dialog
+        dialog = QDialog(self.window)
+        dialog.setWindowTitle(self.name + " Settings")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
+        dialog.move((self.window.width() - dialog.width()) / 2,
+                    (self.window.height() - dialog.height()) / 2)
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        # Create spin boxes
+        setPointBox = QDoubleSpinBox()
+        setPointBox.setDecimals(1)
+        setPointBox.setMinimum(-2999.9)
+        setPointBox.setMaximum(2999.9)
+        #setPointBox.setValue(self.setPoint)
+        setPointBox.setFont(font)
+
+        PPointBox = QDoubleSpinBox()
+        PPointBox.setMaximum(599.99)
+        #PPointBox.setValue(self.Pconstant)
+        PPointBox.setDecimals(2)
+        PPointBox.setFont(font)
+
+        IPointBox = QDoubleSpinBox()
+        IPointBox.setMaximum(599.99)
+        #IPointBox.setValue(self.Iconstant)
+        IPointBox.setDecimals(2)
+        IPointBox.setFont(font)
+
+        DPointBox = QDoubleSpinBox()
+        DPointBox.setMaximum(599.99)
+        #DPointBox.setValue(self.Dconstant)
+        DPointBox.setDecimals(2)
+        DPointBox.setFont(font)
+
+
+        # Create zero button
+        zeroBtn = QPushButton("Zero Now")
+        zeroBtn.setDefault(False)
+        zeroBtn.setAutoDefault(False)
+        #zeroBtn.clicked.connect(self.motorDialogZeroButtonClicked)
+
+        spinBoxes = [setPointBox,PPointBox,IPointBox,DPointBox]
+
+        label1 = QLabel("Set Point:")
+        label1.setFont(font)
+        label2 = QLabel("P Constant:")
+        label2.setFont(font)
+        label3 = QLabel("I Constant:")
+        label3.setFont(font)
+        label4 = QLabel("D Constant:")
+        label4.setFont(font)
+        label5 = QLabel("Set Zero:")
+        label5.setFont(font)
+
+        # Add to the layout
+        formLayout.addRow(label1, setPointBox)
+        formLayout.addRow(label2, PPointBox)
+        formLayout.addRow(label3, IPointBox)
+        formLayout.addRow(label4, DPointBox)
+        formLayout.addRow(label5, zeroBtn)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        #save_button.clicked.connect(lambda: self.motorDialogSave(spinBoxes, dialog))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
 
     def createDataFormLayoutLabel(self, text: str):
         """
