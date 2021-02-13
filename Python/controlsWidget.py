@@ -529,6 +529,13 @@ class ControlsWidget(QWidget):
                         i = self.last_packet[channel_name + ".i"]
                         d = self.last_packet[channel_name + ".d"]
                         obj.updateValues(curra,currb,pos,set,p,i,d)
+                if type(obj) == Tank:
+                    if obj.channel != "Undefined":
+                        channel_name = "tnk" + str(obj.channel)
+                        setPoint = self.last_packet[channel_name + ".tp"]
+                        lowbound = self.last_packet[channel_name + ".lp"]
+                        highBound = self.last_packet[channel_name + ".hp"]
+                        obj.updateValues(setPoint,lowbound,highBound)
 
 
 

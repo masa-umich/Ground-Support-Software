@@ -84,7 +84,8 @@ class BaseObject:
         self.is_being_dragged = is_being_dragged
         self.locked = locked
         self.position_locked = position_locked
-        self.context_menu = QMenu(self.widget_parent)
+        self.edit_context_menu = QMenu(self.widget_parent)
+        self.run_context_menu = QMenu(self.widget_parent)
         self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
@@ -100,6 +101,8 @@ class BaseObject:
         self.anchor_points = []
 
         self._initAnchorPoints()
+        self.editContextMenuItems = ["Delete Object"]
+        self.runContextMenuItems = []
         self._initContextMenu()
         self._initToolTip()
 
@@ -121,8 +124,11 @@ class BaseObject:
         Initialize is an odd work to use, simply just sets the actions the context menu will contain
         """
 
-        # Add quitAction
-        self.context_menu.addAction("Delete Object")
+        for action in self.editContextMenuItems:
+            self.edit_context_menu.addAction(action)
+        for action in self.runContextMenuItems:
+            self.run_context_menu.addAction(action)
+
         # Connect Context menu to button right click
         self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
 
@@ -329,7 +335,8 @@ class BaseObject:
 
         # Move the object and all the shit connected to it
         self.button.move(point)
-        self.context_menu.move(point)
+        self.edit_context_menu.move(point)
+        self.run_context_menu.move(point)
         self.position = point
         self.updateAnchorPoints()
         self.long_name_label.moveToPosition()
@@ -412,16 +419,18 @@ class BaseObject:
         """
         Handler for context menu. These menus hand-off data plotting to plot windows
         :param event: default event from pyqt
-        :return:
+        :return: action: passes the action to potential overridden methods to handle non default cases
         """
         # If window is in edit mode
         if self.central_widget.is_editing:
-            action = self.context_menu.exec_(self.button.mapToGlobal(event))
+            action = self.edit_context_menu.exec_(self.button.mapToGlobal(event))
+        else:
+            action = self.run_context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
-            if action is not None:
-                if action.text() == "Delete Object":
-                    self.widget_parent.deleteObject(self)
+        if action is not None:
+            if action.text() == "Delete Object":
+                self.widget_parent.deleteObject(self)
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []
@@ -436,6 +445,8 @@ class BaseObject:
         #     menu.addAction(self.plotMenuActions[-1])
         #
         # menu.exec_(self.button.mapToGlobal(event))
+
+        return action
 
     """----------------------------------------------------------------------------------------------------------------
    File save and Loading

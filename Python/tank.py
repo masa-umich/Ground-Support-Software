@@ -7,6 +7,7 @@ from overrides import overrides
 from constants import Constants
 from MathHelper import MathHelper
 from object import BaseObject
+from datetime import datetime
 
 
 """
@@ -64,8 +65,7 @@ class Tank(BaseObject):
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible, serial_number_visible=serial_number_visible)
 
-        # TODO: Grab height and width from csv file
-        # TODO: Grab object scale from widget_parent
+        self.window = self.widget_parent.window
 
         # Tracks the percentage of fluid in the tank
         self.fillPercent = 0
@@ -77,7 +77,12 @@ class Tank(BaseObject):
 
         self.updateToolTip()
 
+        self.runContextMenuItems.append("Set Pressure Config")
+        self.run_context_menu.addAction("Set Pressure Config")
+
         #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
+
+        self.client = self.widget_parent.window.client_dialog.client
 
     @overrides
     def onClick(self):
@@ -94,6 +99,20 @@ class Tank(BaseObject):
 
         # Tells widget painter to update screen
         self.widget_parent.update()
+        self.updateToolTip()
+
+    def updateValues(self, setPoint, lowerBound, upperBound):
+        """
+        Updates the tank values
+        :param setPoint: Pressure set point
+        :param lowerBound: lower % bound
+        :param upperBound: upper % bound
+        """
+
+        self.pressureSetPoint = setPoint
+        self.pressureLowerBounds = lowerBound
+        self.pressureUpperBounds = upperBound
+
         self.updateToolTip()
 
     @overrides
@@ -202,7 +221,6 @@ class Tank(BaseObject):
         """
         self.channel = channel
 
-
     def updateToolTip(self):
         """
         Called to update the tooltip of the tank
@@ -214,11 +232,153 @@ class Tank(BaseObject):
 
         if self.pressureSetPoint is not None:
             text += "\n"
-            text += "Set Pressure: " + self.pressureSetPoint + "psi\n"
-            text += "Lower Pressure Bound: " + self.pressureLowerBounds + "psi\n"
-            text += "Upper Pressure Bound: " + self.pressureUpperBounds + "psi\n"
+            text += "Set Pressure: " + str(self.pressureSetPoint) + "psi\n"
+            text += "Lower Pressure Bound: " + str(self.pressureLowerBounds) + "%\n"
+            text += "Upper Pressure Bound: " + str(self.pressureUpperBounds) + "%"
 
         self.setToolTip_(text)
+
+    @overrides
+    def contextMenuEvent_(self, event):
+
+        action = super().contextMenuEvent_(event)
+
+        if action is not None:
+            if action.text() == "Set Pressure Config":
+                self.showSetPresConfigDialog()
+
+    def showSetPresConfigDialog(self):
+        """
+        Shows a dialog when the tank context menu is clicked. Allows the user to update the pressure set point,
+        lower and upper bounds
+        """
+
+        # Create the dialog
+        dialog = QDialog(self.window)
+        dialog.setWindowTitle("Set Pressure Config")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
+        dialog.move((self.window.width() - dialog.width()) / 2,
+                    (self.window.height() - dialog.height()) / 2)
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        # Create spin boxes
+        setPointBox = QDoubleSpinBox()
+        setPointBox.setDecimals(1)
+        setPointBox.setMinimum(0)
+        setPointBox.setMaximum(650)
+        setPointBox.setValue(0) if self.pressureSetPoint is None else setPointBox.setValue(self.pressureSetPoint)
+        setPointBox.setSuffix("psi")
+        setPointBox.setFont(font)
+
+        lowBoundBox = QDoubleSpinBox()
+        lowBoundBox.setMaximum(99.9)
+        lowBoundBox.setMinimum(0)
+        lowBoundBox.setValue(0) if self.pressureLowerBounds is None else lowBoundBox.setValue(self.pressureLowerBounds)
+        lowBoundBox.setSuffix("%")
+        lowBoundBox.setDecimals(1)
+        lowBoundBox.setFont(font)
+        
+        highBoundBox = QDoubleSpinBox()
+        highBoundBox.setMaximum(200)
+        highBoundBox.setMinimum(100.1)
+        highBoundBox.setValue(0) if self.pressureUpperBounds is None else highBoundBox.setValue(self.pressureUpperBounds)
+        highBoundBox.setSuffix("%")
+        highBoundBox.setDecimals(1)
+        highBoundBox.setFont(font)
+
+        spinBoxes = [setPointBox, lowBoundBox, highBoundBox]
+
+        label1 = QLabel("Pressure Set Point:")
+        label1.setFont(font)
+        label2 = QLabel("Lower Bound:")
+        label2.setFont(font)
+        label3 = QLabel("Upper Bound:")
+        label3.setFont(font)
+
+        # Add to the layout
+        formLayout.addRow(label1, setPointBox)
+        formLayout.addRow(label2, lowBoundBox)
+        formLayout.addRow(label3, highBoundBox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(
+            125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: self.tankDialogSave(spinBoxes, dialog))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+    def tankDialogSave(self, spinBoxes, dialog):
+        """
+        Saves the new motor values and sends the commands to the board
+        :param spinBoxes: spin boxes with the values
+        :param dialog: dialog with motor settings
+        """
+        setpoint = spinBoxes[0].value()
+        lowbound = spinBoxes[1].value()
+        upbound = spinBoxes[2].value()
+
+        if self.gui.debug_mode:
+            self.updateValues(setpoint,lowbound,upbound)
+        else:
+            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                cmd_dict = {
+                    "function_name": "set_control_target_pressure",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), float(setpoint)]
+                }
+                self.client.command(3, cmd_dict)
+                cmd_dict = {
+                    "function_name": "set_low_toggle_percent",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), float(lowbound)]
+                }
+                self.client.command(3, cmd_dict)
+                cmd_dict = {
+                    "function_name": "set_high_toggle_percent",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), float(upbound)]
+                }
+                self.client.command(3, cmd_dict)
+        dialog.done(2)
 
     @overrides
     def generateSaveDict(self):
