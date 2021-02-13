@@ -22,7 +22,7 @@ class ControlsPanelWidget(QWidget):
         self.interface = self.window.interface
         self.parser = self.interface.parser
 
-        self.sensor_channels = self.interface.channels()
+        self.sensor_channels = self.interface.channels
         self.valve_channels = [str(x) for x in range(0, self.interface.num_valves)]  # TODO: how dafuq do we do board ids and vary valve channel numbers
         self.motor_channels = [str(x) for x in range(0, self.interface.num_motors)]
 

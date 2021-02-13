@@ -40,14 +40,28 @@ command_log  = None
 
 # initialize parser
 interface = S2_Interface()
+num_items = len(interface.channels)
 
-# init empty dataframe (mainly for debugging)
+# init empty dataframe
 dataframe["commander"] = None
 dataframe["packet_num"] = 0
 dataframe["time"] = datetime.now().timestamp()
-for i in interface.parser.items: # hardcoded 
-    dataframe[i] = 0
-dataframe["vlv3.en"] = 1
+for c in interface.channels: # hardcoded 
+    dataframe[c] = 0
+dataframe["press.vlv3.en"] = 1
+
+# init csv header
+header = "Time,"
+for c in interface.channels:
+    header += "%s (%s)," % (c, interface.units[c])
+header += "\n"
+
+# get data formatted for csv
+def get_logstring():
+    logstring = str(dataframe["time"]) + ","
+    for c in interface.channels:
+        logstring += "%s," % (dataframe[c])
+    return logstring
 
 def open_log(runname):
     global server_log, serial_log, data_log, command_log
@@ -62,7 +76,7 @@ def open_log(runname):
     command_log = open('data/'+runname+"/"+runname+"_command_log.csv", "w+")
     command_log.write("Time, Command/info\n")
     serial_log.write("Time, Packet\n")
-    data_log.write(interface.parser.csv_header)
+    data_log.write(header +"\n")
 
 def close_log():
     server_log.close()
@@ -113,7 +127,7 @@ command_textedit = QtGui.QTextEdit()
 command_textedit.setReadOnly(True)
 
 data_table = QtGui.QTableWidget()
-data_table.setRowCount(interface.parser.num_items)
+data_table.setRowCount(num_items)
 data_table.setColumnCount(3)
 header = data_table.horizontalHeader()
 #header.setStretchLastSection(True)
@@ -121,9 +135,9 @@ data_table.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
 header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
 header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
-for n in range(interface.parser.num_items):
-    data_table.setItem(n,0, QtGui.QTableWidgetItem(interface.parser.items[n]))
-    data_table.setItem(n,2, QtGui.QTableWidgetItem(interface.parser.units[interface.parser.items[n]]))
+for n in range(num_items):
+    data_table.setItem(n,0, QtGui.QTableWidgetItem(interface.channels[n]))
+    data_table.setItem(n,2, QtGui.QTableWidgetItem(interface.units[interface.channels[n]]))
 
 packet_layout.addWidget(data_box)
 packet_layout.addWidget(data_table)
@@ -200,6 +214,7 @@ connectButton = QtGui.QPushButton("Connect")
 connectButton.clicked.connect(connect)
 connection_layout.addWidget(connectButton, 0, 4)
 
+# heartbeat indicator
 pp = PartyParrot()
 pp.setFixedSize(60, 60)
 top_layout.addWidget(pp, 0, 1)
@@ -352,10 +367,11 @@ def update():
                 send_to_log(log_box, "Dump Complete.")
             
             else:
-                # read in packet from EC
-                could_parse = interface.parse_serial()
+                # read in packet from system
+                packet_addr = interface.parse_serial() # returns origin address
+                #packet_addr = -1
 
-                if could_parse:
+                if packet_addr != -1:
                     #print("PARSER WORKED")
                     raw_packet = interface.last_raw_packet
                     serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet)+ '\n')
@@ -364,18 +380,23 @@ def update():
                     packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
                     # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) # disabled to stop server logs becoming massive, see just below send_to_log
 
-                    # parse packet
-                    dataframe = interface.parser.dict
+                    # parse packet and aggregate
+                    new_data = interface.board_parser[packet_addr].dict
+                    prefix = interface.getPrefix(interface.getName(packet_addr))
+                    for key in new_data.keys():
+                        dataframe[str(prefix+key)] = new_data[key]
+                    
                     #print(dataframe)
                     dataframe["time"] = datetime.now().timestamp()
-                    for n in range(interface.parser.num_items):
-                        key = interface.parser.items[n]
+                    for n in range(num_items):
+                        key = interface.channels[n]
                         data_table.setItem(n,1, QtGui.QTableWidgetItem(str(dataframe[key])))
                         #print([n, key, dataframe[key]])
 
-                    data_log.write(interface.parser.log_string+'\n')
+                    data_log.write(get_logstring()+'\n')
                 else:
-                    send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
+                    #send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
+                    pass
         pp.step()
 
     except Exception as e:

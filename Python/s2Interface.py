@@ -24,15 +24,29 @@ class S2_Interface:
         self.ser            = ser
         self.ports_box      = []
         self.serial_name    = ""
-        self.board_parser   = [ None, None, None,
+        self.board_parser   = [ None, None, PressurizationController(),
                                 PressurizationController(),
                                 None, None
                             ] # Maps board to associated packet parser
         self.parser         = self.board_parser[3] # TODO remove this later
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
+
+        self.num_valves = [0]*len(self.board_parser)
+        self.num_motors = [0]*len(self.board_parser)
         self.init_valves()
         self.init_motors()
+
+        self.channels = []
+        self.units = {}
+        for i in range(len(self.board_parser)):
+            prefix = self.getPrefix(self.getName(i))
+            parser = self.board_parser[i]
+            if parser:
+                for item in parser.items:
+                    name = str(prefix+item)
+                    self.channels.append(name)
+                    self.units[name] = parser.units[item]
 
     ## TODO: add close function
     ## TODO: add write function
@@ -79,59 +93,58 @@ class S2_Interface:
                 if len(packet) > 0:
                     packet = self.unstuff_packet(packet)
                     # TODO: modify packet header to include origin packet 
-                    #board_addr = self.get_board_addr_from_packet(packet)
+                    board_addr = self.get_board_addr_from_packet(packet)
                     try:
-                        # TODO: change this so that parse serial takes
                         self.board_parser[board_addr].parse_packet(packet)
-                        self.unpack_valves()
+                        self.unpack_valves(board_addr)
                         #print(self.parser.dict)
-                        return 1
+                        return board_addr
                     except Exception as e:
 
                         print("Packet lost with error ", e)
         except Exception as e:
             print(e)
-        return 0
+        return -1
 
 
     def init_valves(self):
-        board_addr = 3
-        valve_prefix = "vlv"
-        # TODO: change this later to handle multiboard
-        vlvs_list = [key for key in self.board_parser[board_addr].items
-                            if key.startswith(valve_prefix)]
-        num_valves = 0
-        for key in vlvs_list: # dont assume greatest vlv in list is last
-            vlv_num = str(key)[3:4] # get vlv num
-            vlv_num = int(vlv_num)
-            if (vlv_num > num_valves):
-                num_valves = vlv_num
-        num_valves += 1
-        self.num_valves = num_valves
-        self.board_parser[board_addr].num_items += num_valves # update num items in array
-        for n in range(0, num_valves):
-            valve_name = 'vlv' + str(n) + '.en'
-            self.board_parser[board_addr].items.append(valve_name)
-            self.board_parser[board_addr].units[valve_name] = 'ul'
+        for board_addr in range(len(self.board_parser)):
+            if self.board_parser[board_addr]:
+                valve_prefix = "vlv"
+                vlvs_list = [key for key in self.board_parser[board_addr].items
+                                    if key.startswith(valve_prefix)]
+                num_valves = 0
+                for key in vlvs_list: # dont assume greatest vlv in list is last
+                    vlv_num = str(key)[3:4] # get vlv num
+                    vlv_num = int(vlv_num)
+                    if (vlv_num > num_valves):
+                        num_valves = vlv_num
+                num_valves += 1
+                self.num_valves[board_addr] = num_valves
+                self.board_parser[board_addr].num_items += num_valves # update num items in array
+                for n in range(0, num_valves):
+                    valve_name = 'vlv' + str(n) + '.en'
+                    self.board_parser[board_addr].items.append(valve_name)
+                    self.board_parser[board_addr].units[valve_name] = 'ul'
 
     def init_motors(self):
-        board_addr = 3
-        motor_prefix = "mtr"
-        mtrs_list = [key for key in self.board_parser[board_addr].items
-                            if key.startswith(motor_prefix)]
-        num_motors = 0
-        for key in mtrs_list: # dont assume greatest vlv in list is last
-            mtr_num = str(key)[3:4] # get vlv num
-            mtr_num = int(mtr_num)
-            if (mtr_num > num_motors):
-                num_motors = mtr_num
-        num_motors += 1
-        self.num_motors = num_motors
+        for board_addr in range(len(self.board_parser)):
+            if self.board_parser[board_addr]:
+                motor_prefix = "mtr"
+                mtrs_list = [key for key in self.board_parser[board_addr].items
+                                    if key.startswith(motor_prefix)]
+                num_motors = 0
+                for key in mtrs_list: # dont assume greatest vlv in list is last
+                    mtr_num = str(key)[3:4] # get vlv num
+                    mtr_num = int(mtr_num)
+                    if (mtr_num > num_motors):
+                        num_motors = mtr_num
+                num_motors += 1
+                self.num_motors[board_addr] = num_motors
 
     
     # Unpack valves and generates valves key in dict
-    def unpack_valves(self):
-        board_addr = 3
+    def unpack_valves(self, board_addr=3):
         valve_states = int(self.board_parser[board_addr].dict["valve_states"]) 
         mask = 1
         for n in range(0, self.num_valves):
@@ -141,11 +154,6 @@ class S2_Interface:
             valve_name = 'vlv' + str(n) + '.en'
             self.board_parser[board_addr].dict[valve_name] = state
             mask = mask << 1
-
-    # returns list of channels, cleaned up
-    def channels(self):
-        board_addr = 3 # TODO: change later to support multiboards
-        return [item for item in self.board_parser[board_addr].items if (item != 'zero' and item != '')]
 
     """
     Reads a byte array and returns an integer array (for debugging)
@@ -159,7 +167,7 @@ class S2_Interface:
         return array
 
     def get_board_addr_from_packet(self, packet):
-        board_addr = int((float(struct.unpack("<B", packet[1:2])[0]))/1)
+        board_addr = int((float(struct.unpack("<B", packet[3:4])[0]))/1)
         print("addr ", board_addr)
         return board_addr
 
@@ -313,6 +321,10 @@ class S2_Interface:
         }
         return mapping[name]
     
+    def getName(self, num):
+        mapping = ["GSE Controller", "Flight Computer", "Engine Controller", "Pressurization Controller", "Recovery Controller", "Black Box"]
+        return mapping[num]
+    
     def getPrefix(self, name):
         mapping = {
             "Engine Controller": "ec.", 
@@ -323,3 +335,5 @@ class S2_Interface:
             "Black Box": "bb."
         }
         return mapping[name]
+        
+
