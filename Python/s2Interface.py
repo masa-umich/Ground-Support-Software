@@ -29,6 +29,7 @@ class S2_Interface:
         self.last_raw_packet = None
         self.init_valves()
         self.init_motors()
+        self.init_tanks()
 
     ## TODO: add close function
     ## TODO: add write function
@@ -90,7 +91,7 @@ class S2_Interface:
         valve_prefix = "vlv"
         vlvs_list = [key for key in self.parser.items
                             if key.startswith(valve_prefix)]
-        num_valves = 0
+        num_valves = -1
         for key in vlvs_list: # dont assume greatest vlv in list is last
             vlv_num = str(key)[3:4] # get vlv num
             vlv_num = int(vlv_num)
@@ -108,7 +109,7 @@ class S2_Interface:
         motor_prefix = "mtr"
         mtrs_list = [key for key in self.parser.items
                             if key.startswith(motor_prefix)]
-        num_motors = 0
+        num_motors = -1
         for key in mtrs_list: # dont assume greatest vlv in list is last
             mtr_num = str(key)[3:4] # get vlv num
             mtr_num = int(mtr_num)
@@ -116,6 +117,19 @@ class S2_Interface:
                 num_motors = mtr_num
         num_motors += 1
         self.num_motors = num_motors
+
+    def init_tanks(self):
+        tank_prefix = "tnk"
+        tnks_list = [key for key in self.parser.items
+                            if key.startswith(tank_prefix)]
+        num_tanks = -1
+        for key in tnks_list: # dont assume greatest vlv in list is last
+            tnk_num = str(key)[3:4] # get vlv num
+            tnk_num = int(tnk_num)
+            if (tnk_num > num_tanks):
+                num_tanks = tnk_num
+        num_tanks += 1
+        self.num_tanks = num_tanks
 
     
     # Unpack valves and generates valves key in dict

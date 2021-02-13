@@ -25,6 +25,7 @@ class ControlsPanelWidget(QWidget):
         self.sensor_channels = self.interface.channels()
         self.valve_channels = [str(x) for x in range(0, self.interface.num_valves)]  # TODO: how dafuq do we do board ids and vary valve channel numbers
         self.motor_channels = [str(x) for x in range(0, self.interface.num_motors)]
+        self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks)]
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
@@ -280,10 +281,16 @@ class ControlsPanelWidget(QWidget):
         # Updates the available values for the channels for solenoids and generic sensors
         if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
+            self.comboBoxReplaceFields(self.board_combobox, ["Undefined"] + Constants.boards)
         elif object_.object_name == "Motor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.motor_channels)
+            self.comboBoxReplaceFields(self.board_combobox, ["Undefined", "Pressurization Controller"])
         elif object_.object_name == "Generic Sensor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)
+            self.comboBoxReplaceFields(self.board_combobox, ["Undefined"] + Constants.boards)
+        elif object_.object_name == "Tank":
+            self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
+            self.comboBoxReplaceFields(self.board_combobox, ["Undefined", "Pressurization Controller"])
 
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
@@ -298,8 +305,8 @@ class ControlsPanelWidget(QWidget):
         self.long_name_font_size_spinbox.setValue(object_.long_name_label.getFontSize())
         self.serial_number_font_size_spinbox.setValue(object_.serial_number_label.getFontSize())
 
-        # Enables the board and channel box and sets there values
-        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve" or object_.object_name == "Motor":
+        # Enables the board and channel box and sets their values
+        if object_.object_name == "Generic Sensor" or object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve" or object_.object_name == "Motor" or object_.object_name == "Tank":
             self.channel_combobox.setEnabled(True)
             self.channel_combobox.setCurrentText(object_.channel)
             self.board_combobox.setEnabled(True)

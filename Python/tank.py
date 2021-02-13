@@ -26,7 +26,8 @@ class Tank(BaseObject):
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0 , 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True):
+                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True,
+                 channel: str = 'Undefined', board: str = 'Undefined'):
         """
         Initializer for Solenoid
 
@@ -68,6 +69,13 @@ class Tank(BaseObject):
 
         # Tracks the percentage of fluid in the tank
         self.fillPercent = 0
+        self.pressureSetPoint = None
+        self.pressureLowerBounds = None
+        self.pressureUpperBounds = None
+        self.channel = channel
+        self.avionics_board = board
+
+        self.updateToolTip()
 
         #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
@@ -178,3 +186,56 @@ class Tank(BaseObject):
         # End fill in top arc
 
         super().draw()
+        
+    def setAvionicsBoard(self, board: str):
+        """
+        Sets the avionics board the object is connected to
+        :param board: string name of board object is connected to
+        """
+        self.avionics_board = board
+
+    def setChannel(self, channel: str):
+        """
+        Sets channel of object
+        :param channel: channel of the object
+        """
+        self.channel = channel
+
+
+    def updateToolTip(self):
+        """
+        Called to update the tooltip of the tank
+        """
+
+        text = ""
+
+        text += "Fill Level: " + str(self.fillPercent) + "%"
+
+        if self.pressureSetPoint is not None:
+            text += "\n"
+            text += "Set Pressure: " + self.pressureSetPoint + "psi\n"
+            text += "Lower Pressure Bound: " + self.pressureLowerBounds + "psi\n"
+            text += "Upper Pressure Bound: " + self.pressureUpperBounds + "psi\n"
+
+        self.setToolTip_(text)
+
+    @overrides
+    def generateSaveDict(self):
+        """
+        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
+        info needs to be saved is added here.
+        """
+
+        # Gets the BaseObject data that needs to be saved
+        super_dict = super().generateSaveDict()
+
+        # Extra data the Solenoid contains that needs to be saved
+        save_dict = {
+            "channel": self.channel,
+            "board": self.avionics_board
+        }
+
+        # Update the super_dict under the solenoid entry with the solenoid specific data
+        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
+
+        return super_dict
