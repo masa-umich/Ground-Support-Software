@@ -233,8 +233,8 @@ class Tank(BaseObject):
         if self.pressureSetPoint is not None:
             text += "\n"
             text += "Set Pressure: " + str(self.pressureSetPoint) + "psi\n"
-            text += "Lower Pressure Bound: " + str(self.pressureLowerBounds) + "%\n"
-            text += "Upper Pressure Bound: " + str(self.pressureUpperBounds) + "%"
+            text += "Lower Pressure Bound: " + str(self.pressureLowerBounds) + "psi\n"
+            text += "Upper Pressure Bound: " + str(self.pressureUpperBounds) + "psi"
 
         self.setToolTip_(text)
 
@@ -289,18 +289,18 @@ class Tank(BaseObject):
         setPointBox.setFont(font)
 
         lowBoundBox = QDoubleSpinBox()
-        lowBoundBox.setMaximum(99.9)
+        lowBoundBox.setMaximum(650)
         lowBoundBox.setMinimum(0)
         lowBoundBox.setValue(0) if self.pressureLowerBounds is None else lowBoundBox.setValue(self.pressureLowerBounds)
-        lowBoundBox.setSuffix("%")
+        lowBoundBox.setSuffix("psi")
         lowBoundBox.setDecimals(1)
         lowBoundBox.setFont(font)
         
         highBoundBox = QDoubleSpinBox()
-        highBoundBox.setMaximum(200)
-        highBoundBox.setMinimum(100.1)
+        highBoundBox.setMaximum(650)
+        highBoundBox.setMinimum(0)
         highBoundBox.setValue(0) if self.pressureUpperBounds is None else highBoundBox.setValue(self.pressureUpperBounds)
-        highBoundBox.setSuffix("%")
+        highBoundBox.setSuffix("psi")
         highBoundBox.setDecimals(1)
         highBoundBox.setFont(font)
 
@@ -368,14 +368,14 @@ class Tank(BaseObject):
                     "function_name": "set_low_toggle_percent",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(lowbound)]
+                    "args": [int(self.channel), float(lowbound/setpoint)]
                 }
                 self.client.command(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_high_toggle_percent",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(upbound)]
+                    "args": [int(self.channel), float(upbound/setpoint)]
                 }
                 self.client.command(3, cmd_dict)
         dialog.done(2)
