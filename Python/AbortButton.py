@@ -106,8 +106,8 @@ class AbortButton(QtWidgets.QDialog):
         # (mainly if you want to test if button works without calling an abort)
         if self.is_armed == False:
             self.is_armed = True
-            self.last_state = False # to ensure abort triggers if button already depressed
-            self.state = False
+            #self.last_state = False # to ensure abort triggers if button already depressed
+            #self.state = False
             self.arming_button.setText("Disable Button")
         else:
             self.is_armed = False
