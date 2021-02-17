@@ -11,6 +11,7 @@ import os
 import sys
 import pdb
 import serial
+import serial.tools.list_ports
 import time
 import threading
 import struct
@@ -214,14 +215,14 @@ class S2_Interface:
     Getter function that returns a dictionary mapping a command name to its packet_type ID
     """
     def get_cmd_names_dict(self):
-        return helper.cmd_names_dict
+        return self.helper.cmd_names_dict
     
     """
     Getter function that returns a dictionary mapping a command's packet_type ID to a list of tuples
     containing function arguments in the order (arg_name, arg_type, xmit_scale)
     """
     def get_cmd_args_dict(self):
-        return helper.cmd_args_dict
+        return self.helper.cmd_args_dict
 
     """
     Sends the command to download flash. This uses the s2_command() function from this class,
