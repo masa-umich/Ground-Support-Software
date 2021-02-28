@@ -372,6 +372,7 @@ def update():
 
             if do_flash_dump:
                 send_to_log(log_box, "Taking a dump. Be out in just a sec")
+                QApplication.processEvents()
                 interface.download_flash(dump_addr, int(datetime.now().timestamp()), command_log, "")
                 do_flash_dump = False
                 send_to_log(log_box, "Dump Complete.")
