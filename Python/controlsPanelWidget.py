@@ -23,6 +23,7 @@ class ControlsPanelWidget(QWidget):
         self.sensor_channels = self.interface.channels
         self.valve_channels = []
         self.motor_channels = []
+        self.tank_channels = []
 
         # Keeps track of all the objects currently being edited
         self.object_editing = None
@@ -284,12 +285,16 @@ class ControlsPanelWidget(QWidget):
             addr = self.interface.getBoardAddr(board_name)
             self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
             self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
+            self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks[addr])]
         
         if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
             self.channel_combobox.setEditable(False)
         elif object_.object_name == "Motor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.motor_channels)
+            self.channel_combobox.setEditable(False)
+        elif object_.object_name == "Tank":
+            self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
             self.channel_combobox.setEditable(False)
         elif object_.object_name == "Generic Sensor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)

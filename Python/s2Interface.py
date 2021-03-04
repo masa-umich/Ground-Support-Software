@@ -33,6 +33,7 @@ class S2_Interface:
         # init valves and motors
         self.num_valves = [0]*len(self.board_parser)
         self.num_motors = [0]*len(self.board_parser)
+        self.num_tanks = [0]*len(self.board_parser)
         self.init_valves()
         self.init_motors()
         self.init_tanks()
@@ -115,7 +116,7 @@ class S2_Interface:
                 valve_prefix = "vlv"
                 vlvs_list = [key for key in self.board_parser[board_addr].items
                                     if key.startswith(valve_prefix)]
-                num_valves = 0
+                num_valves = -1
                 for key in vlvs_list: # dont assume greatest vlv in list is last
                     vlv_num = str(key)[3:4] # get vlv num
                     vlv_num = int(vlv_num)
@@ -128,6 +129,7 @@ class S2_Interface:
                     valve_name = 'vlv' + str(n) + '.en'
                     self.board_parser[board_addr].items.append(valve_name)
                     self.board_parser[board_addr].units[valve_name] = 'ul'
+        #print(self.num_valves)
 
     def init_motors(self):
         for board_addr in range(len(self.board_parser)):
@@ -135,7 +137,7 @@ class S2_Interface:
                 motor_prefix = "mtr"
                 mtrs_list = [key for key in self.board_parser[board_addr].items
                                     if key.startswith(motor_prefix)]
-                num_motors = 0
+                num_motors = -1
                 for key in mtrs_list: # dont assume greatest vlv in list is last
                     mtr_num = str(key)[3:4] # get vlv num
                     mtr_num = int(mtr_num)
@@ -143,19 +145,23 @@ class S2_Interface:
                         num_motors = mtr_num
                 num_motors += 1
                 self.num_motors[board_addr] = num_motors
+        #print(self.num_motors)
 
     def init_tanks(self):
-        tank_prefix = "tnk"
-        tnks_list = [key for key in self.parser.items
-                            if key.startswith(tank_prefix)]
-        num_tanks = -1
-        for key in tnks_list: # dont assume greatest vlv in list is last
-            tnk_num = str(key)[3:4] # get vlv num
-            tnk_num = int(tnk_num)
-            if (tnk_num > num_tanks):
-                num_tanks = tnk_num
-        num_tanks += 1
-        self.num_tanks = num_tanks
+        for board_addr in range(len(self.board_parser)):
+            if self.board_parser[board_addr]:
+                tank_prefix = "tnk"
+                tnks_list = [key for key in self.board_parser[board_addr].items
+                                    if key.startswith(tank_prefix)]
+                num_tanks = -1
+                for key in tnks_list: # dont assume greatest vlv in list is last
+                    tnk_num = str(key)[3:4] # get vlv num
+                    tnk_num = int(tnk_num)
+                    if (tnk_num > num_tanks):
+                        num_tanks = tnk_num
+                num_tanks += 1
+                self.num_tanks[board_addr] = num_tanks
+        #print(self.num_tanks)
 
     
     # Unpack valves and generates valves key in dict
@@ -326,7 +332,7 @@ class S2_Interface:
     Returns the board address given a board name
     """
     def getBoardAddr(self, name):
-        print(name)
+        #print(name)
         mapping = {
             "Engine Controller": 2, 
             "Flight Computer": 1, 
