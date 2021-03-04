@@ -515,7 +515,10 @@ class ControlsWidget(QWidget):
                         channel_name = prefix + "vlv" + str(obj.channel)
                         state = self.last_packet[channel_name + ".en"]
                         voltage = self.last_packet[channel_name + ".e"]
-                        current = self.last_packet[channel_name + ".i"]
+                        if (channel_name + ".i") in self.last_packet.keys():
+                            current = self.last_packet[channel_name + ".i"]
+                        else:
+                            current = None
                         obj.setState(state, voltage, current)
                         #print(channel_name)
                 if type(obj) == Motor:

@@ -401,7 +401,7 @@ def update():
                     dataframe["time"] = datetime.now().timestamp()
                     for n in range(num_items):
                         key = interface.channels[n]
-                        data_table.setItem(n, 1, QtGui.QTableWidgetItem(str(dataframe[key])))
+                        data_table.setItem(n, 1, QTableWidgetItem(str(dataframe[key])))
                         # print([n, key, dataframe[key]])
 
                     data_log.write(get_logstring() + '\n')
