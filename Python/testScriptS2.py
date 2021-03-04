@@ -169,5 +169,10 @@ def test_telem():
 
 # function calls for tests go here
 
-test_set_control_loop_dur()
+#test_set_control_loop_dur()
 #test_set_state_control()
+print(s2_interface.channels)
+print(s2_interface.num_valves)
+print(s2_interface.num_motors)
+
+#print(s2_interface.units)

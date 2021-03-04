@@ -126,8 +126,8 @@ class GenSensor(BaseObject):
         """
         Sets units from config
         """
-        unit_dict = self.interface.parser.units
-        if self.channel in self.interface.channels():
+        unit_dict = self.interface.units
+        if self.channel in self.interface.channels:
             units = unit_dict[self.channel]
             if units == 'ul':
                 self.units = ''
