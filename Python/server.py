@@ -66,10 +66,13 @@ def open_log(runname):
         os.makedirs("data/" + runname + "/")
 
     # log file init and headers
-    server_log = open('data/' + runname + "/" + runname + "_server_log.txt", "w+")
-    serial_log = open('data/' + runname + "/" + runname + "_serial_log.csv", "w+")
+    server_log = open('data/' + runname + "/" +
+                      runname + "_server_log.txt", "w+")
+    serial_log = open('data/' + runname + "/" +
+                      runname + "_serial_log.csv", "w+")
     data_log = open('data/' + runname + "/" + runname + "_data_log.csv", "w+")
-    command_log = open('data/' + runname + "/" + runname + "_command_log.csv", "w+")
+    command_log = open('data/' + runname + "/" +
+                       runname + "_command_log.csv", "w+")
     command_log.write("Time, Command/info\n")
     serial_log.write("Time, Packet\n")
     data_log.write(header + "\n")
@@ -135,7 +138,8 @@ header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
 for n in range(num_items):
     data_table.setItem(n, 0, QTableWidgetItem(interface.channels[n]))
-    data_table.setItem(n, 2, QTableWidgetItem(interface.units[interface.channels[n]]))
+    data_table.setItem(n, 2, QTableWidgetItem(
+        interface.units[interface.channels[n]]))
 
 packet_layout.addWidget(data_box)
 packet_layout.addWidget(data_table)
@@ -151,13 +155,15 @@ top_layout.addWidget(tab, 2, 0, 1, 2)
 # TODO: Sort this out
 def send_to_log(textedit: QTextEdit, text: str):
     time_obj = datetime.now().time()
-    time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
+    time = "<{:02d}:{:02d}:{:02d}> ".format(
+        time_obj.hour, time_obj.minute, time_obj.second)
     textedit.append(time + text)
     if textedit is log_box:
         server_log.write(time + text + "\n")
 
 
-send_to_log(data_box, "Packet log disabled")  # please ask Alex before reenabling, need to add circular buffer
+# please ask Alex before reenabling, need to add circular buffer
+send_to_log(data_box, "Packet log disabled")
 
 # scan com ports
 ports = interface.scan()
@@ -176,7 +182,8 @@ def connect():
     if interface.ser.isOpen():
         send_to_log(log_box, "Connection established on %s" % port)
     else:
-        send_to_log(log_box, "Unable to connect to selected port or no ports available")
+        send_to_log(
+            log_box, "Unable to connect to selected port or no ports available")
 
 
 # scan for com ports
@@ -191,7 +198,8 @@ def scan():
 def set_commander(clientid, ip):
     global commander
     commander = clientid
-    send_to_log(log_box, "New commander: " + str(clientid) + " (" + str(ip) + ")")
+    send_to_log(log_box, "New commander: " +
+                str(clientid) + " (" + str(ip) + ")")
 
 
 # remove current commander
@@ -260,7 +268,8 @@ def client_handler(clientsocket, addr):
                 elif (command["command"] == 1 and not commander):  # take command
                     print(command)
                     set_commander(command["clientid"], addr[0])
-                elif (command["command"] == 2 and commander == command["clientid"]):  # give up command
+                # give up command
+                elif (command["command"] == 2 and commander == command["clientid"]):
                     print(command)
                     override_commander()
                 elif (command["command"] == 3 and commander == command["clientid"]):  # send command
@@ -297,7 +306,8 @@ def client_handler(clientsocket, addr):
         except:  # detect dropped connection
             if counter > 3:  # close connection after 3 consecutive failed packets
                 break
-            print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter))
+            print("Failed Packet from %s (consecutive: %s)" %
+                  (addr[0], counter))
             counter += 1
     clientsocket.close()
     send_to_log(log_box, "Closing connection to " + addr[0])
@@ -323,9 +333,10 @@ def server_handler():
         # establish connection with client
         c, addr = s.accept()
         send_to_log(log_box, 'Got connection from ' + addr[0])
-        
+
         # create thread to handle client
-        t = threading.Thread(target=client_handler, args=(c, addr), daemon=True)
+        t = threading.Thread(target=client_handler,
+                             args=(c, addr), daemon=True)
         t.start()
 
     # close socket on exit (i don't think this ever actually will run. probably should figure this out)
@@ -368,12 +379,14 @@ def update():
                 cmd = command_queue.get()
                 send_to_log(command_textedit, str(cmd))
                 interface.s2_command(cmd)
-                command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd) + '\n')
+                command_log.write(datetime.now().strftime(
+                    "%H:%M:%S,") + str(cmd) + '\n')
 
             if do_flash_dump:
                 send_to_log(log_box, "Taking a dump. Be out in just a sec")
                 QApplication.processEvents()
-                interface.download_flash(dump_addr, int(datetime.now().timestamp()), command_log, "")
+                interface.download_flash(dump_addr, int(
+                    datetime.now().timestamp()), command_log, "")
                 do_flash_dump = False
                 send_to_log(log_box, "Dump Complete.")
 
@@ -385,15 +398,18 @@ def update():
                 if packet_addr != -1:
                     # print("PARSER WORKED")
                     raw_packet = interface.last_raw_packet
-                    serial_log.write(datetime.now().strftime("%H:%M:%S,") + str(raw_packet) + '\n')
+                    serial_log.write(datetime.now().strftime(
+                        "%H:%M:%S,") + str(raw_packet) + '\n')
 
                     raw_packet_size = len(raw_packet)
-                    packet_size_label.setText("Last Packet Size: %s" % raw_packet_size)
+                    packet_size_label.setText(
+                        "Last Packet Size: %s" % raw_packet_size)
                     # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) # disabled to stop server logs becoming massive, see just below send_to_log
 
                     # parse packet and aggregate
                     new_data = interface.board_parser[packet_addr].dict
-                    prefix = interface.getPrefix(interface.getName(packet_addr))
+                    prefix = interface.getPrefix(
+                        interface.getName(packet_addr))
                     for key in new_data.keys():
                         dataframe[str(prefix + key)] = new_data[key]
 
@@ -401,7 +417,8 @@ def update():
                     dataframe["time"] = datetime.now().timestamp()
                     for n in range(num_items):
                         key = interface.channels[n]
-                        data_table.setItem(n, 1, QTableWidgetItem(str(dataframe[key])))
+                        data_table.setItem(
+                            n, 1, QTableWidgetItem(str(dataframe[key])))
                         # print([n, key, dataframe[key]])
 
                     data_log.write(get_logstring() + '\n')
