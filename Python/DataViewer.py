@@ -40,6 +40,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # set up config
         completer = QtWidgets.QCompleter(self.channels) # channel autocomplete
+        completer.setCaseSensitivity(False)
         self.config_layout = QtWidgets.QGridLayout()
         self.config_tab.setLayout(self.config_layout)
         self.switches = [] # L/R switches
@@ -51,7 +52,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.title_edit = QtWidgets.QLineEdit()
         self.title_edit.setPlaceholderText("Plot Title")
         self.config_layout.addWidget(self.title_edit, 0, 1)
-        font = self.title_edit.font()
+        font=QtGui.QFont()
         font.setPointSize(12)
         self.title_edit.setFont(font)
         self.title_edit.editingFinished.connect(self.titleUpdate)
@@ -97,7 +98,18 @@ class DataViewer(QtWidgets.QTabWidget):
         self.right.setXLink(self.left)
         self.viewUpdate()
         self.left.vb.sigResized.connect(self.viewUpdate)
-    
+        
+        # Plot formatting
+        font=QtGui.QFont()
+        font.setPixelSize(14)
+        self.left.getAxis("bottom").setTickFont(font)
+        self.left.getAxis("left").setTickFont(font)
+        self.left.getAxis("right").setTickFont(font)
+        self.left.showGrid(True, True)
+        self.left.legend.setOffset((5,5))
+        self.plot.setMouseEnabled(False, False)
+
+ 
     def loadConfig(self, config):
         # viewer config load
         self.title_edit.setText(config[0])
@@ -126,6 +138,15 @@ class DataViewer(QtWidgets.QTabWidget):
     def redrawCurves(self):
         # remove curves from legend
         self.left.legend.clear()
+
+        if len(self.getActive()) > 0: 
+            # draw when plots active
+            self.left.legend.setBrush(pg.mkBrush(255,255,255,255))  # background
+            self.left.legend.setPen(pg.mkPen(0,0,0,100))            # border
+        else: 
+            # hide when not active
+            self.left.legend.setBrush(None)
+            self.left.legend.setPen(None)
 
         for idx in range(self.num_channels):
             # remove curve from plot
@@ -187,6 +208,8 @@ class DataViewer(QtWidgets.QTabWidget):
             channel_name = self.series[i].text()
             if channel_name in self.channels:
                 self.curves[i].setData(x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
+
+
 class DataViewerWindow(QtWidgets.QMainWindow):
     def __init__(self, num_channels=4, rows=3, cols=3, cycle_time=250, *args, **kwargs):
         super(DataViewerWindow, self).__init__(*args, **kwargs)
@@ -231,7 +254,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up environment and database
         self.interface = S2_Interface()
-        self.channels = self.interface.channels()
+        self.channels = self.interface.channels
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         

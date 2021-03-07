@@ -383,7 +383,7 @@ class Board(QWidget):
         # Update labels
         self.state_label.setText(stateMap[self.state])
 
-        if self.state is 1:
+        if self.state == 1:
             self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
         else:

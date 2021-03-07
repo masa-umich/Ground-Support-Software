@@ -98,7 +98,9 @@ class ControlsPanelWidget(QWidget):
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
         self.channel_combobox.setEditable(True)
-        self.channel_combobox.setCompleter(QCompleter(self.sensor_channels))
+        completer = QCompleter(self.sensor_channels)
+        completer.setCaseSensitivity(False)
+        self.channel_combobox.setCompleter(completer)
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -299,7 +301,9 @@ class ControlsPanelWidget(QWidget):
         elif object_.object_name == "Generic Sensor":
             self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)
             self.channel_combobox.setEditable(True)
-            self.channel_combobox.setCompleter(QCompleter(self.sensor_channels))
+            completer = QCompleter(self.sensor_channels)
+            completer.setCaseSensitivity(False)
+            self.channel_combobox.setCompleter(completer)
         else:
             self.channel_combobox.setEditable(False)
 
