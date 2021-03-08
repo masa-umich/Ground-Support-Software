@@ -104,7 +104,7 @@ class ControlsWidget(QWidget):
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap('masawhiteworm3.png')
+        pixmap = QPixmap('Images/masawhiteworm3.png')
         pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
 
@@ -510,39 +510,42 @@ class ControlsWidget(QWidget):
                         #print(this_channel + str())
                 if type(obj) == Solenoid or type(obj) == ThreeWayValve:
                     board = obj.avionics_board
-                    prefix = self.interface.getPrefix(board)
-                    if obj.channel != "Undefined":
-                        channel_name = prefix + "vlv" + str(obj.channel)
-                        state = self.last_packet[channel_name + ".en"]
-                        voltage = self.last_packet[channel_name + ".e"]
-                        if (channel_name + ".i") in self.last_packet.keys():
-                            current = self.last_packet[channel_name + ".i"]
-                        else:
-                            current = None
-                        obj.setState(state, voltage, current)
-                        #print(channel_name)
+                    if board != "Undefined":
+                        prefix = self.interface.getPrefix(board)
+                        if obj.channel != "Undefined":
+                            channel_name = prefix + "vlv" + str(obj.channel)
+                            state = self.last_packet[channel_name + ".en"]
+                            voltage = self.last_packet[channel_name + ".e"]
+                            if (channel_name + ".i") in self.last_packet.keys():
+                                current = self.last_packet[channel_name + ".i"]
+                            else:
+                                current = None
+                            obj.setState(state, voltage, current)
+                            #print(channel_name)
                 if type(obj) == Motor:
                     board = obj.avionics_board
-                    prefix = self.interface.getPrefix(board)
-                    if obj.channel != "Undefined":
-                        channel_name = prefix + "mtr" + str(obj.channel)
-                        curra = self.last_packet[channel_name + ".ia"]
-                        currb = self.last_packet[channel_name + ".ib"]
-                        pos = self.last_packet[channel_name + ".pos"]
-                        setp = self.last_packet[channel_name + ".set"]
-                        p = self.last_packet[channel_name + ".p"]
-                        i = self.last_packet[channel_name + ".i"]
-                        d = self.last_packet[channel_name + ".d"]
-                        obj.updateValues(curra,currb,pos,set,p,i,d)
+                    if board != "Undefined":
+                        prefix = self.interface.getPrefix(board)
+                        if obj.channel != "Undefined":
+                            channel_name = prefix + "mtr" + str(obj.channel)
+                            curra = self.last_packet[channel_name + ".ia"]
+                            currb = self.last_packet[channel_name + ".ib"]
+                            pos = self.last_packet[channel_name + ".pos"]
+                            setp = self.last_packet[channel_name + ".set"]
+                            p = self.last_packet[channel_name + ".p"]
+                            i = self.last_packet[channel_name + ".i"]
+                            d = self.last_packet[channel_name + ".d"]
+                            obj.updateValues(curra,currb,pos,set,p,i,d)
                 if type(obj) == Tank:
                     board = obj.avionics_board
-                    prefix = self.interface.getPrefix(board)
-                    if obj.channel != "Undefined":
-                        channel_name = prefix + "tnk" + str(obj.channel)
-                        setPoint = self.last_packet[channel_name + ".tp"]
-                        lowbound = self.last_packet[channel_name + ".lp"]
-                        highBound = self.last_packet[channel_name + ".hp"]
-                        obj.updateValues(setPoint,lowbound,highBound)
+                    if board != "Undefined":
+                        prefix = self.interface.getPrefix(board)
+                        if obj.channel != "Undefined":
+                            channel_name = prefix + "tnk" + str(obj.channel)
+                            setPoint = self.last_packet[channel_name + ".tp"]
+                            lowbound = self.last_packet[channel_name + ".lp"]
+                            highBound = self.last_packet[channel_name + ".hp"]
+                            obj.updateValues(setPoint,lowbound,highBound)
 
 
 

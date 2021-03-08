@@ -386,7 +386,7 @@ if __name__ == "__main__":
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('logo_server.png'))
+    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
     CYCLE_TIME = 250  # in ms

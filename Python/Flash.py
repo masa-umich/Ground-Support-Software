@@ -26,7 +26,7 @@ class FlashController(QtWidgets.QWidget):
 
         # logo
         self.logo = QtGui.QLabel()
-        pixmap = QtGui.QPixmap("flash.png")
+        pixmap = QtGui.QPixmap("Images/flash.png")
         #pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
         self.logo.setPixmap(pixmap)
         self.logo.setAlignment(QtCore.Qt.AlignCenter)
