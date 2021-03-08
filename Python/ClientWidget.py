@@ -29,6 +29,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.command_queue = queue.Queue()
         self.is_commander = False
         self.is_connected = False
+        self.last_packet = None
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
@@ -143,7 +144,8 @@ class ClientWidget(QtWidgets.QWidget):
                 self.is_commander = False
             self.led.setChecked(self.is_commander)
 
-            return packet
+            self.last_packet = packet
+            return self.last_packet
 
         except:
             self.is_connected = False

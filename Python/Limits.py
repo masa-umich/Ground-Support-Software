@@ -103,9 +103,6 @@ class LimitWidget(QtWidgets.QWidget):
         self.channels = self.interface.channels
         self.num_channels = num_channels
         self.client_dialog = client
-        self.last_packet = None
-        self.header = ['time', 'packet_num', 'commander'] + self.channels
-        self.database = pd.DataFrame(columns=self.header)
 
         self.limits_box = QtWidgets.QWidget()
         self.limits_layout = QtWidgets.QVBoxLayout()
@@ -168,16 +165,17 @@ class LimitWidget(QtWidgets.QWidget):
         for i in range(len(self.limits)):
             self.limits[i].load(configs["limit_configs"][i])
 
+    def update_limits(self, last_packet: dict):
+        if last_packet:
+            last_packet["time"] -= self.starttime  # time to elapsed
+            for i in range(len(self.limits)):
+                channel = self.limits[i].channel.text()
+                if channel in self.channels:
+                    self.limits[i].update(last_packet[channel])
+    
     def cycle(self):
-        self.last_packet = self.client_dialog.client.cycle()
-
-        if self.last_packet:
-            self.last_packet["time"] -= self.starttime  # time to elapsed
-
-        for i in range(len(self.limits)):
-            channel = self.limits[i].channel.text()
-            if channel in self.channels:
-                self.limits[i].update(self.last_packet[channel])
+        last_packet = self.client_dialog.client.cycle()
+        self.update_limits(last_packet)
 
 
 class LimitWindow(QtWidgets.QMainWindow):
@@ -189,7 +187,7 @@ class LimitWindow(QtWidgets.QMainWindow):
             self.client_dialog = ClientDialog(False)
         else:
             self.client_dialog = client
-            
+
         self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
@@ -245,6 +243,9 @@ class LimitWindow(QtWidgets.QMainWindow):
     
     def cycle(self):
         self.widget.cycle()
+    
+    def update_limits(self, last_packet: dict):
+        self.widget.update_limits(last_packet)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
 from Flash import FlashDialog
 from AbortButton import AbortButton
+from limits import LimitWindow
 
 from overrides import overrides
 import os
@@ -38,6 +39,7 @@ class ControlsWindow(QMainWindow):
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
         self.flash_dialog = FlashDialog(self.client_dialog.client)
         self.button_box = AbortButton(self.client_dialog.client)
+        self.limits = LimitWindow(8, self.client_dialog.client)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -135,6 +137,10 @@ class ControlsWindow(QMainWindow):
         self.buttonBoxAct.setShortcut('Ctrl+B')
         self.buttonBoxAct.triggered.connect(self.button_box.show)
 
+        # Run -> Limits
+        self.limit_action = QAction('&Limits', self)
+        self.limit_action.triggered.connect(self.limits.show)
+
         self.ambientizeMenu = QMenu('&Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
         self.ambientizeMenu.addAction("Engine Controller")
@@ -173,6 +179,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.checkpointAct)
         run_menu.addAction(self.buttonBoxAct)
         run_menu.addMenu(self.ambientizeMenu)
+        run_menu.addAction(self.limit_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -685,6 +692,7 @@ class ControlsWindow(QMainWindow):
         self.centralWidget.update()
 
         self.button_box.cycle()
+        self.limits.update_limits(self.last_packet)
 
 
 class ControlsCentralWidget(QWidget):
