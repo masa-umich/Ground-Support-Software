@@ -6,6 +6,7 @@ import socket
 import sys
 import threading
 from datetime import datetime
+import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
@@ -16,9 +17,16 @@ from s2Interface import S2_Interface
 
 threading.stack_size(134217728)
 
+
 class Server(QtWidgets.QMainWindow):
+    """
+    MASA Data Aggregation Server
+    """
+
     def __init__(self):
+        """Init server window"""
         super().__init__()
+
         # init variables
         self.packet_num = 0
         self.packet_size = 0
@@ -30,6 +38,7 @@ class Server(QtWidgets.QMainWindow):
         self.do_flash_dump = False
         self.dump_addr = None
 
+        # init logs
         self.server_log = None
         self.serial_log = None
         self.data_log = None
@@ -50,13 +59,13 @@ class Server(QtWidgets.QMainWindow):
         # init csv header
         self.header = "Time,"
         for channel in self.interface.channels:
-            self.header += "%s (%s)," % (channel, self.interface.units[channel])
+            self.header += "%s (%s)," % (channel,
+                                         self.interface.units[channel])
         self.header += "\n"
 
         self.open_log(self.starttime)  # start initial run
 
         # window layout
-        #top = QtWidgets.QMainWindow()
         self.setWindowTitle("Server")
         w = QtWidgets.QWidget()
         self.setCentralWidget(w)
@@ -94,7 +103,8 @@ class Server(QtWidgets.QMainWindow):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
         for n in range(self.num_items):
-            self.data_table.setItem(n, 0, QTableWidgetItem(self.interface.channels[n]))
+            self.data_table.setItem(
+                n, 0, QTableWidgetItem(self.interface.channels[n]))
             self.data_table.setItem(n, 2, QTableWidgetItem(
                 self.interface.units[self.interface.channels[n]]))
 
@@ -107,12 +117,9 @@ class Server(QtWidgets.QMainWindow):
         # top_layout.addWidget(tab, 2, 0) # no parrot
         top_layout.addWidget(tab, 2, 0, 1, 2)
 
-
         # please ask Alex before reenabling, need to add circular buffer
         self.send_to_log(self.data_box, "Packet log disabled")
 
-        # scan com ports
-        #ports = interface.scan()
         # connection box (add to top_layout)
         connection = QGroupBox("EC Connection")
         top_layout.addWidget(connection, 0, 0)
@@ -122,17 +129,17 @@ class Server(QtWidgets.QMainWindow):
         connection_layout.addWidget(self.packet_size_label, 0, 5)
         self.ports_box = QComboBox()
         connection_layout.addWidget(self.ports_box, 0, 0, 0, 2)
-        scanButton = QPushButton("Scan")
-        scanButton.clicked.connect(self.scan)
-        connection_layout.addWidget(scanButton, 0, 3)
-        connectButton = QPushButton("Connect")
-        connectButton.clicked.connect(self.connect)
-        connection_layout.addWidget(connectButton, 0, 4)
+        scan_button = QPushButton("Scan")
+        scan_button.clicked.connect(self.scan)
+        connection_layout.addWidget(scan_button, 0, 3)
+        connect_button = QPushButton("Connect")
+        connect_button.clicked.connect(self.connect)
+        connection_layout.addWidget(connect_button, 0, 4)
 
         # heartbeat indicator
-        self.pp = PartyParrot()
-        self.pp.setFixedSize(60, 60)
-        top_layout.addWidget(self.pp, 0, 1)
+        self.party_parrot = PartyParrot()
+        self.party_parrot.setFixedSize(60, 60)
+        top_layout.addWidget(self.party_parrot, 0, 1)
 
         # populate port box
         self.scan()
@@ -161,14 +168,22 @@ class Server(QtWidgets.QMainWindow):
         file_menu = main_menu.addMenu('&File')
 
         # quit application menu item
-        quit = QAction("&Quit", file_menu)
-        quit.setShortcut("Ctrl+Q")
-        quit.triggered.connect(self.exit)
-        file_menu.addAction(quit)
+        quit_action = QAction("&Quit", file_menu)
+        quit_action.setShortcut("Ctrl+Q")
+        quit_action.triggered.connect(self.exit)
+        file_menu.addAction(quit_action)
 
-    # send message to log (should work from any thread but it throws a warning after the first attempt, also it very rarely breaks)
-    # TODO: Sort this out
     def send_to_log(self, textedit: QTextEdit, text: str):
+        """Sends a message to a log.
+        (should work from any thread but it throws a warning after the first attempt)
+        (also it very rarely breaks)
+
+        Args:
+            textedit (QTextEdit): Text box to send to
+            text (str): Text to write
+        """
+        # TODO: Sort this out
+
         time_obj = datetime.now().time()
         time = "<{:02d}:{:02d}:{:02d}> ".format(
             time_obj.hour, time_obj.minute, time_obj.second)
@@ -176,45 +191,59 @@ class Server(QtWidgets.QMainWindow):
         if textedit is self.log_box:
             self.server_log.write(time + text + "\n")
 
-    # connect to com port
     def connect(self):
+        """Connects to COM port"""
+
         try:
             port = str(self.ports_box.currentText())
             if port:
                 self.interface.connect(port, 115200, 0.3)
                 self.interface.parse_serial()
         except:
+            # traceback.print_exc()
             pass
 
         if self.interface.ser.isOpen():
-            self.send_to_log(self.log_box, "Connection established on %s" % port)
+            self.send_to_log(
+                self.log_box, "Connection established on %s" % port)
         else:
             self.send_to_log(
                 self.log_box, "Unable to connect to selected port or no ports available")
 
-
-    # scan for com ports
     def scan(self):
+        """Scans for COM ports"""
+
         ports = self.interface.scan()
         self.ports_box.clear()
         self.ports_box.addItems(ports)
 
+    def set_commander(self, clientid: str, ip: str):
+        """Sets a client as commander
 
-    # set client as commander
-    def set_commander(self, clientid, ip):
+        Args:
+            clientid (str): UUID of client
+            ip (str): IP address of client
+        """
+
         self.commander = clientid
         self.send_to_log(self.log_box, "New commander: " +
-                    str(clientid) + " (" + str(ip) + ")")
+                         str(clientid) + " (" + str(ip) + ")")
 
-
-    # remove current commander
     def override_commander(self):
+        """Removes the current commander"""
+
         self.send_to_log(self.log_box, "Clearing commander")
         self.commander = None
 
+    def client_handler(self, clientsocket: socket.socket, addr: str):
+        """Client thread handler function.
 
-    # client handler
-    def client_handler(self, clientsocket, addr):
+        Args:
+            clientsocket (socket.socket): Socket object of new connection
+            addr (str): IP address of client connection
+        """
+        print(type(clientsocket))
+        # client handler
         counter = 0
         last_uuid = None
         while True:
@@ -230,40 +259,43 @@ class Server(QtWidgets.QMainWindow):
                     last_uuid = command["clientid"]
                     if command["command"] == 0:  # do nothing
                         pass
-                    elif (command["command"] == 1 and not self.commander):  # take command
+                    elif command["command"] == 1 and not self.commander:  # take command
                         print(command)
                         self.set_commander(command["clientid"], addr[0])
                     # give up command
-                    elif (command["command"] == 2 and self.commander == command["clientid"]):
+                    elif command["command"] == 2 and self.commander == command["clientid"]:
                         print(command)
                         self.override_commander()
-                    elif (command["command"] == 3 and self.commander == command["clientid"]):  # send command
+                    # send command
+                    elif command["command"] == 3 and self.commander == command["clientid"]:
                         print(command)
                         self.command_queue.put(command["args"])
-                    elif (command["command"] == 4):  # close connection
+                    elif command["command"] == 4:  # close connection
                         print(command)
                         if self.commander == command["clientid"]:
                             self.override_commander()
                         break
-                    elif (command["command"] == 5 and self.commander == command["clientid"]):  # flash dump
+                    # flash dump
+                    elif command["command"] == 5 and self.commander == command["clientid"]:
                         print(command)
                         self.do_flash_dump = True
                         self.dump_addr = command["args"]
                     # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
-                    elif (command["command"] == 6):  # checkpoint logs
+                    elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"]
-                        
+
                         if new_runname in (None, ()):
-                            self.runname = datetime.now().strftime("%Y%m%d%H%M%S")
+                            runname = datetime.now().strftime("%Y%m%d%H%M%S")
                         elif isinstance(new_runname, str):
-                            self.runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
+                            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
                         else:
                             print("Error: Unhandled Runname")
-                        
+
                         self.close_log()
-                        self.open_log(self.runname)
-                        self.send_to_log(self.log_box, "Checkpoint Created: %s" % self.runname)
+                        self.open_log(runname)
+                        self.send_to_log(
+                            self.log_box, "Checkpoint Created: %s" % runname)
                     else:
                         print("WARNING: Unhandled command")
 
@@ -276,84 +308,105 @@ class Server(QtWidgets.QMainWindow):
                 if counter > 3:  # close connection after 3 consecutive failed packets
                     if self.commander == command["clientid"]:
                         self.override_commander()
+                    break
                 print("Failed Packet from %s (consecutive: %s)" %
-                    (addr[0], counter))
+                      (addr[0], counter+1))
                 counter += 1
         clientsocket.close()
         self.send_to_log(self.log_box, "Closing connection to " + addr[0])
         self.t.join()
 
-    # main server target function
     def server_handler(self):
+        """Handler for server thread. Main server target function."""
+
         # initialize socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         host = socket.gethostbyname(socket.gethostname())
         port = 6969
         # s.bind(("masadataserver.local", port))
-        s.bind((host, port))
+        sock.bind((host, port))
 
         # wait
-        self.send_to_log(self.log_box, 'Server initialized. Waiting for clients to connect...')
+        self.send_to_log(
+            self.log_box, 'Server initialized. Waiting for clients to connect...')
         self.send_to_log(self.log_box, "Listening on %s:%s" % (host, port))
-        s.listen(5)
+        sock.listen(5)
 
         # create connection
         while True:
             # establish connection with client
-            c, addr = s.accept()
+            cli, addr = sock.accept()
             self.send_to_log(self.log_box, 'Got connection from ' + addr[0])
 
             # create thread to handle client
-            t = threading.Thread(target=self.client_handler,
-                                args=(c, addr), daemon=True)
-            t.start()
-        
+            client_thread = threading.Thread(target=self.client_handler,
+                                             args=(cli, addr), daemon=True)
+            client_thread.start()
+
         # close socket on exit (i don't think this ever actually will run. probably should figure this out)
-        s.close()
+        sock.close()
 
     # quit application function
     def exit(self):
+        """Exits application safely"""
+
         self.interface.ser.close()
         self.close_log()
         sys.exit()
 
     def closeEvent(self, event):
+        """Handler for closeEvent at window close"""
+
         self.exit()
 
     # get data formatted for csv
     def get_logstring(self):
+        """Constructs a datalog CSV row from current data
+
+        Returns:
+            str: Formatted CSV row
+        """
+
         logstring = str(self.dataframe["time"]) + ","
         for channel in self.interface.channels:
-            logstring += "%s," % (dataframe[channel])
+            logstring += "%s," % (self.dataframe[channel])
         return logstring
 
+    def open_log(self, runname: str):
+        """Opens a new set of log files.
 
-    def open_log(self, runname):
-        #global server_log, serial_log, data_log, command_log
-        # make data folder
+        Args:
+            runname (str): Run-name label
+        """
+
+        # make data folder if it does not exist
         if not os.path.exists("data/" + runname + "/"):
             os.makedirs("data/" + runname + "/")
 
         # log file init and headers
         self.server_log = open('data/' + runname + "/" +
-                        runname + "_server_log.txt", "w+")
+                               runname + "_server_log.txt", "w+")
         self.serial_log = open('data/' + runname + "/" +
-                        runname + "_serial_log.csv", "w+")
-        self.data_log = open('data/' + runname + "/" + runname + "_data_log.csv", "w+")
+                               runname + "_serial_log.csv", "w+")
+        self.data_log = open('data/' + runname + "/" +
+                             runname + "_data_log.csv", "w+")
         self.command_log = open('data/' + runname + "/" +
-                        runname + "_command_log.csv", "w+")
+                                runname + "_command_log.csv", "w+")
         self.command_log.write("Time, Command/info\n")
         self.serial_log.write("Time, Packet\n")
         self.data_log.write(self.header + "\n")
 
     def close_log(self):
+        """Safely closes all logfiles"""
+
         self.server_log.close()
         self.serial_log.close()
         self.command_log.close()
         self.data_log.close()
 
-    # main update loop
     def update(self):
+        """Main server update loop"""
+
         try:
             if self.interface.ser.is_open:
                 if not self.command_queue.empty():
@@ -364,7 +417,8 @@ class Server(QtWidgets.QMainWindow):
                         "%H:%M:%S,") + str(cmd) + '\n')
 
                 if self.do_flash_dump:
-                    self.send_to_log(self.log_box, "Taking a dump. Be out in just a sec")
+                    self.send_to_log(
+                        self.log_box, "Taking a dump. Be out in just a sec")
                     QApplication.processEvents()
                     self.interface.download_flash(self.dump_addr, int(
                         datetime.now().timestamp()), self.command_log, "")
@@ -385,7 +439,8 @@ class Server(QtWidgets.QMainWindow):
                         raw_packet_size = len(raw_packet)
                         self.packet_size_label.setText(
                             "Last Packet Size: %s" % raw_packet_size)
-                        # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) # disabled to stop server logs becoming massive, see just below send_to_log
+                        # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) 
+                        # disabled to stop server logs becoming massive, see just below send_to_log
 
                         # parse packet and aggregate
                         new_data = self.interface.board_parser[packet_addr].dict
@@ -396,7 +451,7 @@ class Server(QtWidgets.QMainWindow):
 
                         # print(dataframe)
                         self.dataframe["time"] = datetime.now().timestamp()
-                        for n in range(num_items):
+                        for n in range(self.num_items):
                             key = self.interface.channels[n]
                             self.data_table.setItem(
                                 n, 1, QTableWidgetItem(str(self.dataframe[key])))
@@ -406,15 +461,15 @@ class Server(QtWidgets.QMainWindow):
                     else:
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
                         pass
-            self.pp.step()
+            self.party_parrot.step()
 
-        except Exception as e:
-            print(e)
-            #pass
+        except:
+            traceback.print_exc()
 
         # update server state
         self.packet_num += 1
         self.commander_label.setText("Commander: " + str(self.commander))
+
 
 if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
