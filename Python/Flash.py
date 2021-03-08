@@ -1,12 +1,14 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt
-import pyqtgraph as pg
 import sys
-import os
+#import os
 from datetime import datetime
+
+from PyQt5 import QtGui, QtCore, QtWidgets
+#from PyQt5.QtCore import Qt
+import pyqtgraph as pg
 
 from constants import Constants
 from s2Interface import S2_Interface
+
 
 class FlashDialog(QtWidgets.QDialog):
     def __init__(self, client):
@@ -18,9 +20,10 @@ class FlashDialog(QtWidgets.QDialog):
         self.layout.addWidget(self.flash_controller)
         self.setLayout(self.layout)
 
+
 class FlashController(QtWidgets.QWidget):
     def __init__(self, client, *args, **kwargs):
-        super(FlashController, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.interface = S2_Interface()
         self.client = client
 
@@ -45,10 +48,10 @@ class FlashController(QtWidgets.QWidget):
         self.layout.addWidget(self.board_selector, 1, 0, 1, 2)
         #self.layout.addWidget(self.file_selector, 2, 0, 1, 1)
         #self.layout.addWidget(self.file_button, 2, 1, 1, 1)
-        self.layout.addWidget(self.download_button, 3, 0, 1, 2) 
-        self.layout.addWidget(self.wipe_button, 4, 0, 1, 2) 
-        self.layout.addWidget(self.start_button, 5, 0, 1, 2) 
-        self.layout.addWidget(self.stop_button, 6, 0, 1, 2) 
+        self.layout.addWidget(self.download_button, 3, 0, 1, 2)
+        self.layout.addWidget(self.wipe_button, 4, 0, 1, 2)
+        self.layout.addWidget(self.start_button, 5, 0, 1, 2)
+        self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
 
         self.board_selector.addItems(Constants.boards)
 
@@ -61,17 +64,18 @@ class FlashController(QtWidgets.QWidget):
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
         #options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self,"Select Dump File","","Text Files (*.csv);;All Files (*)", options=options)
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self, "Select Dump File", "", "Text Files (*.csv);;All Files (*)", options=options)
         if filename:
             self.file_selector.setText(filename)
-    
+
     def get_addr(self):
         name = self.board_selector.currentText()
         return self.interface.getBoardAddr(name)
 
     def dump(self):
         self.client.command(5, self.get_addr())
-    
+
     def wipe(self):
         cmd_dict = {
             "function_name": "wipe_flash",
@@ -80,7 +84,7 @@ class FlashController(QtWidgets.QWidget):
             "args": []
         }
         self.client.command(3, cmd_dict)
-    
+
     def stop_logging(self):
         cmd_dict = {
             "function_name": "stop_logging",
@@ -100,20 +104,12 @@ class FlashController(QtWidgets.QWidget):
         self.client.command(3, cmd_dict)
 
 
-    
-
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
     controller = FlashDialog(None)
-    
-    #timer = QtCore.QTimer()
-    #timer.timeout.connect(controller.cycle)
-    #timer.start(50) # in ms, 20hz
-    
+
     controller.show()
     sys.exit(app.exec())
-
-        

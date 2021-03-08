@@ -255,7 +255,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     Window with client and DataViewer objects
     """
 
-    def __init__(self, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, *args, **kwargs):
+    def __init__(self, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
         """Initializes window
 
         Args:
@@ -273,7 +273,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.widget.setLayout(self.top_layout)
 
         # set up client
-        self.client_dialog = ClientDialog(False)
+        if not client:
+            self.client_dialog = ClientDialog(False)
+        else:
+            self.client_dialog = client
+
         self.last_packet = None
 
         # menu bar
@@ -282,10 +286,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.options_menu = self.main_menu.addMenu('&Options')
 
         # connection menu item
-        self.connect = QtGui.QAction("&Connection", self.options_menu)
-        # self.quit.setShortcut("Ctrl+K")
-        self.connect.triggered.connect(self.client_dialog.show)
-        self.options_menu.addAction(self.connect)
+        if not client:
+            self.connect = QtGui.QAction("&Connection", self.options_menu)
+            # self.quit.setShortcut("Ctrl+K")
+            self.connect.triggered.connect(self.client_dialog.show)
+            self.options_menu.addAction(self.connect)
 
         # save menu item
         self.save_action = QtGui.QAction("&Save Config", self.options_menu)
@@ -339,19 +344,16 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             if viewer.is_active():
                 viewer.update(self.database)
 
-    # quit application function
     def exit(self):
         """Exit application"""
         self.client_dialog.client.disconnect()
         app.quit()
         sys.exit()
 
-    # show connection dialog
     def show_connection(self):
         """Show connection dialog"""
         self.client_dialog.show()
 
-    # viewer config load
     def load(self):
         """Load config file"""
         loadname = QtGui.QFileDialog.getOpenFileName(
@@ -361,7 +363,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for i in range(len(self.viewers)):
             self.viewers[i].load_config(configs[i])
 
-    # save config
     def save(self):
         """Saves config to a file"""
         configs = [viewer.save_config() for viewer in self.viewers]

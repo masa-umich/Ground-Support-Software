@@ -1,14 +1,14 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt
-import pyqtgraph as pg
 import sys
 import socket
-import json
 import pickle
-import time
 import uuid
 import queue
+
+from PyQt5 import QtGui, QtCore, QtWidgets
+import pyqtgraph as pg
+
 from LedIndicatorWidget import LedIndicator
+
 
 class ClientDialog(QtWidgets.QDialog):
     def __init__(self, commandable):
@@ -20,9 +20,10 @@ class ClientDialog(QtWidgets.QDialog):
         self.layout.addWidget(self.client)
         self.setLayout(self.layout)
 
+
 class ClientWidget(QtWidgets.QWidget):
-    def __init__(self, commandable=True, *args, **kwargs):
-        super(ClientWidget, self).__init__(*args, **kwargs)
+    def __init__(self, commandable: bool=True, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
         #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.command_queue = queue.Queue()
@@ -34,7 +35,8 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout = QtWidgets.QGridLayout()
         self.connection_widget.setLayout(self.connection_layout)
         self.host = QtWidgets.QComboBox()
-        self.host.addItems([socket.gethostbyname(socket.gethostname()), '192.168.50.79', 'masadataserver'])
+        self.host.addItems([socket.gethostbyname(
+            socket.gethostname()), '192.168.50.79', 'masadataserver'])
         self.host.setEditable(True)
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
@@ -47,12 +49,12 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout.addWidget(self.disconnect_button, 0, 4)
         self.disconnect_button.clicked.connect(lambda: self.disconnect())
         self.clientid_label = QtGui.QLabel("UUID: %s" % self.clientid)
-        self.connection_layout.setColumnStretch(0, 2)
+        self.connection_layout.setColumnStretch(0, 4)
         self.connection_layout.setColumnStretch(1, 0)
-        self.connection_layout.setColumnStretch(2, 1)
-        self.connection_layout.setColumnStretch(3, 1.5)
-        self.connection_layout.setColumnStretch(4, 1.5)
-        
+        self.connection_layout.setColumnStretch(2, 2)
+        self.connection_layout.setColumnStretch(3, 3)
+        self.connection_layout.setColumnStretch(4, 3)
+
         # command box init
         self.command_widget = QtWidgets.QGroupBox("Commanding")
         self.command_layout = QtWidgets.QGridLayout()
@@ -76,37 +78,37 @@ class ClientWidget(QtWidgets.QWidget):
             self.layout.addWidget(self.command_widget)
 
         # populate host fields with local address
-        #self.host.setText(socket.gethostbyname(socket.gethostname()))
+        # self.host.setText(socket.gethostbyname(socket.gethostname()))
         self.port.setText(str(6969))
-    
-    def command(self, command, args=()):
+
+    def command(self, command: int, args: tuple=()):
         # build and add command to queue
         command_dict = {
-            "clientid" : self.clientid,
-            "command" : command,
-            "args" : args
+            "clientid": self.clientid,
+            "command": command,
+            "args": args
         }
 
         msg = pickle.dumps(command_dict)
-        #print(msg)
+        # print(msg)
 
         if command != 0:
             print(command_dict)
-        
+
         # add to queue
         if self.is_connected:
             self.command_queue.put(msg)
 
-        
-
     def connect(self):
         # try to make a connection with server
         try:
-            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # setup socket interface
-            self.s.connect((self.host.currentText(), int(self.port.text()))) # connect to socket
-            self.is_connected = True # update status
+            # setup socket interface
+            self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.s.connect((self.host.currentText(), int(
+                self.port.text())))  # connect to socket
+            self.is_connected = True  # update status
         except:
-            self.is_connected = False # update status
+            self.is_connected = False  # update status
 
     def disconnect(self):
         # send disconnect message
@@ -133,19 +135,20 @@ class ClientWidget(QtWidgets.QWidget):
                 # get data
                 data = self.s.recv(4096*4)
                 packet = pickle.loads(data)
-            
+
             # update command status
             if packet["commander"] == self.clientid:
                 self.is_commander = True
             else:
                 self.is_commander = False
             self.led.setChecked(self.is_commander)
-            
+
             return packet
-        
+
         except:
             self.is_connected = False
             return None
+
 
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
@@ -153,12 +156,10 @@ if __name__ == "__main__":
     else:
         app = QtWidgets.QApplication.instance()
     controller = ClientWidget(commandable=True)
-    
+
     timer = QtCore.QTimer()
     timer.timeout.connect(controller.cycle)
-    timer.start(50) # in ms, 20hz
-    
+    timer.start(50)  # in ms, 20hz
+
     controller.show()
     sys.exit(app.exec())
-
-        
