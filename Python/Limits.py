@@ -55,12 +55,12 @@ class Limit(QtWidgets.QGroupBox):
         #self.delete_button.setIcon(QtGui.QIcon('Python/xicon.jpg'))
         self.delete_button.setFixedSize(QtCore.QSize(30,30))
 
-        self.layout.setColumnStretch(0, 0.5)
-        self.layout.setColumnStretch(1, 1)
-        self.layout.setColumnStretch(2, 1)
-        self.layout.setColumnStretch(3, 1)
-        self.layout.setColumnStretch(4, 2)
-        self.layout.setColumnStretch(5, 0.1)
+        self.layout.setColumnStretch(0, 2)
+        self.layout.setColumnStretch(1, 10)
+        self.layout.setColumnStretch(2, 10)
+        self.layout.setColumnStretch(3, 10)
+        self.layout.setColumnStretch(4, 20)
+        self.layout.setColumnStretch(5, 1)
 
     def update(self, val):
         val = float(val)
@@ -95,7 +95,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.setStyleSheet("")
 
         self.interface = S2_Interface()
-        self.channels = self.interface.channels()
+        self.channels = self.interface.channels
         self.num_channels = num_channels
 
         self.limits_box = QtWidgets.QWidget()
