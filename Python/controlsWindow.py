@@ -9,8 +9,8 @@ from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from s2Interface import S2_Interface
-from Flash import FlashDialog
-from AbortButton import AbortButton
+from flash import FlashDialog
+from abort_button import AbortButton
 from limits import LimitWindow
 
 from overrides import overrides
@@ -120,12 +120,12 @@ class ControlsWindow(QMainWindow):
 
         # Run -> Connection Settings
         self.connect = QAction("&Connection Settings", self)
-        self.connect.triggered.connect(self.client_dialog.show)
+        self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
         self.connect.setShortcut('Ctrl+S')
 
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
-        self.flashsettings.triggered.connect(self.flash_dialog.show)
+        self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
 
         # Run -> Checkpoint Log
         self.checkpointAct = QAction('&Checkpoint Log', self)
@@ -135,11 +135,11 @@ class ControlsWindow(QMainWindow):
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('&Abort Button Settings', self)
         self.buttonBoxAct.setShortcut('Ctrl+B')
-        self.buttonBoxAct.triggered.connect(self.button_box.show)
+        self.buttonBoxAct.triggered.connect(lambda: self.show_window(self.button_box))
 
         # Run -> Limits
         self.limit_action = QAction('&Limits', self)
-        self.limit_action.triggered.connect(self.limits.show)
+        self.limit_action.triggered.connect(lambda: self.show_window(self.limits))
 
         self.ambientizeMenu = QMenu('&Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
@@ -680,6 +680,19 @@ class ControlsWindow(QMainWindow):
         # Save the gui preferences and reboot
         self.gui.savePreferences()
         QCoreApplication.exit(self.gui.EXIT_CODE_REBOOT)
+    
+    def show_window(self, window: QWidget):
+        """Shows a window or brings it to the front if already open.
+
+        Args:
+            window (QWidget): window to show
+        """
+        # open window
+        window.show() 
+
+        # bring to front
+        window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
+        window.activateWindow()
 
     @overrides
     def update(self):
