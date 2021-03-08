@@ -25,7 +25,7 @@ class Solenoid(BaseObject):
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
-                 normally_open: bool = 0):
+                 normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True):
 
         """
         Initializer for Solenoid
@@ -56,27 +56,17 @@ class Solenoid(BaseObject):
 
         # TODO: Still bleah, should have a way to rotate or something
 
-        if is_vertical:
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                             name=name, is_vertical=is_vertical, scale=scale,
-                             serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
-                             _id=_id, serial_number_label_pos=serial_number_label_pos,
-                             serial_number_label_local_pos=serial_number_label_local_pos,
-                             serial_number_label_font_size=serial_number_label_font_size,
-                             long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
-                             long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
-        else:
-            # Initialize base classes
-            super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                             name=name, is_vertical=is_vertical, scale=scale,
-                             serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
-                             _id=_id, serial_number_label_pos=serial_number_label_pos,
-                             serial_number_label_local_pos=serial_number_label_local_pos,
-                             serial_number_label_font_size=serial_number_label_font_size,
-                             long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
-                             long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
+        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
+                         name=name, is_vertical=is_vertical, scale=scale,
+                         serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
+                         _id=_id, serial_number_label_pos=serial_number_label_pos,
+                         serial_number_label_local_pos=serial_number_label_local_pos,
+                         serial_number_label_font_size=serial_number_label_font_size,
+                         long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
+                         long_name_label_font_size=long_name_label_font_size,
+                         long_name_label_rows=long_name_label_rows, long_name_visible = long_name_visible,
+                         serial_number_visible = serial_number_visible)
+
 
 
         # TODO: Grab object scale from widget_parent
@@ -98,6 +88,10 @@ class Solenoid(BaseObject):
         # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
 
         self.client = self.widget_parent.window.client_dialog.client
+
+    # TODO: Use this withe new configuration manager
+    # @classmethod
+    # def initFromObject(cls, object):
 
     @overrides
     def draw(self):
@@ -217,9 +211,9 @@ class Solenoid(BaseObject):
         """
 
         if self.state == 0:
-            self.setState(1)
+            self.setState(1, self.voltage, self.current)
         elif self.state == 1:
-            self.setState(0)
+            self.setState(0, self.voltage, self.current)
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
 

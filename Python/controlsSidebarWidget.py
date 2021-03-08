@@ -20,6 +20,7 @@ class ControlsSidebarWidget(QWidget):
         self.window = parent.window
         self.controlsWidget = self.centralWidget.controlsWidget
         self.gui = self.centralWidget.gui
+        self.interface = self.window.interface
 
         # Defines placement and size of control panel
         self.left = self.gui.screenResolution[0] - self.centralWidget.panel_width
@@ -61,7 +62,7 @@ class ControlsSidebarWidget(QWidget):
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
         """
-        y_pos = 80 * self.gui.pixel_scale_ratio[1] + 1
+        y_pos = 85 * self.gui.pixel_scale_ratio[1] + 1
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it
@@ -115,5 +116,12 @@ class ControlsSidebarWidget(QWidget):
         self.last_packet = self.window.last_packet
         if self.last_packet:
             for board in self.board_objects:
-                ## TODO: update board based on name with right values
-                board.update(self.last_packet["e_batt"], self.last_packet["i_batt"], self.last_packet["STATE"], False, self.last_packet["timestamp"], self.last_packet["adc_rate"], self.last_packet["telem_rate"]) # no flash state yet
+                board_name = board.name
+                prefix = self.interface.getPrefix(board_name)
+                
+                if board_name == "Flight Computer":
+                    board.update(self.last_packet[prefix+"e_batt"], 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt
+                elif board_name == "Black Box":
+                    board.update(0, 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt, no e_batt
+                else:
+                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet

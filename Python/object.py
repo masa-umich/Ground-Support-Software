@@ -27,7 +27,7 @@ class BaseObject:
                  serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+                 long_name_label_rows: int = 1, long_name_visible: bool = True, serial_number_visible: bool = True):
         """
         Initializer for Solenoid
 
@@ -57,11 +57,16 @@ class BaseObject:
         self.widget_parent = parent  # Important for drawing icon
         self.central_widget = self.widget_parent.centralWidget
         self.gui = self.widget_parent.gui
+
+        # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         if _id is not None:
             self._id = _id
+            self.widget_parent.last_object_id = max(self.widget_parent.last_object_id, self._id)
         else:
-            # FIXME: This causes problems when data is loaded because objects can be deleted and have the same id set
-            self._id = len(self.widget_parent.object_list)  # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
+            self._id = self.widget_parent.last_object_id + 1
+            self.widget_parent.last_object_id = self._id
+
+
         self.position = position
         # Have to scale it, not sure if this is best location
         self.position.setX(self.position.x() * self.gui.pixel_scale_ratio[0])
@@ -79,22 +84,27 @@ class BaseObject:
         self.is_being_dragged = is_being_dragged
         self.locked = locked
         self.position_locked = position_locked
-        self.context_menu = QMenu(self.widget_parent)
+        self.edit_context_menu = QMenu(self.widget_parent)
+        self.run_context_menu = QMenu(self.widget_parent)
         self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
         self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                            is_vertical=False, font_size=long_name_label_font_size,
                                            text=self.long_name, local_pos=long_name_label_local_pos,
-                                           position_string=long_name_label_pos, rows=long_name_label_rows)
+                                           position_string=long_name_label_pos, rows=long_name_label_rows,
+                                           is_visible=long_name_visible)
 
         self.serial_number_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
                                             is_vertical=False, font_size=serial_number_label_font_size,
                                             text=self.serial_number, local_pos=serial_number_label_local_pos,
-                                            position_string=serial_number_label_pos)
+                                            position_string=serial_number_label_pos,is_visible=serial_number_visible)
 
         self.anchor_points = []
 
         self._initAnchorPoints()
+        self.editContextMenuItems = ["Delete Object"]
+        self.runContextMenuItems = []
         self._initContextMenu()
+        self._initToolTip()
 
     def _initAnchorPoints(self):
         """
@@ -114,10 +124,23 @@ class BaseObject:
         Initialize is an odd work to use, simply just sets the actions the context menu will contain
         """
 
-        # Add quitAction
-        self.context_menu.addAction("Delete Object")
+        for action in self.editContextMenuItems:
+            self.edit_context_menu.addAction(action)
+        for action in self.runContextMenuItems:
+            self.run_context_menu.addAction(action)
+
         # Connect Context menu to button right click
         self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
+
+    def _initToolTip(self):
+        """
+        Initialize the font for the tooltip
+        """
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSizeF(12 * self.gui.font_scale_ratio)
+        QToolTip.setFont(font)
 
     """----------------------------------------------------------------------------------------------------------------
     GETTERS and SETTERS
@@ -312,7 +335,8 @@ class BaseObject:
 
         # Move the object and all the shit connected to it
         self.button.move(point)
-        self.context_menu.move(point)
+        self.edit_context_menu.move(point)
+        self.run_context_menu.move(point)
         self.position = point
         self.updateAnchorPoints()
         self.long_name_label.moveToPosition()
@@ -395,16 +419,18 @@ class BaseObject:
         """
         Handler for context menu. These menus hand-off data plotting to plot windows
         :param event: default event from pyqt
-        :return:
+        :return: action: passes the action to potential overridden methods to handle non default cases
         """
         # If window is in edit mode
         if self.central_widget.is_editing:
-            action = self.context_menu.exec_(self.button.mapToGlobal(event))
+            action = self.edit_context_menu.exec_(self.button.mapToGlobal(event))
+        else:
+            action = self.run_context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
-            if action is not None:
-                if action.text() == "Delete Object":
-                    self.widget_parent.deleteObject(self)
+        if action is not None:
+            if action.text() == "Delete Object":
+                self.widget_parent.deleteObject(self)
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []
@@ -419,6 +445,8 @@ class BaseObject:
         #     menu.addAction(self.plotMenuActions[-1])
         #
         # menu.exec_(self.button.mapToGlobal(event))
+
+        return action
 
     """----------------------------------------------------------------------------------------------------------------
    File save and Loading

@@ -19,7 +19,7 @@ import os
 import sys
 from datetime import datetime
 import time
-from hotfire_packet import ECParse
+#from hotfire_packet import ECParse
 import queue
 
 # init variables
@@ -32,7 +32,7 @@ threads = []
 command_queue = queue.Queue()
 
 # initialize parser
-parser = ECParse()
+#parser = TelemParse()
 
 # make data folder
 if not os.path.exists("data/" + starttime + "/"):
@@ -162,3 +162,4 @@ if __name__ == '__main__':
     timerThread.daemon = True
     timerThread.start()
     app.run_server(debug=True)
+    #app.run_server(debug=False, host='0.0.0.0')
