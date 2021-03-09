@@ -1,17 +1,14 @@
 import traceback
 import sys
 
-from s2Interface import S2_Interface
-from binary_parser import BinaryParser
-
 
 class BinaryParser:
     """
     Converts flash binaries into CSV files
     """
 
-    def __init__(self):
-        self.interface = S2_Interface()
+    def __init__(self, interface):
+        self.interface = interface
 
         self.dataframe = {}
         for channel in self.interface.channels:
@@ -75,7 +72,8 @@ class BinaryParser:
 
 
 if __name__ == "__main__":
-    binparse = BinaryParser()
+    from s2Interface import S2_Interface
+    binparse = BinaryParser(interface = S2_Interface())
 
     args = len(sys.argv)
     if args == 3:

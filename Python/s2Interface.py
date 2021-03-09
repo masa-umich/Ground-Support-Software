@@ -33,7 +33,6 @@ class S2_Interface:
         self.board_parser   = [None, FlightComputer(), None, PressurizationController(), None, None] # Maps board to associated packet parser
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
-        self.binparse = BinaryParser()
 
         # init valves and motors
         self.num_valves = [0]*len(self.board_parser)
@@ -54,6 +53,9 @@ class S2_Interface:
                     name = str(prefix+item)
                     self.channels.append(name)
                     self.units[name] = parser.units[item]
+        
+        # init binary parser
+        self.binparse = BinaryParser(interface=self)
 
     ## TODO: add close function
     ## TODO: add write function
