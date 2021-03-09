@@ -57,12 +57,7 @@ class Server(QtWidgets.QMainWindow):
         self.dataframe["press.vlv3.en"] = 1
 
         # init csv header
-        self.header = "Time,"
-        for channel in self.interface.channels:
-            self.header += "%s (%s)," % (channel,
-                                         self.interface.units[channel])
-        self.header += "\n"
-
+        self.header = "Time," + self.interface.get_header()
         self.open_log(self.starttime)  # start initial run
 
         # window layout
