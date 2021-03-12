@@ -85,8 +85,25 @@ class Server(QtWidgets.QMainWindow):
         self.data_box.setReadOnly(True)
         self.data_box.setLineWrapMode(QTextEdit.NoWrap)
 
+        command_widget = QWidget()
+        command_widget_layout = QVBoxLayout()
+        command_widget.setLayout(command_widget_layout)
+
+        command_line_widget = QWidget()
+        command_line_layout = QHBoxLayout()
+        command_line_widget.setLayout(command_line_layout)
+        self.command_line = QLineEdit()
+        self.command_line.returnPressed.connect(self.command_line_send)
+        self.command_line.setPlaceholderText("Command line interface. Type \"help\" for info.")
+        self.board_dropdown = QComboBox()
+        self.board_dropdown.addItems(["Engine Controller", "Flight Computer", "Pressurization Controller", "Recovery Controller", "GSE Controller"])
+        command_line_layout.addWidget(self.command_line)
+        command_line_layout.addWidget(self.board_dropdown)
+
         self.command_textedit = QTextEdit()
         self.command_textedit.setReadOnly(True)
+        command_widget_layout.addWidget(command_line_widget)
+        command_widget_layout.addWidget(self.command_textedit)
 
         self.data_table = QTableWidget()
         self.data_table.setRowCount(self.num_items)
@@ -108,7 +125,7 @@ class Server(QtWidgets.QMainWindow):
 
         tab.addTab(self.log_box, "Server Log")
         tab.addTab(packet_widget, "Packet Log")
-        tab.addTab(self.command_textedit, "Command Log")
+        tab.addTab(command_widget, "Command Line")
         # top_layout.addWidget(tab, 2, 0) # no parrot
         top_layout.addWidget(tab, 2, 0, 1, 2)
 
@@ -168,7 +185,7 @@ class Server(QtWidgets.QMainWindow):
         quit_action.triggered.connect(self.exit)
         file_menu.addAction(quit_action)
 
-    def send_to_log(self, textedit: QTextEdit, text: str):
+    def send_to_log(self, textedit: QTextEdit, text: str, timestamp: bool = True):
         """Sends a message to a log.
         (should work from any thread but it throws a warning after the first attempt)
         (also it very rarely breaks)
@@ -176,13 +193,17 @@ class Server(QtWidgets.QMainWindow):
         Args:
             textedit (QTextEdit): Text box to send to
             text (str): Text to write
+            timestamp (bool): add timestamp
         """
         # TODO: Sort this out
 
         time_obj = datetime.now().time()
         time = "<{:02d}:{:02d}:{:02d}> ".format(
             time_obj.hour, time_obj.minute, time_obj.second)
-        textedit.append(time + text)
+        if timestamp:
+            textedit.append(time + text)
+        else:
+            textedit.append(text)
         if textedit is self.log_box:
             self.server_log.write(time + text + "\n")
 
@@ -353,6 +374,41 @@ class Server(QtWidgets.QMainWindow):
         """Handler for closeEvent at window close"""
 
         self.exit()
+
+    def command_line_send(self):
+        commands = list(self.interface.get_cmd_names_dict().keys())
+        
+        cmd_str = self.command_line.text().split(" ")
+        addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
+        cmd = cmd_str[0].lower()
+        args = cmd_str[1:]
+
+        if cmd in commands:
+            selected_cmd = self.interface.get_cmd_names_dict()[cmd]
+            cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
+
+            if sum([a.isnumeric() for a in args]) == len(cmd_args):
+                cmd_dict = {
+                    "function_name": cmd,
+                    "target_board_addr": addr,
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [float(a) for a in args if a.isnumeric()]
+                }
+                print(cmd_dict)
+                self.command_queue.put(cmd_dict)
+        
+        elif cmd == "help":
+            if len(args) == 0:
+                self.send_to_log(self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n", timestamp=False)
+                self.send_to_log(self.command_textedit, "Available commands:\n%s\n" % commands, timestamp=False)
+                self.send_to_log(self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
+            elif args[0] in commands:
+                selected_cmd = self.interface.get_cmd_names_dict()[args[0]]
+                cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
+                self.send_to_log(self.command_textedit, "Help for: %s (%s)" % (args[0], selected_cmd), timestamp=False)
+                self.send_to_log(self.command_textedit, "Args: (arg, format, xmitscale (IGNORE THIS))\n%s" % cmd_args, timestamp=False)
+        
+        self.command_line.clear()
 
     # get data formatted for csv
     def get_logstring(self):

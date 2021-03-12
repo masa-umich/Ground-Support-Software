@@ -117,15 +117,17 @@ class ControlsWindow(QMainWindow):
         # Run -> Add Boards
         self.addAvionicsAct = QAction('&Add Avionics', self)
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
+        self.addAvionicsAct.setShortcut('Alt+A')
 
         # Run -> Connection Settings
         self.connect = QAction("&Connection Settings", self)
         self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
-        self.connect.setShortcut('Ctrl+S')
+        self.connect.setShortcut('Alt+C')
 
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
+        self.flashsettings.setShortcut('Alt+F')
 
         # Run -> Checkpoint Log
         self.checkpointAct = QAction('&Checkpoint Log', self)
@@ -134,12 +136,13 @@ class ControlsWindow(QMainWindow):
 
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('&Abort Button Settings', self)
-        self.buttonBoxAct.setShortcut('Ctrl+B')
+        self.buttonBoxAct.setShortcut('Alt+B')
         self.buttonBoxAct.triggered.connect(lambda: self.show_window(self.button_box))
 
         # Run -> Limits
         self.limit_action = QAction('&Limits', self)
         self.limit_action.triggered.connect(lambda: self.show_window(self.limits))
+        self.limit_action.setShortcut('Alt+L')
 
         self.ambientizeMenu = QMenu('&Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
