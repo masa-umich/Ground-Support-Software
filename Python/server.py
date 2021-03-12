@@ -37,6 +37,7 @@ class Server(QtWidgets.QMainWindow):
         self.command_queue = queue.Queue()
         self.do_flash_dump = False
         self.dump_addr = None
+        self.database_lock = threading.Lock()
 
         # init logs
         self.server_log = None
@@ -89,6 +90,7 @@ class Server(QtWidgets.QMainWindow):
         command_widget_layout = QVBoxLayout()
         command_widget.setLayout(command_widget_layout)
 
+        # command line interface
         command_line_widget = QWidget()
         command_line_layout = QHBoxLayout()
         command_line_widget.setLayout(command_line_layout)
@@ -105,6 +107,7 @@ class Server(QtWidgets.QMainWindow):
         command_widget_layout.addWidget(command_line_widget)
         command_widget_layout.addWidget(self.command_textedit)
 
+        # telemetry table
         self.data_table = QTableWidget()
         self.data_table.setRowCount(self.num_items)
         self.data_table.setColumnCount(3)
@@ -123,6 +126,7 @@ class Server(QtWidgets.QMainWindow):
         packet_layout.addWidget(self.data_box)
         packet_layout.addWidget(self.data_table)
 
+        # tabs
         tab.addTab(self.log_box, "Server Log")
         tab.addTab(packet_widget, "Packet Log")
         tab.addTab(command_widget, "Command Line")
@@ -258,7 +262,7 @@ class Server(QtWidgets.QMainWindow):
             clientsocket (socket.socket): Socket object of new connection
             addr (str): IP address of client connection
         """
-        print(type(clientsocket))
+        #print(type(clientsocket))
         # client handler
         counter = 0
         last_uuid = None
@@ -315,9 +319,17 @@ class Server(QtWidgets.QMainWindow):
                     else:
                         print("WARNING: Unhandled command")
 
-                    self.dataframe["commander"] = self.commander
-                    self.dataframe["packet_num"] = self.packet_num
-                    data = pickle.dumps(self.dataframe)
+                    
+                    self.database_lock.acquire()
+                    try:
+                        self.dataframe["commander"] = self.commander
+                        self.dataframe["packet_num"] = self.packet_num
+                        data = pickle.dumps(self.dataframe)
+                    except:
+                        data = None
+                    finally:
+                        self.database_lock.release()
+                    
                     clientsocket.sendall(data)
                 counter = 0
             except:  # detect dropped connection
@@ -497,25 +509,31 @@ class Server(QtWidgets.QMainWindow):
                         new_data = self.interface.board_parser[packet_addr].dict
                         prefix = self.interface.getPrefix(
                             self.interface.getName(packet_addr))
-                        for key in new_data.keys():
-                            self.dataframe[str(prefix + key)] = new_data[key]
 
-                        # print(dataframe)
-                        self.dataframe["time"] = datetime.now().timestamp()
-                        for n in range(self.num_items):
-                            key = self.interface.channels[n]
-                            self.data_table.setItem(
-                                n, 1, QTableWidgetItem(str(self.dataframe[key])))
-                            # print([n, key, dataframe[key]])
+                        self.database_lock.acquire()
+                        try:
+                            for key in new_data.keys():
+                                self.dataframe[str(prefix + key)] = new_data[key]
 
-                        self.data_log.write(self.get_logstring() + '\n')
+                            # print(dataframe)
+                            self.dataframe["time"] = datetime.now().timestamp()
+                            for n in range(self.num_items):
+                                key = self.interface.channels[n]
+                                self.data_table.setItem(
+                                    n, 1, QTableWidgetItem(str(self.dataframe[key])))
+                                # print([n, key, dataframe[key]])
+
+                            self.data_log.write(self.get_logstring() + '\n')
+                        finally:
+                            self.database_lock.release()
                     else:
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
                         pass
             self.party_parrot.step()
 
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
+            pass
 
         # update server state
         self.packet_num += 1
