@@ -425,6 +425,7 @@ class Motor(BaseObject):
         # Update labels
         self.set_pos_label.setText(str(self.setPoint)+ "°", False)
         self.current_pos_label.setText(str(self.currentPos) + "°", False)
+        self.pot_pos_label.setText(str(self.potPos) + "°", False)
 
         self.updateToolTip()
 

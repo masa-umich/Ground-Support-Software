@@ -319,6 +319,14 @@ class Server(QtWidgets.QMainWindow):
                         self.open_log(runname)
                         self.send_to_log(
                             self.log_box, "Checkpoint Created: %s" % runname)
+                    elif command["command"] == 7 and self.commander == command["clientid"]: # run autosequence
+                        print(command)
+                        addr = command["args"][0]
+                        lines = command["args"][1]
+                        auto_thread = threading.Thread(target=self.run_auto,
+                                            args=(lines, addr), daemon=True)
+                        auto_thread.start()
+                        
                     else:
                         print("WARNING: Unhandled command")
 
@@ -403,18 +411,16 @@ class Server(QtWidgets.QMainWindow):
             print(cmd_dict)
             self.command_queue.put(cmd_dict)
 
-    def run_auto(self, path: str, addr: int):
-        """Runs an autosequence file
+    def run_auto(self, lines: list, addr: int):
+        """Runs an autosequence
 
         Args:
-            path (str): path to autosequence file
+            lines (list): list of autosequence lines
             addr (int): starting target address
         """
 
         commands = list(self.interface.get_cmd_names_dict().keys())
         try:
-            with open(path) as f:
-                lines = f.read().splitlines()
             for line in lines:
                 cmd_str = line.lower().split(" ")
                 cmd = cmd_str[0]
@@ -428,7 +434,7 @@ class Server(QtWidgets.QMainWindow):
                     addr = args[0]
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
-
+        
         except:
             traceback.print_exc()
 
@@ -467,9 +473,14 @@ class Server(QtWidgets.QMainWindow):
             seq = args[0]
             path = "autos/" + str(seq) + ".txt"
             # create thread to handle auto
-            auto_thread = threading.Thread(target=self.run_auto,
-                                           args=(path, addr), daemon=True)
-            auto_thread.start()
+            try: 
+                with open(path) as f:
+                    lines = f.read().splitlines()
+                auto_thread = threading.Thread(target=self.run_auto,
+                                            args=(lines, addr), daemon=True)
+                auto_thread.start()
+            except:
+                pass
 
         self.command_line.clear()
 
