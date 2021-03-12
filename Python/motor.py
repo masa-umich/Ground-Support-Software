@@ -18,7 +18,7 @@ class Motor(BaseObject):
     object_name = "Motor"
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 70,
-                 height: float = 78, name: str = "Motor",
+                 height: float = 78*1.5, name: str = "Motor",
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Motor', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
@@ -80,6 +80,7 @@ class Motor(BaseObject):
         # State tracks the motor values
         self.setPoint = 0
         self.currentPos = 0
+        self.potPos = 0
         self.currenta = 0
         self.currentb = 0
         self.Pconstant = 0
@@ -107,6 +108,15 @@ class Motor(BaseObject):
         self.current_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.current_pos_label.lower()
 
+        self.pot_pos_title_label = CustomLabel(self.widget_parent,self.gui, text="Pot Pos")
+        self.pot_pos_title_label.setFixedWidth(self.width)
+        self.pot_pos_title_label.lower()
+
+        self.pot_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.currentPos)+ "°")
+        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.pot_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.pot_pos_label.lower()
+
         # Move labels to their positions
         self.moveLabelsToPosition()
 
@@ -125,10 +135,12 @@ class Motor(BaseObject):
         """
         self.set_pos_title_label.move(self.position.x(), self.position.y())
         self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
-        self.current_pos_title_label.move(self.position.x(),
-                                      self.position.y() + self.set_pos_title_label.height() + self.boxHeight + 4 *
-                                      self.gui.pixel_scale_ratio[0])
+        
+        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + 4 * self.gui.pixel_scale_ratio[0])
         self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
+        
+        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + 8 * self.gui.pixel_scale_ratio[0])
+        self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
 
     @overrides
     def draw(self):
@@ -157,6 +169,9 @@ class Motor(BaseObject):
         y3 = self.current_pos_title_label.y()-self.position.y() + self.current_pos_title_label.height()
         y4 = y3 + self.boxHeight
 
+        y5 = self.pot_pos_title_label.y()-self.position.y() + self.pot_pos_title_label.height()
+        y6 = y5 + self.boxHeight
+
         path.moveTo(x1, y1)
         path.lineTo(x2, y1)
         path.lineTo(x2, y2)
@@ -168,6 +183,12 @@ class Motor(BaseObject):
         path.lineTo(x2, y4)
         path.lineTo(x1, y4)
         path.lineTo(x1, y3)
+
+        path.moveTo(x1, y5)
+        path.lineTo(x2, y5)
+        path.lineTo(x2, y6)
+        path.lineTo(x1, y6)
+        path.lineTo(x1, y5)
 
         path.translate(self.position.x(), self.position.y())
 
@@ -251,10 +272,16 @@ class Motor(BaseObject):
 
 
         # Create zero button
-        zeroBtn = QPushButton("Zero Now")
+        zeroBtn = QPushButton("Zero Motor")
         zeroBtn.setDefault(False)
         zeroBtn.setAutoDefault(False)
         zeroBtn.clicked.connect(self.motorDialogZeroButtonClicked)
+
+        # Create zero pot button
+        zeroPotBtn = QPushButton("Zero Pot")
+        zeroPotBtn.setDefault(False)
+        zeroPotBtn.setAutoDefault(False)
+        zeroPotBtn.clicked.connect(self.motorDialogZeroPotButtonClicked)
 
         spinBoxes = [setPointBox,PPointBox,IPointBox,DPointBox]
 
@@ -266,8 +293,10 @@ class Motor(BaseObject):
         label3.setFont(font)
         label4 = QLabel("D Constant:")
         label4.setFont(font)
-        label5 = QLabel("Set Zero:")
+        label5 = QLabel("Zero Motor:")
         label5.setFont(font)
+        label6 = QLabel("Zero Pot:")
+        label6.setFont(font)
 
         # Add to the layout
         formLayout.addRow(label1, setPointBox)
@@ -275,6 +304,7 @@ class Motor(BaseObject):
         formLayout.addRow(label3, IPointBox)
         formLayout.addRow(label4, DPointBox)
         formLayout.addRow(label5, zeroBtn)
+        formLayout.addRow(label6, zeroPotBtn)
 
         # Horizontal button layout
         buttonLayout = QHBoxLayout()
@@ -300,16 +330,33 @@ class Motor(BaseObject):
 
         dialog.show()
 
-    def motorDialogZeroButtonClicked(self):
+    def motorDialogZeroButtonClicked(self): #TODO: update
         """
         Function called when the zero button is clicked in motor dialog
         """
         if self.gui.debug_mode:
-            self.updateValues(self.currenta,self.currentb, 0,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
+            self.updateValues(self.currenta,self.currentb, 0,self.potPos,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
         else:
             if self.avionics_board != "Undefined" and self.channel != "Undefined":
                 cmd_dict = {
                     "function_name": "set_stepper_zero",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel)]
+                }
+                #print(cmd_dict)
+                self.client.command(3, cmd_dict)
+    
+    def motorDialogZeroPotButtonClicked(self): #TODO: update
+        """
+        Function called when the zero pot button is clicked in motor dialog
+        """
+        if self.gui.debug_mode:
+            self.updateValues(self.currenta,self.currentb, self.currentPos,0,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
+        else:
+            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                cmd_dict = {
+                    "function_name": "ambientize_pot",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel)]
@@ -329,7 +376,7 @@ class Motor(BaseObject):
         d = spinBoxes[3].value()
 
         if self.gui.debug_mode:
-            self.updateValues(self.currenta,self.currentb,self.currentPos,setpoint,p,i,d)
+            self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
         else:
             if self.avionics_board != "Undefined" and self.channel != "Undefined":
                 cmd_dict = {
@@ -362,13 +409,14 @@ class Motor(BaseObject):
                 self.client.command(3, cmd_dict)
         dialog.done(2)
 
-    def updateValues(self, currenta, currentb, currPos, setPoint, Pconstant, Iconstant, Dconstant):
+    def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):
         """
         Updates the current motor values from passed data packet values
         """
         self.currenta = currenta
         self.currentb = currentb
         self.currentPos = currPos
+        self.potPos = potPos
         self.setPoint = setPoint
         self.Pconstant = Pconstant
         self.Iconstant = Iconstant
@@ -460,9 +508,13 @@ class Motor(BaseObject):
         self.set_pos_title_label.deleteLater()
         self.current_pos_label.deleteLater()
         self.current_pos_title_label.deleteLater()
+        self.pot_pos_label.deleteLater()
+        self.pot_pos_title_label.deleteLater()
         del self.set_pos_label
         del self.set_pos_title_label
         del self.current_pos_label
         del self.current_pos_title_label
+        del self.pot_pos_label
+        del self.pot_pos_title_label
 
         super().deleteSelf()

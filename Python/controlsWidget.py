@@ -531,11 +531,12 @@ class ControlsWidget(QWidget):
                             curra = self.last_packet[channel_name + ".ia"]
                             currb = self.last_packet[channel_name + ".ib"]
                             pos = self.last_packet[channel_name + ".pos"]
+                            pot_pos = self.last_packet[channel_name + ".pot"]
                             setp = self.last_packet[channel_name + ".set"]
                             p = self.last_packet[channel_name + ".p"]
                             i = self.last_packet[channel_name + ".i"]
                             d = self.last_packet[channel_name + ".d"]
-                            obj.updateValues(curra,currb,pos,setp,p,i,d)
+                            obj.updateValues(curra,currb,pos,pot_pos,setp,p,i,d)
                 if type(obj) == Tank:
                     board = obj.avionics_board
                     if board != "Undefined":
