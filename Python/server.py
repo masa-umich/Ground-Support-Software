@@ -7,6 +7,7 @@ import sys
 import threading
 from datetime import datetime
 import traceback
+import time
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
@@ -96,9 +97,11 @@ class Server(QtWidgets.QMainWindow):
         command_line_widget.setLayout(command_line_layout)
         self.command_line = QLineEdit()
         self.command_line.returnPressed.connect(self.command_line_send)
-        self.command_line.setPlaceholderText("Command line interface. Type \"help\" for info.")
+        self.command_line.setPlaceholderText(
+            "Command line interface. Type \"help\" for info.")
         self.board_dropdown = QComboBox()
-        self.board_dropdown.addItems(["Engine Controller", "Flight Computer", "Pressurization Controller", "Recovery Controller", "GSE Controller"])
+        self.board_dropdown.addItems(["Engine Controller", "Flight Computer",
+                                      "Pressurization Controller", "Recovery Controller", "GSE Controller"])
         command_line_layout.addWidget(self.command_line)
         command_line_layout.addWidget(self.board_dropdown)
 
@@ -262,7 +265,7 @@ class Server(QtWidgets.QMainWindow):
             clientsocket (socket.socket): Socket object of new connection
             addr (str): IP address of client connection
         """
-        #print(type(clientsocket))
+        # print(type(clientsocket))
         # client handler
         counter = 0
         last_uuid = None
@@ -319,7 +322,6 @@ class Server(QtWidgets.QMainWindow):
                     else:
                         print("WARNING: Unhandled command")
 
-                    
                     self.database_lock.acquire()
                     try:
                         self.dataframe["commander"] = self.commander
@@ -329,7 +331,7 @@ class Server(QtWidgets.QMainWindow):
                         data = None
                     finally:
                         self.database_lock.release()
-                    
+
                     clientsocket.sendall(data)
                 counter = 0
             except:  # detect dropped connection
@@ -387,39 +389,88 @@ class Server(QtWidgets.QMainWindow):
 
         self.exit()
 
-    def command_line_send(self):
+    def parse_command(self, cmd, args, addr):
+        selected_cmd = self.interface.get_cmd_names_dict()[cmd]
+        cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
+
+        if sum([a.isnumeric() for a in args]) == len(cmd_args):
+            cmd_dict = {
+                "function_name": cmd,
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [float(a) for a in args if a.isnumeric()]
+            }
+            print(cmd_dict)
+            self.command_queue.put(cmd_dict)
+
+    def run_auto(self, path: str, addr: int):
+        """Runs an autosequence file
+
+        Args:
+            path (str): path to autosequence file
+            addr (int): starting target address
+        """
+
         commands = list(self.interface.get_cmd_names_dict().keys())
-        
-        cmd_str = self.command_line.text().split(" ")
+        try:
+            with open(path) as f:
+                lines = f.read().splitlines()
+            for line in lines:
+                cmd_str = line.lower().split(" ")
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
+
+                if cmd == "delay":  # delay time in ms
+                    print("delay %s" % args[0])
+                    time.sleep(float(args[0])/1000)
+                elif cmd == "set_addr":  # set target addr
+                    print("set_addr %s" % args[0])
+                    addr = args[0]
+                elif cmd in commands:  # handle commands
+                    self.parse_command(cmd, args, addr)
+
+        except:
+            traceback.print_exc()
+
+    def command_line_send(self):
+        """Processes command line interface"""
+
+        commands = list(self.interface.get_cmd_names_dict().keys())
+
+        cmd_str = self.command_line.text().lower().split(" ")
         addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
-        cmd = cmd_str[0].lower()
+        cmd = cmd_str[0]
         args = cmd_str[1:]
 
         if cmd in commands:
-            selected_cmd = self.interface.get_cmd_names_dict()[cmd]
-            cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
+            self.parse_command(cmd, args, addr)
 
-            if sum([a.isnumeric() for a in args]) == len(cmd_args):
-                cmd_dict = {
-                    "function_name": cmd,
-                    "target_board_addr": addr,
-                    "timestamp": int(datetime.now().timestamp()),
-                    "args": [float(a) for a in args if a.isnumeric()]
-                }
-                print(cmd_dict)
-                self.command_queue.put(cmd_dict)
-        
         elif cmd == "help":
             if len(args) == 0:
-                self.send_to_log(self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n", timestamp=False)
-                self.send_to_log(self.command_textedit, "Available commands:\n%s\n" % commands, timestamp=False)
-                self.send_to_log(self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n", timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "Available commands:\n%s\n" % commands, timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "To run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n", timestamp=False)
             elif args[0] in commands:
                 selected_cmd = self.interface.get_cmd_names_dict()[args[0]]
                 cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
-                self.send_to_log(self.command_textedit, "Help for: %s (%s)" % (args[0], selected_cmd), timestamp=False)
-                self.send_to_log(self.command_textedit, "Args: (arg, format, xmitscale (IGNORE THIS))\n%s" % cmd_args, timestamp=False)
-        
+                self.send_to_log(self.command_textedit, "Help for: %s (%s)" % (
+                    args[0], selected_cmd), timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "Args: (arg, format, xmitscale (IGNORE THIS))\n%s" % cmd_args, timestamp=False)
+
+        elif cmd == "auto":  # run an auto sequence
+            seq = args[0]
+            path = "autos/" + str(seq) + ".txt"
+            # create thread to handle auto
+            auto_thread = threading.Thread(target=self.run_auto,
+                                           args=(path, addr), daemon=True)
+            auto_thread.start()
+
         self.command_line.clear()
 
     # get data formatted for csv
@@ -502,7 +553,7 @@ class Server(QtWidgets.QMainWindow):
                         raw_packet_size = len(raw_packet)
                         self.packet_size_label.setText(
                             "Last Packet Size: %s" % raw_packet_size)
-                        # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size) 
+                        # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
                         # disabled to stop server logs becoming massive, see just below send_to_log
 
                         # parse packet and aggregate
@@ -513,7 +564,8 @@ class Server(QtWidgets.QMainWindow):
                         self.database_lock.acquire()
                         try:
                             for key in new_data.keys():
-                                self.dataframe[str(prefix + key)] = new_data[key]
+                                self.dataframe[str(
+                                    prefix + key)] = new_data[key]
 
                             # print(dataframe)
                             self.dataframe["time"] = datetime.now().timestamp()
@@ -532,7 +584,7 @@ class Server(QtWidgets.QMainWindow):
             self.party_parrot.step()
 
         except:
-            #traceback.print_exc()
+            # traceback.print_exc()
             pass
 
         # update server state

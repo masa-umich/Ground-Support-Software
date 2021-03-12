@@ -1,0 +1,14 @@
+# test auto sequence
+
+# command selected board
+set_vlv 4 1
+delay 1000
+set_vlv 4 0
+
+# change target address
+set_addr 1
+
+# command new board
+set_vlv 4 1
+delay 1000
+set_vlv 4 0
