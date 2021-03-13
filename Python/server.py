@@ -421,6 +421,36 @@ class Server(QtWidgets.QMainWindow):
             print(cmd_dict)
             self.command_queue.put(cmd_dict)  # add command to queue
 
+    def unpack_auto(self, command_list: list, i: int = 0):
+        commands = list(self.interface.get_cmd_names_dict().keys())
+        try:
+            # unpack loops and compile into single sequence
+            constructed = []
+            loop = []
+            loop_len = 0
+            #in_loop = False
+            while i < len(command_list):  # loop parsing
+                line = command_list[i]
+                cmd = line[0]
+                args = line[1:]
+
+                if cmd == "loop":  # start loop
+                    loop_len = int(args[0])
+                    #in_loop = True
+                    (loop, i) = self.unpack_auto(command_list, i+1)
+                    constructed += (loop * loop_len)
+                elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
+                    constructed.append(line)
+                elif cmd == "end_loop":  # stop loop and add to sequence
+                    return (constructed, i)
+
+                
+                i+=1
+            return constructed
+        except:
+            traceback.print_exc()
+
+    
     def run_auto(self, lines: list, addr: int):
         """Runs an autosequence
 
@@ -428,33 +458,15 @@ class Server(QtWidgets.QMainWindow):
             lines (list): list of autosequence lines
             addr (int): starting target address
         """
+
         commands = list(self.interface.get_cmd_names_dict().keys())
-
         try:
-            # unpack loops and compile into single sequence
-            constructed = []
-            loop = []
-            loop_len = 0
-            in_loop = False
+            command_list = []
             for line in lines:  # loop parsing
-                cmd_str = line.lstrip().lower().split(" ")
-                cmd = cmd_str[0]
-                args = cmd_str[1:]
+                command_list.append(line.lstrip().lower().split(" "))
 
-                if cmd == "loop":  # start loop
-                    loop = []
-                    loop_len = int(args[0])
-                    in_loop = True
-                elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
-                    if in_loop:
-                        loop.append(cmd_str)
-                    else:
-                        constructed.append(cmd_str)
-                elif cmd == "end_loop":  # stop loop and add to sequence
-                    in_loop = False
-                    # flatten the loop add to sequence
-                    constructed += (loop * loop_len)
-
+            constructed = self.unpack_auto(command_list)
+            print(constructed)
             for cmd_str in constructed:  # run auto
                 cmd = cmd_str[0]
                 args = cmd_str[1:]

@@ -22,10 +22,15 @@ DELAY 1000
 set_vlv 4 0
 
 # You can also do loops
-# No nesting allowed!!!!!
-loop 6
-    set_vlv 8 1
-    delay 1000
-    set_vlv 8 0
-    delay 500
+# Nesting allowed!
+loop 3
+    delay 5000
+    loop 2
+        set_vlv 1 1
+        delay 500
+        set_vlv 1 0
+        delay 500
+    end_loop
 end_loop
+
+delay 1
