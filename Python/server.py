@@ -421,7 +421,18 @@ class Server(QtWidgets.QMainWindow):
             print(cmd_dict)
             self.command_queue.put(cmd_dict)  # add command to queue
 
-    def unpack_auto(self, command_list: list, i: int = 0):
+    def parse_auto(self, command_list: list, i: int = 0):
+        """Recursive autosequence parser
+
+        Args:
+            command_list (list): List of autosequence commands
+            i (int, optional): Index in autosequence. Defaults to 0.
+
+        Returns:
+            list: unrolled autosequence or loop
+            int: ending index in autosequence or loop
+        """
+
         commands = list(self.interface.get_cmd_names_dict().keys())
         try:
             # unpack loops and compile into single sequence
@@ -437,16 +448,15 @@ class Server(QtWidgets.QMainWindow):
                 if cmd == "loop":  # start loop
                     loop_len = int(args[0])
                     #in_loop = True
-                    (loop, i) = self.unpack_auto(command_list, i+1)
+                    (loop, i) = self.parse_auto(command_list, i+1)
                     constructed += (loop * loop_len)
                 elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
                     constructed.append(line)
                 elif cmd == "end_loop":  # stop loop and add to sequence
                     return (constructed, i)
 
-                
                 i+=1
-            return constructed
+            return (constructed, i)
         except:
             traceback.print_exc()
 
@@ -465,8 +475,8 @@ class Server(QtWidgets.QMainWindow):
             for line in lines:  # loop parsing
                 command_list.append(line.lstrip().lower().split(" "))
 
-            constructed = self.unpack_auto(command_list)
-            print(constructed)
+            (constructed, _) = self.parse_auto(command_list)
+            #print(constructed)
             for cmd_str in constructed:  # run auto
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
