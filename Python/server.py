@@ -425,7 +425,7 @@ class Server(QtWidgets.QMainWindow):
             loop = []
             loop_len = 0;
             in_loop = False
-            for line in lines:
+            for line in lines: # loop parsing
                 cmd_str = line.lower().split(" ")
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
@@ -443,12 +443,12 @@ class Server(QtWidgets.QMainWindow):
                     in_loop = False
                     constructed += (loop * loop_len)
 
-            for cmd_str in constructed:
+            for cmd_str in constructed: # run auto
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
 
                 if cmd == "delay":  # delay time in ms
-                    print("delay %s" % args[0])
+                    print("delay %s ms" % args[0])
                     time.sleep(float(args[0])/1000)
                 elif cmd == "set_addr":  # set target addr
                     print("set_addr %s" % args[0])

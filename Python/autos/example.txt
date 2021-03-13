@@ -1,23 +1,32 @@
 # test auto sequence
 
-# command selected board
+# By default it will send commands to the board selected in the server
+# Or start with a set_addr statement like this:
+# set_addr 2
 set_vlv 4 1
+
+# You can add delays (in ms)
 delay 1000
 set_vlv 4 0
+set_stepper_pos 1 360
 
-# change target address
+# Changing the target address
 set_addr 1
 
-# commanding the new board
+# Commanding the new board
 set_vlv 4 1
-delay 1000
+
+# Commands are case insensitive
+DELAY 1000
 set_vlv 4 0
 
-# you can also do loops
-# no nesting allowed
+# You can also do loops
+# No nesting allowed!!!!!
 loop 6
+
 set_vlv 8 1
 delay 1000
 set_vlv 8 0
 delay 500
+
 end_loop
