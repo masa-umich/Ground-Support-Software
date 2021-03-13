@@ -418,11 +418,32 @@ class Server(QtWidgets.QMainWindow):
             lines (list): list of autosequence lines
             addr (int): starting target address
         """
-
         commands = list(self.interface.get_cmd_names_dict().keys())
+        
         try:
+            constructed = []
+            loop = []
+            loop_len = 0;
+            in_loop = False
             for line in lines:
                 cmd_str = line.lower().split(" ")
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
+
+                if cmd == "loop":
+                    loop = []
+                    loop_len = int(args[0])
+                    in_loop = True
+                elif cmd in (commands + ["set_addr", "delay"]):
+                    if in_loop:
+                        loop.append(cmd_str)
+                    else:
+                        constructed.append(cmd_str)
+                elif cmd == "end_loop":
+                    in_loop = False
+                    constructed += (loop * loop_len)
+
+            for cmd_str in constructed:
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
 

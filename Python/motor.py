@@ -416,7 +416,7 @@ class Motor(BaseObject):
         self.currenta = currenta
         self.currentb = currentb
         self.currentPos = currPos
-        self.potPos = potPos
+        self.potPos = -potPos
         self.setPoint = setPoint
         self.Pconstant = Pconstant
         self.Iconstant = Iconstant
