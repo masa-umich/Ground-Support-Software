@@ -319,14 +319,15 @@ class Server(QtWidgets.QMainWindow):
                         self.open_log(runname)
                         self.send_to_log(
                             self.log_box, "Checkpoint Created: %s" % runname)
-                    elif command["command"] == 7 and self.commander == command["clientid"]: # run autosequence
+                    # run autosequence
+                    elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
                         addr = command["args"][0]
                         lines = command["args"][1]
                         auto_thread = threading.Thread(target=self.run_auto,
-                                            args=(lines, addr), daemon=True)
+                                                       args=(lines, addr), daemon=True)
                         auto_thread.start()
-                        
+
                     else:
                         print("WARNING: Unhandled command")
 
@@ -397,10 +398,19 @@ class Server(QtWidgets.QMainWindow):
 
         self.exit()
 
-    def parse_command(self, cmd, args, addr):
+    def parse_command(self, cmd: str, args: list, addr: int):
+        """Parses a command and compiles the command dict.
+
+        Args:
+            cmd (str): Command
+            args (list): List of command arguments
+            addr (int): Target addr
+        """
+
         selected_cmd = self.interface.get_cmd_names_dict()[cmd]
         cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
 
+        # make sure it has the right number of args
         if sum([a.isnumeric() for a in args]) == len(cmd_args):
             cmd_dict = {
                 "function_name": cmd,
@@ -409,7 +419,7 @@ class Server(QtWidgets.QMainWindow):
                 "args": [float(a) for a in args if a.isnumeric()]
             }
             print(cmd_dict)
-            self.command_queue.put(cmd_dict)
+            self.command_queue.put(cmd_dict)  # add command to queue
 
     def run_auto(self, lines: list, addr: int):
         """Runs an autosequence
@@ -419,31 +429,33 @@ class Server(QtWidgets.QMainWindow):
             addr (int): starting target address
         """
         commands = list(self.interface.get_cmd_names_dict().keys())
-        
+
         try:
+            # unpack loops and compile into single sequence
             constructed = []
             loop = []
-            loop_len = 0;
+            loop_len = 0
             in_loop = False
-            for line in lines: # loop parsing
-                cmd_str = line.lower().split(" ")
+            for line in lines:  # loop parsing
+                cmd_str = line.lstrip().lower().split(" ")
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
 
-                if cmd == "loop":
+                if cmd == "loop":  # start loop
                     loop = []
                     loop_len = int(args[0])
                     in_loop = True
-                elif cmd in (commands + ["set_addr", "delay"]):
+                elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
                     if in_loop:
                         loop.append(cmd_str)
                     else:
                         constructed.append(cmd_str)
-                elif cmd == "end_loop":
+                elif cmd == "end_loop":  # stop loop and add to sequence
                     in_loop = False
+                    # flatten the loop add to sequence
                     constructed += (loop * loop_len)
 
-            for cmd_str in constructed: # run auto
+            for cmd_str in constructed:  # run auto
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
 
@@ -455,7 +467,7 @@ class Server(QtWidgets.QMainWindow):
                     addr = args[0]
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
-        
+
         except:
             traceback.print_exc()
 
@@ -493,12 +505,14 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "auto":  # run an auto sequence
             seq = args[0]
             path = "autos/" + str(seq) + ".txt"
-            # create thread to handle auto
-            try: 
+
+            try:
                 with open(path) as f:
-                    lines = f.read().splitlines()
+                    lines = f.read().splitlines()  # read file
+
+                # create thread to handle auto
                 auto_thread = threading.Thread(target=self.run_auto,
-                                            args=(lines, addr), daemon=True)
+                                               args=(lines, addr), daemon=True)
                 auto_thread.start()
             except:
                 pass
