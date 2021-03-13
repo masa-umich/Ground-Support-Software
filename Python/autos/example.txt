@@ -17,6 +17,9 @@ set_addr 1
 # Commanding the new board
 set_vlv 4 1
 
+# Call other autos
+auto sub
+
 # Commands are case insensitive
 DELAY 1000
 set_vlv 4 0
@@ -32,5 +35,3 @@ loop 3
         delay 500
     end_loop
 end_loop
-
-delay 1

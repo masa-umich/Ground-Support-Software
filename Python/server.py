@@ -452,12 +452,22 @@ class Server(QtWidgets.QMainWindow):
                     constructed += (loop * loop_len)
                 elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
                     constructed.append(line)
+                elif cmd == "auto":
+                    seq = args[0]
+                    path = "autos/" + str(seq) + ".txt"
+                    with open(path) as f:
+                        new_lines = f.read().splitlines()
+                    auto = []
+                    for new_line in new_lines:  # loop parsing
+                        auto.append(new_line.lstrip().lower().split(" "))
+                    constructed += self.parse_auto(auto)[0]
                 elif cmd == "end_loop":  # stop loop and add to sequence
                     return (constructed, i)
 
                 i+=1
             return (constructed, i)
         except:
+            return ([], i)
             traceback.print_exc()
 
     
@@ -477,6 +487,9 @@ class Server(QtWidgets.QMainWindow):
 
             (constructed, _) = self.parse_auto(command_list)
             #print(constructed)
+            if len(constructed) == 0:
+                self.send_to_log(
+                    self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
             for cmd_str in constructed:  # run auto
                 cmd = cmd_str[0]
                 args = cmd_str[1:]
