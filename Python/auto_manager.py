@@ -33,7 +33,8 @@ class LineTextWidget(QtWidgets.QFrame):
             Also, adjusts the width of the number bar if necessary.
             '''
             # The + 4 is used to compensate for the current line being bold.
-            width = self.fontMetrics().width(str(self.highest_line)) + 4
+            #width = self.fontMetrics().width(str(self.highest_line)) + 4
+            width = int((self.fontMetrics().width(str(self.highest_line)) + 4)*1.5)
             if self.width() != width:
                 self.setFixedWidth(width)
             QtWidgets.QWidget.update(self, *args)
@@ -45,6 +46,9 @@ class LineTextWidget(QtWidgets.QFrame):
             current_block = self.edit.document().findBlock(self.edit.textCursor().position())
 
             painter = QtGui.QPainter(self)
+            font = painter.font()
+            font.setPointSize(12)
+            painter.setFont(font)
 
             line_count = 0
             # Iterate over all text blocks in the document.
@@ -70,7 +74,9 @@ class LineTextWidget(QtWidgets.QFrame):
 
                 # Draw the line number right justified at the y position of the
                 # line. 3 is a magic padding number. drawText(x, y, text).
-                painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
+                #painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
+                painter.drawText(int(self.width() - font_metrics.width(str(line_count))*1.5 - 3), int(round(position.y()) - contents_y + font_metrics.ascent()*1.5), str(line_count))
+
 
                 # Remove the bold style if it was set previously.
                 if bold:
@@ -94,6 +100,11 @@ class LineTextWidget(QtWidgets.QFrame):
         self.edit = QtWidgets.QTextEdit()
         self.edit.setFrameStyle(QtWidgets.QFrame.NoFrame)
         self.edit.setAcceptRichText(False)
+        self.highlighter = Highlighter(self.edit.document())
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setFamily("Consolas")
+        self.edit.setFont(font)
 
         self.number_bar = self.NumberBar()
         self.number_bar.setTextEdit(self.edit)
@@ -124,6 +135,24 @@ class LineTextWidget(QtWidgets.QFrame):
     def setText(self, text: str):
         self.edit.setText(text)
 
+
+class Highlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, parent):
+        super(Highlighter, self).__init__(parent)
+        self.commentFormat = QtGui.QTextCharFormat()
+        self.commentFormat.setForeground(QtGui.QColor(34, 139, 34))
+        self.cmdFormat = QtGui.QTextCharFormat()
+        self.cmdFormat.setForeground(QtCore.Qt.blue)
+
+    def highlightBlock(self, text):
+        stripped = text.lstrip()
+        if stripped.find(' ') != -1:
+            padding = len(text) - len(stripped)
+            self.setFormat(0, padding + stripped.find(" "), self.cmdFormat)
+        else:
+            self.setFormat(0, len(text), self.cmdFormat)
+        if text.find('#') != -1:
+            self.setFormat(text.find("#"), len(text), self.commentFormat)
 
 class AutoManager(QtWidgets.QMainWindow):
     def __init__(self, client=None, *args, **kwargs):
@@ -160,7 +189,7 @@ class AutoManager(QtWidgets.QMainWindow):
             quit = QtGui.QAction("&Quit", options_menu)
             quit.setShortcut("Ctrl+Q")
             quit.triggered.connect(self.exit)
-            options_menu.addAction(self.quit)
+            options_menu.addAction(quit)
             self.is_master = True
         else:
             self.client = client
