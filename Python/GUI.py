@@ -150,6 +150,7 @@ if __name__ == '__main__':
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
         app = QApplication(sys.argv)
+        app.setWindowIcon(QIcon('Images/M_icon.png'))
         gui = GUI()
 
         #timer and tick updates

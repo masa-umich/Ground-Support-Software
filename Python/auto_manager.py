@@ -13,14 +13,31 @@ from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
 from parse_auto import parse_auto
 
+INTERFACE = S2_Interface()
+COMMANDS = list(INTERFACE.get_cmd_names_dict().keys())
+KEYWORDS = ["set_addr", "delay", "loop", "end_loop", "auto"] + COMMANDS
+
+TOOLTIPS = {}
+for cmd in COMMANDS:
+    cmd_id = INTERFACE.get_cmd_names_dict()[cmd]
+    cmd_args = INTERFACE.get_cmd_args_dict()[cmd_id]
+    tip = "<nobr><b>%s</b>" % cmd  
+    for arg in cmd_args:
+        name = arg[0]
+        arg_type = arg[1]
+        tip += " %s<i>(%s)</i>" % (name, arg_type)
+    TOOLTIPS[cmd] = tip + "</nobr>"
+TOOLTIPS["delay"] = "<nobr><b>delay</b> time<i>(int, milliseconds)</i></nobr>"
+TOOLTIPS["set_addr"] = "<nobr><b>set_addr</b> target_addr<i>(int)</i></nobr>"
+TOOLTIPS["loop"] = "<nobr><b>loop</b> num_loops<i>(int)</i></nobr>"
+TOOLTIPS["end_loop"] = "<nobr><b>end_loop</b></nobr>"
+TOOLTIPS["auto"] = "<nobr><b>auto</b> auto_name<i>(str)</i></nobr>"
 
 class DictionaryCompleter(QtGui.QCompleter):
     insertText = QtCore.pyqtSignal(str)
 
     def __init__(self, keywords=None, parent=None):
-        interface = S2_Interface()
-        commands = list(interface.get_cmd_names_dict().keys())
-        keywords = ["set_addr", "delay", "loop", "end_loop"] + commands
+        keywords = KEYWORDS
         QtGui.QCompleter.__init__(self, keywords, parent)
         self.activated.connect(self.changeCompletion)
 
@@ -65,7 +82,16 @@ class AutoTextEdit(QtGui.QTextEdit):
         tc = self.textCursor()
         tc.select(QtGui.QTextCursor.WordUnderCursor)
         return tc.selectedText()
-
+    
+    def textUnderMouse(self):
+        oldCur = self.textCursor()
+        textCursor = self.cursorForPosition(self.mapFromGlobal(QtGui.QCursor().pos()))
+        textCursor.select(QtGui.QTextCursor.WordUnderCursor)
+        self.setTextCursor(textCursor)
+        word = self.textCursor().selectedText()
+        self.setTextCursor(oldCur)
+        return word
+    
     @overrides
     def focusInEvent(self, event):
         if self.completer:
@@ -89,6 +115,15 @@ class AutoTextEdit(QtGui.QTextEdit):
         # modifier to complete suggestion inline ctrl-e
         inline = (event.modifiers() == QtCore.Qt.ControlModifier and
                   event.key() == QtCore.Qt.Key_E)
+        
+        help_tip = event.key() == QtCore.Qt.Key_F1
+        if help_tip:
+            #phrase = self.textUnderMouse().lower() # at mouse pointer
+            phrase = self.textUnderCursor().lower() # at text cursor
+            if phrase in KEYWORDS:
+                QtWidgets.QToolTip.showText(QtGui.QCursor().pos(), TOOLTIPS[phrase], self, QtCore.QRect())
+                #print(phrase)
+        
         # if inline completion has been chosen
         if inline:
             # set completion mode as inline
@@ -288,6 +323,7 @@ class AutoManager(QtWidgets.QMainWindow):
         AR = 0.7  # H/W
         self.setFixedWidth(int(AR * base_size))
         self.setFixedHeight(int(base_size))
+        self.setMouseTracking(True)
 
         # menu bar
         main_menu = self.menuBar()
@@ -333,6 +369,7 @@ class AutoManager(QtWidgets.QMainWindow):
 
         self.code_area = LineTextWidget()
         top_layout.addWidget(self.code_area)
+        self.code_area.setMouseTracking(True)
 
         self.run_button = QtWidgets.QPushButton("Execute")
         self.run_button.clicked.connect(self.run)
