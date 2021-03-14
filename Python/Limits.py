@@ -240,6 +240,11 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.client_dialog.client.disconnect()
         app.quit()
         sys.exit()
+
+    def closeEvent(self, event):
+        """Handler for closeEvent at window close"""
+
+        self.exit()
     
     def cycle(self):
         self.widget.cycle()

@@ -12,6 +12,7 @@ from s2Interface import S2_Interface
 from flash import FlashDialog
 from abort_button import AbortButton
 from limits import LimitWindow
+from auto_manager import AutoManager
 
 from overrides import overrides
 import os
@@ -40,6 +41,7 @@ class ControlsWindow(QMainWindow):
         self.flash_dialog = FlashDialog(self.client_dialog.client)
         self.button_box = AbortButton(self.client_dialog.client)
         self.limits = LimitWindow(8, self.client_dialog.client)
+        self.auto_manager = AutoManager(self.client_dialog.client)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -144,6 +146,11 @@ class ControlsWindow(QMainWindow):
         self.limit_action.triggered.connect(lambda: self.show_window(self.limits))
         self.limit_action.setShortcut('Alt+L')
 
+        # Run -> Autosequence Manager
+        self.auto_action = QAction('&Autosequence Manager', self)
+        self.auto_action.triggered.connect(lambda: self.show_window(self.auto_manager))
+        self.auto_action.setShortcut('Alt+S')
+
         self.ambientizeMenu = QMenu('&Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
         self.ambientizeMenu.addAction("Engine Controller")
@@ -183,6 +190,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.buttonBoxAct)
         run_menu.addMenu(self.ambientizeMenu)
         run_menu.addAction(self.limit_action)
+        run_menu.addAction(self.auto_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,

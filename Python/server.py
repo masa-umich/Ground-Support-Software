@@ -9,12 +9,14 @@ from datetime import datetime
 import traceback
 import time
 
+from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
 from party import PartyParrot
 from s2Interface import S2_Interface
+import parse_auto
 
 threading.stack_size(134217728)
 
@@ -317,15 +319,14 @@ class Server(QtWidgets.QMainWindow):
 
                         self.close_log()
                         self.open_log(runname)
-                        self.send_to_log(
-                            self.log_box, "Checkpoint Created: %s" % runname)
+                        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
-                        addr = command["args"][0]
-                        lines = command["args"][1]
+                        target_addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
+                        lines = command["args"][0]
                         auto_thread = threading.Thread(target=self.run_auto,
-                                                       args=(lines, addr), daemon=True)
+                                                       args=(lines, target_addr, True), daemon=True)
                         auto_thread.start()
 
                     else:
@@ -348,8 +349,8 @@ class Server(QtWidgets.QMainWindow):
                     if self.commander == command["clientid"]:
                         self.override_commander()
                     break
-                print("Failed Packet from %s (consecutive: %s)" %
-                      (addr[0], counter+1))
+                #print(addr)
+                print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter+1))
                 counter += 1
         clientsocket.close()
         self.send_to_log(self.log_box, "Closing connection to " + addr[0])
@@ -421,90 +422,47 @@ class Server(QtWidgets.QMainWindow):
             print(cmd_dict)
             self.command_queue.put(cmd_dict)  # add command to queue
 
-    def parse_auto(self, command_list: list, i: int = 0):
-        """Recursive autosequence parser
-
-        Args:
-            command_list (list): List of autosequence commands
-            i (int, optional): Index in autosequence. Defaults to 0.
-
-        Returns:
-            list: unrolled autosequence or loop
-            int: ending index in autosequence or loop
-        """
-
-        commands = list(self.interface.get_cmd_names_dict().keys())
-        try:
-            # unpack loops and compile into single sequence
-            constructed = []
-            loop = []
-            loop_len = 0
-            #in_loop = False
-            while i < len(command_list):  # loop parsing
-                line = command_list[i]
-                cmd = line[0]
-                args = line[1:]
-
-                if cmd == "loop":  # start loop
-                    loop_len = int(args[0])
-                    #in_loop = True
-                    (loop, i) = self.parse_auto(command_list, i+1)
-                    constructed += (loop * loop_len)
-                elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
-                    constructed.append(line)
-                elif cmd == "auto":
-                    seq = args[0]
-                    path = "autos/" + str(seq) + ".txt"
-                    with open(path) as f:
-                        new_lines = f.read().splitlines()
-                    auto = []
-                    for new_line in new_lines:  # loop parsing
-                        auto.append(new_line.lstrip().lower().split(" "))
-                    constructed += self.parse_auto(auto)[0]
-                elif cmd == "end_loop":  # stop loop and add to sequence
-                    return (constructed, i)
-
-                i+=1
-            return (constructed, i)
-        except:
-            return ([], i)
-            traceback.print_exc()
-
     
-    def run_auto(self, lines: list, addr: int):
+    def run_auto(self, lines: list, addr: int, remote: bool = False):
         """Runs an autosequence
 
         Args:
             lines (list): list of autosequence lines
             addr (int): starting target address
+            remote (bool): is a pre-parsed auto from remote client
         """
 
         commands = list(self.interface.get_cmd_names_dict().keys())
-        try:
-            command_list = []
-            for line in lines:  # loop parsing
-                command_list.append(line.lstrip().lower().split(" "))
+        if not remote:
+            try:
+                command_list = []
+                for line in lines:  # loop parsing
+                    command_list.append(line.lstrip().lower().split(" "))
 
-            (constructed, _) = self.parse_auto(command_list)
-            #print(constructed)
-            if len(constructed) == 0:
-                self.send_to_log(
-                    self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
-            for cmd_str in constructed:  # run auto
-                cmd = cmd_str[0]
-                args = cmd_str[1:]
+                (constructed, _) = parse_auto.parse_auto(command_list)
+            except:
+                traceback.print_exc()
+                return
+        else:
+            constructed = lines
+        
+        #print(constructed)
+        if len(constructed) == 0:
+            self.send_to_log(
+                self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
+        for cmd_str in constructed:  # run auto
+            cmd = cmd_str[0]
+            args = cmd_str[1:]
 
-                if cmd == "delay":  # delay time in ms
-                    print("delay %s ms" % args[0])
-                    time.sleep(float(args[0])/1000)
-                elif cmd == "set_addr":  # set target addr
-                    print("set_addr %s" % args[0])
-                    addr = args[0]
-                elif cmd in commands:  # handle commands
-                    self.parse_command(cmd, args, addr)
-
-        except:
-            traceback.print_exc()
+            if cmd == "delay":  # delay time in ms
+                print("delay %s ms" % args[0])
+                time.sleep(float(args[0])/1000)
+            elif cmd == "set_addr":  # set target addr
+                print("set_addr %s" % args[0])
+                addr = args[0]
+            elif cmd in commands:  # handle commands
+                self.parse_command(cmd, args, addr)
+        
 
     def command_line_send(self):
         """Processes command line interface"""
@@ -599,8 +557,10 @@ class Server(QtWidgets.QMainWindow):
         self.command_log.close()
         self.data_log.close()
 
+    @overrides
     def update(self):
         """Main server update loop"""
+        super().update()
 
         try:
             if self.interface.ser.is_open:
@@ -665,7 +625,7 @@ class Server(QtWidgets.QMainWindow):
             self.party_parrot.step()
 
         except:
-            # traceback.print_exc()
+            traceback.print_exc()
             pass
 
         # update server state
@@ -682,7 +642,7 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication.instance()
 
     # initialize application
-    APPID = 'MASA.DataViewer'  # arbitrary string
+    APPID = 'MASA.Server'  # arbitrary string
     if os.name == 'nt':  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
     else:
