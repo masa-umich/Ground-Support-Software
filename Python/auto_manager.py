@@ -1,103 +1,220 @@
 import sys
 import os
 import ctypes
-#import random
-#import json
-from datetime import datetime
+#from datetime import datetime
 import ntpath
 
-import pyqtgraph as pg
+#import pyqtgraph as pg
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
+from overrides import overrides
 
-#from s2Interface import S2_Interface
-#from LedIndicatorWidget import LedIndicator
-from ClientWidget import ClientWidget, ClientDialog
+from s2Interface import S2_Interface
+from ClientWidget import ClientDialog
 from parse_auto import parse_auto
 
+
+class DictionaryCompleter(QtGui.QCompleter):
+    insertText = QtCore.pyqtSignal(str)
+
+    def __init__(self, keywords=None, parent=None):
+        interface = S2_Interface()
+        commands = list(interface.get_cmd_names_dict().keys())
+        keywords = ["set_addr", "delay", "loop", "end_loop"] + commands
+        QtGui.QCompleter.__init__(self, keywords, parent)
+        self.activated.connect(self.changeCompletion)
+
+    def changeCompletion(self, completion):
+        if completion.find("(") != -1:
+            completion = completion[:completion.find("(")]
+        # print(completion)
+        self.insertText.emit(completion)
+
+
+class AutoTextEdit(QtGui.QTextEdit):
+    def __init__(self, *args):
+        # *args to set parent
+        QtGui.QLineEdit.__init__(self, *args)
+        # font=QtGui.QFont()
+        # font.setPointSize(12)
+        # self.setFont(font)
+        self.completer = None
+
+    def setCompleter(self, completer):
+        if self.completer:
+            self.disconnect(self.completer, 0, self, 0)
+        if not completer:
+            return
+
+        completer.setWidget(self)
+        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.completer = completer
+        self.completer.insertText.connect(self.insertCompletion)
+
+    def insertCompletion(self, completion):
+        tc = self.textCursor()
+        extra = (len(completion) -
+                 len(self.completer.completionPrefix()))
+        tc.movePosition(QtGui.QTextCursor.Left)
+        tc.movePosition(QtGui.QTextCursor.EndOfWord)
+        tc.insertText(completion[-extra:])
+        self.setTextCursor(tc)
+
+    def textUnderCursor(self):
+        tc = self.textCursor()
+        tc.select(QtGui.QTextCursor.WordUnderCursor)
+        return tc.selectedText()
+
+    @overrides
+    def focusInEvent(self, event):
+        if self.completer:
+            self.completer.setWidget(self)
+        QtGui.QTextEdit.focusInEvent(self, event)
+
+    @overrides
+    def keyPressEvent(self, event):
+        if self.completer and self.completer.popup() and self.completer.popup().isVisible():
+            if event.key() in (
+                    QtCore.Qt.Key_Enter,
+                    QtCore.Qt.Key_Return,
+                    QtCore.Qt.Key_Escape,
+                    QtCore.Qt.Key_Tab,
+                    QtCore.Qt.Key_Backtab):
+                event.ignore()
+                return
+        # has ctrl-Space been pressed?
+        isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier and
+                      event.key() == QtCore.Qt.Key_Space)
+        # modifier to complete suggestion inline ctrl-e
+        inline = (event.modifiers() == QtCore.Qt.ControlModifier and
+                  event.key() == QtCore.Qt.Key_E)
+        # if inline completion has been chosen
+        if inline:
+            # set completion mode as inline
+            self.completer.setCompletionMode(QtGui.QCompleter.InlineCompletion)
+            completionPrefix = self.textUnderCursor()
+            if (completionPrefix != self.completer.completionPrefix()):
+                self.completer.setCompletionPrefix(completionPrefix)
+            self.completer.complete()
+            # set the current suggestion in the text box
+            self.completer.insertText.emit(self.completer.currentCompletion())
+            # reset the completion mode
+            self.completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+            return
+        if (not self.completer or not isShortcut):
+            pass
+            QtGui.QTextEdit.keyPressEvent(self, event)
+        ctrlOrShift = event.modifiers() in (QtCore.Qt.ControlModifier,
+                                            QtCore.Qt.ShiftModifier)
+        if ctrlOrShift and event.text() == '':
+            return
+        eow = "~!@#$%^&*+{}|:\"<>?,./;'[]\\-="  # end of word
+
+        hasModifier = ((event.modifiers() != QtCore.Qt.NoModifier) and
+                       not ctrlOrShift)
+
+        completionPrefix = self.textUnderCursor()
+        if not isShortcut:
+            if self.completer.popup():
+                self.completer.popup().hide()
+            return
+
+        self.completer.setCompletionPrefix(completionPrefix)
+        popup = self.completer.popup()
+        popup.setCurrentIndex(
+            self.completer.completionModel().index(0, 0))
+        cr = self.cursorRect()
+        cr.setWidth(self.completer.popup().sizeHintForColumn(0)
+                    + self.completer.popup().verticalScrollBar().sizeHint().width())
+        self.completer.complete(cr)  # popup
+
+
+class NumberBar(QtWidgets.QWidget):
+    def __init__(self, *args):
+        QtWidgets.QWidget.__init__(self, *args)
+        self.edit = None
+        # This is used to update the width of the control.
+        # It is the highest line that is currently visibile.
+        self.highest_line = 0
+
+    def setTextEdit(self, edit):
+        self.edit = edit
+
+    def update(self, *args):
+        '''
+        Updates the number bar to display the current set of numbers.
+        Also, adjusts the width of the number bar if necessary.
+        '''
+        # The + 4 is used to compensate for the current line being bold.
+        #width = self.fontMetrics().width(str(self.highest_line)) + 4
+        width = int((self.fontMetrics().width(str(self.highest_line)) + 4)*1.5)
+        if self.width() != width:
+            self.setFixedWidth(width)
+        QtWidgets.QWidget.update(self, *args)
+
+    def paintEvent(self, event):
+        contents_y = self.edit.verticalScrollBar().value()
+        page_bottom = contents_y + self.edit.viewport().height()
+        font_metrics = self.fontMetrics()
+        current_block = self.edit.document().findBlock(self.edit.textCursor().position())
+
+        painter = QtGui.QPainter(self)
+        font = painter.font()
+        font.setPointSize(12)
+        painter.setFont(font)
+
+        line_count = 0
+        # Iterate over all text blocks in the document.
+        block = self.edit.document().begin()
+        while block.isValid():
+            line_count += 1
+
+            # The top left position of the block in the document
+            position = self.edit.document().documentLayout().blockBoundingRect(block).topLeft()
+
+            # Check if the position of the block is out side of the visible
+            # area.
+            if position.y() > page_bottom:
+                break
+
+            # We want the line number for the selected line to be bold.
+            bold = False
+            if block == current_block:
+                bold = True
+                font = painter.font()
+                font.setBold(True)
+                painter.setFont(font)
+
+            # Draw the line number right justified at the y position of the
+            # line. 3 is a magic padding number. drawText(x, y, text).
+            #painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
+            painter.drawText(int(self.width() - font_metrics.width(str(line_count))*1.5 - 3), int(
+                round(position.y()) - contents_y + font_metrics.ascent()*1.5), str(line_count))
+
+            # Remove the bold style if it was set previously.
+            if bold:
+                font = painter.font()
+                font.setBold(False)
+                painter.setFont(font)
+
+            block = block.next()
+
+        self.highest_line = line_count
+        painter.end()
+
+        QtWidgets.QWidget.paintEvent(self, event)
+
+
 class LineTextWidget(QtWidgets.QFrame):
-    class NumberBar(QtWidgets.QWidget):
-        def __init__(self, *args):
-            QtWidgets.QWidget.__init__(self, *args)
-            self.edit = None
-            # This is used to update the width of the control.
-            # It is the highest line that is currently visibile.
-            self.highest_line = 0
-
-        def setTextEdit(self, edit):
-            self.edit = edit
-
-        def update(self, *args):
-            '''
-            Updates the number bar to display the current set of numbers.
-            Also, adjusts the width of the number bar if necessary.
-            '''
-            # The + 4 is used to compensate for the current line being bold.
-            #width = self.fontMetrics().width(str(self.highest_line)) + 4
-            width = int((self.fontMetrics().width(str(self.highest_line)) + 4)*1.5)
-            if self.width() != width:
-                self.setFixedWidth(width)
-            QtWidgets.QWidget.update(self, *args)
-
-        def paintEvent(self, event):
-            contents_y = self.edit.verticalScrollBar().value()
-            page_bottom = contents_y + self.edit.viewport().height()
-            font_metrics = self.fontMetrics()
-            current_block = self.edit.document().findBlock(self.edit.textCursor().position())
-
-            painter = QtGui.QPainter(self)
-            font = painter.font()
-            font.setPointSize(12)
-            painter.setFont(font)
-
-            line_count = 0
-            # Iterate over all text blocks in the document.
-            block = self.edit.document().begin()
-            while block.isValid():
-                line_count += 1
-
-                # The top left position of the block in the document
-                position = self.edit.document().documentLayout().blockBoundingRect(block).topLeft()
-
-                # Check if the position of the block is out side of the visible
-                # area.
-                if position.y() > page_bottom:
-                    break
-
-                # We want the line number for the selected line to be bold.
-                bold = False
-                if block == current_block:
-                    bold = True
-                    font = painter.font()
-                    font.setBold(True)
-                    painter.setFont(font)
-
-                # Draw the line number right justified at the y position of the
-                # line. 3 is a magic padding number. drawText(x, y, text).
-                #painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
-                painter.drawText(int(self.width() - font_metrics.width(str(line_count))*1.5 - 3), int(round(position.y()) - contents_y + font_metrics.ascent()*1.5), str(line_count))
-
-
-                # Remove the bold style if it was set previously.
-                if bold:
-                    font = painter.font()
-                    font.setBold(False)
-                    painter.setFont(font)
-
-                block = block.next()
-
-            self.highest_line = line_count
-            painter.end()
-
-            QtWidgets.QWidget.paintEvent(self, event)
-
-
     def __init__(self, *args):
         QtWidgets.QFrame.__init__(self, *args)
 
-        self.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Sunken)
+        self.setFrameStyle(QtWidgets.QFrame.StyledPanel |
+                           QtWidgets.QFrame.Sunken)
 
-        self.edit = QtWidgets.QTextEdit()
+        self.edit = AutoTextEdit()
+        self.edit.setCompleter(DictionaryCompleter())
         self.edit.setFrameStyle(QtWidgets.QFrame.NoFrame)
         self.edit.setAcceptRichText(False)
         self.highlighter = Highlighter(self.edit.document())
@@ -106,7 +223,7 @@ class LineTextWidget(QtWidgets.QFrame):
         font.setFamily("Consolas")
         self.edit.setFont(font)
 
-        self.number_bar = self.NumberBar()
+        self.number_bar = NumberBar()
         self.number_bar.setTextEdit(self.edit)
 
         hbox = QtWidgets.QHBoxLayout(self)
@@ -154,14 +271,15 @@ class Highlighter(QtGui.QSyntaxHighlighter):
         if text.find('#') != -1:
             self.setFormat(text.find("#"), len(text), self.commentFormat)
 
+
 class AutoManager(QtWidgets.QMainWindow):
     def __init__(self, client=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filename = 'Untitled'
         self.path = None
-        
-        self.setWindowTitle("MASA Script Auto Manager")
+
+        self.setWindowTitle("MASAscript Auto Manager")
         widget = QtWidgets.QWidget()
         self.setCentralWidget(widget)
         top_layout = QtWidgets.QVBoxLayout()
@@ -219,7 +337,7 @@ class AutoManager(QtWidgets.QMainWindow):
         self.run_button = QtWidgets.QPushButton("Execute")
         self.run_button.clicked.connect(self.run)
         top_layout.addWidget(self.run_button)
-    
+
     def run(self):
         print(10)
         lines = self.code_area.getText().splitlines()
@@ -231,17 +349,17 @@ class AutoManager(QtWidgets.QMainWindow):
         print(constructed, i)
         if i > 0:
             self.client.command(7, (constructed,))
-    
+
     def save(self):
         if self.path:
             with open(self.path, "w") as f:
                 f.write(self.code_area.getText())
         else:
             self.saveas()
-    
+
     def saveas(self):
         savename = QtGui.QFileDialog.getSaveFileName(
-            self, 'Save Config', 'autos/'+ self.filename + '.txt', "MASAscript (*.txt)")[0]
+            self, 'Save Config', 'autos/' + self.filename + '.txt', "MASAscript (*.txt)")[0]
         with open(savename, "w") as f:
             f.write(self.code_area.getText())
 
@@ -252,7 +370,7 @@ class AutoManager(QtWidgets.QMainWindow):
             self.code_area.setText(f.read())
             self.filename = ntpath.basename(loadname).split(".")[0]
             self.path = loadname
-    
+
     def closeEvent(self, event):
         """Handler for closeEvent at window close"""
 
