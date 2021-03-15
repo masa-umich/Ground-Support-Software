@@ -375,6 +375,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+    QtWidgets.QApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:

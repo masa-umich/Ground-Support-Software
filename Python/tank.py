@@ -8,6 +8,7 @@ from constants import Constants
 from MathHelper import MathHelper
 from object import BaseObject
 from datetime import datetime
+from LedIndicatorWidget import LedIndicator
 
 
 """
@@ -265,19 +266,35 @@ class Tank(BaseObject):
         dialog.move((self.window.width() - dialog.width()) / 2,
                     (self.window.height() - dialog.height()) / 2)
 
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
+
+        # enable box
+        enable_layout = QHBoxLayout()
+        enable_button = QPushButton("Enable Press")
+        enable_button.setFont(font)
+        enable_button.setDefault(False)
+        enable_button.setAutoDefault(False)
+        enable_button.clicked.connect(lambda: self.setTankStatus(1))
+        disable_button = QPushButton("Disable Press")
+        disable_button.setFont(font)
+        disable_button.setDefault(False)
+        disable_button.setAutoDefault(False)
+        disable_button.clicked.connect(lambda: self.setTankStatus(0))
+        enable_layout.addWidget(enable_button)
+        enable_layout.addWidget(disable_button)
+        verticalLayout.addLayout(enable_layout)
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
         formLayout.setFieldGrowthPolicy(
             QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
         verticalLayout.addLayout(formLayout)
-
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
 
         # Create spin boxes
         setPointBox = QDoubleSpinBox()
@@ -379,6 +396,22 @@ class Tank(BaseObject):
                 }
                 self.client.command(3, cmd_dict)
         dialog.done(2)
+    
+    def setTankStatus(self, status):
+        """
+        Saves the new motor values and sends the commands to the board
+        :param spinBoxes: spin boxes with the values
+        :param dialog: dialog with motor settings
+        """
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            cmd_dict = {
+                "function_name": "set_presstank_status",
+                "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [int(self.channel),int(status)]
+            }
+            self.client.command(3, cmd_dict)
 
     @overrides
     def generateSaveDict(self):

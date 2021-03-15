@@ -377,7 +377,8 @@ class Board(QWidget):
             0: "Manual",
             1: "Armed",
             2: "Run",
-            3: "Abort"
+            3: "Abort",
+            4: "Post"
         }
 
         # Update labels
