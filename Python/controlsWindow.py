@@ -12,6 +12,7 @@ from s2Interface import S2_Interface
 from flash import FlashDialog
 from abort_button import AbortButton
 from limits import LimitWindow
+from auto_manager import AutoManager
 
 from overrides import overrides
 import os
@@ -40,6 +41,7 @@ class ControlsWindow(QMainWindow):
         self.flash_dialog = FlashDialog(self.client_dialog.client)
         self.button_box = AbortButton(self.client_dialog.client)
         self.limits = LimitWindow(8, self.client_dialog.client)
+        self.auto_manager = AutoManager(self.client_dialog.client)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -117,31 +119,39 @@ class ControlsWindow(QMainWindow):
         # Run -> Add Boards
         self.addAvionicsAct = QAction('&Add Avionics', self)
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
+        self.addAvionicsAct.setShortcut('Alt+A')
 
         # Run -> Connection Settings
-        self.connect = QAction("&Connection Settings", self)
+        self.connect = QAction("&Connection", self)
         self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
-        self.connect.setShortcut('Ctrl+S')
+        self.connect.setShortcut('Alt+C')
 
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
+        self.flashsettings.setShortcut('Alt+F')
 
         # Run -> Checkpoint Log
-        self.checkpointAct = QAction('&Checkpoint Log', self)
+        self.checkpointAct = QAction('Checkpoint &Log', self)
         self.checkpointAct.setShortcut('Ctrl+L')
         self.checkpointAct.triggered.connect(self.checkpoint)
 
         # Run -> Abort Button Settings
-        self.buttonBoxAct = QAction('&Abort Button Settings', self)
-        self.buttonBoxAct.setShortcut('Ctrl+B')
+        self.buttonBoxAct = QAction('Abort &Button', self)
+        self.buttonBoxAct.setShortcut('Alt+B')
         self.buttonBoxAct.triggered.connect(lambda: self.show_window(self.button_box))
 
         # Run -> Limits
         self.limit_action = QAction('&Limits', self)
         self.limit_action.triggered.connect(lambda: self.show_window(self.limits))
+        self.limit_action.setShortcut('Alt+L')
 
-        self.ambientizeMenu = QMenu('&Ambientize',self)
+        # Run -> Autosequence Manager
+        self.auto_action = QAction('Auto&sequence Manager', self)
+        self.auto_action.triggered.connect(lambda: self.show_window(self.auto_manager))
+        self.auto_action.setShortcut('Alt+S')
+
+        self.ambientizeMenu = QMenu('Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
         self.ambientizeMenu.addAction("Engine Controller")
         self.ambientizeMenu.addAction("Pressurization Controller")
@@ -151,7 +161,7 @@ class ControlsWindow(QMainWindow):
         menuBar.setNativeMenuBar(True)
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
-        view_menu = menuBar.addMenu('View')
+        #view_menu = menuBar.addMenu('View')
         run_menu = menuBar.addMenu('Run')
 
         # Adds all the file buttons to the file tab
@@ -173,18 +183,19 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-        run_menu.addAction(self.connect)
+        menuBar.addAction(self.connect)
         run_menu.addAction(self.addAvionicsAct)
-        run_menu.addAction(self.flashsettings)
+        menuBar.addAction(self.flashsettings)
         run_menu.addAction(self.checkpointAct)
-        run_menu.addAction(self.buttonBoxAct)
+        menuBar.addAction(self.buttonBoxAct)
         run_menu.addMenu(self.ambientizeMenu)
-        run_menu.addAction(self.limit_action)
+        menuBar.addAction(self.limit_action)
+        menuBar.addAction(self.auto_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
-                      "View": view_menu,
+                      #"View": view_menu,
                       "Run":  run_menu}
         
         self.showMaximized()

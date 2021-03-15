@@ -8,12 +8,12 @@ s2_interface = S2_Interface()
 ports = s2_interface.scan()
 #print(ports)
 
-s2_interface.connect("COM4", 115200, 2)
+s2_interface.connect("COM11", 115200, 2)
 set_vlv = {
     "function_name": "set_vlv",
     "target_board_addr": 3,
     "timestamp": 99,
-    "args": [1, 1]
+    "args": [2, 0]
 }
 
 start = {
@@ -41,7 +41,7 @@ zero_stepper = {
     "function_name": "set_stepper_zero",
     "target_board_addr": 3,
     "timestamp": 103,
-    "args": [1]
+    "args": [0]
 }
 
 set_arm_state = {
@@ -104,8 +104,32 @@ move_stepper = {
     "function_name": "set_stepper_pos",
     "target_board_addr": 3,
     "timestamp": 103,
-    "args": [1, 1800]
+    "args": [0, 1800]
 }
+
+enable_tank = {
+    "function_name": "set_presstank_status",
+    "target_board_addr": 3,
+    "timestamp": 103,
+    "args": [0, 1]
+}
+
+set_mtr_kp = {
+    "function_name": "set_kp",
+    "target_board_addr": 3,
+    "timestamp": 103,
+    "args": [1, 9.69]
+}
+
+ambientize_pot = {
+    "function_name": "ambientize_pot",
+    "target_board_addr": 3,
+    "timestamp": 103,
+    "args": [0]
+}
+
+def test_set_vlv():
+    s2_interface.s2_command(set_vlv)
 
 def test_set_stepper_speed():
     s2_interface.s2_command(set_stepper_speed)
@@ -138,10 +162,10 @@ def test_stepper():
     s2_interface.s2_command(zero_stepper)
     time.sleep(0.1)
     s2_interface.s2_command(move_stepper)
-    time.sleep(2)
-    s2_interface.s2_command(zero_stepper)
-    time.sleep(2)
-    s2_interface.s2_command(move_stepper)
+    # time.sleep(6)
+    # s2_interface.s2_command(zero_stepper)
+    # time.sleep(2)
+    # s2_interface.s2_command(move_stepper)
 
 def test_valve():
     s2_interface.s2_command(set_vlv)
@@ -166,9 +190,20 @@ def test_telem():
             print(s2_interface.parser.dict) # get telem values
             print(s2_interface.parser.units) # get units
 
+def test_enable_tank():
+    s2_interface.s2_command(enable_tank)
+
+def test_set_mtr_kp():
+    s2_interface.s2_command(set_mtr_kp)
+
+def test_ambientize_pot():
+    s2_interface.s2_command(ambientize_pot)
 
 # function calls for tests go here
 
+test_stepper()
+# test_set_vlv()
+# test_ambientize_pot()
 #test_set_control_loop_dur()
 #test_set_state_control()
 print(s2_interface.channels)
