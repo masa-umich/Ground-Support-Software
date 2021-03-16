@@ -1,10 +1,8 @@
 import sys
 import os
 import ctypes
-#from datetime import datetime
 import ntpath
 
-#import pyqtgraph as pg
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from overrides import overrides
@@ -52,9 +50,6 @@ class AutoTextEdit(QtGui.QTextEdit):
     def __init__(self, *args):
         # *args to set parent
         QtGui.QLineEdit.__init__(self, *args)
-        # font=QtGui.QFont()
-        # font.setPointSize(12)
-        # self.setFont(font)
         self.completer = None
 
     def setCompleter(self, completer):

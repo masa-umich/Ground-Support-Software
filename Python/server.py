@@ -464,6 +464,26 @@ class Server(QtWidgets.QMainWindow):
                 self.parse_command(cmd, args, addr)
         
 
+    def getHelp(self, selected_command):
+        commands = list(self.interface.get_cmd_names_dict().keys())
+        keywords = ["set_addr", "delay", "auto"] + commands
+
+        tooltips = {}
+        for cmd in commands:
+            cmd_id = self.interface.get_cmd_names_dict()[cmd]
+            cmd_args = self.interface.get_cmd_args_dict()[cmd_id]
+            tip = "%s" % cmd  
+            for arg in cmd_args:
+                name = arg[0]
+                arg_type = arg[1]
+                tip += " %s(%s)" % (name, arg_type)
+            tooltips[cmd] = tip
+        tooltips["delay"] = "delay time(int, milliseconds)"
+        tooltips["set_addr"] = "set_addr target_addr(int)"
+        tooltips["auto"] = "auto auto_name(str)"
+
+        return tooltips[selected_command]
+
     def command_line_send(self):
         """Processes command line interface"""
 
@@ -488,12 +508,12 @@ class Server(QtWidgets.QMainWindow):
                 self.send_to_log(
                     self.command_textedit, "To run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n", timestamp=False)
             elif args[0] in commands:
-                selected_cmd = self.interface.get_cmd_names_dict()[args[0]]
-                cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
-                self.send_to_log(self.command_textedit, "Help for: %s (%s)" % (
-                    args[0], selected_cmd), timestamp=False)
+                selected_cmd = args[0]
+                cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
-                    self.command_textedit, "Args: (arg, format, xmitscale (IGNORE THIS))\n%s" % cmd_args, timestamp=False)
+                    self.command_textedit, "Help for: %s (%s)" % (selected_cmd), timestamp=False)
+                self.send_to_log(
+                    self.command_textedit, "Args: arg(format)\n%s" % cmd_args, timestamp=False)
 
         elif cmd == "auto":  # run an auto sequence
             seq = args[0]
