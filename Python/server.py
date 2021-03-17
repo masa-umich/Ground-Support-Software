@@ -507,11 +507,11 @@ class Server(QtWidgets.QMainWindow):
                     self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
                 self.send_to_log(
                     self.command_textedit, "To run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n", timestamp=False)
-            elif args[0] in commands:
+            elif args[0] in (["set_addr", "delay", "auto"] + commands):
                 selected_cmd = args[0]
                 cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
-                    self.command_textedit, "Help for: %s (%s)" % (selected_cmd), timestamp=False)
+                    self.command_textedit, "Help for: %s" % selected_cmd, timestamp=False)
                 self.send_to_log(
                     self.command_textedit, "Args: arg(format)\n%s" % cmd_args, timestamp=False)
 

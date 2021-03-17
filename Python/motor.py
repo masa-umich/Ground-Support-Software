@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import time
 from datetime import datetime
 from overrides import overrides
 
@@ -386,6 +387,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(setpoint)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kp",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -393,6 +395,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(p)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_ki",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -400,6 +403,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(i)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kd",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
