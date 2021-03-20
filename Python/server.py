@@ -41,6 +41,7 @@ class Server(QtWidgets.QMainWindow):
         self.do_flash_dump = False
         self.dump_addr = None
         self.database_lock = threading.Lock()
+        self.abort_auto = False
 
         # init logs
         self.server_log = None
@@ -328,6 +329,11 @@ class Server(QtWidgets.QMainWindow):
                         auto_thread = threading.Thread(target=self.run_auto,
                                                        args=(lines, target_addr, True), daemon=True)
                         auto_thread.start()
+                    elif command["command"] == 8 and self.commander == command["clientid"]:
+                        print(command)
+                        with self.command_queue.mutex:
+                            self.command_queue.queue.clear()
+                        self.abort_auto = True
 
                     else:
                         print("WARNING: Unhandled command")
@@ -451,17 +457,23 @@ class Server(QtWidgets.QMainWindow):
             self.send_to_log(
                 self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
         for cmd_str in constructed:  # run auto
-            cmd = cmd_str[0]
-            args = cmd_str[1:]
+            if self.abort_auto:
+                with self.command_queue.mutex:
+                    self.command_queue.queue.clear()
+                self.abort_auto = False
+                return
+            else:
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
 
-            if cmd == "delay":  # delay time in ms
-                print("delay %s ms" % args[0])
-                time.sleep(float(args[0])/1000)
-            elif cmd == "set_addr":  # set target addr
-                print("set_addr %s" % args[0])
-                addr = args[0]
-            elif cmd in commands:  # handle commands
-                self.parse_command(cmd, args, addr)
+                if cmd == "delay":  # delay time in ms
+                    print("delay %s ms" % args[0])
+                    time.sleep(float(args[0])/1000)
+                elif cmd == "set_addr":  # set target addr
+                    print("set_addr %s" % args[0])
+                    addr = args[0]
+                elif cmd in commands:  # handle commands
+                    self.parse_command(cmd, args, addr)
         
 
     def getHelp(self, selected_command):
