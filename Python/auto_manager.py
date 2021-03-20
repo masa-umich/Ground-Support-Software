@@ -366,21 +366,44 @@ class AutoManager(QtWidgets.QMainWindow):
         top_layout.addWidget(self.code_area)
         self.code_area.setMouseTracking(True)
 
+        butt_layout = QtWidgets.QHBoxLayout()
         self.run_button = QtWidgets.QPushButton("Execute")
         self.run_button.clicked.connect(self.run)
-        top_layout.addWidget(self.run_button)
+        self.abort_button = QtWidgets.QPushButton("Abort")
+        self.abort_button.clicked.connect(self.abort)
+        butt_layout.addWidget(self.run_button)
+        butt_layout.addWidget(self.abort_button)
+        top_layout.addLayout(butt_layout)
 
     def run(self):
-        print(10)
-        lines = self.code_area.getText().splitlines()
+        code = self.code_area.getText()
+        lines = code.splitlines()
         command_list = []
         for line in lines:  # loop parsing
             command_list.append(line.lstrip().lower().split(" "))
+        
+        # minor code validation
+        first_pharses = [c[0] for c in command_list]
+        if first_pharses.count("set_addr") < 1:
+            self.showDialog("set_addr command missing. Please set the target address.")
+        elif first_pharses.count("loop") != first_pharses.count("end_loop"):
+            self.showDialog("Mismatched loop and end_loop statements. Number must match.")
+        else:
+            (constructed, i) = parse_auto(command_list)
+            print(constructed, i)
+            if i > 0:
+                self.client.command(7, (constructed,))
+    
+    def showDialog(self, msg):
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+        msgBox.setText(msg)
+        msgBox.setWindowTitle("Error")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        return msgBox.exec()
 
-        (constructed, i) = parse_auto(command_list)
-        print(constructed, i)
-        if i > 0:
-            self.client.command(7, (constructed,))
+    def abort(self):
+        self.client.command(8)
 
     def save(self):
         if self.path:
