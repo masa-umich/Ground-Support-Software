@@ -276,7 +276,7 @@ class Motor(BaseObject):
         zeroBtn = QPushButton("Zero Motor")
         zeroBtn.setDefault(False)
         zeroBtn.setAutoDefault(False)
-        zeroBtn.clicked.connect(self.motorDialogZeroButtonClicked)
+        zeroBtn.clicked.connect(lambda: self.motorDialogZeroButtonClicked(spinBoxes, dialog))
 
         # Create zero pot button
         zeroPotBtn = QPushButton("Zero Pot")
@@ -331,7 +331,7 @@ class Motor(BaseObject):
 
         dialog.show()
 
-    def motorDialogZeroButtonClicked(self): #TODO: update
+    def motorDialogZeroButtonClicked(self, spinBoxes, dialog): #TODO: update
         """
         Function called when the zero button is clicked in motor dialog
         """
@@ -347,6 +347,7 @@ class Motor(BaseObject):
                 }
                 #print(cmd_dict)
                 self.client.command(3, cmd_dict)
+                spinBoxes[0].setValue(0)
     
     def motorDialogZeroPotButtonClicked(self): #TODO: update
         """
@@ -364,6 +365,8 @@ class Motor(BaseObject):
                 }
                 #print(cmd_dict)
                 self.client.command(3, cmd_dict)
+
+
 
     def motorDialogSave(self, spinBoxes, dialog):
         """
