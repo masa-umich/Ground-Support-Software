@@ -3,6 +3,6 @@ table-layout: fixed;
 }
 
 html, body {
-    max-width: 60%;
+    max-width: 100vw;
     overflow-x: hidden;
 }
