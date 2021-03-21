@@ -421,7 +421,7 @@ class Server(QtWidgets.QMainWindow):
         if sum([a.isnumeric() for a in args]) == len(cmd_args):
             cmd_dict = {
                 "function_name": cmd,
-                "target_board_addr": addr,
+                "target_board_addr": int(addr),
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [float(a) for a in args if a.isnumeric()]
             }
