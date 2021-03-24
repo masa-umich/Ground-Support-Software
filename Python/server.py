@@ -42,6 +42,8 @@ class Server(QtWidgets.QMainWindow):
         self.dump_addr = None
         self.database_lock = threading.Lock()
         self.abort_auto = False
+        self.history_idx = -1
+        self.history = []
 
         # init logs
         self.server_log = None
@@ -102,6 +104,7 @@ class Server(QtWidgets.QMainWindow):
         self.command_line.returnPressed.connect(self.command_line_send)
         self.command_line.setPlaceholderText(
             "Command line interface. Type \"help\" for info.")
+        self.command_line.installEventFilter(self)
         self.board_dropdown = QComboBox()
         self.board_dropdown.addItems(["Engine Controller", "Flight Computer",
                                       "Pressurization Controller", "Recovery Controller", "GSE Controller"])
@@ -165,7 +168,7 @@ class Server(QtWidgets.QMainWindow):
 
         # populate port box
         self.scan()
-        self.connect()
+        #self.connect()
 
         # commander status
         command_box = QGroupBox("Command Status")
@@ -216,6 +219,29 @@ class Server(QtWidgets.QMainWindow):
             textedit.append(text)
         if textedit is self.log_box:
             self.server_log.write(time + text + "\n")
+
+    def eventFilter(self, source, event):
+        if source is self.command_line and event.type() == QtCore.QEvent.KeyPress:
+            if event.key() == Qt.Key_Up:
+                self.history_idx += 1
+                if self.history_idx >= len(self.history):
+                    self.history_idx = len(self.history)-1
+            
+            elif event.key() == Qt.Key_Down:
+                self.history_idx -= 1
+                if self.history_idx < -1:
+                    self.history_idx = -1
+            
+            else:
+                return QtWidgets.QMainWindow.eventFilter(self, source, event)
+            print(self.history_idx)
+            if self.history_idx == -1:
+                self.command_line.setText("")
+            else:
+                self.command_line.setText(self.history[self.history_idx])
+            
+        
+        return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
     def connect(self):
         """Connects to COM port"""
@@ -501,6 +527,9 @@ class Server(QtWidgets.QMainWindow):
 
         commands = list(self.interface.get_cmd_names_dict().keys())
 
+        self.history = [self.command_line.text()] + self.history
+        self.history_idx = -1
+        #print(self.history)
         cmd_str = self.command_line.text().lower().split(" ")
         addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
         cmd = cmd_str[0]
