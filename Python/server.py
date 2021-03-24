@@ -26,7 +26,7 @@ class Server(QtWidgets.QMainWindow):
     MASA Data Aggregation Server
     """
 
-    def __init__(self):
+    def __init__(self, autoconnect=False):
         """Init server window"""
         super().__init__()
 
@@ -169,7 +169,8 @@ class Server(QtWidgets.QMainWindow):
 
         # populate port box
         self.scan()
-        #self.connect()
+        if autoconnect:
+            self.connect()
 
         # commander status
         command_box = QGroupBox("Command Status")
@@ -199,17 +200,16 @@ class Server(QtWidgets.QMainWindow):
         quit_action.triggered.connect(self.exit)
         file_menu.addAction(quit_action)
 
+        self.party_parrot.step()
+
     def send_to_log(self, textedit: QTextEdit, text: str, timestamp: bool = True):
         """Sends a message to a log.
-        (should work from any thread but it throws a warning after the first attempt)
-        (also it very rarely breaks)
 
         Args:
             textedit (QTextEdit): Text box to send to
             text (str): Text to write
             timestamp (bool): add timestamp
         """
-        # TODO: Sort this out
         self.log_queue.put([textedit, text, timestamp])
         
 
@@ -533,20 +533,12 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "help":
             if len(args) == 0:
                 self.send_to_log(
-                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n", timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "Available commands:\n%s\n" % commands, timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "To run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n", timestamp=False)
+                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, timestamp=False)
             elif args[0] in (["set_addr", "delay", "auto"] + commands):
                 selected_cmd = args[0]
                 cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
-                    self.command_textedit, "Help for: %s" % selected_cmd, timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "Args: arg(format)\n%s" % cmd_args, timestamp=False)
+                    self.command_textedit, "Help for: %s\nArgs: arg(format)\n%s" % (selected_cmd, cmd_args), timestamp=False)
 
         elif cmd == "auto":  # run an auto sequence
             seq = args[0]
@@ -615,7 +607,7 @@ class Server(QtWidgets.QMainWindow):
         """Main server update loop"""
         super().update()
         
-        if not self.log_queue.empty():
+        while not self.log_queue.empty():
             log_args = self.log_queue.get()
             textedit = log_args[0]
             text = log_args[1]
@@ -718,7 +710,13 @@ if __name__ == "__main__":
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
-    server = Server()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--connect":
+            server = Server(autoconnect=True)
+        else:
+            server = Server(autoconnect=False)
+    else:
+        server = Server(autoconnect=False)
 
     # timer and tick updates
     timer = QtCore.QTimer()
