@@ -104,7 +104,8 @@ class S2_Interface:
                 self.last_raw_packet = packet
                 return self.parse_packet(packet)
         except Exception as e:
-            traceback.print_exc()
+            #traceback.print_exc()
+            pass
         return -1
 
     def parse_packet(self, packet):
@@ -119,7 +120,7 @@ class S2_Interface:
                 # print(self.parser.dict)
                 return board_addr
             except Exception as e:
-                traceback.print_exc()
+                #traceback.print_exc()
                 print("Packet lost with error ", e)
 
     def init_valves(self):

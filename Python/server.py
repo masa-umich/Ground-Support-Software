@@ -221,25 +221,24 @@ class Server(QtWidgets.QMainWindow):
             self.server_log.write(time + text + "\n")
 
     def eventFilter(self, source, event):
+        # up and down arrows in command line to see previous commands
         if source is self.command_line and event.type() == QtCore.QEvent.KeyPress:
             if event.key() == Qt.Key_Up:
                 self.history_idx += 1
                 if self.history_idx >= len(self.history):
                     self.history_idx = len(self.history)-1
-            
             elif event.key() == Qt.Key_Down:
                 self.history_idx -= 1
                 if self.history_idx < -1:
                     self.history_idx = -1
-            
             else:
                 return QtWidgets.QMainWindow.eventFilter(self, source, event)
-            print(self.history_idx)
+            #print(self.history_idx)
             if self.history_idx == -1:
                 self.command_line.setText("")
             else:
                 self.command_line.setText(self.history[self.history_idx])
-            
+            return True
         
         return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
@@ -686,7 +685,7 @@ class Server(QtWidgets.QMainWindow):
             self.party_parrot.step()
 
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
             pass
 
         # update server state
