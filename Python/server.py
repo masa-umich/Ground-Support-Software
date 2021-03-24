@@ -38,6 +38,7 @@ class Server(QtWidgets.QMainWindow):
         self.starttime = datetime.now().strftime("%Y%m%d%H%M%S")
         self.threads = []
         self.command_queue = queue.Queue()
+        self.log_queue = queue.Queue()
         self.do_flash_dump = False
         self.dump_addr = None
         self.database_lock = threading.Lock()
@@ -209,16 +210,8 @@ class Server(QtWidgets.QMainWindow):
             timestamp (bool): add timestamp
         """
         # TODO: Sort this out
-
-        time_obj = datetime.now().time()
-        time = "<{:02d}:{:02d}:{:02d}> ".format(
-            time_obj.hour, time_obj.minute, time_obj.second)
-        if timestamp:
-            textedit.append(time + text)
-        else:
-            textedit.append(text)
-        if textedit is self.log_box:
-            self.server_log.write(time + text + "\n")
+        self.log_queue.put([textedit, text, timestamp])
+        
 
     def eventFilter(self, source, event):
         # up and down arrows in command line to see previous commands
@@ -621,6 +614,21 @@ class Server(QtWidgets.QMainWindow):
     def update(self):
         """Main server update loop"""
         super().update()
+        
+        if not self.log_queue.empty():
+            log_args = self.log_queue.get()
+            textedit = log_args[0]
+            text = log_args[1]
+            timestamp = log_args[2]
+
+            time_obj = datetime.now().time()
+            time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
+            if timestamp:
+                textedit.append(time + text)
+            else:
+                textedit.append(text)
+            if textedit is self.log_box:
+                self.server_log.write(time + text + "\n")
 
         try:
             if self.interface.ser.is_open:
