@@ -13,6 +13,7 @@ from flash import FlashDialog
 from abort_button import AbortButton
 from limits import LimitWindow
 from auto_manager import AutoManager
+from dp import TankLevelDialog
 
 from overrides import overrides
 import os
@@ -42,6 +43,7 @@ class ControlsWindow(QMainWindow):
         self.button_box = AbortButton(self.client_dialog.client)
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
+        self.tank_levels = TankLevelDialog(dual=False)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -156,6 +158,11 @@ class ControlsWindow(QMainWindow):
         self.ambientizeMenu.addAction("Engine Controller")
         self.ambientizeMenu.addAction("Pressurization Controller")
 
+        # Run -> Level Sensing
+        self.level_action = QAction("&Level Sensing", self)
+        self.level_action.triggered.connect(lambda: self.show_window(self.tank_levels))
+        #self.level_action.setShortcut('Alt+D')
+
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -191,6 +198,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addMenu(self.ambientizeMenu)
         menuBar.addAction(self.limit_action)
         menuBar.addAction(self.auto_action)
+        menuBar.addAction(self.level_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -717,6 +725,7 @@ class ControlsWindow(QMainWindow):
 
         self.button_box.cycle()
         self.limits.update_limits(self.last_packet)
+        self.tank_levels.update_values(self.last_packet)
 
 
 class ControlsCentralWidget(QWidget):
