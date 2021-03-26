@@ -1,0 +1,5 @@
+loop 10
+	set_stepper_pos 0 180
+	delay 1000
+	set_stepper_pos 0 0
+	delay 1000

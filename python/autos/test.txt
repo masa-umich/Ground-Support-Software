@@ -1,0 +1,8 @@
+set_addr 3
+
+loop 10
+    set_vlv 2 1
+    delay 1000
+    set_vlv 2 0
+    delay 1000
+end_loop

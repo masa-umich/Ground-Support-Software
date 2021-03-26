@@ -1,0 +1,66 @@
+Device	Alias
+fvlv0	BROKEN
+fvlv1	FUEL-PURGE
+fvlv2	Fuel-slowpres
+fvlv3	LOX-Slow
+fvlv4	Fuel-OPEN
+fvlv5	BROKEN
+fvlv6	LOX-Bang
+fvlv7	LOX-CLOSE
+fvlv8	OX-SN-G01
+fvlv9	OX-SN-G02
+fvlv10	OX-SN-G03
+fvlv11	HE-SN-G01
+fvlv12	HE-SN-G02
+fvlv13	.
+fvlv14	HE-SN-G03
+fvlv15	FUEL-Vent
+fvlv16	HE-SN-G05
+fvlv17	LOX-Purge
+fvlv18	.
+fvlv19	FUEL-BANG
+fvlv20	LOX-VENT
+fvlv21	.
+fvlv22	.
+fvlv23	.
+fvlv24	Fuel-CLOSED
+fvlv25	.
+fvlv26	IGNITER
+fvlv27	.
+fvlv28	.
+fvlv29	.
+fvlv30	LOX-OPEN
+fvlv31	.
+fpressure0	NC
+fpressure1	NC
+fpressure2	NC
+fpressure3	NC
+fpressure4	NC
+fpressure5	NC
+fpressure6	NC
+fpressure7	OX-PT-F05 (LOX TANK)
+fpressure8	ET-PT-F14 (INJ ET)
+fpressure9	ET-PT-F06 (ET  TANK)
+fpressure10	HE-PT-F08 (PURGE)
+fpressure11	ET-PT-F09 (ET  VLV)
+fpressure12	ET-PT-F13 (REGEN)
+fpressure13	OX-PT-G04 (LOX POST)
+fpressure14	HE-PT-G02 (HE-LOX P)
+fpressure15	OX-PT-F10 (INJ LOX)
+fpressure16	ET-PT-F11 (ET  MPL)
+fpressure17	OX-PT-G03 (LOX PRE)
+fpressure18	OX-PT-F12 (LOX MPL)
+fpressure19	EX-PT-F16 (CHAMBER)
+fpressure20	HE-PT-F07 (HE TANK)
+fpressure21	HE-PT-G01 (HE PRE)
+STATE0	ERROR
+STATE1	MANUAL
+STATE2	ARMED
+STATE3	IGNITION
+STATE4	FIRING
+STATE5	FULL_DURATION
+STATE6	PRE_IGNITION
+STATE7	FULL_DURATION_SAFE
+STATE_N	8
+COM_PORT	COM10
+BAUDRATE	57600

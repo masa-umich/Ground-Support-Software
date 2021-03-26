@@ -1,0 +1,41 @@
+{
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 485.83333333333337,
+			"y": 375.55555555555554
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 41.66666666666667,
+				"y": 230.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 28.333333333333336,
+				"y": -21.11111111111111
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Pressurization Controller"
+	}
+}
