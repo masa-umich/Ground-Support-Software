@@ -159,6 +159,6 @@ if __name__ == '__main__':
         timer.timeout.connect(gui.update)
         timer.start(cycle_time)
         currentExitCode = app.exec_()
-        print(currentExitCode)
+        #print(currentExitCode)
         gui.savePreferences()
         app = None

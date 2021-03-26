@@ -8,6 +8,8 @@ import threading
 from datetime import datetime
 import traceback
 import time
+import hashlib
+
 
 from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
@@ -241,7 +243,7 @@ class Server(QtWidgets.QMainWindow):
         try:
             port = str(self.ports_box.currentText())
             if port:
-                self.interface.connect(port, 115200, 0.3)
+                self.interface.connect(port, 115200, 0.2)
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
@@ -358,11 +360,16 @@ class Server(QtWidgets.QMainWindow):
 
                     self.database_lock.acquire()
                     try:
-                        self.dataframe["commander"] = self.commander
+                        if self.commander:
+                            self.dataframe["commander"] = hashlib.sha256(self.commander.encode('utf-8')).hexdigest()
+                            #self.dataframe["commander"] = self.commander
+                        else:
+                            self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
                         data = pickle.dumps(self.dataframe)
                     except:
                         data = None
+                        traceback.print_exc()
                     finally:
                         self.database_lock.release()
 

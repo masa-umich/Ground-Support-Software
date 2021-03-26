@@ -3,6 +3,8 @@ import socket
 import pickle
 import uuid
 import queue
+import hashlib
+import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 import pyqtgraph as pg
@@ -110,6 +112,7 @@ class ClientWidget(QtWidgets.QWidget):
             self.is_connected = True  # update status
         except:
             self.is_connected = False  # update status
+        #print(self.is_connected)
 
     def disconnect(self):
         # send disconnect message
@@ -138,7 +141,9 @@ class ClientWidget(QtWidgets.QWidget):
                 packet = pickle.loads(data)
 
             # update command status
-            if packet["commander"] == self.clientid:
+            if packet["commander"] == None:
+                self.is_commander = False
+            elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
                 self.is_commander = True
             else:
                 self.is_commander = False
@@ -148,6 +153,7 @@ class ClientWidget(QtWidgets.QWidget):
             return self.last_packet
 
         except:
+            #traceback.print_exc()
             self.is_connected = False
             return None
 
