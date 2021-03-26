@@ -182,26 +182,26 @@ class LimitWindow(QtWidgets.QMainWindow):
     def __init__(self, num_channels, client=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # set up client
-        if not client:
-            self.client_dialog = ClientDialog(False)
-        else:
-            self.client_dialog = client
-
-        self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
-        self.setWindowTitle("Limits")
-        self.setCentralWidget(self.widget)
-
         # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
 
-        # connection menu item
-        self.connect = QtGui.QAction("&Connection", self.options_menu)
-        # self.quit.setShortcut("Ctrl+K")
-        self.connect.triggered.connect(self.client_dialog.show)
-        self.options_menu.addAction(self.connect)
+        # set up client
+        if not client:
+            self.client_dialog = ClientDialog(False)
+            # connection menu item
+            self.connect = QtGui.QAction("&Connection", self.options_menu)
+            # self.quit.setShortcut("Ctrl+K")
+            self.connect.triggered.connect(self.client_dialog.show)
+            self.options_menu.addAction(self.connect)
+        else:
+            self.client_dialog = client
+        
+        self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
+        self.setWindowTitle("Limits")
+        self.setCentralWidget(self.widget)
+        
 
         # save menu item
         self.save_action = QtGui.QAction("&Save Config", self.options_menu)

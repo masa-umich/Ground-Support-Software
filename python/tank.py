@@ -431,6 +431,8 @@ class Tank(BaseObject):
             "channel": self.channel,
             "board": self.avionics_board
         }
+        print(self.object_name + " " + str(self._id))
+        print(save_dict)
 
         # Update the super_dict under the solenoid entry with the solenoid specific data
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)

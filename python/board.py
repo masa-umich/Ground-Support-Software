@@ -346,7 +346,7 @@ class Board(QWidget):
                 newState = 2
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
-            newState = 3
+            newState = 5
         else:
             return
 
@@ -376,9 +376,13 @@ class Board(QWidget):
             -1: "",
             0: "Manual",
             1: "Armed",
-            2: "Run",
-            3: "Abort",
-            4: "Post"
+            2: "Auto-Press",
+            3: "Startup",
+            4: "Running",
+            5: "Abort",
+            6: "Post",
+            7: "Safe",
+
         }
 
         # Update labels

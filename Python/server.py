@@ -213,7 +213,7 @@ class Server(QtWidgets.QMainWindow):
             timestamp (bool): add timestamp
         """
         self.log_queue.put([textedit, text, timestamp])
-        
+
 
     def eventFilter(self, source, event):
         # up and down arrows in command line to see previous commands
@@ -234,7 +234,7 @@ class Server(QtWidgets.QMainWindow):
             else:
                 self.command_line.setText(self.history[self.history_idx])
             return True
-        
+
         return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
     def connect(self):
@@ -453,7 +453,7 @@ class Server(QtWidgets.QMainWindow):
             print(cmd_dict)
             self.command_queue.put(cmd_dict)  # add command to queue
 
-    
+
     def run_auto(self, lines: list, addr: int, remote: bool = False):
         """Runs an autosequence
 
@@ -476,7 +476,7 @@ class Server(QtWidgets.QMainWindow):
                 return
         else:
             constructed = lines
-        
+
         #print(constructed)
         if len(constructed) == 0:
             self.send_to_log(
@@ -499,7 +499,7 @@ class Server(QtWidgets.QMainWindow):
                     addr = args[0]
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
-        
+
 
     def getHelp(self, selected_command):
         commands = list(self.interface.get_cmd_names_dict().keys())
@@ -509,7 +509,7 @@ class Server(QtWidgets.QMainWindow):
         for cmd in commands:
             cmd_id = self.interface.get_cmd_names_dict()[cmd]
             cmd_args = self.interface.get_cmd_args_dict()[cmd_id]
-            tip = "%s" % cmd  
+            tip = "%s" % cmd
             for arg in cmd_args:
                 name = arg[0]
                 arg_type = arg[1]
@@ -613,7 +613,7 @@ class Server(QtWidgets.QMainWindow):
     def update(self):
         """Main server update loop"""
         super().update()
-        
+
         while not self.log_queue.empty():
             log_args = self.log_queue.get()
             textedit = log_args[0]
