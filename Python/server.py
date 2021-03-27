@@ -614,7 +614,7 @@ class Server(QtWidgets.QMainWindow):
         """Main server update loop"""
         super().update()
         
-        while not self.log_queue.empty():
+        if not self.log_queue.empty():
             log_args = self.log_queue.get()
             textedit = log_args[0]
             text = log_args[1]
