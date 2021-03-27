@@ -87,6 +87,7 @@ class Motor(BaseObject):
         self.Pconstant = 0
         self.Iconstant = 0
         self.Dconstant = 0
+        self.speed = 0
         self.channel = channel
         self.avionics_board = board
 
@@ -271,6 +272,12 @@ class Motor(BaseObject):
         DPointBox.setDecimals(2)
         DPointBox.setFont(font)
 
+        speedBox = QDoubleSpinBox()
+        speedBox.setMaximum(9999)
+        speedBox.setValue(self.speed)
+        speedBox.setDecimals(2)
+        speedBox.setFont(font)
+
 
         # Create zero button
         zeroBtn = QPushButton("Zero Motor")
@@ -284,7 +291,7 @@ class Motor(BaseObject):
         zeroPotBtn.setAutoDefault(False)
         zeroPotBtn.clicked.connect(self.motorDialogZeroPotButtonClicked)
 
-        spinBoxes = [setPointBox,PPointBox,IPointBox,DPointBox]
+        spinBoxes = [setPointBox,PPointBox,IPointBox,DPointBox, speedBox]
 
         label1 = QLabel("Set Point:")
         label1.setFont(font)
@@ -298,14 +305,18 @@ class Motor(BaseObject):
         label5.setFont(font)
         label6 = QLabel("Zero Pot:")
         label6.setFont(font)
+        label7 = QLabel("Speed: ")
+        label7.setFont(font)
 
         # Add to the layout
         formLayout.addRow(label1, setPointBox)
         formLayout.addRow(label2, PPointBox)
         formLayout.addRow(label3, IPointBox)
         formLayout.addRow(label4, DPointBox)
+        formLayout.addRow(label7, speedBox)
         formLayout.addRow(label5, zeroBtn)
         formLayout.addRow(label6, zeroPotBtn)
+
 
         # Horizontal button layout
         buttonLayout = QHBoxLayout()
@@ -378,6 +389,7 @@ class Motor(BaseObject):
         p = spinBoxes[1].value()
         i = spinBoxes[2].value()
         d = spinBoxes[3].value()
+        speed = spinBoxes[4].value()
 
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
@@ -412,6 +424,13 @@ class Motor(BaseObject):
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(d)]
+                }
+                self.client.command(3, cmd_dict)
+                cmd_dict = {
+                    "function_name": "set_stepper_speed",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), float(speed)]
                 }
                 self.client.command(3, cmd_dict)
         dialog.done(2)
