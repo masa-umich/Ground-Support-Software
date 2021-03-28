@@ -8,12 +8,12 @@ s2_interface = S2_Interface()
 ports = s2_interface.scan()
 #print(ports)
 
-s2_interface.connect("COM11", 115200, 2)
+s2_interface.connect("COM7", 115200, 2)
 set_vlv = {
     "function_name": "set_vlv",
-    "target_board_addr": 3,
+    "target_board_addr": 0,
     "timestamp": 99,
-    "args": [2, 0]
+    "args": [0, 1]
 }
 
 start = {
@@ -201,8 +201,8 @@ def test_ambientize_pot():
 
 # function calls for tests go here
 
-test_stepper()
-# test_set_vlv()
+# test_stepper()
+test_set_vlv()
 # test_ambientize_pot()
 #test_set_control_loop_dur()
 #test_set_state_control()

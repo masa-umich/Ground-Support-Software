@@ -376,6 +376,7 @@ if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     QtWidgets.QApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    #QtWidgets.QApplication.setHigh
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
@@ -404,3 +405,4 @@ if __name__ == "__main__":
     # run
     window.show()
     sys.exit(app.exec())
+
