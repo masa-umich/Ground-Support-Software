@@ -1,0 +1,7 @@
+set_adddr 3
+loop 10
+	set_stepper_pos 1 360
+	delay 1000
+	set_stepper_pos 1 0
+	delay 1000
+end_loop

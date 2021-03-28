@@ -8,6 +8,8 @@ import threading
 from datetime import datetime
 import traceback
 import time
+import hashlib
+
 
 from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
@@ -26,7 +28,7 @@ class Server(QtWidgets.QMainWindow):
     MASA Data Aggregation Server
     """
 
-    def __init__(self):
+    def __init__(self, autoconnect=False):
         """Init server window"""
         super().__init__()
 
@@ -38,9 +40,13 @@ class Server(QtWidgets.QMainWindow):
         self.starttime = datetime.now().strftime("%Y%m%d%H%M%S")
         self.threads = []
         self.command_queue = queue.Queue()
+        self.log_queue = queue.Queue()
         self.do_flash_dump = False
         self.dump_addr = None
         self.database_lock = threading.Lock()
+        self.abort_auto = False
+        self.history_idx = -1
+        self.history = []
 
         # init logs
         self.server_log = None
@@ -101,6 +107,7 @@ class Server(QtWidgets.QMainWindow):
         self.command_line.returnPressed.connect(self.command_line_send)
         self.command_line.setPlaceholderText(
             "Command line interface. Type \"help\" for info.")
+        self.command_line.installEventFilter(self)
         self.board_dropdown = QComboBox()
         self.board_dropdown.addItems(["Engine Controller", "Flight Computer",
                                       "Pressurization Controller", "Recovery Controller", "GSE Controller"])
@@ -164,7 +171,8 @@ class Server(QtWidgets.QMainWindow):
 
         # populate port box
         self.scan()
-        self.connect()
+        if autoconnect:
+            self.connect()
 
         # commander status
         command_box = QGroupBox("Command Status")
@@ -194,27 +202,40 @@ class Server(QtWidgets.QMainWindow):
         quit_action.triggered.connect(self.exit)
         file_menu.addAction(quit_action)
 
+        self.party_parrot.step()
+
     def send_to_log(self, textedit: QTextEdit, text: str, timestamp: bool = True):
         """Sends a message to a log.
-        (should work from any thread but it throws a warning after the first attempt)
-        (also it very rarely breaks)
 
         Args:
             textedit (QTextEdit): Text box to send to
             text (str): Text to write
             timestamp (bool): add timestamp
         """
-        # TODO: Sort this out
+        self.log_queue.put([textedit, text, timestamp])
+        
 
-        time_obj = datetime.now().time()
-        time = "<{:02d}:{:02d}:{:02d}> ".format(
-            time_obj.hour, time_obj.minute, time_obj.second)
-        if timestamp:
-            textedit.append(time + text)
-        else:
-            textedit.append(text)
-        if textedit is self.log_box:
-            self.server_log.write(time + text + "\n")
+    def eventFilter(self, source, event):
+        # up and down arrows in command line to see previous commands
+        if source is self.command_line and event.type() == QtCore.QEvent.KeyPress:
+            if event.key() == Qt.Key_Up:
+                self.history_idx += 1
+                if self.history_idx >= len(self.history):
+                    self.history_idx = len(self.history)-1
+            elif event.key() == Qt.Key_Down:
+                self.history_idx -= 1
+                if self.history_idx < -1:
+                    self.history_idx = -1
+            else:
+                return QtWidgets.QMainWindow.eventFilter(self, source, event)
+            #print(self.history_idx)
+            if self.history_idx == -1:
+                self.command_line.setText("")
+            else:
+                self.command_line.setText(self.history[self.history_idx])
+            return True
+        
+        return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
     def connect(self):
         """Connects to COM port"""
@@ -222,7 +243,7 @@ class Server(QtWidgets.QMainWindow):
         try:
             port = str(self.ports_box.currentText())
             if port:
-                self.interface.connect(port, 115200, 0.3)
+                self.interface.connect(port, 115200, 0.2)
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
@@ -328,17 +349,27 @@ class Server(QtWidgets.QMainWindow):
                         auto_thread = threading.Thread(target=self.run_auto,
                                                        args=(lines, target_addr, True), daemon=True)
                         auto_thread.start()
+                    elif command["command"] == 8 and self.commander == command["clientid"]:
+                        print(command)
+                        with self.command_queue.mutex:
+                            self.command_queue.queue.clear()
+                        self.abort_auto = True
 
                     else:
                         print("WARNING: Unhandled command")
 
                     self.database_lock.acquire()
                     try:
-                        self.dataframe["commander"] = self.commander
+                        if self.commander:
+                            self.dataframe["commander"] = hashlib.sha256(self.commander.encode('utf-8')).hexdigest()
+                            #self.dataframe["commander"] = self.commander
+                        else:
+                            self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
                         data = pickle.dumps(self.dataframe)
                     except:
                         data = None
+                        traceback.print_exc()
                     finally:
                         self.database_lock.release()
 
@@ -415,7 +446,7 @@ class Server(QtWidgets.QMainWindow):
         if sum([a.isnumeric() for a in args]) == len(cmd_args):
             cmd_dict = {
                 "function_name": cmd,
-                "target_board_addr": addr,
+                "target_board_addr": int(addr),
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [float(a) for a in args if a.isnumeric()]
             }
@@ -451,24 +482,53 @@ class Server(QtWidgets.QMainWindow):
             self.send_to_log(
                 self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
         for cmd_str in constructed:  # run auto
-            cmd = cmd_str[0]
-            args = cmd_str[1:]
+            if self.abort_auto:
+                with self.command_queue.mutex:
+                    self.command_queue.queue.clear()
+                self.abort_auto = False
+                return
+            else:
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
 
-            if cmd == "delay":  # delay time in ms
-                print("delay %s ms" % args[0])
-                time.sleep(float(args[0])/1000)
-            elif cmd == "set_addr":  # set target addr
-                print("set_addr %s" % args[0])
-                addr = args[0]
-            elif cmd in commands:  # handle commands
-                self.parse_command(cmd, args, addr)
+                if cmd == "delay":  # delay time in ms
+                    print("delay %s ms" % args[0])
+                    time.sleep(float(args[0])/1000)
+                elif cmd == "set_addr":  # set target addr
+                    print("set_addr %s" % args[0])
+                    addr = args[0]
+                elif cmd in commands:  # handle commands
+                    self.parse_command(cmd, args, addr)
         
+
+    def getHelp(self, selected_command):
+        commands = list(self.interface.get_cmd_names_dict().keys())
+        keywords = ["set_addr", "delay", "auto"] + commands
+
+        tooltips = {}
+        for cmd in commands:
+            cmd_id = self.interface.get_cmd_names_dict()[cmd]
+            cmd_args = self.interface.get_cmd_args_dict()[cmd_id]
+            tip = "%s" % cmd  
+            for arg in cmd_args:
+                name = arg[0]
+                arg_type = arg[1]
+                tip += " %s(%s)" % (name, arg_type)
+            tooltips[cmd] = tip
+        tooltips["delay"] = "delay time(int, milliseconds)"
+        tooltips["set_addr"] = "set_addr target_addr(int)"
+        tooltips["auto"] = "auto auto_name(str)"
+
+        return tooltips[selected_command]
 
     def command_line_send(self):
         """Processes command line interface"""
 
         commands = list(self.interface.get_cmd_names_dict().keys())
 
+        self.history = [self.command_line.text()] + self.history
+        self.history_idx = -1
+        #print(self.history)
         cmd_str = self.command_line.text().lower().split(" ")
         addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
         cmd = cmd_str[0]
@@ -480,20 +540,12 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "help":
             if len(args) == 0:
                 self.send_to_log(
-                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n", timestamp=False)
+                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, timestamp=False)
+            elif args[0] in (["set_addr", "delay", "auto"] + commands):
+                selected_cmd = args[0]
+                cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
-                    self.command_textedit, "Available commands:\n%s\n" % commands, timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "For more information on a command type: help <COMMAND>\n", timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "To run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n", timestamp=False)
-            elif args[0] in commands:
-                selected_cmd = self.interface.get_cmd_names_dict()[args[0]]
-                cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
-                self.send_to_log(self.command_textedit, "Help for: %s (%s)" % (
-                    args[0], selected_cmd), timestamp=False)
-                self.send_to_log(
-                    self.command_textedit, "Args: (arg, format, xmitscale (IGNORE THIS))\n%s" % cmd_args, timestamp=False)
+                    self.command_textedit, "Help for: %s\nArgs: arg(format)\n%s" % (selected_cmd, cmd_args), timestamp=False)
 
         elif cmd == "auto":  # run an auto sequence
             seq = args[0]
@@ -561,6 +613,21 @@ class Server(QtWidgets.QMainWindow):
     def update(self):
         """Main server update loop"""
         super().update()
+        
+        if not self.log_queue.empty():
+            log_args = self.log_queue.get()
+            textedit = log_args[0]
+            text = log_args[1]
+            timestamp = log_args[2]
+
+            time_obj = datetime.now().time()
+            time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
+            if timestamp:
+                textedit.append(time + text)
+            else:
+                textedit.append(text)
+            if textedit is self.log_box:
+                self.server_log.write(time + text + "\n")
 
         try:
             if self.interface.ser.is_open:
@@ -625,7 +692,7 @@ class Server(QtWidgets.QMainWindow):
             self.party_parrot.step()
 
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
             pass
 
         # update server state
@@ -650,7 +717,13 @@ if __name__ == "__main__":
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
-    server = Server()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--connect":
+            server = Server(autoconnect=True)
+        else:
+            server = Server(autoconnect=False)
+    else:
+        server = Server(autoconnect=False)
 
     # timer and tick updates
     timer = QtCore.QTimer()

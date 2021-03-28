@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import time
 from datetime import datetime
 from overrides import overrides
 
@@ -275,7 +276,7 @@ class Motor(BaseObject):
         zeroBtn = QPushButton("Zero Motor")
         zeroBtn.setDefault(False)
         zeroBtn.setAutoDefault(False)
-        zeroBtn.clicked.connect(self.motorDialogZeroButtonClicked)
+        zeroBtn.clicked.connect(lambda: self.motorDialogZeroButtonClicked(spinBoxes, dialog))
 
         # Create zero pot button
         zeroPotBtn = QPushButton("Zero Pot")
@@ -330,7 +331,7 @@ class Motor(BaseObject):
 
         dialog.show()
 
-    def motorDialogZeroButtonClicked(self): #TODO: update
+    def motorDialogZeroButtonClicked(self, spinBoxes, dialog): #TODO: update
         """
         Function called when the zero button is clicked in motor dialog
         """
@@ -346,6 +347,7 @@ class Motor(BaseObject):
                 }
                 #print(cmd_dict)
                 self.client.command(3, cmd_dict)
+                spinBoxes[0].setValue(0)
     
     def motorDialogZeroPotButtonClicked(self): #TODO: update
         """
@@ -363,6 +365,8 @@ class Motor(BaseObject):
                 }
                 #print(cmd_dict)
                 self.client.command(3, cmd_dict)
+
+
 
     def motorDialogSave(self, spinBoxes, dialog):
         """
@@ -386,6 +390,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(setpoint)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kp",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -393,6 +398,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(p)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_ki",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -400,6 +406,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(i)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kd",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -416,7 +423,7 @@ class Motor(BaseObject):
         self.currenta = currenta
         self.currentb = currentb
         self.currentPos = currPos
-        self.potPos = -potPos
+        self.potPos = potPos
         self.setPoint = setPoint
         self.Pconstant = Pconstant
         self.Iconstant = Iconstant

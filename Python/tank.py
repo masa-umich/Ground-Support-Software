@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import time
 from overrides import overrides
 
 from constants import Constants
@@ -381,6 +382,7 @@ class Tank(BaseObject):
                     "args": [int(self.channel), float(setpoint)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_low_toggle_percent",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -388,6 +390,7 @@ class Tank(BaseObject):
                     "args": [int(self.channel), float(lowbound/setpoint)]
                 }
                 self.client.command(3, cmd_dict)
+                time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_high_toggle_percent",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),

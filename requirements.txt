@@ -6,3 +6,5 @@ termcolor
 pandas
 pyqtgraph
 pyserial
+dash
+dash_table
