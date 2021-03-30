@@ -186,7 +186,7 @@ class S2_Interface:
             if (mask & valve_states):
                 state = 1
             valve_name = 'vlv' + str(n) + '.en'
-            self.board_parser[board_addr].dict[valve_name] = state
+            self.board_parser[board_addr].dict[valve_name] = int(state)
             mask = mask << 1
 
     """
