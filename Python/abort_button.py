@@ -96,7 +96,7 @@ class AbortButton(QtWidgets.QDialog):
             "function_name": "set_state",
             "target_board_addr": self.get_addr(),
             "timestamp": int(datetime.now().timestamp()),
-            "args": [3]
+            "args": [5]
         }
         if self.client:
             self.client.command(3, cmd_dict)

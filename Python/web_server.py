@@ -43,11 +43,7 @@ host = '35.3.1.58'
 me = socket.gethostbyname(socket.gethostname())
 port = 6969
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-<<<<<<< Python/web_server.py
-s.connect((host, port))
-=======
 s.connect((me, port))
->>>>>>> Python/web_server.py
 clientid = uuid.uuid4().hex
 count = 0
 
