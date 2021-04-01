@@ -153,6 +153,14 @@ class Board(QWidget):
         self.fire_button.setFont(font)
         self.fire_button.setFixedWidth(fwidth)
 
+        self.continue_button = QPushButton("Continue")
+        self.continue_button.setDefault(False)
+        self.continue_button.setAutoDefault(False)
+        self.continue_button.setDisabled(False)
+        self.continue_button.clicked.connect(lambda: self.sendBoardState("Continue"))
+        self.continue_button.setFont(font)
+        self.continue_button.setFixedWidth(fwidth)
+
         abort_button = QPushButton("Abort")
         abort_button.setDefault(False)
         abort_button.setAutoDefault(False)
@@ -173,6 +181,7 @@ class Board(QWidget):
         buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
+        buttonLayout.addWidget(self.continue_button)
         buttonLayout.addWidget(abort_button)
 
         self.show()  # Need to show before able to access some data_frame values
@@ -347,6 +356,8 @@ class Board(QWidget):
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = 5
+        elif identifier == "Continue":
+            newState = 255
         else:
             return
 
@@ -382,6 +393,7 @@ class Board(QWidget):
             5: "Abort",
             6: "Post",
             7: "Safe",
+            255: "Continue"
 
         }
 
@@ -391,9 +403,14 @@ class Board(QWidget):
         if self.state == 1:
             self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
+            self.continue_button.setDisabled(True)
         else:
             self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
+
+        if self.state == 0:
+            self.continue_button.setDisabled(True)
+
 
     @overrides
     def paintEvent(self, e):
