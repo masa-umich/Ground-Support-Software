@@ -129,4 +129,4 @@ class ControlsSidebarWidget(QWidget):
                                  self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
                                  self.last_packet[prefix + "state_rem_duration"])
                 else:
-                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], self.last_packet[prefix+"state_rem_duration"]) # no flash state yet
+                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet
