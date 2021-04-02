@@ -218,7 +218,7 @@ class Board(QWidget):
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         if self.name == "Pressurization Controller":
-            self.rem_timer.move(state_form_label.x() + state_form_label.width()+275, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+            self.rem_timer.move(state_form_label.x() + state_form_label.width()+155, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.board_background_button = QPushButton(self)
         self.board_background_button.setGeometry(self.board_pos.x(), self.board_pos.y(), self.board_width,self.board_height)
