@@ -171,9 +171,9 @@ class Board(QWidget):
         abort_button.setFont(font)
         abort_button.setFixedWidth(fwidth)
 
+        self.rem_timer = QLabel(self)
         if self.name == "Pressurization Controller":
          # Remaining time in state
-            self.rem_timer = QLabel(self)
             rem_timer_font = QFont()
             rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
             rem_timer_font.setFamily(Constants.monospace_font)
