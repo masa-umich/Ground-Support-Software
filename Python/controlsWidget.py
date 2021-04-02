@@ -382,7 +382,7 @@ class ControlsWidget(QWidget):
                                              long_name_label_font_size=tnk["long name label"]["font size"],
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
                                              long_name_label_rows=tnk["long name label"]["rows"],long_name_visible=tnk["long name label"]["is visible"],
-                                             serial_number_visible=tnk["serial number label"]["is visible"], board=tnk["board"], channel=tnk["board"]))
+                                             serial_number_visible=tnk["serial number label"]["is visible"], board=tnk["board"], channel=tnk["channel"]))
             if i.split()[0] == "Motor":
                 motor = data[i]
                 self.object_list.append(Motor(self, _id=motor["id"], position=QPoint(motor["pos"]["x"],motor["pos"]["y"]),
