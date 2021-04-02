@@ -53,6 +53,7 @@ class Board(QWidget):
         self.adc_rate = 0
         self.telem_rate = 0
 
+
         # Connection status indicator light
         self.connectionIndicator = IndicatorLightWidget(self, '', 10, "Red", 10, 10, 10, 1)
         self.connectionIndicator.setToolTip("No connection")
@@ -112,6 +113,8 @@ class Board(QWidget):
         state_form_label = self.createDataFormLayoutLabel("State:")
         self.state_label = self.createDataFormLayoutLabel("Aggressively long string don't change")
 
+
+
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
@@ -168,6 +171,22 @@ class Board(QWidget):
         abort_button.setFont(font)
         abort_button.setFixedWidth(fwidth)
 
+        if self.name == "Pressurization Controller":
+         # Remaining time in state
+            self.rem_timer = QLabel(self)
+            rem_timer_font = QFont()
+            rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
+            rem_timer_font.setFamily(Constants.monospace_font)
+            rem_timer_font.setPointSizeF(14 * self.gui.font_scale_ratio)
+            self.rem_timer.setFont(rem_timer_font)
+            self.rem_timer.setText("00 s")
+            self.rem_timer.setStyleSheet("color: white")
+            self.rem_timer.show()
+
+
+
+
+
         # Set text depending on board
         if self.name == "Engine Controller":
             self.fire_button.setText("Hotfire")
@@ -198,8 +217,9 @@ class Board(QWidget):
             self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+        if self.name == "Pressurization Controller":
+            self.rem_timer.move(state_form_label.x() + state_form_label.width()+75, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
-
         self.board_background_button = QPushButton(self)
         self.board_background_button.setGeometry(self.board_pos.x(), self.board_pos.y(), self.board_width,self.board_height)
         self.board_background_button.setStyleSheet("background-color:transparent;border:0;")
@@ -218,6 +238,7 @@ class Board(QWidget):
         # Right now only have settings for press board
         if self.name != "Pressurization Controller":
             return
+
 
         # Create the dialog
         dialog = QDialog(self.window)
@@ -412,6 +433,7 @@ class Board(QWidget):
             self.continue_button.setDisabled(True)
 
 
+
     @overrides
     def paintEvent(self, e):
         """
@@ -488,7 +510,7 @@ class Board(QWidget):
         self.painter.end()
 
     @overrides
-    def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate):
+    def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate, state_rem_time):
         """
         Function to update board state
         :param ebatt: bus voltage
@@ -508,5 +530,7 @@ class Board(QWidget):
         self.LPT_label.setText(str(int((LPT-self.LPT)/1000)) + "ms")
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
+        self.rem_timer.setText(str(state_rem_time/1000) + " s")
 
         self.LPT = LPT
+
