@@ -51,7 +51,7 @@
 		"name": "Solenoid",
 		"scale": 1.0,
 		"serial number": "",
-		"long name": "Fuel MPV Press",
+		"long name": "Fuel MPV Actuate",
 		"is vertical": true,
 		"is locked": false,
 		"is pos locked": false,
@@ -1922,7 +1922,7 @@
 		"width": 55.0,
 		"height": 20.0,
 		"name": "PT",
-		"scale": 1,
+		"scale": 1.0,
 		"serial number": "",
 		"long name": "LN2 Temp Bot",
 		"is vertical": 0,
@@ -1945,7 +1945,7 @@
 				"y": -27.77777777777778
 			},
 			"rows": 1,
-			"font size": 11.999999999999998,
+			"font size": 12.0,
 			"is visible": true
 		},
 		"channel": "press.tc[4]",
@@ -1955,7 +1955,7 @@
 		"id": 73,
 		"pos": {
 			"x": 350.0,
-			"y": 925.5555555555555
+			"y": 923.3333333333333
 		},
 		"fluid": 1,
 		"width": 18.0,
@@ -1981,7 +1981,7 @@
 			"pos string": "Custom",
 			"local pos": {
 				"x": 30.0,
-				"y": 5.555555555555555
+				"y": 3.333333333333333
 			},
 			"rows": 1,
 			"font size": 12.0,
