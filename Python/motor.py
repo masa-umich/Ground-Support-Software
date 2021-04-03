@@ -314,7 +314,7 @@ class Motor(BaseObject):
         formLayout.addRow(label2, PPointBox)
         formLayout.addRow(label3, IPointBox)
         formLayout.addRow(label4, DPointBox)
-        formLayout.addRow(label7, speedBox)
+        #formLayout.addRow(label7, speedBox)
         formLayout.addRow(label5, zeroBtn)
         formLayout.addRow(label6, zeroPotBtn)
 

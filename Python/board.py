@@ -431,6 +431,8 @@ class Board(QWidget):
 
         if self.state == 0:
             self.continue_button.setDisabled(True)
+        if self.state == 3:
+            self.continue_button.setEnabled(True)
 
 
 
