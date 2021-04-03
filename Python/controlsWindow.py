@@ -123,6 +123,11 @@ class ControlsWindow(QMainWindow):
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
         self.addAvionicsAct.setShortcut('Alt+A')
 
+
+        self.changeMotorSpeed = QAction('&Set Stepper Motor Speed', self)
+        self.startRunAct.setShortcut('Ctrl+M')
+        self.changeMotorSpeed.triggered.connect(self.setMotorSpeed)
+
         # Run -> Connection Settings
         self.connect = QAction("&Connection", self)
         self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
@@ -199,6 +204,7 @@ class ControlsWindow(QMainWindow):
         menuBar.addAction(self.limit_action)
         menuBar.addAction(self.auto_action)
         menuBar.addAction(self.level_action)
+        run_menu.addAction(self.changeMotorSpeed)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -676,6 +682,83 @@ class ControlsWindow(QMainWindow):
         }
         # print(cmd_dict)
         self.client_dialog.client.command(3, cmd_dict)
+
+    def sendMotorSpeeds(self, motors, dialog):
+        if motors:
+            for motor in motors:
+                motor.motorSpeedDialogSave(motor.speedBox, dialog)
+
+
+    def setMotorSpeed(self):
+
+        # open speed dialog
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Motor Speeds")
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
+        dialog.move((self.width() - dialog.width()) / 2,
+                    (self.height() - dialog.height()) / 2)
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        motors = []
+
+        for object  in self.centralWidget.controlsWidget.object_list:
+            if str(type(object)) == "<class 'motor.Motor'>":
+                motors.append(object)
+
+        if motors:
+            for motor in motors:
+                motor.speedBox.setValue(motor.speed)
+                label = QLabel(motor.long_name)
+                label.setFont(font)
+                motor.speedBox.setFont(font)
+                formLayout.addRow(label, motor.speedBox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: self.sendMotorSpeeds(motors, dialog))
+        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+
+
+
+
 
     def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """

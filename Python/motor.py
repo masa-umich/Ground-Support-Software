@@ -91,6 +91,11 @@ class Motor(BaseObject):
         self.channel = channel
         self.avionics_board = board
 
+        self.speedBox = QDoubleSpinBox()
+        self.speedBox.setMaximum(9999)
+        self.speedBox.setValue(self.speed)
+        self.speedBox.setDecimals(2)
+
         # Define the labels that keep track of position and set point
         self.set_pos_title_label = CustomLabel(self.widget_parent, self.gui, text="Set Pos")
         self.set_pos_title_label.setFixedWidth(self.width)
@@ -272,12 +277,6 @@ class Motor(BaseObject):
         DPointBox.setDecimals(2)
         DPointBox.setFont(font)
 
-        speedBox = QDoubleSpinBox()
-        speedBox.setMaximum(9999)
-        speedBox.setValue(self.speed)
-        speedBox.setDecimals(2)
-        speedBox.setFont(font)
-
 
         # Create zero button
         zeroBtn = QPushButton("Zero Motor")
@@ -291,7 +290,7 @@ class Motor(BaseObject):
         zeroPotBtn.setAutoDefault(False)
         zeroPotBtn.clicked.connect(self.motorDialogZeroPotButtonClicked)
 
-        spinBoxes = [setPointBox, PPointBox, IPointBox, DPointBox, speedBox]
+        spinBoxes = [setPointBox, PPointBox, IPointBox, DPointBox]
 
         label1 = QLabel("Set Point:")
         label1.setFont(font)
@@ -305,8 +304,7 @@ class Motor(BaseObject):
         label5.setFont(font)
         label6 = QLabel("Zero Pot:")
         label6.setFont(font)
-        label7 = QLabel("Speed: ")
-        label7.setFont(font)
+
 
 
         # Add to the layout
@@ -314,7 +312,6 @@ class Motor(BaseObject):
         formLayout.addRow(label2, PPointBox)
         formLayout.addRow(label3, IPointBox)
         formLayout.addRow(label4, DPointBox)
-        #formLayout.addRow(label7, speedBox)
         formLayout.addRow(label5, zeroBtn)
         formLayout.addRow(label6, zeroPotBtn)
 
@@ -389,7 +386,6 @@ class Motor(BaseObject):
         p = spinBoxes[1].value()
         i = spinBoxes[2].value()
         d = spinBoxes[3].value()
-        speed = spinBoxes[4].value()
 
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
@@ -426,14 +422,20 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(d)]
                 }
                 self.client.command(3, cmd_dict)
-                cmd_dict = {
-                    "function_name": "set_stepper_speed",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
-                    "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(speed)]
-                }
-                self.client.command(3, cmd_dict)
         dialog.done(2)
+
+    def motorSpeedDialogSave(self, spinBox, dialog):
+        speed = spinBox.value()
+        cmd_dict = {
+            "function_name": "set_stepper_speed",
+            "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": [int(self.channel), speed]
+        }
+        self.client.command(3, cmd_dict)
+        dialog.done(2)
+
+        self.speed = speed
 
     def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):
         """
