@@ -411,10 +411,10 @@ class Board(QWidget):
             2: "Auto-Press",
             3: "Startup",
             4: "Running",
-            5: "Abort",
-            6: "Post",
-            7: "Safe",
-            8: "hotfire",
+            5: "Hotfire",
+            6: "Abort",
+            7: "Post",
+            8: "Safe",
             255: "Continue"
 
         }
@@ -434,9 +434,7 @@ class Board(QWidget):
             self.continue_button.setDisabled(True)
         if self.state == 3:
             self.continue_button.setEnabled(True)
-        if self.state == 8:
-            self.manual_button.setEnabled(False)
-        if self.name == "Pressurization Controller" and self.state == 4:
+        if self.state == 4 or self.state == 5:
             self.manual_button.setEnabled(False)
 
 
