@@ -54,19 +54,22 @@ class BinaryParser:
             print("Num Packets: %s, %s" % (n, len(packets)))
 
         for packet in packets:
-            if verbose:
-                print(len(packet))
-                print(bytes(packet))
             try:
-                packet_addr = self.interface.parse_packet(packet)
-                if packet_addr != -1:
-                    new_data = self.interface.board_parser[packet_addr].dict
-                    prefix = self.interface.getPrefix(
-                        self.interface.getName(packet_addr))
-                    for key in new_data.keys():
-                        self.dataframe[str(prefix + key)] = new_data[key]
-
-                    datalog.write(self.get_logstring()+'\n')
+                if len(packet) > 0:
+                    if verbose:
+                        print(len(packet))
+                        print(bytes(packet))
+                    packet_addr = self.interface.parse_packet(packet)
+                    #print
+                    if packet_addr != -1:
+                        new_data = self.interface.board_parser[packet_addr].dict
+                        #print(new_data)
+                        prefix = self.interface.getPrefix(
+                            self.interface.getName(packet_addr))
+                        for key in new_data.keys():
+                            self.dataframe[str(prefix + key)] = new_data[key]
+                        #print(self.dataframe)
+                        datalog.write(self.get_logstring()+'\n')
             except:
                 traceback.print_exc()
 
