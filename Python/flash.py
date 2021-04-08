@@ -120,7 +120,7 @@ class FlashController(QtWidgets.QWidget):
     @overrides
     def update(self):
         rem_mem = self.get_flash_remaining()/1000
-        self.rem_mem.setText(str(rem_mem)+ " kb")
+        self.rem_mem.setText("Bytes Remaining: " + str(rem_mem)+ " kb")
 
 
 if __name__ == "__main__":
