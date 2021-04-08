@@ -429,7 +429,7 @@ class Board(QWidget):
             self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
 
-        if self.state == 0:
+        if self.state == 0 or self.state == 2:
             self.continue_button.setDisabled(True)
         if self.state == 3:
             self.continue_button.setEnabled(True)
