@@ -410,7 +410,7 @@ class Board(QWidget):
             1: "Armed",
             2: "Auto-Press",
             3: "Startup",
-            4: "Running",
+            4: "Ignition",
             5: "Hotfire",
             6: "Abort",
             7: "Post",
