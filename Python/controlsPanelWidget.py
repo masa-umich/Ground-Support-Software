@@ -289,7 +289,7 @@ class ControlsPanelWidget(QWidget):
                 if board_name == "Pressurization Controller":
                     self.valve_channels = [str(x) for x in range(0, 9)]
                 if board_name == "Engine Controller" or board_name == "GSE Controller":
-                    self.valve_channels = [str(x) for x in range(0, 33)]
+                    self.valve_channels = [str(x) for x in range(0, 32)]
                 else:
                     self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
                 self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
