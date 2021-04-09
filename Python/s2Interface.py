@@ -132,7 +132,7 @@ class S2_Interface:
                                     if key.startswith(valve_prefix)]
                 num_valves = -1
                 for key in vlvs_list: # dont assume greatest vlv in list is last
-                    vlv_num = str(key)[3:4] # get vlv num
+                    vlv_num = str(key.split(".")[0])[3:] # get vlv num
                     vlv_num = int(vlv_num)
                     if (vlv_num > num_valves):
                         num_valves = vlv_num
