@@ -1955,7 +1955,7 @@
 		"id": 73,
 		"pos": {
 			"x": 350.0,
-			"y": 926.6666666666666
+			"y": 925.5555555555555
 		},
 		"fluid": 1,
 		"width": 18.0,
@@ -1981,13 +1981,133 @@
 			"pos string": "Custom",
 			"local pos": {
 				"x": 30.0,
-				"y": 6.666666666666666
+				"y": 5.555555555555555
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
 		"channel": "5",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 74": {
+		"id": 74,
+		"pos": {
+			"x": 1338.3333333333335,
+			"y": 432.22222222222223
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -10.833333333333334,
+				"y": -27.77777777777778
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Solenoid 75": {
+		"id": 75,
+		"pos": {
+			"x": 595.0,
+			"y": 172.22222222222223
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Purge",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3.3333333333333335,
+				"y": -27.77777777777778
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "8",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 76": {
+		"id": 76,
+		"pos": {
+			"x": 700.0,
+			"y": 177.77777777777777
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Ignitor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5.0,
+				"y": -27.77777777777778
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "6",
 		"board": "Pressurization Controller",
 		"normally open": false
 	},
