@@ -285,7 +285,7 @@ class ControlsPanelWidget(QWidget):
             board_name = object_.avionics_board
             if board_name in Constants.boards:
                 addr = self.interface.getBoardAddr(board_name)
-                self.valve_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
+                self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
                 self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
                 self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks[addr])]
             
