@@ -140,6 +140,7 @@ class Board(QWidget):
         self.manual_button.clicked.connect(lambda: self.sendBoardState("Manual-Disarm"))
         self.manual_button.setFont(font)
         self.manual_button.setFixedWidth(fwidth)
+        self.manual_button.setEnabled(True)
 
         self.arm_button = QPushButton("Arm")
         self.arm_button.setDefault(False)
