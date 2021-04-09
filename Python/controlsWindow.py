@@ -726,7 +726,7 @@ class ControlsWindow(QMainWindow):
         self.button_box.cycle()
         self.limits.update_limits(self.last_packet)
         self.tank_levels.update_values(self.last_packet)
-        self.flash_dialog.flash_controller.update()
+        self.flash_dialog.flash_controller.update(self.last_packet)
 
 
 class ControlsCentralWidget(QWidget):

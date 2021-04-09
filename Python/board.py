@@ -426,6 +426,7 @@ class Board(QWidget):
             self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
             self.continue_button.setDisabled(True)
+            self.manual_button.setEnabled(True)
         else:
             self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)

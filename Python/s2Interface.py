@@ -374,12 +374,4 @@ class S2_Interface:
         header += "\n"
         return header
 
-    def get_rem_flash(self, board_addr):
-        if self.board_parser[board_addr] is None:
-            return 0
-        else:
-            if 'flash_mem' in self.board_parser[board_addr].dict:
-                return int(self.board_parser[board_addr].dict.get("flash_mem"))
-            else:
-                return 0
 

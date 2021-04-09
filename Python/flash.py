@@ -84,8 +84,6 @@ class FlashController(QtWidgets.QWidget):
         name = self.board_selector.currentText()
         return self.interface.getBoardAddr(name)
 
-    def get_flash_remaining(self):
-        return self.interface.get_rem_flash(self.get_addr())
 
     def dump(self):
         self.client.command(5, self.get_addr())
@@ -118,8 +116,13 @@ class FlashController(QtWidgets.QWidget):
         self.client.command(3, cmd_dict)
 
     @overrides
-    def update(self):
-        rem_mem = self.get_flash_remaining()/1000
+    def update(self, last_packet):
+        prefix = self.interface.getPrefix(self.board_selector.currentText())
+        key = prefix + "flash_mem"
+        if( key in last_packet.keys()):
+            rem_mem = int (last_packet[prefix + "flash_mem"])
+        else: 
+            rem_mem = 0
         self.rem_mem.setText("Bytes Remaining: " + str(rem_mem)+ " kb")
 
 
