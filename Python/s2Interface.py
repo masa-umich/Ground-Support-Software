@@ -331,11 +331,12 @@ class S2_Interface:
 
         # Convert binary file to csv
         try:
-            print("Converting "+binfile+"...", end='')
-            self.binparse.bin2csv(filename=binfile, verbose=True)
+            print("Converting "+filename+"...", end='')
+            self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=True)
             print(" done.")
         except Exception as e:
             print("Error when converting binary file to csv ", e)
+            traceback.print_exc()
 
     """
     Returns the board address given a board name
