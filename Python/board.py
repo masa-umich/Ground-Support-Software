@@ -377,7 +377,7 @@ class Board(QWidget):
                 newState = 2
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
-            newState = 5
+            newState = 6
         elif identifier == "Continue":
             newState = 255
         else:
