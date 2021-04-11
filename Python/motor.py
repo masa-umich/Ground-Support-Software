@@ -137,24 +137,20 @@ class Motor(BaseObject):
 
         blankSpaceHeight = (self.height-self.boxHeight*3 - self.set_pos_title_label.height()*3)/4
 
-        print(blankSpaceHeight)
-        print(self.height)
-        print("Tets")
-
         self.set_pos_title_label.setFixedWidth(self.width)
-        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1) * self.gui.pixel_scale_ratio[1])
+        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1))
 
         self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
 
         self.current_pos_title_label.setFixedWidth(self.width)
-        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2) * self.gui.pixel_scale_ratio[1])
+        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2))
 
         self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
 
         self.pot_pos_title_label.setFixedWidth(self.width)
-        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3) * self.gui.pixel_scale_ratio[1])
+        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3))
 
         self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
