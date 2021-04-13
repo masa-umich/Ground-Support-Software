@@ -76,7 +76,7 @@ class Motor(BaseObject):
 
         # The boxes the values go in
         self.boxWidth = 55 * self.gui.pixel_scale_ratio[0] * self.scale
-        self.boxHeight = 20 * self.gui.pixel_scale_ratio[0] * self.scale
+        self.boxHeight = 20 * self.gui.pixel_scale_ratio[1] * self.scale
 
         # State tracks the motor values
         self.setPoint = 0
@@ -87,7 +87,6 @@ class Motor(BaseObject):
         self.Pconstant = 0
         self.Iconstant = 0
         self.Dconstant = 0
-        self.speed = 0
         self.channel = channel
         self.avionics_board = board
 
@@ -135,13 +134,25 @@ class Motor(BaseObject):
         Move the motor labels to the correct position
         :return:
         """
-        self.set_pos_title_label.move(self.position.x(), self.position.y())
+
+        blankSpaceHeight = (self.height-self.boxHeight*3 - self.set_pos_title_label.height()*3)/4
+
+        self.set_pos_title_label.setFixedWidth(self.width)
+        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1))
+
+        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
-        
-        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + 4 * self.gui.pixel_scale_ratio[0])
+
+        self.current_pos_title_label.setFixedWidth(self.width)
+        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2))
+
+        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
-        
-        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + 8 * self.gui.pixel_scale_ratio[0])
+
+        self.pot_pos_title_label.setFixedWidth(self.width)
+        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3))
+
+        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
 
     @overrides
@@ -165,7 +176,7 @@ class Motor(BaseObject):
         x1 = (self.width - self.boxWidth)/2
         x2 = x1 + self.boxWidth
 
-        y1 = self.set_pos_title_label.height()
+        y1 = self.set_pos_title_label.y() - self.position.y() + self.set_pos_title_label.height()
         y2 = y1 + self.boxHeight
 
         y3 = self.current_pos_title_label.y()-self.position.y() + self.current_pos_title_label.height()
@@ -272,12 +283,6 @@ class Motor(BaseObject):
         DPointBox.setDecimals(2)
         DPointBox.setFont(font)
 
-        speedBox = QDoubleSpinBox()
-        speedBox.setMaximum(9999)
-        speedBox.setValue(self.speed)
-        speedBox.setDecimals(2)
-        speedBox.setFont(font)
-
 
         # Create zero button
         zeroBtn = QPushButton("Zero Motor")
@@ -291,7 +296,7 @@ class Motor(BaseObject):
         zeroPotBtn.setAutoDefault(False)
         zeroPotBtn.clicked.connect(self.motorDialogZeroPotButtonClicked)
 
-        spinBoxes = [setPointBox, PPointBox, IPointBox, DPointBox, speedBox]
+        spinBoxes = [setPointBox, PPointBox, IPointBox, DPointBox]
 
         label1 = QLabel("Set Point:")
         label1.setFont(font)
@@ -305,16 +310,11 @@ class Motor(BaseObject):
         label5.setFont(font)
         label6 = QLabel("Zero Pot:")
         label6.setFont(font)
-        label7 = QLabel("Speed: ")
-        label7.setFont(font)
-
-
         # Add to the layout
         formLayout.addRow(label1, setPointBox)
         formLayout.addRow(label2, PPointBox)
         formLayout.addRow(label3, IPointBox)
         formLayout.addRow(label4, DPointBox)
-        formLayout.addRow(label7, speedBox)
         formLayout.addRow(label5, zeroBtn)
         formLayout.addRow(label6, zeroPotBtn)
 
@@ -389,7 +389,6 @@ class Motor(BaseObject):
         p = spinBoxes[1].value()
         i = spinBoxes[2].value()
         d = spinBoxes[3].value()
-        speed = spinBoxes[4].value()
 
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
@@ -426,13 +425,6 @@ class Motor(BaseObject):
                     "args": [int(self.channel), float(d)]
                 }
                 self.client.command(3, cmd_dict)
-                cmd_dict = {
-                    "function_name": "set_stepper_speed",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
-                    "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(speed)]
-                }
-                self.client.command(3, cmd_dict)
         dialog.done(2)
 
     def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):
@@ -464,7 +456,10 @@ class Motor(BaseObject):
         super().setScale(scale)
 
         self.boxWidth = 55 * self.gui.pixel_scale_ratio[0] * self.scale
-        self.boxHeight = 20 * self.gui.pixel_scale_ratio[0] * self.scale
+        self.boxHeight = 20 * self.gui.pixel_scale_ratio[1] * self.scale
+
+        # Update Labels
+        self.moveLabelsToPosition()
 
     @overrides
     def move(self, point: QPoint):

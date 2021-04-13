@@ -1,13 +1,15 @@
 import sys
 #import os
 from datetime import datetime
+from overrides import overrides
 
 from PyQt5 import QtGui, QtCore, QtWidgets
-#from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 
 from constants import Constants
 from s2Interface import S2_Interface
+
 
 
 class FlashDialog(QtWidgets.QDialog):
@@ -42,6 +44,11 @@ class FlashController(QtWidgets.QWidget):
         self.start_button = QtWidgets.QPushButton("Start Logging")
         self.stop_button = QtWidgets.QPushButton("Stop Logging")
 
+        self.rem_mem = QtWidgets.QLabel(self)
+        self.rem_mem.setFont(QtGui.QFont('Arial, 30'))
+        self.rem_mem.setText("0000 kb")
+        #self.rem_mem.setStyleSheet("color: black")
+
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.logo, 0, 0, 1, 2)
@@ -52,6 +59,7 @@ class FlashController(QtWidgets.QWidget):
         self.layout.addWidget(self.wipe_button, 4, 0, 1, 2)
         self.layout.addWidget(self.start_button, 5, 0, 1, 2)
         self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
+        self.layout.addWidget(self.rem_mem, 2, 0, 1, 2)
 
         self.board_selector.addItems([""]+Constants.boards)
 
@@ -60,6 +68,9 @@ class FlashController(QtWidgets.QWidget):
         self.wipe_button.clicked.connect(self.wipe)
         self.start_button.clicked.connect(self.start_logging)
         self.stop_button.clicked.connect(self.stop_logging)
+
+
+
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
@@ -84,6 +95,7 @@ class FlashController(QtWidgets.QWidget):
         msgBox.setWindowTitle("Error")
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         return msgBox.exec()
+
 
     def dump(self):
         addr = self.get_addr()
@@ -122,6 +134,16 @@ class FlashController(QtWidgets.QWidget):
                 "args": []
             }
             self.client.command(3, cmd_dict)
+
+    @overrides
+    def update(self, last_packet):
+        prefix = self.interface.getPrefix(self.board_selector.currentText())
+        key = prefix + "flash_mem"
+        if( key in last_packet.keys()):
+            rem_mem = int (last_packet[prefix + "flash_mem"])
+        else: 
+            rem_mem = 0
+        self.rem_mem.setText("Bytes Remaining: " + str(rem_mem)+ " kb")
 
 
 if __name__ == "__main__":
