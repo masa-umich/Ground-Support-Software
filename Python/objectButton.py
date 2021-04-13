@@ -28,6 +28,7 @@ class ObjectButton(QPushButton):
         self.object_ = object_
         self.dataFile = dataFile
         self.dataType = dataType
+        self.drag_start_pos = None
 
         # Make sure button has no label
         self.setText("")
@@ -48,6 +49,7 @@ class ObjectButton(QPushButton):
         self.show()
         # Raise button above label
         self.raise_()
+        self.setFocus()  # Want the button to have focus when created
 
         assert dataType in self.allowed_data_types
 
@@ -60,8 +62,9 @@ class ObjectButton(QPushButton):
         """
 
         # If left click and the button is currently being edited
-        if event.button() == Qt.LeftButton & self.object_.is_being_edited:
+        if event.button() == Qt.LeftButton & self.object_.doesObjectHaveFocus():
             # Set drag start position
+            self.parent.controlsPanel.addEditingObject(self.object_)
             self.drag_start_pos = event.pos()
 
         super().mousePressEvent(event)
@@ -73,6 +76,10 @@ class ObjectButton(QPushButton):
 
         :param event: variable holding event data
         """
+
+        # If the start position does not exist, then it should not be moved so return out
+        if self.drag_start_pos is None:
+            return
 
         # For some unknown reason mouse move events handle buttons differently on OSX and Windows
         target_button = Qt.LeftButton
@@ -91,11 +98,35 @@ class ObjectButton(QPushButton):
             # Move the button into place on screen
             pos = event.globalPos() - self.window_pos - self.drag_start_pos
 
+            # Check if the shift ket is being held down, if so check if the object has x or y alignment right now
+            mod = QApplication.keyboardModifiers()
+            if mod == Qt.ShiftModifier:
+                x_aligned = False
+                y_aligned = False
+                # Loop through ap and see if any are aligned currently
+                for ap in self.object_.anchor_points:
+                    if ap.x_aligned:
+                        x_aligned = True
+                    if ap.y_aligned:
+                        y_aligned = True
+
+                # If the ap is aligned, lock the X/Y position so the object can only be moved along that line, also
+                # update the drag start position to prevent weird movement when the object encounters another ap
+                if x_aligned and not y_aligned:
+                    pos.setX(self.object_.position.x())
+                    self.drag_start_pos.setX(event.pos().x())
+                elif y_aligned and not x_aligned:
+                    pos.setY(self.object_.position.y())
+                    self.drag_start_pos.setY(event.pos().y())
+
             # Checks if the object should be snapped into place, and get that new pos if it does
             pos = self.object_.checkApAlignment(pos)
 
-            # Moves the object into its new position
-            self.object_.move(pos)
+            # Calculate the difference in location
+            dif = pos - self.object_.position
+
+            # Move all teh editing objects that amount
+            self.object_.central_widget.controlsWidget.moveObjectGroup(dif)
 
         super().mouseMoveEvent(event)
 
@@ -108,15 +139,46 @@ class ObjectButton(QPushButton):
         """
 
         # Checks if the object is currently being dragged
-        if event.button() == Qt.LeftButton and self.object_.is_being_edited and self.object_.is_being_dragged:
+        if event.button() == Qt.LeftButton and self.object_.button.hasFocus() and self.object_.is_being_dragged:
             # Does background stuff when object is released
             super().mouseReleaseEvent(event)
 
             # Makes sure that the button is still checked as editing and edit panel does not disappear
             self.parent.controlsPanel.addEditingObject(self.object_)
             self.object_.is_being_dragged = False
+            self.drag_start_pos = None
         else:
             super().mouseReleaseEvent(event)
+
+    @overrides
+    def keyPressEvent(self, event: QKeyEvent):
+        """
+        Checks for keyboard events, only occurs when an object is in focus. Currently will allow to move an object with
+        the arrow keys
+        :param event: passed in event
+        """
+
+        super().keyPressEvent(event)  # Not sure if super has to be called, but doing it for best practice
+
+        # Default pixel move distance, essential the distance the object will move when an arrow key is pressed
+        move_dist = 5
+
+        # If the shift key is being held down, allow for finer moving of the object
+        if event.modifiers() & Qt.ShiftModifier:  # Idk why this works
+            move_dist = 1
+
+        # Move the selected group by the move dist amount
+        if event.key() == Qt.Key_Left:
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(-move_dist, 0))
+        elif event.key() == Qt.Key_Right:
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(move_dist, 0))
+        elif event.key() == Qt.Key_Up:
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(0, -move_dist))
+        elif event.key() == Qt.Key_Down:
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(0, move_dist))
+
+        # Idk why but calling super causes the button to lose focus, so set that back
+        self.object_.button.setFocus()
 
 
 

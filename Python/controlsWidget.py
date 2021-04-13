@@ -146,7 +146,7 @@ class ControlsWidget(QWidget):
         # Leaving edit mode, nothing to do when entering
         if not self.centralWidget.is_editing:
             self.controlsPanel.edit_frame.hide()
-            self.controlsPanel.removeEditingObject()
+            self.controlsPanel.removeAllEditingObjects()
             if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
@@ -169,6 +169,16 @@ class ControlsWidget(QWidget):
         object_.deleteSelf()
 
         self.update()
+
+    def moveObjectGroup(self, dif):
+        """
+        Moves a group of editing objects to a new position
+        :param dif: this is the the difference to move each object, the relative distance essentially
+        """
+
+        # For every object in the group, move them
+        for obj in self.centralWidget.controlsPanelWidget.editing_object_list:
+            obj.move(dif + obj.position)
 
     @overrides
     def paintEvent(self, e):
@@ -265,7 +275,7 @@ class ControlsWidget(QWidget):
 
         # If we are not expecting a release don't remove all objects
         if not self.should_ignore_mouse_release:
-            self.controlsPanel.removeEditingObject()
+            self.controlsPanel.removeAllEditingObjects()
         else:
             self.should_ignore_mouse_release = False
 
@@ -282,11 +292,12 @@ class ControlsWidget(QWidget):
 
         # If window is in edit mode
         if self.parent.is_editing:
-            action = self.context_menu.exec_(self.mapToGlobal(point))
+            action = self.context_menu.exec_(self.mapToGlobal(point) - self.window.pos())
 
             # Below ifs creates new objects at the point where the right click
             if action is not None:
-                self.controlsPanel.removeEditingObject()
+                self.controlsPanel.removeAllEditingObjects()
+                point = self.mapToGlobal(point) - self.window.pos()
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
@@ -311,7 +322,9 @@ class ControlsWidget(QWidget):
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
+                # Add editing object, and move back because the position is scaled and I am lazy
                 self.controlsPanel.addEditingObject(self.object_list[-1])
+                self.object_list[-1].move(point)
 
             self.update()
 

@@ -5,6 +5,8 @@ from PyQt5.QtCore import *
 from overrides import overrides
 from tube import Tube
 
+import math
+
 
 class AnchorPoint(QPushButton):
     """
@@ -34,7 +36,8 @@ class AnchorPoint(QPushButton):
         self.tube = None
 
         self.setStyleSheet("background-color:transparent;border:0;")
-        self.resize(6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0])
+        # Below makes sure the anchor point size is rounded to the nearest odd number
+        self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2), 2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
         self.show()
 
         self.updatePosition()
@@ -59,9 +62,9 @@ class AnchorPoint(QPushButton):
         """
         Draws the anchor point on the screen, also draws the alignment lines
         """
-        # Draws the 6x6 box
-        self.widget.painter.drawRect(QRectF(self.x(), self.y(), 6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0]))
-        self.widget.painter.eraseRect(QRectF(self.x(), self.y(), 6 * self.gui.pixel_scale_ratio[0], 6 * self.gui.pixel_scale_ratio[0]))
+        # Draws the box
+        self.widget.painter.drawRect(QRectF(self.x(), self.y(), self.width(), self.height()))
+        self.widget.painter.eraseRect(QRectF(self.x(), self.y(), self.width(), self.height()))
 
         # Draws the yellow dashed alignment lines when dragging the ap's object or drawing the ap's tube
         if self.object_.is_being_dragged or self.widget.is_drawing:

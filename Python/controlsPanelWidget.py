@@ -4,6 +4,8 @@ from PyQt5.QtCore import *
 
 from constants import Constants
 
+import inspect
+
 
 class ControlsPanelWidget(QWidget):
     """
@@ -20,12 +22,14 @@ class ControlsPanelWidget(QWidget):
         self.gui = self.parent.gui
         self.interface = self.window.interface
 
+        # Keeps track of the differnt channels in boxes
         self.sensor_channels = self.interface.channels
         self.valve_channels = []
         self.motor_channels = []
         self.tank_channels = []
 
         # Keeps track of all the objects currently being edited
+        self.editing_object_list = []
         self.object_editing = None
 
         # Defines placement and size of control panel
@@ -274,11 +278,39 @@ class ControlsPanelWidget(QWidget):
 
         self.edit_form_layout.addRow(identifier_label, spinBox)
 
+    def blockAllEditPanelFieldSignals(self):
+        """
+        Block all signals from being emitted from edit panel fields, useful for making changes with no ripple effects
+        """
+
+        numRows = self.edit_form_layout.count()
+
+        # For all the items in the layout, block the signals
+        for i in range(numRows):
+            widget = self.edit_form_layout.itemAt(i).widget()
+            if widget is not None:
+                widget.blockSignals(True)
+
+    def enableAllEditPanelFieldSignals(self):
+        """
+        Enable all signals from being emitted from edit panel fields, to undo the block all
+        """
+
+        numRows = self.edit_form_layout.count()
+
+        # For all the items in the layout, block the signals
+        for i in range(numRows):
+            widget = self.edit_form_layout.itemAt(i).widget()
+            if widget is not None:
+                widget.blockSignals(False)
+
     def updateEditPanelFields(self, object_):
         """
         Updates the various fields in the edit frame when a new object is selected for editing
         :param object_: the object that is selected for editing
         """
+
+        self.blockAllEditPanelFieldSignals()
 
         # Updates the available values for the channels for solenoids and generic sensors
         try:
@@ -332,6 +364,8 @@ class ControlsPanelWidget(QWidget):
             self.channel_combobox.setDisabled(True)
             self.board_combobox.setDisabled(True)
 
+        self.enableAllEditPanelFieldSignals()
+
     def updateEditingObjectFields(self, text, identifier):
         """
         Called when user changes field of an object from the edit panel
@@ -346,58 +380,115 @@ class ControlsPanelWidget(QWidget):
 
             # Component Parameters
             if identifier == "Component Name":
-                object_.setLongName(text)
+                for object_ in self.editing_object_list:
+                    object_.setLongName(text)
             elif identifier == "Serial Number":
                 object_.setShortName(text)
             elif identifier == "Component Fixed?":
-                object_.setPositionLock(text)
+                for object_ in self.editing_object_list:
+                    object_.setPositionLock(text)
             elif identifier == "Component Scale":
-                object_.setScale(text)
+                for object_ in self.editing_object_list:
+                    object_.setScale(text)
             elif identifier == "Component Fluid":
-                object_.setFluid(text)
+                for object_ in self.editing_object_list:
+                    object_.setFluid(text)
             elif identifier == "Board":
-                object_.setAvionicsBoard(text)
+                for object_ in self.editing_object_list:
+                    object_.setAvionicsBoard(text)
                 self.updateEditPanelFields(object_) # lazy fix for valve numbers
             elif identifier == "Channel":
                 object_.setChannel(text)
 
             # Component Label Parameters
             elif identifier == "Component Name Visibility":
-                object_.long_name_label.setVisible(text)
+                for object_ in self.editing_object_list:
+                    object_.long_name_label.setVisible(text)
             elif identifier == "Component Name Position":
-                object_.long_name_label.moveToPosition(text)
+                for object_ in self.editing_object_list:
+                    object_.long_name_label.moveToPosition(text)
             elif identifier == "Component Name Font Size":
-                object_.long_name_label.setFontSize(text)
+                for object_ in self.editing_object_list:
+                    object_.long_name_label.setFontSize(text)
             elif identifier == "Component Name Rows":
-                object_.long_name_label.setRows(text)
+                for object_ in self.editing_object_list:
+                    object_.long_name_label.setRows(text)
 
             # Serial Number Label Parameters
             elif identifier == "Serial Number Visibility":
-                object_.serial_number_label.setVisible(text)
+                for object_ in self.editing_object_list:
+                    object_.serial_number_label.setVisible(text)
             elif identifier == "Serial Number Position":
-                object_.serial_number_label.moveToPosition(text)
+                for object_ in self.editing_object_list:
+                    object_.serial_number_label.moveToPosition(text)
             elif identifier == "Serial Number Font Size":
-                object_.serial_number_label.setFontSize(text)
+                for object_ in self.editing_object_list:
+                    object_.serial_number_label.setFontSize(text)
+
+    # def doesFormLayoutHaveFocus(self):
+    #     numRow = self.edit_form_layout.count()
+    #     for i in range(numRow):
+    #         widget = self.edit_form_layout.itemAt(i).widget()
+    #
+    #         if widget is not None and self.edit_form_layout.itemAt(i).widget().hasFocus():
+    #             return True
+    #
+    #     return False
 
     # HMM: Move is_being_edited to object class and call this function here
     def addEditingObject(self, object_):
         """
         Adds object to list to be edited
         """
-        # Make sure the currently editing object is removed
-        self.removeEditingObject()
-        # Keep track of what object is being updated, and update the fields
-        object_.setIsEditing(True)
+        # Check if shift is being pressed, if so add the object to the array of objects being edited
+        mod = QApplication.keyboardModifiers()
+        if mod == Qt.ShiftModifier:
+            if object_ not in self.editing_object_list:
+                self.editing_object_list.append(object_)
+            object_.setIsEditing(True)
+        else:
+            # Make sure the currently editing object is removed, and the new object is added
+            self.removeAllEditingObjects()
+            if object_ not in self.editing_object_list:
+                self.editing_object_list.append(object_)
+            object_.setIsEditing(True)
+
+        self.setEditingObjectFocus(object_)
+
+    def setEditingObjectFocus(self, object_):
+        """
+        Sets the specified object as focuses, making sure to have this object data displayed in the panel
+        :param object_: object to be set as the focus
+        """
+
+        object_.button.setFocus()
         self.object_editing = object_
         self.edit_frame.show()
         self.updateEditPanelFields(object_)
 
-    def removeEditingObject(self):
+    def removeEditingObject(self, object_):
         """
         Removes object from list to be edited
         """
-        # Safely remove the object that is currently being edited
-        if self.object_editing is not None:
-            self.object_editing.setIsEditing(False)
-            self.object_editing = None
-            self.edit_frame.hide()
+        object_.setIsEditing(False)
+        self.editing_object_list.remove(object_)
+
+    def removeAllEditingObjects(self):
+        """
+        Removes all the currently editing objects
+        """
+        for obj in reversed(self.editing_object_list):
+            self.removeEditingObject(obj)
+
+        self.object_editing = None
+        self.edit_frame.hide()
+
+    def removeOtherEditingObjects(self, object_):
+        """
+        Removes all but the specified the editing objects
+        """
+        for obj in reversed(self.editing_object_list):
+            if obj is not object_:
+                self.removeEditingObject(obj)
+
+        self.setEditingObjectFocus(object_)

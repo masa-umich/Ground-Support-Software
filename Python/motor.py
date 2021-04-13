@@ -501,6 +501,21 @@ class Motor(BaseObject):
         self.setToolTip_(text)
 
     @overrides
+    def lowerObject(self):
+        """
+        Lowers the object, overridden to make sure the callout labels does not get in the way
+        """
+        super().lowerObject()
+
+        # Lower the labels
+        self.set_pos_title_label.lower()
+        self.set_pos_label.lower()
+        self.current_pos_title_label.lower()
+        self.current_pos_label.lower()
+        self.pot_pos_title_label.lower()
+        self.pot_pos_label.lower()
+
+    @overrides
     def generateSaveDict(self):
         """
         Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific

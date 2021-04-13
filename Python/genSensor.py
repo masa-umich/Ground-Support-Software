@@ -12,8 +12,8 @@ class GenSensor(BaseObject):
 
     object_name = "Generic Sensor"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 55*1,
-                 height: float = 20*1, name: str = "PT",
+    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 66,
+                 height: float = 24, name: str = "PT",
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Sensor', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
@@ -178,7 +178,6 @@ class GenSensor(BaseObject):
         self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
 
 
-
     @overrides
     def draw(self):
         """
@@ -188,6 +187,17 @@ class GenSensor(BaseObject):
         self.widget_parent.painter.setBrush(0)
         
         super().draw()
+
+    @overrides
+    def lowerObject(self):
+        """
+        Lowers the object, overridden to make sure the measurement label does not get in the way
+        """
+        super().lowerObject()
+
+        # Lower the label
+        self.measurement_label.lower()
+
         
     @overrides
     def deleteSelf(self):
