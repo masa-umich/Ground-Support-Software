@@ -61,7 +61,7 @@ class FlashController(QtWidgets.QWidget):
         self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
         self.layout.addWidget(self.rem_mem, 2, 0, 1, 2)
 
-        self.board_selector.addItems(Constants.boards)
+        self.board_selector.addItems([""]+Constants.boards)
 
         self.file_button.clicked.connect(self.select_file)
         self.download_button.clicked.connect(self.dump)
@@ -82,38 +82,58 @@ class FlashController(QtWidgets.QWidget):
 
     def get_addr(self):
         name = self.board_selector.currentText()
-        return self.interface.getBoardAddr(name)
+        if name != "":
+            return self.interface.getBoardAddr(name)
+        else:
+            self.showDialog("Select a board.")
+            return -1
+
+    def showDialog(self, msg):
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+        msgBox.setText(msg)
+        msgBox.setWindowTitle("Error")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        return msgBox.exec()
 
 
     def dump(self):
-        self.client.command(5, self.get_addr())
+        addr = self.get_addr()
+        if addr != -1:
+            self.client.command(5, addr)
 
     def wipe(self):
-        cmd_dict = {
-            "function_name": "wipe_flash",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        if addr != -1:
+            cmd_dict = {
+                "function_name": "wipe_flash",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
 
     def stop_logging(self):
-        cmd_dict = {
-            "function_name": "stop_logging",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        if addr != -1:
+            cmd_dict = {
+                "function_name": "stop_logging",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
 
     def start_logging(self):
-        cmd_dict = {
-            "function_name": "start_logging",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        if addr != -1:
+            cmd_dict = {
+                "function_name": "start_logging",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
 
     @overrides
     def update(self, last_packet):
