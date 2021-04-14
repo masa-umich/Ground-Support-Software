@@ -173,6 +173,7 @@ class ControlsWindow(QMainWindow):
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
+        menuBar.setStyleSheet("background-color:white;border:0;color:black;")
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
         #view_menu = menuBar.addMenu('View')
@@ -197,15 +198,25 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-        menuBar.addAction(self.connect)
         run_menu.addAction(self.addAvionicsAct)
-        menuBar.addAction(self.flashsettings)
         run_menu.addAction(self.checkpointAct)
-        menuBar.addAction(self.buttonBoxAct)
         run_menu.addMenu(self.ambientizeMenu)
-        menuBar.addAction(self.limit_action)
-        menuBar.addAction(self.auto_action)
-        menuBar.addAction(self.level_action)
+
+        # If the gui is being run on windows, dont use the menu bar
+        if self.gui.platform == "Windows":
+            menuBar.addAction(self.connect)
+            menuBar.addAction(self.flashsettings)
+            menuBar.addAction(self.buttonBoxAct)
+            menuBar.addAction(self.limit_action)
+            menuBar.addAction(self.auto_action)
+            menuBar.addAction(self.level_action)
+        elif self.gui.platform == "OSX":
+            run_menu.addAction(self.connect)
+            run_menu.addAction(self.flashsettings)
+            run_menu.addAction(self.buttonBoxAct)
+            run_menu.addAction(self.limit_action)
+            run_menu.addAction(self.auto_action)
+            run_menu.addAction(self.level_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
