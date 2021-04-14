@@ -34,7 +34,9 @@ class ObjectButton(QPushButton):
         self.setText("")
 
         # No background/ border and allow for custom right click options
-        self.setStyleSheet("QPushButton{background-color:transparent;border:0;}")
+        self.setStyleSheet(""
+                           "QPushButton{background-color:transparent;border:0;}"
+                           "QToolTip{background-color:black;color:white;}")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 
         self.setToolTip("SN: " + self.object_.serial_number)
