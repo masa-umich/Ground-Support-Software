@@ -129,7 +129,7 @@ class Board(QWidget):
         font.setPointSize(11 * self.gui.font_scale_ratio)
 
         if self.gui.platform == "OSX":
-            fwidth = self.width()/5 * 1
+            fwidth = self.width()/5 * .85
         else:
             fwidth = self.width()/5 * .85
 
