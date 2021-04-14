@@ -162,7 +162,7 @@ if __name__ == '__main__':
         darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
         darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
         darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
-        darkPalette.setColor(QPalette.ToolTipBase, Qt.white)
+        darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
         darkPalette.setColor(QPalette.ToolTipText, Qt.white)
         darkPalette.setColor(QPalette.Text, Qt.white)
         darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
