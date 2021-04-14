@@ -56,15 +56,15 @@ class ControlsWidget(QWidget):
         self.top = 0
 
         self.width = self.gui.screenResolution[0] - self.parent.panel_width
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
 
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber,
-                                 ThrottleValve, HeatEx, Regulator, CheckValve, Motor]
+        self.object_type_list = [Solenoid, Tank, Motor, GenSensor, ThreeWayValve, Chamber,
+                                 ThrottleValve, HeatEx, Regulator, CheckValve]
 
         # Object Tracker
         self.object_list = []
@@ -110,11 +110,11 @@ class ControlsWidget(QWidget):
         self.masa_logo.setPixmap(pixmap)
 
         if self.gui.platform == "OSX":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
+            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
                                        (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                        100 * self.gui.pixel_scale_ratio[1])
         elif self.gui.platform == "Windows":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
+            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
                                    (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
 
@@ -137,6 +137,8 @@ class ControlsWidget(QWidget):
         for object_type in self.object_type_list:
             self.context_menu.addAction("New " + object_type.object_name)
 
+        self.context_menu.addAction("New Tube")
+
     def toggleEdit(self):
         """
         Toggles if the window is in edit mode or not
@@ -152,6 +154,12 @@ class ControlsWidget(QWidget):
             else:
                 self.window.saveFileDialog()
 
+            # Prevents tube from drawing in run mode
+            if self.is_drawing:
+                for tube in self.tube_list:
+                    if tube.is_being_drawn:
+                        tube.completeTube()
+
         # Tells painter to update screen
         self.update()
 
@@ -164,6 +172,9 @@ class ControlsWidget(QWidget):
 
         # Remove object from any tracker lists
         self.object_list.remove(object_)
+
+        if object_ in self.centralWidget.controlsPanelWidget.editing_object_list:
+            self.centralWidget.controlsPanelWidget.editing_object_list.remove(object_)
 
         # Tells the object to delete itself
         object_.deleteSelf()
@@ -179,6 +190,26 @@ class ControlsWidget(QWidget):
         # For every object in the group, move them
         for obj in self.centralWidget.controlsPanelWidget.editing_object_list:
             obj.move(dif + obj.position)
+
+    def setObjectsMouseTransparency(self, isTransparent: bool):
+        """
+        For all objects drawn onscreen, set the objects mouse transparency. Mouse events will not be
+        triggered if an object is transparent
+        :param isTransparent: should the objects be transparent, True/ False
+        """
+
+        for obj in self.object_list:
+            obj.setMouseEventTransparency(isTransparent)
+
+    def resetObjectsAnchorPointAlignment(self):
+        """
+        Resets all objects anchor point alignment, basically prevents lines from being accidentally drawn once a
+        process is done
+        """
+        for obj in self.object_list:
+            for obj_ap in obj.anchor_points:
+                obj_ap.x_aligned = False
+                obj_ap.y_aligned = False
 
     @overrides
     def paintEvent(self, e):
@@ -207,7 +238,7 @@ class ControlsWidget(QWidget):
         self.painter.end()
 
     @overrides
-    def keyPressEvent(self, e:QKeyEvent):
+    def keyPressEvent(self, e: QKeyEvent):
         """
         Called whenever the user presses a button on the keyboard
         :param e:
@@ -222,13 +253,13 @@ class ControlsWidget(QWidget):
         elif e.key() == Qt.Key_Escape:
             for tube in self.tube_list:
                 if tube.is_being_drawn:
-                    self.tube_list.remove(tube)
-                    self.is_drawing = False
-                    del tube
+                    tube.deleteTube()
+                    self.resetObjectsAnchorPointAlignment()
                     self.update()
-        #If 'r' key is pressed:
-        elif e.key() == 82:
-            #Calls rotate method on last object in editing list
+                    self.window.statusBar().showMessage("Tube canceled")
+        # If 'r' key is pressed:
+        elif e.key() == Qt.Key_R:
+            # Calls rotate method on last object in editing list
             if self.controlsPanel.object_editing is not None:
                 self.controlsPanel.object_editing.rotate()
                 self.update()
@@ -291,13 +322,12 @@ class ControlsWidget(QWidget):
         """
 
         # If window is in edit mode
-        if self.parent.is_editing:
-            action = self.context_menu.exec_(self.mapToGlobal(point) - self.window.pos())
+        if self.parent.is_editing and not self.is_drawing:
+            action = self.context_menu.exec_(self.mapToGlobal(point))
 
             # Below ifs creates new objects at the point where the right click
             if action is not None:
-                self.controlsPanel.removeAllEditingObjects()
-                point = self.mapToGlobal(point) - self.window.pos()
+                point = self.mapToGlobal(point)
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
@@ -319,12 +349,22 @@ class ControlsWidget(QWidget):
                     self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=0))
                 elif action.text() == "New Check Valve":
                     self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Tube":
+                    self.tube_list.append(Tube(self, [],Constants.fluid["HE"], [self]))
+                    self.setMouseTracking(True)
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
                 # Add editing object, and move back because the position is scaled and I am lazy
-                self.controlsPanel.addEditingObject(self.object_list[-1])
-                self.object_list[-1].move(point)
+                if action.text() == "New Tube":
+                    self.is_drawing = True
+                    self.tube_list[-1].is_being_drawn = True
+                else:
+                    #mod = QApplication.keyboardModifiers()
+                    self.controlsPanel.addEditingObject(self.object_list[-1])
+                    self.object_list[-1].move(point)
+
+                self.window.statusBar().showMessage(action.text() + " created")
 
             self.update()
 
@@ -345,9 +385,13 @@ class ControlsWidget(QWidget):
         for tube in self.tube_list:
             data = {**data, **(tube.generateSaveDict())}
 
+        data = {**data, **(self.centralWidget.controlsSidebarWidget.generateSaveDict())}
+
         # With the open file, write to json with a tab as an indent
         with open(filename, "w") as write_file:
             json.dump(data, write_file, indent="\t")
+
+        self.window.statusBar().showMessage("Configuration saved to " + filename)
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
@@ -360,6 +404,9 @@ class ControlsWidget(QWidget):
         with open(fileName, "r") as read_file:
             data = json.load(read_file)
 
+        boards = []
+
+        # TODO: Move this out of controls widget
         # TODO: I was really lazy so I just copy pasted but can be done nicer
         # Quickly parses json data dict and calls the right object initializer to add it to screen
         for i in data:
@@ -503,9 +550,17 @@ class ControlsWidget(QWidget):
                 points = []
                 for j in tube["bend positions"]:
                     points.append(QPoint(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
-                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[0]))
+                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
 
-                self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
+                self.tube_list.append(Tube(self, tube_id=tube["tube id"], attachment_aps=[], fluid=tube["fluid"], points=points, line_width=tube["line width"]))
+
+            if i.split()[0] == "Board":
+                boards.append(data[i])
+
+        self.gui.run.boards = boards
+        self.centralWidget.controlsSidebarWidget.addBoards(boards)
+
+        self.window.statusBar().showMessage("Configuration opened from " + fileName)
 
     @overrides
     def update(self):

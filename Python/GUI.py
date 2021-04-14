@@ -93,6 +93,8 @@ class GUI:
 
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
+
+        self.controlsWindow.statusBar().showMessage("GUI startup")
         
         # set client path for run class (for server checkpointing)
         self.run.setClient(self.controlsWindow.client_dialog.client)

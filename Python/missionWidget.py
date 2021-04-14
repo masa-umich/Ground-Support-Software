@@ -288,12 +288,20 @@ class MissionWidget(QWidget):
     def update(self):
         super().update()
         # connection
-        if self.client.is_connected:
+        if self.window.interface.last_raw_packet is not None:
+            last_raw_size = len(self.window.interface.last_raw_packet)
+        else:
+            last_raw_size = 0
+
+        if self.client.is_connected and last_raw_size > 0:
             self.connectionIndicator.setIndicatorColor("Green")
             self.connectionIndicator.setToolTip("Connected")
+        elif self.client.is_connected:
+            self.connectionIndicator.setIndicatorColor("Yellow")
+            self.connectionIndicator.setToolTip("Server Connected, No Packets Received")
         else:
             self.connectionIndicator.setIndicatorColor("Red")
-            self.connectionIndicator.setToolTip("No connection")
+            self.connectionIndicator.setToolTip("No Server Connection")
         
         # commander
         if self.client.is_commander:

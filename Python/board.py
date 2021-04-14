@@ -126,12 +126,12 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(13 * self.gui.font_scale_ratio)
+        font.setPointSize(11 * self.gui.font_scale_ratio)
 
         if self.gui.platform == "OSX":
-            fwidth = self.width()/4 * 1
+            fwidth = self.width()/5 * 1
         else:
-            fwidth = self.width()/4 * .85
+            fwidth = self.width()/5 * .85
 
         # Create the buttons, make sure there is no default option, and connect to functions
         self.manual_button = QPushButton("Manual")
@@ -157,7 +157,7 @@ class Board(QWidget):
         self.fire_button.setFont(font)
         self.fire_button.setFixedWidth(fwidth)
 
-        self.continue_button = QPushButton("Continue")
+        self.continue_button = QPushButton("Cont.")
         self.continue_button.setDefault(False)
         self.continue_button.setAutoDefault(False)
         self.continue_button.setDisabled(False)
@@ -183,10 +183,6 @@ class Board(QWidget):
             self.rem_timer.setText("00 s")
             self.rem_timer.setStyleSheet("color: white")
             self.rem_timer.show()
-
-
-
-
 
         # Set text depending on board
         if self.name == "Engine Controller":
@@ -231,6 +227,7 @@ class Board(QWidget):
         print(self.name + " clicked! But doing nothing about it")
         #self.showBoardSettingsDialog()
 
+    # TODO: THIS IS NOT CALLED EVER
     def showBoardSettingsDialog(self):
         """
         Shows a dialog when the motor is clicked. Allows the user to update the set point, zero and PID constants

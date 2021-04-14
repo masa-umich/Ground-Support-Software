@@ -61,7 +61,7 @@ class FlashController(QtWidgets.QWidget):
         self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
         self.layout.addWidget(self.rem_mem, 2, 0, 1, 2)
 
-        self.board_selector.addItems([""]+Constants.boards)
+        self.board_selector.addItems(Constants.boards)
 
         self.file_button.clicked.connect(self.select_file)
         self.download_button.clicked.connect(self.dump)

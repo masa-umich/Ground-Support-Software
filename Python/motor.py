@@ -458,6 +458,22 @@ class Motor(BaseObject):
         self.boxWidth = 55 * self.gui.pixel_scale_ratio[0] * self.scale
         self.boxHeight = 20 * self.gui.pixel_scale_ratio[1] * self.scale
 
+        # Make the font bigger when scaled upwards
+        font = self.set_pos_title_label.font()
+        font.setPointSizeF(14 * scale * self.gui.font_scale_ratio)
+
+        self.set_pos_label.setFont(font)
+        self.set_pos_title_label.setFont(font)
+        self.set_pos_title_label.setFixedSize_()
+
+        self.current_pos_label.setFont(font)
+        self.current_pos_title_label.setFont(font)
+        self.current_pos_title_label.setFixedSize_()
+
+        self.pot_pos_label.setFont(font)
+        self.pot_pos_title_label.setFont(font)
+        self.pot_pos_title_label.setFixedSize_()
+
         # Update Labels
         self.moveLabelsToPosition()
 
@@ -478,12 +494,18 @@ class Motor(BaseObject):
         """
         self.avionics_board = board
 
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
         self.channel = channel
+
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
 
     def updateToolTip(self):
         """
@@ -514,6 +536,22 @@ class Motor(BaseObject):
         self.current_pos_label.lower()
         self.pot_pos_title_label.lower()
         self.pot_pos_label.lower()
+
+    @overrides
+    def setMouseEventTransparency(self, should_be_transparent):
+        """
+        Sets the object to be transparent to mouse or not, overridden for motor pos/ pot labels
+        :param should_be_transparent:
+        """
+        super().setMouseEventTransparency(should_be_transparent)
+        self.set_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.set_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
+        self.current_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.current_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
+        self.pot_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.pot_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
 
     @overrides
     def generateSaveDict(self):

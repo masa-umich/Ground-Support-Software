@@ -37,7 +37,7 @@ class ControlsPanelWidget(QWidget):
         self.top = 0
 
         self.width = self.parent.panel_width
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Sets color of control panel
@@ -404,26 +404,40 @@ class ControlsPanelWidget(QWidget):
             elif identifier == "Component Name Visibility":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setVisible(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": set component name visible to " + str(text))
             elif identifier == "Component Name Position":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.moveToPosition(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": set component name position to " + str(text))
             elif identifier == "Component Name Font Size":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setFontSize(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": set component name font size to " + str(text))
             elif identifier == "Component Name Rows":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setRows(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": set component name rows to " + str(text))
 
             # Serial Number Label Parameters
             elif identifier == "Serial Number Visibility":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setVisible(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": serial number visibility to " + str(text))
             elif identifier == "Serial Number Position":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.moveToPosition(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": serial number position to " + str(text))
             elif identifier == "Serial Number Font Size":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setFontSize(text)
+                    self.window.statusBar().showMessage(
+                        object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
 
     # def doesFormLayoutHaveFocus(self):
     #     numRow = self.edit_form_layout.count()
@@ -443,10 +457,13 @@ class ControlsPanelWidget(QWidget):
         # Check if shift is being pressed, if so add the object to the array of objects being edited
         mod = QApplication.keyboardModifiers()
         if mod == Qt.ShiftModifier:
+            print("HERE")
             if object_ not in self.editing_object_list:
+                print("Here two")
                 self.editing_object_list.append(object_)
             object_.setIsEditing(True)
         else:
+            print("HEREEE")
             # Make sure the currently editing object is removed, and the new object is added
             self.removeAllEditingObjects()
             if object_ not in self.editing_object_list:

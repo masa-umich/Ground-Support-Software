@@ -92,7 +92,7 @@ class GenSensor(BaseObject):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(12 * self.gui.font_scale_ratio)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
         self.measurement_label.setFont(font)
 
         self.measurement_label.show()
@@ -113,6 +113,9 @@ class GenSensor(BaseObject):
         """
         self.avionics_board = board
 
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
@@ -121,6 +124,9 @@ class GenSensor(BaseObject):
         self.channel = channel
         self.setUnits()
         self.updateToolTip()
+
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
     
     def setUnits(self):
         """
@@ -162,12 +168,10 @@ class GenSensor(BaseObject):
         """
         Called when the Sensor is clicked
         """
+
+        # Make the font bigger when scaled upwards
         font = self.measurement_label.font()
-        size = font.pointSizeF()
-        if scale < self.scale:
-            font.setPointSizeF((size-1) * self.gui.font_scale_ratio)
-        else:
-            font.setPointSizeF((size + 1) * self.gui.font_scale_ratio)
+        font.setPointSizeF(14 * scale * self.gui.font_scale_ratio)
 
         self.measurement_label.setFont(font)
 
@@ -176,7 +180,6 @@ class GenSensor(BaseObject):
         self.measurement_label.setFixedSize(QSize(self.width, self.height))
         self.measurement_label.move(self.position.x(), self.position.y())
         self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-
 
     @overrides
     def draw(self):
@@ -197,6 +200,16 @@ class GenSensor(BaseObject):
 
         # Lower the label
         self.measurement_label.lower()
+
+    @overrides
+    def setMouseEventTransparency(self, should_be_transparent):
+        """
+        Sets the object to be transparent to mouse or not, overridden for measurement label
+        :param should_be_transparent:
+        """
+
+        super().setMouseEventTransparency(should_be_transparent)
+        self.measurement_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
 
         
     @overrides

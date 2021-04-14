@@ -31,9 +31,10 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('Images/M_icon.png'))
-        self.client_dialog = ClientDialog(True) # control client
+        self.client_dialog = ClientDialog(True, self) # control client
         self.last_packet = {}
         self.interface = S2_Interface()
+        self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
@@ -51,6 +52,13 @@ class ControlsWindow(QMainWindow):
         else:
             pass
 
+        # Setup Status bar
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSizeF(14 * self.gui.font_scale_ratio)
+        self.statusBar().setFont(font)
+
 
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
         exitAct = QAction('&Save and Quit', self)
@@ -60,7 +68,6 @@ class ControlsWindow(QMainWindow):
         # The next several segments of code create objects to represent each button action for the toolbar
         # Each segment has a comment above it describing what action it implements
         # The third line of each segment calls a function, defined below, that carries out the action of the button
-
         # FILE -> New
         newAct = QAction('&New Configuration', self)
         newAct.setShortcut('Ctrl+N')
@@ -155,8 +162,8 @@ class ControlsWindow(QMainWindow):
 
         self.ambientizeMenu = QMenu('Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
-        self.ambientizeMenu.addAction("Engine Controller")
-        self.ambientizeMenu.addAction("Pressurization Controller")
+        for board in Constants.boards:
+            self.ambientizeMenu.addAction(board)
 
         # Run -> Level Sensing
         self.level_action = QAction("&Level Sensing", self)
@@ -253,11 +260,15 @@ class ControlsWindow(QMainWindow):
         Creates new blank untitled file. Basically just erases everything and sets filename to unset
         """
         self.fileName = ""
+        self.centralWidget.controlsPanelWidget.removeAllEditingObjects()
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
-        self.centralWidget.controlsWidget.tube_list = []
+        for tube in self.centralWidget.controlsWidget.tube_list:
+            tube.deleteTube()
+
+        self.statusBar().showMessage("New configuration started")
 
     def enterEdit(self):
         """
@@ -271,6 +282,7 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setEnabled(True)
             self.debugAct.setDisabled(True)
             self.exitDebugAct.setDisabled(True)
+            self.statusBar().showMessage("Enter Edit Mode")
 
     def exitEdit(self):
         """
@@ -284,6 +296,7 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
+            self.statusBar().showMessage("Exit Edit Mode")
 
     def enterDebug(self):
         """
@@ -296,6 +309,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setDisabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
+        self.statusBar().showMessage("Enter Debug Mode")
 
     def exitDebug(self):
         """
@@ -307,6 +321,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
+        self.statusBar().showMessage("Exit Debug Mode")
 
     def showRunDialog(self):
         """
@@ -388,6 +403,7 @@ class ControlsWindow(QMainWindow):
 
         self.gui.run.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
+        self.statusBar().showMessage("Run: " + run_name + " started")
 
     def endRun(self):
         """
@@ -403,6 +419,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
+        self.statusBar().showMessage("Run: " + self.gui.run.title + " ended")
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -662,21 +679,6 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
-    def ambientizeCmd(self, action: QAction):
-        """
-        Sends command to ambientize pts
-        :param action: Qaction that was clicked
-        :return:
-        """
-        cmd_dict = {
-            "function_name": "ambientize_pressure_transducers",
-            "target_board_addr": self.interface.getBoardAddr(action.text()),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
-
     def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """
         This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
@@ -699,6 +701,21 @@ class ControlsWindow(QMainWindow):
         # Save the gui preferences and reboot
         self.gui.savePreferences()
         QCoreApplication.exit(self.gui.EXIT_CODE_REBOOT)
+
+    def ambientizeCmd(self, action: QAction):
+        """
+        Sends command to ambientize pts
+        :param action: Qaction that was clicked
+        :return:
+        """
+        cmd_dict = {
+            "function_name": "ambientize_pressure_transducers",
+            "target_board_addr": self.interface.getBoardAddr(action.text()),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
     
     def show_window(self, window: QWidget):
         """Shows a window or brings it to the front if already open.
@@ -752,6 +769,7 @@ class ControlsCentralWidget(QWidget):
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
         self.panel_width = 300 * self.gui.pixel_scale_ratio[0]
+        self.status_bar_height = self.parent.statusBar().height()
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -774,7 +792,7 @@ class ControlsCentralWidget(QWidget):
     @overrides
     def resizeEvent(self, e: QResizeEvent):
         """
-        Called when window is re-sized, updates height and width vas
+        Called when window is re-sized, updates height and width values
 
         :param e: variable holding event data
         """

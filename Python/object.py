@@ -111,10 +111,10 @@ class BaseObject:
         Should only be called from __init__
         """
         # Default points are the midpoints of the four sides.
-        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(0, int(self.height / 2)), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, parent=self.widget_parent)
+        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, 0, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, 1, parent=self.widget_parent),
+                         AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
+                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, 3, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
 
@@ -167,6 +167,8 @@ class BaseObject:
         self.long_name = name
         self.long_name_label.setText(name)
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + " component name changed to " + name)
+
     def setShortName(self, name):
         """
         Sets serial number and label of object
@@ -177,6 +179,8 @@ class BaseObject:
 
         # Moves the label to keep it in the center if it changes length
         self.serial_number_label.moveToPosition()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
 
     def setScale(self, scale):
         """
@@ -207,6 +211,8 @@ class BaseObject:
         # Update some other dependent values
         self.setAnchorPoints()
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
+
         # Tells widget painter to update screen
         self.widget_parent.update()
 
@@ -217,6 +223,8 @@ class BaseObject:
         """
         self.fluid = Constants.fluid[fluid]
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
+
         # Tells widget painter to update screen
         self.widget_parent.update()
 
@@ -225,6 +233,8 @@ class BaseObject:
         Sets if the position of on object is locked
         :param is_locked: is the position locked
         """
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
 
         self.position_locked = is_locked
 
@@ -281,6 +291,7 @@ class BaseObject:
         """
         Sets the object and its labels to be mouse transparent or not. When transparent the mouse events are not
         triggered on the buttons/ labels
+        :param should_be_transparent: should the mouse be transparent to the object
         """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -353,6 +364,8 @@ class BaseObject:
         self.serial_number_label.moveToPosition()
         self.deleteConnectedTubes()
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
+
         # Tells widget painter to update screen
         self.widget_parent.update()
     
@@ -380,6 +393,8 @@ class BaseObject:
         self.button.resize(self.width, self.height)
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -466,12 +481,16 @@ class BaseObject:
         """
         self.button.lower()
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
+
     def raiseObject(self):
         """
         Raises the object so the user can select items that on bottom
         :return:
         """
         self.button.raise_()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
 
     def doesObjectHaveFocus(self):
         """
@@ -495,18 +514,25 @@ class BaseObject:
         """
         # If window is in edit mode
         if self.central_widget.is_editing:
+            # Make sure the button is marked as editing
+            self.central_widget.controlsPanelWidget.addEditingObject(self)
+            self.button.setFocus()  # Make sure object has focus
             action = self.edit_context_menu.exec_(self.button.mapToGlobal(event))
         else:
             action = self.run_context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
+        # TODO: Honestly the face we are iterating over obects inside the object class feels wrong. Figure out a cleaner solution
         if action is not None:
             if action.text() == "Delete Object":
-                self.widget_parent.deleteObject(self)
+                for obj in reversed(self.central_widget.controlsPanelWidget.editing_object_list):
+                    self.widget_parent.deleteObject(obj)
             elif action.text() == "Lower Object":
-                self.lowerObject()
+                for obj in self.central_widget.controlsPanelWidget.editing_object_list:
+                    obj.lowerObject()
             elif action.text() == "Raise Object":
-                self.raiseObject()
+                for obj in self.central_widget.controlsPanelWidget.editing_object_list:
+                    obj.raiseObject()
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []
@@ -564,6 +590,8 @@ class BaseObject:
         Called for object to delete itself
         """
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
+
         self.button.deleteLater()
         del self.button
         self.serial_number_label.deleteLater()
@@ -583,9 +611,7 @@ class BaseObject:
 
         for ap in self.anchor_points:
             if ap.tube is not None:
-                self.widget_parent.tube_list.remove(ap.tube)
-                del ap.tube
-                ap.tube = None
+                ap.tube.deleteTube()
 
         self.widget_parent.update()
 

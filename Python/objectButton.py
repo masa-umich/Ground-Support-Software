@@ -62,7 +62,7 @@ class ObjectButton(QPushButton):
         """
 
         # If left click and the button is currently being edited
-        if event.button() == Qt.LeftButton & self.object_.doesObjectHaveFocus():
+        if event.button() == Qt.LeftButton & self.object_.doesObjectHaveFocus() & self.object_.central_widget.is_editing:
             # Set drag start position
             self.parent.controlsPanel.addEditingObject(self.object_)
             self.drag_start_pos = event.pos()

@@ -27,7 +27,7 @@ class ControlsSidebarWidget(QWidget):
         self.top = 0
 
         self.width = self.centralWidget.panel_width
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Sets color of control panel
@@ -79,6 +79,8 @@ class ControlsSidebarWidget(QWidget):
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
 
+        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+
     @overrides
     def paintEvent(self, e):
         """
@@ -109,6 +111,17 @@ class ControlsSidebarWidget(QWidget):
         self.painter.drawPath(path)
 
         self.painter.end()
+
+    def generateSaveDict(self):
+        """
+        Generates the save dict for the boards
+        :return save_dict: returns the save dictionary
+        """
+        save_dict = {}
+        for i, board in enumerate(self.board_objects):
+            save_dict["Board"+str(i)] = board.name
+
+        return save_dict
 
     @overrides
     def update(self):
