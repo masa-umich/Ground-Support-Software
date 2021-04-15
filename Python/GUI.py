@@ -152,9 +152,10 @@ if __name__ == '__main__':
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
         app = QApplication(sys.argv)
-        print(QT_VERSION_STR)
-        app.setStyle("Fusion")
+        print("Python Version:" + str(sys.version_info))
+        print("QT Version: " + QT_VERSION_STR)
 
+        app.setStyle("Fusion")
 
         darkPalette = QPalette()
         darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
@@ -179,7 +180,6 @@ if __name__ == '__main__':
         darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
 
         app.setPalette(darkPalette)
-
 
         app.setWindowIcon(QIcon('Images/M_icon.png'))
         gui = GUI()

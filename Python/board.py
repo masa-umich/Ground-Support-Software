@@ -80,25 +80,25 @@ class Board(QWidget):
         self.data_form_layout.setLabelAlignment(Qt.AlignLeft)
         self.data_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         EBatt_form_label = self.createDataFormLayoutLabel("ebatt:")
-        self.Ebatt_label = self.createDataFormLayoutLabel("11.1V")
+        self.Ebatt_label = self.createDataFormLayoutLabel("-")
 
         amp_form_label = self.createDataFormLayoutLabel("ibatt:")
-        self.amp_label = self.createDataFormLayoutLabel("2.2a")
+        self.amp_label = self.createDataFormLayoutLabel("-")
 
         # temp_form_label = self.createDataFormLayoutLabel("Temp:")
         # self.temp_label = self.createDataFormLayoutLabel("--K")
 
         flash_form_label = self.createDataFormLayoutLabel("Flash:")
-        self.flash_label = self.createDataFormLayoutLabel("Inactive")
+        self.flash_label = self.createDataFormLayoutLabel("-")
 
         LPT_form_label = self.createDataFormLayoutLabel("LP Time:")
-        self.LPT_label = self.createDataFormLayoutLabel("247ms")
+        self.LPT_label = self.createDataFormLayoutLabel("-")
 
         adcrate_form_label = self.createDataFormLayoutLabel("ADC Rate:")
-        self.adcrate_label = self.createDataFormLayoutLabel("200Hz")
+        self.adcrate_label = self.createDataFormLayoutLabel("-")
 
         telemrate_form_label = self.createDataFormLayoutLabel("Tx Rate:")
-        self.telemrate_label = self.createDataFormLayoutLabel("10Hz")
+        self.telemrate_label = self.createDataFormLayoutLabel("-")
 
         # Populate the layout with the above labels
         self.data_form_layout.addRow(EBatt_form_label, self.Ebatt_label)
