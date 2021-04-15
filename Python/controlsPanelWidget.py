@@ -457,13 +457,10 @@ class ControlsPanelWidget(QWidget):
         # Check if shift is being pressed, if so add the object to the array of objects being edited
         mod = QApplication.keyboardModifiers()
         if mod == Qt.ShiftModifier:
-            print("HERE")
             if object_ not in self.editing_object_list:
-                print("Here two")
                 self.editing_object_list.append(object_)
             object_.setIsEditing(True)
         else:
-            print("HEREEE")
             # Make sure the currently editing object is removed, and the new object is added
             self.removeAllEditingObjects()
             if object_ not in self.editing_object_list:

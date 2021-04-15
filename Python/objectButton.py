@@ -24,11 +24,15 @@ class ObjectButton(QPushButton):
         """
         super().__init__(name,parent)
         self.parent = parent
+        self.central_widget = self.parent.parent
+        self.window = self.central_widget.parent
         self.name = name
         self.object_ = object_
         self.dataFile = dataFile
         self.dataType = dataType
         self.drag_start_pos = None
+
+        self.central_widget_offset = self.central_widget.pos() - self.window.pos() + QPoint(0, self.window.menuBar().height())
 
         # Make sure button has no label
         self.setText("")
@@ -92,7 +96,7 @@ class ObjectButton(QPushButton):
             # I have no idea where the 22 comes from
             # 22 is for non full screen on my (all?) macs
             # HMM: Elegant Solution?
-            self.window_pos = self.parent.parent.pos() #+ QPoint(0, 22)
+            self.window_pos = self.window.pos() + self.central_widget_offset
 
             # Sets that the object is currently being moved
             self.object_.is_being_dragged = True
@@ -181,7 +185,3 @@ class ObjectButton(QPushButton):
 
         # Idk why but calling super causes the button to lose focus, so set that back
         self.object_.button.setFocus()
-
-
-
-
