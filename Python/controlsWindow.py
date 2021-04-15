@@ -296,6 +296,7 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setEnabled(True)
             self.debugAct.setDisabled(True)
             self.exitDebugAct.setDisabled(True)
+            self.startRunAct.setDisabled(True)
             self.statusBar().showMessage("Enter Edit Mode")
 
     def exitEdit(self):
@@ -310,6 +311,7 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
+            self.startRunAct.setEnabled(True)
             self.statusBar().showMessage("Exit Edit Mode")
 
     def enterDebug(self):

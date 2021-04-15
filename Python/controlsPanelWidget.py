@@ -315,12 +315,13 @@ class ControlsPanelWidget(QWidget):
         # Updates the available values for the channels for solenoids and generic sensors
         try:
             board_name = object_.avionics_board
+
             if board_name in Constants.boards:
                 addr = self.interface.getBoardAddr(board_name)
                 self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
                 self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
                 self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks[addr])]
-            
+
             if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
                 self.channel_combobox.setEditable(False)
@@ -331,15 +332,18 @@ class ControlsPanelWidget(QWidget):
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
                 self.channel_combobox.setEditable(False)
             elif object_.object_name == "Generic Sensor":
-                self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.sensor_channels)
+                prefix = self.interface.getPrefix(board_name)
+                specific_channels = [i for i in self.sensor_channels if i.startswith(prefix)]
+                self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + specific_channels)
                 self.channel_combobox.setEditable(True)
                 completer = QCompleter(self.sensor_channels)
                 completer.setCaseSensitivity(False)
                 self.channel_combobox.setCompleter(completer)
             else:
                 self.channel_combobox.setEditable(False)
-        except:
-            pass
+        except Exception as e:
+            print("UpdateEditPanelFields Threw Exception")
+            print(e)
 
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
