@@ -226,6 +226,9 @@ class ControlsWindow(QMainWindow):
         
         self.showMaximized()
 
+        # I have no clue why this is so strange, but see update function for more info
+        self.central_widget_offset = None
+
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
@@ -744,6 +747,15 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
+
+        # So the window does not move to its final position till after exec_ is called on the gui, which means it cannot
+        # go in the init_ function. This seems very strange but this appears to be the best solution
+        if self.central_widget_offset is None:
+            # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
+            if self.gui.platform == "Windows":
+                self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+            elif self.gui.platform == "OSX":
+                self.central_widget_offset = self.pos()
 
         packet = self.client_dialog.client.cycle()
         if packet != None: # on exception

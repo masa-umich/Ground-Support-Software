@@ -32,12 +32,6 @@ class ObjectButton(QPushButton):
         self.dataType = dataType
         self.drag_start_pos = None
 
-        # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
-        if self.window.gui.platform == "Windows":
-            self.central_widget_offset = self.central_widget.pos() - self.window.pos() + QPoint(0, self.window.menuBar().height())
-        elif self.window.gui.platform == "OSX":
-            self.central_widget_offset = self.window.pos()
-
         # Make sure button has no label
         self.setText("")
 
@@ -100,8 +94,10 @@ class ObjectButton(QPushButton):
             # If the gui is in full screen on mac don't apply the extra offset
             if self.window.gui.platform == "OSX" and self.window.isFullScreen():
                 self.window_pos = self.window.pos()
+            elif self.window.gui.platform == "Windows" and self.window.isFullScreen():
+                self.window_pos = self.window.pos() + self.window.central_widget_offset - self.central_widget.pos()
             else:
-                self.window_pos = self.window.pos() + self.central_widget_offset
+                self.window_pos = self.window.pos() + self.window.central_widget_offset
 
             # Sets that the object is currently being moved
             self.object_.is_being_dragged = True
