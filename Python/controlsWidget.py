@@ -328,9 +328,14 @@ class ControlsWidget(QWidget):
             # Below ifs creates new objects at the point where the right click
             if action is not None:
                 point = self.centralWidget.mapToGlobal(point)
+                if self.gui.platform == "OSX" and self.window.isFullScreen():
+                    point = point - self.window.pos()
+                elif self.gui.platform == "Windows" and self.window.isFullScreen():
+                    point = point - self.window.pos() - self.window.central_widget_offset + self.centralWidget.pos()
+                else:
+                    point = point - self.window.central_widget_offset - self.window.pos()
                 # TODO: This is a suppppppper janky fix but it works
-                point = QPoint(point.x()/self.gui.pixel_scale_ratio[0], point.y()/self.gui.pixel_scale_ratio[1])
-                point = point - self.window.central_widget_offset - self.window.pos()
+                point = QPoint(point.x() / self.gui.pixel_scale_ratio[0], point.y() / self.gui.pixel_scale_ratio[1])
 
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
