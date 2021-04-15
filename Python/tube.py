@@ -211,6 +211,7 @@ class TubeAnchorPoint(QPushButton):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.context_menu = QMenu(self.controlsWidget)
         self.context_menu.addAction("Delete Tube")
+        self.context_menu.addAction("Change Fluid")
         self.context_menu.addAction("Increase Line Width")
         self.context_menu.addAction("Decrease Line Width")
         self.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
@@ -268,6 +269,14 @@ class TubeAnchorPoint(QPushButton):
             if action.text() == "Delete Tube":
                 self.tube.deleteTube()
                 self.controlsWidget.window.statusBar().showMessage("Tube deleted")
+            elif action.text() == "Change Fluid":
+                # TODO: Don't cycle through tubes like this it sucks
+                max_ = len(Constants.fluid) / 2 - 1
+                if self.tube.fluid < max_:
+                    self.tube.fluid = self.tube.fluid + 1
+                else:
+                    self.tube.fluid = 0
+                self.controlsWidget.window.statusBar().showMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
             elif action.text() == "Increase Line Width":
                 self.tube.line_width = self.tube.line_width + 1
                 self.controlsWidget.window.statusBar().showMessage("Tube width increased to " + str(self.tube.line_width))
