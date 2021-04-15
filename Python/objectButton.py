@@ -32,7 +32,11 @@ class ObjectButton(QPushButton):
         self.dataType = dataType
         self.drag_start_pos = None
 
-        self.central_widget_offset = self.central_widget.pos() - self.window.pos() + QPoint(0, self.window.menuBar().height())
+        # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
+        if self.window.gui.platform == "Windows":
+            self.central_widget_offset = self.central_widget.pos() - self.window.pos() + QPoint(0, self.window.menuBar().height())
+        elif self.window.gui.platform == "OSX":
+            self.central_widget_offset = self.window.pos()
 
         # Make sure button has no label
         self.setText("")
@@ -87,16 +91,17 @@ class ObjectButton(QPushButton):
         if self.drag_start_pos is None:
             return
 
-        # For some unknown reason mouse move events handle buttons differently on OSX and Windows
-        target_button = Qt.LeftButton
-        if self.parent.gui.platform == "Windows":
-            target_button = Qt.NoButton
         # Only drag if the right button is pressed, the object is being edited, and position is not locked
-        if event.button() == target_button and self.object_.is_being_edited and not self.object_.position_locked:
+        if event.button() == Qt.NoButton and self.object_.is_being_edited and not self.object_.position_locked:
             # I have no idea where the 22 comes from
             # 22 is for non full screen on my (all?) macs
             # HMM: Elegant Solution?
-            self.window_pos = self.window.pos() + self.central_widget_offset
+
+            # If the gui is in full screen on mac don't apply the extra offset
+            if self.window.gui.platform == "OSX" and self.window.isFullScreen():
+                self.window_pos = self.window.pos()
+            else:
+                self.window_pos = self.window.pos() + self.central_widget_offset
 
             # Sets that the object is currently being moved
             self.object_.is_being_dragged = True
