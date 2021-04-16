@@ -761,7 +761,7 @@ class ControlsWindow(QMainWindow):
 
     def zeroSystemClock(self):
         cmd_dict = {
-            "function_name": "set_system_time",
+            "function_name": "set_system_clock",
             "target_board_addr": "GSE Controller",
             "timestamp": int(datetime.now().timestamp()),
             "args": [0]
@@ -769,7 +769,7 @@ class ControlsWindow(QMainWindow):
         # print(cmd_dict)
         self.client_dialog.client.command(3, cmd_dict)
         cmd_dict = {
-            "function_name": "set_system_time",
+            "function_name": "set_system_clock",
             "target_board_addr": "Pressurization Controller",
             "timestamp": int(datetime.now().timestamp()),
             "args": [0]
