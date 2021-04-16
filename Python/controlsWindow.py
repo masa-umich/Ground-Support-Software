@@ -145,6 +145,15 @@ class ControlsWindow(QMainWindow):
         self.checkpointAct.setShortcut('Ctrl+L')
         self.checkpointAct.triggered.connect(self.checkpoint)
 
+        #Run -> Tare Load Cells
+        self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
+        self.tareLoadCellAct.triggered.connect(self.tareLoadCell)
+
+        # Run -> Zero Board System Time
+        self.zeroTimeAct = QAction('Zero Board System Clocks', self)
+        self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
+
+
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('Abort &Button', self)
         self.buttonBoxAct.setShortcut('Alt+B')
@@ -201,6 +210,8 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.checkpointAct)
         run_menu.addMenu(self.ambientizeMenu)
+        run_menu.addAction(self.tareLoadCellAct)
+        run_menu.addAction(self.zeroTimeAct)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows":
@@ -729,6 +740,39 @@ class ControlsWindow(QMainWindow):
             "target_board_addr": self.interface.getBoardAddr(action.text()),
             "timestamp": int(datetime.now().timestamp()),
             "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+
+    def tareLoadCell(self):
+        """
+        Sends command to tare load cells
+        :param action: Qaction that was clicked
+        :return:
+        """
+        cmd_dict = {
+            "function_name": "tare_load_cells",
+            "target_board_addr": "GSE Controller",
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+
+    def zeroSystemClock(self):
+        cmd_dict = {
+            "function_name": "set_system_time",
+            "target_board_addr": "GSE Controller",
+            "timestamp": int(datetime.now().timestamp()),
+            "args": [0]
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+        cmd_dict = {
+            "function_name": "set_system_time",
+            "target_board_addr": "Pressurization Controller",
+            "timestamp": int(datetime.now().timestamp()),
+            "args": [0]
         }
         # print(cmd_dict)
         self.client_dialog.client.command(3, cmd_dict)
