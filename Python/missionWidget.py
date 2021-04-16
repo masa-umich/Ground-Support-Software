@@ -288,17 +288,16 @@ class MissionWidget(QWidget):
     def update(self):
         super().update()
         # connection
-        if self.window.interface.last_raw_packet is not None:
-            last_raw_size = len(self.window.interface.last_raw_packet)
-        else:
-            last_raw_size = 0
 
-        if self.client.is_connected and last_raw_size > 0:
+        if self.client.is_connected and self.window.last_packet["actively_rx"]:
             self.connectionIndicator.setIndicatorColor("Green")
-            self.connectionIndicator.setToolTip("Connected")
-        elif self.client.is_connected:
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nGood Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+        elif self.client.is_connected and self.window.last_packet["ser_open"]:
             self.connectionIndicator.setIndicatorColor("Yellow")
-            self.connectionIndicator.setToolTip("Server Connected, No Packets Received")
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+        elif self.client.is_connected and not self.window.interface.ser.is_open:
+            self.connectionIndicator.setIndicatorColor("Yellow")
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
         else:
             self.connectionIndicator.setIndicatorColor("Red")
             self.connectionIndicator.setToolTip("No Server Connection")

@@ -37,7 +37,7 @@ class ObjectButton(QPushButton):
 
         # No background/ border and allow for custom right click options
         self.setStyleSheet(""
-                           "QPushButton{background-color:transparent;border:0;}"
+                           "QPushButton{background-color:transparent;border:none;outline:none}"
                            "QToolTip{background-color:black;color:white;}")
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 

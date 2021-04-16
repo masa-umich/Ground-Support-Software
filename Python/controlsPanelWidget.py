@@ -206,12 +206,18 @@ class ControlsPanelWidget(QWidget):
         trueButton = group.buttons()[0]
         falseButton = group.buttons()[1]
 
+        trueButton.blockSignals(True)
+        falseButton.blockSignals(True)
+
         if value:
             trueButton.setChecked(True)
             falseButton.setChecked(False)
         else:
             trueButton.setChecked(False)
             falseButton.setChecked(True)
+
+        trueButton.blockSignals(False)
+        falseButton.blockSignals(False)
 
     def createComboBox(self, comboBox: QComboBox, identifier: str, label_text: str, items: []):
         """
@@ -342,8 +348,9 @@ class ControlsPanelWidget(QWidget):
             else:
                 self.channel_combobox.setEditable(False)
         except Exception as e:
-            print("UpdateEditPanelFields Threw Exception")
-            print(e)
+            pass
+            # print("UpdateEditPanelFields Threw Exception")
+            # print(e)
 
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
@@ -377,7 +384,7 @@ class ControlsPanelWidget(QWidget):
         :param identifier: identifier of the field being changed
         """
         # Gets the object being edited right now and updated the fields based on identifier
-        object_ = self.object_editing # Lazy mans fix
+        object_ = self.object_editing  # Lazy mans fix
 
         # Sanity check that object is actually being edited
         if object_.is_being_edited:
