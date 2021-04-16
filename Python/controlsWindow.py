@@ -752,7 +752,7 @@ class ControlsWindow(QMainWindow):
         """
         cmd_dict = {
             "function_name": "tare_load_cells",
-            "target_board_addr": "GSE Controller",
+            "target_board_addr": 0,
             "timestamp": int(datetime.now().timestamp()),
             "args": []
         }
@@ -762,7 +762,7 @@ class ControlsWindow(QMainWindow):
     def zeroSystemClock(self):
         cmd_dict = {
             "function_name": "set_system_clock",
-            "target_board_addr": "GSE Controller",
+            "target_board_addr": 0,
             "timestamp": int(datetime.now().timestamp()),
             "args": [0]
         }
@@ -770,7 +770,7 @@ class ControlsWindow(QMainWindow):
         self.client_dialog.client.command(3, cmd_dict)
         cmd_dict = {
             "function_name": "set_system_clock",
-            "target_board_addr": "Pressurization Controller",
+            "target_board_addr": 3,
             "timestamp": int(datetime.now().timestamp()),
             "args": [0]
         }
