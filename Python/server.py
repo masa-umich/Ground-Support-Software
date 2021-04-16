@@ -243,7 +243,7 @@ class Server(QtWidgets.QMainWindow):
         try:
             port = str(self.ports_box.currentText())
             if port:
-                self.interface.connect(port, 115200, 0.2)
+                self.interface.connect(port, 3913043, 0.2) # 3913043
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
