@@ -106,6 +106,7 @@ class S2_Interface:
         except Exception as e:
             #traceback.print_exc()
             pass
+        # Return -1 is the serial parse fails
         return -1
 
     def parse_packet(self, packet):
@@ -123,6 +124,9 @@ class S2_Interface:
             except Exception as e:
                 traceback.print_exc()
                 print("Packet lost with error ", e)
+
+        # Return -2 if the packet parse fails
+        return -2
 
     def init_valves(self):
         for board_addr in range(len(self.board_parser)):

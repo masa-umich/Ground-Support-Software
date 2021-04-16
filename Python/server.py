@@ -45,6 +45,7 @@ class Server(QtWidgets.QMainWindow):
         self.dump_addr = None
         self.database_lock = threading.Lock()
         self.abort_auto = False
+        self.is_actively_receiving = False
         self.history_idx = -1
         self.history = []
 
@@ -61,6 +62,9 @@ class Server(QtWidgets.QMainWindow):
         # init empty dataframe
         self.dataframe["commander"] = None
         self.dataframe["packet_num"] = 0
+        self.dataframe["ser_open"] = False
+        self.dataframe["actively_rx"] = False
+        self.dataframe["error_msg"] = "No Connection Attempted"
         self.dataframe["time"] = datetime.now().timestamp()
         for channel in self.interface.channels:  # hardcoded
             self.dataframe[channel] = 0
@@ -366,6 +370,8 @@ class Server(QtWidgets.QMainWindow):
                         else:
                             self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
+                        self.dataframe["ser_open"] = self.interface.ser.is_open
+                        self.dataframe["actively_rx"] = self.is_actively_receiving
                         data = pickle.dumps(self.dataframe)
                     except:
                         data = None
@@ -651,9 +657,11 @@ class Server(QtWidgets.QMainWindow):
                     # read in packet from system
                     packet_addr = self.interface.parse_serial()  # returns origin address
                     # packet_addr = -1
-
-                    if packet_addr != -1:
+                    if packet_addr != -1 and packet_addr != -2:
                         # print("PARSER WORKED")
+                        self.is_actively_receiving = True
+                        self.dataframe["error_msg"] = "'Norminal' - Jon Insprucker"
+
                         raw_packet = self.interface.last_raw_packet
                         self.serial_log.write(datetime.now().strftime(
                             "%H:%M:%S,") + str(raw_packet) + '\n')
@@ -688,6 +696,11 @@ class Server(QtWidgets.QMainWindow):
                             self.database_lock.release()
                     else:
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
+                        self.is_actively_receiving = False
+                        if packet_addr == -1:
+                            self.dataframe["error_msg"] = "Serial Parse Failed"
+                        elif packet_addr == -2:
+                            self.dataframe["error_msg"] = "Packet Parse Failed"
                         pass
             self.party_parrot.step()
 
