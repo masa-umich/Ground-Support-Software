@@ -138,12 +138,12 @@ class ControlsSidebarWidget(QWidget):
                     board.update(0, 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt, no e_batt
                 elif board_name == "Pressurization Controller":
                     board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "i_batt"],
-                                 self.last_packet[prefix + "STATE"], False, self.last_packet[prefix + "timestamp"],
+                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
                                  self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
                                  self.last_packet[prefix + "state_rem_duration"])
                 elif board_name == "GSE Controller":
                     board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
-                                 self.last_packet[prefix + "STATE"], False, self.last_packet[prefix + "timestamp"],
+                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
                                  self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
                                  0)  # no flash state yet
                 else:
