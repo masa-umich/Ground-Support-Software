@@ -313,13 +313,12 @@ class S2_Interface:
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd_info)+ '\n')
 
                 while(readfile):
-                    # Read the packet header (12 bytes), flash page (2048 bytes)
-                    ser_page = self.ser.read(2048 + 11)
-                    if (len(ser_page) != 2048 + 11):
+                    # Read the flash page (2048 bytes)
+                    ser_page = self.ser.read(2048)
+                    if (len(ser_page) != 2048):
                         readfile = False
                     else:
-                        #self.unstuff_packet(ser_page)  Keep this commented
-                        binfile.write(bytes(ser_page[11:]))  # Log to bin
+                        binfile.write(bytes(ser_page))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
         telem_info["args"] = [0]

@@ -147,10 +147,10 @@ class FlashController(QtWidgets.QWidget):
         prefix = self.interface.getPrefix(self.board_selector.currentText())
         key = prefix + "flash_mem"
         if( key in last_packet.keys()):
-            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1000
+            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
         else: 
             rem_mem = 0
-        self.rem_mem.setText("Bytes Used: " + str(rem_mem)+ " kB")
+        self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
 
 
 if __name__ == "__main__":

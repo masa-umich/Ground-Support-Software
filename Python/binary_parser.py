@@ -34,8 +34,7 @@ class BinaryParser:
         """
 
         file = open(filename, 'rb')
-        datalog = open(filename.rstrip(".bin")+'_datalog_0.csv', 'w')
-        datalog.write(self.interface.get_header())
+        datalog = False  # Initially - so it knows it hasn't opened anything yet
 
         packets = []
         this_line = []
@@ -54,11 +53,19 @@ class BinaryParser:
         if verbose:
             print("Num Packets: %s, %s" % (n, len(packets)))
 
-        num_zeros = 0
-        num_logs = 1
+        num_cons_zeros = 0  # Track consecutive 0s found in the binary - 2000 0's in a row signals the start of a log
+        num_logs = 0
+        open_new_file = False
         for packet in packets:
             try:
                 if len(packet) > 0:
+                    num_cons_zeros = 0
+
+                    if open_new_file:
+                        datalog = open(filename.rstrip(".bin")+'_datalog_' + str(num_logs) + '.csv', 'w')  # tests are 1 indexed for consistency
+                        datalog.write(self.interface.get_header())  # csv header
+                        open_new_file = False
+
                     if verbose:
                         print(len(packet))
                         print(bytes(packet))
@@ -74,15 +81,17 @@ class BinaryParser:
                         #print(self.dataframe)
                         datalog.write(self.get_logstring()+'\n')
                 else:
-                    num_zeros += 1
-                    if (num_zeros >= 2000):  # Test delimiter
-                        # Close current csv and start a new one
-                        num_zeros = 0
+                    num_cons_zeros += 1
+                    if (num_cons_zeros >= 2000):  # Test delimiter
+                        open_new_file = True
+                        num_cons_zeros = 0
                         num_logs += 1
-                        datalog.close()
-                        datalog = open(filename.rstrip(".bin")+'_datalog_' + str(num_logs-1) + '.csv', 'w')
+                        if datalog:
+                            datalog.close()
             except:
                 traceback.print_exc()
+        if datalog:
+            datalog.close()
 
 
 if __name__ == "__main__":
