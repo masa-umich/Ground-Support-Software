@@ -321,6 +321,7 @@ class S2_Interface:
                         binfile.write(bytes(ser_page))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
+
         telem_info["args"] = [0]
         self.s2_command(telem_info)
         print("Finished downloading flash data to " + os.path.join(datadir, filename))
@@ -329,11 +330,50 @@ class S2_Interface:
         try:
             print("Converting "+filename+"...", end='')
             self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=False)
-            print(" done.")
+            print(" mass csv done.")
         except Exception as e:
             print("Error when converting binary file to csv ", e)
             traceback.print_exc()
 
+        try:
+            csv_filenames = []
+            zero_count = 0
+            file_count = 0
+            sub_binfile = None
+            with open(os.path.join(datadir, filename), "rb") as binfile:
+                readFile = True
+                while readFile:
+                    csv_filename = "board_" + str(cmd_info["target_board_addr"]) + "_log" + str(
+                        file_count) + "_flash_data.bin"
+                    sub_binfile = open(os.path.join(datadir, csv_filename), "wb+")
+                    new_test = False
+                    while not new_test:
+                        page = binfile.read(2048)
+                        for byte in bytes(page):
+                            if byte == b'\x00' :
+                                zero_count += 1
+                        if zero_count >= 2000:
+                            zero_count = 0
+                            new_test = True
+                            sub_binfile.close()
+                            csv_filenames.append(csv_filename)
+                            file_count += 1
+                        if not new_test:
+                            sub_binfile.write(bytes(page))
+                        if len(page) < 2048:
+                            readFile = False
+                if not sub_binfile.closed:
+                    sub_binfile.close()
+            for csvFile in csv_filenames:
+                try:
+                    print("Converting " + csvFile + "...", end='')
+                    self.binparse.bin2csv(filename=os.path.join(datadir, csvFile), verbose=False)
+                    print("csv file "+ csvFile + " done.")
+                except Exception as e:
+                    print(("Error when converting binary file to csv for " + csvFile), e)
+                    traceback.print_exc()
+        except Exception as e:
+            print("Error when splitting up the binary file into multiple binfiles", e)
     """
     Returns the board address given a board name
     """
