@@ -370,7 +370,7 @@ class Board(QWidget):
             if self.name == "Pressurization Controller":
                 cmd_dict = {
                     "function_name": "set_system_clock",
-                    "target_board_addr": 0,
+                    "target_board_addr": 3,
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }
@@ -378,7 +378,7 @@ class Board(QWidget):
                 self.client.command(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_system_clock",
-                    "target_board_addr": 3,
+                    "target_board_addr": 0,
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }

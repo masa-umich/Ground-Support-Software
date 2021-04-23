@@ -32,8 +32,9 @@ class BinaryParser:
         Args:
             filename (str): Filename of binary dump
         """
+
         file = open(filename, 'rb')
-        datalog = open(filename.rstrip(".bin")+'_datalog.csv', 'w')
+        datalog = open(filename.rstrip(".bin")+'_datalog_0.csv', 'w')
         datalog.write(self.interface.get_header())
 
         packets = []
@@ -53,6 +54,8 @@ class BinaryParser:
         if verbose:
             print("Num Packets: %s, %s" % (n, len(packets)))
 
+        num_zeros = 0
+        num_logs = 1
         for packet in packets:
             try:
                 if len(packet) > 0:
@@ -70,6 +73,14 @@ class BinaryParser:
                             self.dataframe[str(prefix + key)] = new_data[key]
                         #print(self.dataframe)
                         datalog.write(self.get_logstring()+'\n')
+                else:
+                    num_zeros += 1
+                    if (num_zeros >= 2000):  # Test delimiter
+                        # Close current csv and start a new one
+                        num_zeros = 0
+                        num_logs += 1
+                        datalog.close()
+                        datalog = open(filename.rstrip(".bin")+'_datalog_' + str(num_logs-1) + '.csv', 'w')
             except:
                 traceback.print_exc()
 
