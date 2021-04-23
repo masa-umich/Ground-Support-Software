@@ -367,6 +367,23 @@ class Board(QWidget):
         if identifier == "Manual-Disarm":
             newState = 0
         elif identifier == "Arm":
+            if self.name == "Pressurization Controller":
+                cmd_dict = {
+                    "function_name": "set_system_clock",
+                    "target_board_addr": 0,
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [0]
+                }
+                # print(cmd_dict)
+                self.client.command(3, cmd_dict)
+                cmd_dict = {
+                    "function_name": "set_system_clock",
+                    "target_board_addr": 3,
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [0]
+                }
+                # print(cmd_dict)
+                self.client.command(3, cmd_dict)
             newState = 1
         # If state is armed, allow for state to be run
         elif identifier == "Run":
@@ -391,6 +408,7 @@ class Board(QWidget):
                 "args": [int(newState)]
             }
             self.client.command(3, cmd_dict)
+            self.setBoardState(newState)
 
     def setBoardState(self, state: int):
         """

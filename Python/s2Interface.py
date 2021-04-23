@@ -336,7 +336,7 @@ class S2_Interface:
         # Convert binary file to csv
         try:
             print("Converting "+filename+"...", end='')
-            self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=True)
+            self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=False)
             print(" done.")
         except Exception as e:
             print("Error when converting binary file to csv ", e)
