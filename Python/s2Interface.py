@@ -32,7 +32,7 @@ class S2_Interface:
         self.ser            = ser
         self.ports_box      = []
         self.serial_name    = ""
-        #self.board_parser   = [None, FlightComputer(), None, PressurizationController(), None, None] # Maps board to associated packet parser
+        #self.board_parser   = [None, FlightComputer(), None, None, None, None] # Maps board to associated packet parser
         self.board_parser   = [GSEController(), None, None, PressurizationController(), None, None] # Maps board to associated packet parser
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
@@ -84,6 +84,7 @@ class S2_Interface:
             print("Connection established on %s" % str(port_name))
         except Exception as e:
             print("Unable to connect to selected port ", e)
+            traceback.print_exc()
 
     """
     experimental multithreading
@@ -122,7 +123,7 @@ class S2_Interface:
                 # print(self.parser.dict)
                 return board_addr
             except Exception as e:
-                traceback.print_exc()
+                #traceback.print_exc()
                 print("Packet lost with error ", e)
 
         # Return -2 if the packet parse fails

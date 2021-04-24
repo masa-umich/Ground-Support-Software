@@ -153,20 +153,23 @@ class Server(QtWidgets.QMainWindow):
         self.send_to_log(self.data_box, "Packet log disabled")
 
         # connection box (add to top_layout)
-        connection = QGroupBox("EC Connection")
+        connection = QGroupBox("Serial Port")
         top_layout.addWidget(connection, 0, 0)
         connection_layout = QGridLayout()
         connection.setLayout(connection_layout)
         self.packet_size_label = QLabel("Last Packet Size: 0")
-        connection_layout.addWidget(self.packet_size_label, 0, 5)
+        connection_layout.addWidget(self.packet_size_label, 0, 6)
         self.ports_box = QComboBox()
         connection_layout.addWidget(self.ports_box, 0, 0, 0, 2)
+        self.baudrate_box = QComboBox()
+        connection_layout.addWidget(self.baudrate_box, 0, 3)
+        self.baudrate_box.addItems(["3913043", "115200"])
         scan_button = QPushButton("Scan")
         scan_button.clicked.connect(self.scan)
-        connection_layout.addWidget(scan_button, 0, 3)
+        connection_layout.addWidget(scan_button, 0, 4)
         connect_button = QPushButton("Connect")
         connect_button.clicked.connect(self.connect)
-        connection_layout.addWidget(connect_button, 0, 4)
+        connection_layout.addWidget(connect_button, 0, 5)
 
         # heartbeat indicator
         self.party_parrot = PartyParrot()
@@ -246,8 +249,9 @@ class Server(QtWidgets.QMainWindow):
 
         try:
             port = str(self.ports_box.currentText())
+            baud = int(self.baudrate_box.currentText())
             if port:
-                self.interface.connect(port, 3913043, 0.2) # 3913043
+                self.interface.connect(port, baud, 0.2) # 3913043 or 115200
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
