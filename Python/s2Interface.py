@@ -312,22 +312,14 @@ class S2_Interface:
                 time.sleep(1)
                 self.s2_command(cmd_info)                           # Send command to download flash
                 command_log.write(datetime.now().strftime("%H:%M:%S,") + str(cmd_info)+ '\n')
-                # Serial checks first 11 bytes ()
 
                 while(readfile):
-                    # Read the packet header (11 bytes), flash page (2048 bytes)
-                    ser_page = self.ser.read(2048 + 11)
-                    #if (len(ser_page) > 0):
-                    # Check that packet_type in the CLB header is 1 (flash data)
-                    #if (ser_page[0] != 1):
-                    if (len(ser_page) != 2048 + 11):
+                    # Read the flash page (2048 bytes)
+                    ser_page = self.ser.read(2048)
+                    if (len(ser_page) != 2048):
                         readfile = False
                     else:
-                        # Unencode COBS # Update: no cobs anymore
-                        #self.unstuff_packet(ser_page)
-                        #TODO get rid off "11:" once the firmware no longer sends a packet header during a flash data dump
-                        #print(self.bytes_to_array(ser_page[11:]))
-                        binfile.write(bytes(ser_page[11:]))  # Log to bin
+                        binfile.write(bytes(ser_page))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
         telem_info["args"] = [0]
@@ -337,7 +329,7 @@ class S2_Interface:
         # Convert binary file to csv
         try:
             print("Converting "+filename+"...", end='')
-            self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=True)
+            self.binparse.bin2csv(filename=os.path.join(datadir, filename), verbose=False)
             print(" done.")
         except Exception as e:
             print("Error when converting binary file to csv ", e)
