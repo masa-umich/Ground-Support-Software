@@ -79,7 +79,8 @@ class BinaryParser:
                         for key in new_data.keys():
                             self.dataframe[str(prefix + key)] = new_data[key]
                         #print(self.dataframe)
-                        datalog.write(self.get_logstring()+'\n')
+                        if datalog:
+                            datalog.write(self.get_logstring()+'\n')
                 else:
                     num_cons_zeros += 1
                     if (num_cons_zeros >= 2000):  # Test delimiter
