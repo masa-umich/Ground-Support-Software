@@ -338,17 +338,7 @@ class Server(QtWidgets.QMainWindow):
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"]
-
-                        if new_runname in (None, ()):
-                            runname = datetime.now().strftime("%Y%m%d%H%M%S")
-                        elif isinstance(new_runname, str):
-                            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
-                        else:
-                            print("Error: Unhandled Runname")
-
-                        self.close_log()
-                        self.open_log(runname)
-                        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
+                        self.checkpoint_logs(new_runname)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -507,9 +497,29 @@ class Server(QtWidgets.QMainWindow):
                 elif cmd == "set_addr":  # set target addr
                     print("set_addr %s" % args[0])
                     addr = args[0]
+                elif cmd == "new_log":  # creates new log file
+                    
+                    if len(args) > 0:
+                        print("new_log %s" % args[0])
+                        self.checkpoint_logs(args[0])
+                    else:
+                        print("new_log")
+                        self.checkpoint_logs(None)
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
         
+    def checkpoint_logs(self, new_runname):
+        if new_runname in (None, (), []):
+            runname = datetime.now().strftime("%Y%m%d%H%M%S")
+        elif isinstance(new_runname, str):
+            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
+        else:
+            print("Error: Unhandled Runname")
+
+        self.close_log()
+        self.open_log(runname)
+        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
+
 
     def getHelp(self, selected_command):
         commands = list(self.interface.get_cmd_names_dict().keys())
@@ -528,6 +538,7 @@ class Server(QtWidgets.QMainWindow):
         tooltips["delay"] = "delay time(int, milliseconds)"
         tooltips["set_addr"] = "set_addr target_addr(int)"
         tooltips["auto"] = "auto auto_name(str)"
+        tooltips["new_log"] = "new_log logname(str)"
 
         return tooltips[selected_command]
 
@@ -551,7 +562,7 @@ class Server(QtWidgets.QMainWindow):
             if len(args) == 0:
                 self.send_to_log(
                     self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, timestamp=False)
-            elif args[0] in (["set_addr", "delay", "auto"] + commands):
+            elif args[0] in (["set_addr", "delay", "auto", "new_log"] + commands):
                 selected_cmd = args[0]
                 cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
@@ -571,6 +582,13 @@ class Server(QtWidgets.QMainWindow):
                 auto_thread.start()
             except:
                 pass
+        
+        elif cmd == "new_log":
+            #print("new_log %s" % args[0])
+            if len(args) > 0:
+                self.checkpoint_logs(args[0])
+            else:
+                self.checkpoint_logs(None)
 
         self.command_line.clear()
 
