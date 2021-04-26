@@ -56,9 +56,9 @@ class FlashController(QtWidgets.QWidget):
         #self.layout.addWidget(self.file_selector, 2, 0, 1, 1)
         #self.layout.addWidget(self.file_button, 2, 1, 1, 1)
         self.layout.addWidget(self.download_button, 3, 0, 1, 2)
-        self.layout.addWidget(self.wipe_button, 4, 0, 1, 2)
-        self.layout.addWidget(self.start_button, 5, 0, 1, 2)
-        self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
+        self.layout.addWidget(self.wipe_button, 6, 0, 1, 2)
+        self.layout.addWidget(self.start_button, 4, 0, 1, 2)
+        self.layout.addWidget(self.stop_button, 5, 0, 1, 2)
         self.layout.addWidget(self.rem_mem, 2, 0, 1, 2)
 
         self.board_selector.addItems(Constants.boards)
@@ -101,10 +101,17 @@ class FlashController(QtWidgets.QWidget):
         addr = self.get_addr()
         if addr != -1:
             self.client.command(5, addr)
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Information)
+        msgBox.setText("It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper.")
+        msgBox.setWindowTitle("Notice!")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msgBox.exec()
 
     def wipe(self):
         addr = self.get_addr()
-        if addr != -1:
+        dialog = QtWidgets.QMessageBox.question(self, '', "Are you sure you want to wipe flash?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        if addr != -1 & dialog == QtWidgets.QMessageBox.Yes :
             cmd_dict = {
                 "function_name": "wipe_flash",
                 "target_board_addr": addr,
@@ -140,10 +147,10 @@ class FlashController(QtWidgets.QWidget):
         prefix = self.interface.getPrefix(self.board_selector.currentText())
         key = prefix + "flash_mem"
         if( key in last_packet.keys()):
-            rem_mem = int (last_packet[prefix + "flash_mem"])
+            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
         else: 
             rem_mem = 0
-        self.rem_mem.setText("Bytes Remaining: " + str(rem_mem)+ " kb")
+        self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
 
 
 if __name__ == "__main__":
