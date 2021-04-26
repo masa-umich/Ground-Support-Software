@@ -7,15 +7,11 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import pyqtgraph as pg
-#
-#import pyqtgraph.examples
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
 
 from Switch import Switch
 from ColorButton import ColorButton
@@ -110,7 +106,7 @@ class DataViewer(QtWidgets.QTabWidget):
         # Create input for title label
         self.title_edit = QtWidgets.QLineEdit()
         self.title_edit.setPlaceholderText("Plot Title")
-        self.config_layout.addWidget(self.title_edit, 0, 1)
+        self.config_layout.addWidget(self.title_edit, 0, 1, 1, 2)
         font = QtGui.QFont()
         font.setPointSize(12 * self.font_scale_ratio)
         self.title_edit.setFont(font)
