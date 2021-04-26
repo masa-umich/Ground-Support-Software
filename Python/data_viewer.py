@@ -27,10 +27,12 @@ from plotWidgetWrapper import PlotWidgetWrapper
 class DataViewerDialog(QtWidgets.QDialog):
     def __init__(self, gui):
 
-
         super().__init__()
         pg.setConfigOption('background', (67,67,67))
         pg.setConfigOptions(antialias=True)
+
+        print("pyqtgraph Version: " + pg.__version__)
+
         self.gui = gui
         self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=2, cycle_time=250)
         self.setWindowTitle("Data Viewer")
@@ -192,7 +194,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         #self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
 
-        self.plot2.addCurve("Garbage", self.colors[0].color())
+        self.plot2.addCurve("Garbage", self.colors[0].color(), axis = "left")
         self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
         self.plot2.curves["Garbage"].setData(x = np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]), y = np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
 
@@ -263,10 +265,10 @@ class DataViewer(QtWidgets.QTabWidget):
             if len(parsed[0]) > 0:
                 # If the parse finds nothing then parsed[0] will be the uncut string
                 if parsed[0] == "line" and len(parsed) == 2:
-                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0, axis)
+                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0, axis = axis)
 
                 else:
-                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis)
+                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
                     if self.aliases[idx].text() is not "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
