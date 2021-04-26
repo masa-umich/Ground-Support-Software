@@ -34,7 +34,7 @@ class DataViewerDialog(QtWidgets.QDialog):
         print("pyqtgraph Version: " + pg.__version__)
 
         self.gui = gui
-        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=2, cycle_time=250)
+        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=250)
         self.setWindowTitle("Data Viewer")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.data_viewer)
@@ -200,7 +200,6 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.showLegend()
 
-        #self.plot2.removeAllCurves()
 
 
     def load_config(self, config: list):
@@ -246,6 +245,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.plot2.removeAllCurves()
 
         # Loop through all channels
+        hasRight = False
         for idx in range(self.num_channels):
             # Check if the switch is checked and if so place everything on right axis
             axis = "left"  # default
@@ -253,6 +253,7 @@ class DataViewer(QtWidgets.QTabWidget):
                 axis = "right"
                 if self.plot2.right_view_box is None:
                     self.plot2.addRightAxis()
+                    hasRight = True
 
             # Get the color of the line
             color = QColor(255, 255, 255)  # defualt
@@ -272,8 +273,10 @@ class DataViewer(QtWidgets.QTabWidget):
                     if self.aliases[idx].text() is not "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
-        self.plot2.showLegend()
+        if not hasRight and self.plot2.right_view_box is not None:
+            self.plot2.hideRightAxis()
 
+        self.plot2.showLegend()
 
     def get_active(self):
         """Returns a list of all the active channels
@@ -341,6 +344,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.top_layout = QtWidgets.QGridLayout()
         self.widget.setLayout(self.top_layout)
 
+        self.rows = rows
+        self.cols = cols
+        self.num_channels = num_channels
+        self.cycle_time = cycle_time
+
         # set up client
         if not client:
             self.client_dialog = ClientDialog(False)
@@ -373,11 +381,17 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
 
-        # load menu item
-        self.row_action = QtGui.QAction("&Row Config", self.options_menu)
+        # Add row of graphs to view
+        self.row_action = QtGui.QAction("&Add Row", self.options_menu)
         self.row_action.setShortcut("Ctrl+R")
         self.row_action.triggered.connect(self.addRow)
         self.options_menu.addAction(self.row_action)
+
+        # Add col of graphs to view
+        self.col_action = QtGui.QAction("&Add Column", self.options_menu)
+        self.col_action.setShortcut("Ctrl+C")
+        self.col_action.triggered.connect(self.addCol)
+        self.options_menu.addAction(self.col_action)
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
@@ -403,13 +417,20 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.cycle_time = cycle_time
 
     def addRow(self):
-        self.viewers.append(DataViewer(
-            self.gui, self.channels, 250, num_channels=4))
-        self.viewers.append(DataViewer(
-            self.gui, self.channels, 250, num_channels=4))
 
-        self.top_layout.addWidget(self.viewers[4], 3, 0)
-        self.top_layout.addWidget(self.viewers[5], 3, 1)
+        for i in range(self.cols):
+            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.top_layout.addWidget(self.viewers[-1], self.rows, i)
+
+        self.rows = self.rows + 1
+
+    def addCol(self):
+
+        for i in range(self.rows):
+            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.top_layout.addWidget(self.viewers[-1], i, self.cols)
+
+        self.cols = self.cols + 1
 
     # loop
     def update(self):
@@ -481,8 +502,8 @@ if __name__ == "__main__":
 
     # init window
     CYCLE_TIME = 250  # in ms
-    window = DataViewerWindow(num_channels=4, rows=2,
-                              cols=2, cycle_time=CYCLE_TIME)
+    window = DataViewerWindow(num_channels=4, rows=1,
+                              cols=1, cycle_time=CYCLE_TIME)
 
     # timer and tick updates
     timer = QtCore.QTimer()
