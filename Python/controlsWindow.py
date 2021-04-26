@@ -8,6 +8,7 @@ from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
+from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
 from flash import FlashDialog
 from abort_button import AbortButton
@@ -45,6 +46,7 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
+        self.data_viewer_dialog = DataViewerDialog(self.gui)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -135,6 +137,10 @@ class ControlsWindow(QMainWindow):
         self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
         self.connect.setShortcut('Alt+C')
 
+        # Run -> Connection Settings
+        data_view_dialog = QAction("&Data Viewer", self)
+        data_view_dialog.triggered.connect(lambda: self.show_window(self.data_viewer_dialog))
+
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
@@ -209,6 +215,7 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.endRunAct)
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.checkpointAct)
+        run_menu.addAction(data_view_dialog)
         run_menu.addMenu(self.ambientizeMenu)
         run_menu.addAction(self.tareLoadCellAct)
         run_menu.addAction(self.zeroTimeAct)
@@ -784,7 +791,7 @@ class ControlsWindow(QMainWindow):
             window (QWidget): window to show
         """
         # open window
-        window.show() 
+        window.show()
 
         # bring to front
         window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)

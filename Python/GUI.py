@@ -9,6 +9,8 @@ from PyQt5.QtGui import *
 from controlsWindow import ControlsWindow
 from constants import Constants
 
+from plotWindow import PlotWindow
+
 from configurationManager import ConfigurationManager
 
 from run import Run
@@ -151,6 +153,8 @@ if __name__ == '__main__':
 
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+        os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+        QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
         app = QApplication(sys.argv)
         print("Python Version:" + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)

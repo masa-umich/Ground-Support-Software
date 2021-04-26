@@ -295,7 +295,7 @@ class MissionWidget(QWidget):
         elif self.client.is_connected and self.window.last_packet["ser_open"]:
             self.connectionIndicator.setIndicatorColor("Yellow")
             self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
-        elif self.client.is_connected and not self.window.interface.ser.is_open:
+        elif self.client.is_connected and self.window.last_packet["ser_open"]:
             self.connectionIndicator.setIndicatorColor("Yellow")
             self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
         else:
