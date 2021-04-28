@@ -8,6 +8,7 @@ from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
+from replayServer import ReplayServerDialog
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
 from flash import FlashDialog
@@ -47,6 +48,7 @@ class ControlsWindow(QMainWindow):
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
+        self.replay_server_dialog = ReplayServerDialog(self.gui)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -126,6 +128,10 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.setShortcut('Ctrl+Shift+R')
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
+
+        # Run -> Show Replay Server
+        self.replayServerAct = QAction('&Replay Server Dialog', self)
+        self.replayServerAct.triggered.connect(lambda : self.show_window(self.replay_server_dialog))
 
         # Run -> Add Boards
         self.addAvionicsAct = QAction('&Add Avionics', self)
@@ -213,6 +219,7 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
+        run_menu.addAction(self.replayServerAct)
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.checkpointAct)
         run_menu.addAction(data_view_dialog)
