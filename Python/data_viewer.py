@@ -247,9 +247,10 @@ class DataViewer(QtWidgets.QTabWidget):
             axis = "left"  # default
             if self.switches[idx].isChecked():
                 axis = "right"
+                hasRight = True
                 if self.plot2.right_view_box is None:
                     self.plot2.addRightAxis()
-                    hasRight = True
+
 
             # Get the color of the line
             color = QColor(255, 255, 255)  # defualt

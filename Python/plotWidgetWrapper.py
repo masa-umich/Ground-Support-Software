@@ -132,6 +132,7 @@ class PlotWidgetWrapper(pg.PlotWidget):
         self.plot_item.scene().addItem(self.right_view_box)
         self.plot_item.getAxis('right').linkToView(self.right_view_box)
         self.right_view_box.setZValue(0)
+        self.right_view_box.setMouseEnabled(False, False)
 
         self.right_view_box.setGeometry(self.left_view_box.sceneBoundingRect())
         self.right_view_box.linkedViewChanged(self.left_view_box, self.right_view_box.XAxis)
