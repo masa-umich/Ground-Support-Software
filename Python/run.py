@@ -61,7 +61,7 @@ class Run(QObject):  #
         self.startDateTime = QDateTime.currentDateTime()
         self.MET = 0
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + \
-                                self.startDateTime.time().toString("hhmm") + "__" + self.title.replace(" ", "_")
+                                self.startDateTime.time().toString("hh_mm_ss") + "__" + self.title.replace(" ", "_")
         self.thread = RunBackgroundThread(self)
         self.thread.start()
 

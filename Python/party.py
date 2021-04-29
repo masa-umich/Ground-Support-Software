@@ -12,6 +12,8 @@ class PartyParrot(QLabel):
         self.frames = []
         for i in range(10):
             self.frames.append(QPixmap("Images/Parrot/frame{}.png".format(i)))
+
+        self.confusedParrot = QPixmap("Images/Parrot/confusedparrot.png")
         
         self.setAlignment(Qt.AlignCenter)
         self._set_frame()
@@ -23,6 +25,9 @@ class PartyParrot(QLabel):
     def step(self):
         self.current_frame = (self.current_frame + 1) % 10
         self._set_frame()
+
+    def setConfused(self):
+        self.setPixmap(self.confusedParrot)
     
     @overrides
     def setFixedSize(self, h, w, *args, **kwargs):
@@ -30,6 +35,8 @@ class PartyParrot(QLabel):
         for i in range(10):
             frame = QPixmap("Images/Parrot/frame{}.png".format(i))
             self.frames[i] = frame.scaled(h, w, Qt.KeepAspectRatio)
+
+        self.confusedParrot = self.confusedParrot.scaled(h, w, Qt.KeepAspectRatio)
 
 if __name__ == "__main__":
     #QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)

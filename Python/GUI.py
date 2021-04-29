@@ -27,8 +27,9 @@ class GUI:
     EXIT_CODE_ERROR = -1
     LAUNCH_DIRECTORY = "LaunchFiles/"
 
-    def __init__(self):
+    def __init__(self, app):
 
+        self.app = app
 
         # Check which platform we are working with
         if sys.platform == "win32":
@@ -146,8 +147,9 @@ class GUI:
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
+    # Words to live by: https://stackoverflow.com/questions/30678020/how-often-are-objects-copied-when-passing-across-pyqt-signal-slot-connections
     currentExitCode = GUI.EXIT_CODE_REBOOT
     while currentExitCode == GUI.EXIT_CODE_REBOOT:
 
@@ -186,7 +188,7 @@ if __name__ == '__main__':
         app.setPalette(darkPalette)
 
         app.setWindowIcon(QIcon('Images/M_icon.png'))
-        gui = GUI()
+        gui = GUI(app)
 
         #timer and tick updates
         cycle_time = 200 # in ms
