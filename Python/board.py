@@ -408,7 +408,7 @@ class Board(QWidget):
                 "args": [int(newState)]
             }
             self.client.command(3, cmd_dict)
-            self.setBoardState(newState)
+            #self.setBoardState(newState)
 
     def setBoardState(self, state: int):
         """
