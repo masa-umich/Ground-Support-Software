@@ -132,9 +132,25 @@ class PlotWidgetWrapper(pg.PlotWidget):
         self.plot_item.scene().addItem(self.right_view_box)
         self.plot_item.getAxis('right').linkToView(self.right_view_box)
         self.right_view_box.setZValue(0)
+        self.right_view_box.setMouseEnabled(False, False)
 
         self.right_view_box.setGeometry(self.left_view_box.sceneBoundingRect())
         self.right_view_box.linkedViewChanged(self.left_view_box, self.right_view_box.XAxis)
+
+    def hideRightAxis(self):
+
+        # TODO: Makee sure that the signal was disconnected when deleted
+        #self.right_view_box.sigYRangeChanged.disco
+
+        self.setAxisLabel("right", "")
+        self.plot_item.hideAxis("right")
+        self.plot_item.scene().removeItem(self.right_view_box)
+        self.plot_item.getAxis("right").unlinkFromView()
+
+        self.right_view_box.deleteLater()
+        del self.right_view_box
+
+        self.right_view_box = None
 
     def addCurve(self, label: str, color: QColor, width: int = 4, axis: str = "left"):
         self.curves[label] = pg.PlotCurveItem()

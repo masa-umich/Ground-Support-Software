@@ -389,6 +389,8 @@ class Board(QWidget):
         elif identifier == "Run":
             if self.state == 1:
                 newState = 2
+            elif self.state == 2:
+                newState = 3
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = 6
@@ -449,6 +451,8 @@ class Board(QWidget):
 
         if self.state == 0 or self.state == 2:
             self.continue_button.setDisabled(True)
+        if self.state == 2:
+            self.fire_button.setEnabled(True)
         if self.state == 3:
             self.continue_button.setEnabled(True)
         if self.state == 4 or self.state == 5:
