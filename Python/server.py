@@ -71,7 +71,7 @@ class Server(QtWidgets.QMainWindow):
         self.dataframe["press.vlv3.en"] = 1
 
         # init csv header
-        self.header = "Time," + self.interface.get_header()
+        self.header = "time (s)," + self.interface.get_header()
         self.open_log(self.starttime)  # start initial run
 
         # window layout

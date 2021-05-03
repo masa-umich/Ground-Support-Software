@@ -47,7 +47,7 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
-        self.data_viewer_dialog = DataViewerDialog(self.gui)
+        self.data_viewer_dialog = DataViewerDialog(self.gui, self.client_dialog)
         self.replay_server_dialog = ReplayServerDialog(self.gui)
 
         appid = 'MASA.GUI' # arbitrary string
@@ -818,7 +818,7 @@ class ControlsWindow(QMainWindow):
                 self.central_widget_offset = self.pos()
 
         packet = self.client_dialog.client.cycle()
-        if packet != None: # on exception
+        if packet is not None:  # on exception\ termination
             self.last_packet = packet
         
         self.centralWidget.update()

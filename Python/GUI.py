@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import signal
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -189,6 +190,8 @@ if __name__ == '__main__':
 
         app.setWindowIcon(QIcon('Images/M_icon.png'))
         gui = GUI(app)
+
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
 
         #timer and tick updates
         cycle_time = 200 # in ms

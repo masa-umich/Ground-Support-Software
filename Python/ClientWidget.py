@@ -8,7 +8,6 @@ import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
-import pyqtgraph as pg
 
 from LedIndicatorWidget import LedIndicator
 
@@ -32,6 +31,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.command_queue = queue.Queue()
         self.is_commander = False
         self.is_connected = False
+        self.is_replay_server_connected = False
         self.last_packet = None
 
         self.gui_window = gui_window
@@ -125,11 +125,16 @@ class ClientWidget(QtWidgets.QWidget):
         #print(self.is_connected)
 
     def disconnect(self):
-        # send disconnect message
-        self.command(4)
-        self.is_connected = False
-        if self.gui_window is not None:
-            self.gui_window.statusBar().showMessage("Disconnected from server")
+
+        # Only disconnect if the client is actually connected
+        if self.is_connected:
+            self.command(4)
+            self.s.sendall(self.command_queue.get())  # send we disconnected
+            self.is_connected = False
+            self.is_replay_server_connected = False
+            self.control_button.setDisabled(False)
+            if self.gui_window is not None:
+                self.gui_window.statusBar().showMessage("Disconnected from server")
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -147,22 +152,32 @@ class ClientWidget(QtWidgets.QWidget):
             if self.is_connected:
                 # send next command
                 self.s.sendall(self.command_queue.get())
-
                 # get data
                 data = self.s.recv(4096*4)
                 packet = pickle.loads(data)
 
-            # update command status
-            if packet["commander"] == None:
-                self.is_commander = False
-            elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
-                self.is_commander = True
-            else:
-                self.is_commander = False
-            self.led.setChecked(self.is_commander)
+                if packet.get("terminate", False):
+                    self.disconnect()
+                    return
 
-            self.last_packet = packet
-            return self.last_packet
+                # update command status
+                if packet["commander"] is None:
+                    self.is_commander = False
+                    self.is_replay_server_connected = False
+                    self.control_button.setDisabled(False)
+                elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
+                    self.is_commander = True
+                    self.is_replay_server_connected = False
+                    self.control_button.setDisabled(False)
+                elif packet["commander"] == "ReplayServer":
+                    self.is_replay_server_connected = True
+                    self.control_button.setDisabled(True)
+                else:
+                    self.is_commander = False
+                self.led.setChecked(self.is_commander)
+
+                self.last_packet = packet
+                return self.last_packet
 
         except:
             #traceback.print_exc()

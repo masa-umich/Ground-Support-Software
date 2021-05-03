@@ -2,14 +2,23 @@ import csv
 from os import path
 
 import time
+import socket
+import threading
+import pickle
+import traceback
 
 from party import PartyParrot
 from constants import Constants
+from indicatorLightWidget import IndicatorLightWidget
+from overrides import overrides
 import queue
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+
+
+threading.stack_size(134217728)
 
 
 class ReplayServerDialog(QDialog):
@@ -21,16 +30,15 @@ class ReplayServerDialog(QDialog):
         super().__init__()
 
         self.gui = gui
+        self.setWindowTitle("Replay Server")
         self.replay_server = ReplayServerWindow(self, self.gui)
-        self.setWindowTitle("Replay Server Handler")
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.replay_server)
         self.setLayout(self.layout)
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(800, 500)
         base_size = 500
         AR = 1.5  # H/W
         self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
 
 
 class ReplayServerWindow(QMainWindow):
@@ -47,31 +55,38 @@ class ReplayServerWindow(QMainWindow):
         # Window layout is as follows, Central Widget -> Grid Layout -> Groupbox -> Individual Widgets
         self.dialog = dialog
         self.gui = gui
-        self.setWindowTitle("Replay Server")
         self.widget = QWidget()
         self.setCentralWidget(self.widget)
         self.grid_layout = QGridLayout()
         self.widget.setLayout(self.grid_layout)
 
+        # Connection port and host
+        self.host = socket.gethostbyname(socket.gethostname())
+        self.port = 6968
+
+        # For the user uk
+        self.dialog.setWindowTitle("Replay Server %s:%s" % (self.host, self.port))
+
         # State vars keeping track of playback controls
-        self.thread_active = False
+        self.csv_thread_active = False
         self.is_playing = False
         self.fast_forward_multiplier = 1
 
         # Data to be populated and shown
         self.data_units = {}
+        self.data_dict = {}
         self.header_items = None
 
         # Gui shutdown signal connect
         self.gui.app.aboutToQuit.connect(lambda: self.stopPlayback(0))
 
         # Thread that holds functionality for reading csv, unpacking data
-        self.thread = ReplayServerBackgroundThread(self)
+        self.csv_thread = ReplayServerBackgroundCSVThread(self)
 
         # CANNOT update gui from thread, must use signals to keep all updates in main thread
-        self.thread.parsed.connect(self.updateStateFromPacket)
-        self.thread.EOF_reached.connect(self.stopPlayback)
-        self.thread.file_load.connect(self.loadRunFileData)
+        self.csv_thread.parsed.connect(self.updateStateFromPacket)
+        self.csv_thread.EOF_reached.connect(self.stopPlayback)
+        self.csv_thread.file_load.connect(self.loadRunFileData)
 
         # Setup Status bar
         font = QFont()
@@ -118,7 +133,7 @@ class ReplayServerWindow(QMainWindow):
         # Tabs user can pic
         tab.addTab(self.log_box, "Replayed Server Log")
         tab.addTab(packet_widget, "Replayed Packet Log")
-        self.grid_layout.addWidget(tab, 2, 0, 1, 2)
+        self.grid_layout.addWidget(tab, 3, 0, 1, 2)
 
         # Load file controls
         file_load_groupbox = QGroupBox("Load Run From Save")
@@ -138,7 +153,7 @@ class ReplayServerWindow(QMainWindow):
         self.load_file_name_edit.textEdited.connect(self.loadFileNameLineEdited)
 
         self.load_file_button = QPushButton("Load Run File")
-        self.load_file_button.clicked.connect(self.thread.loadRunFile)
+        self.load_file_button.clicked.connect(self.csv_thread.loadRunFile)
         self.load_file_button.setFocusPolicy(Qt.NoFocus)
 
         file_load_layout.addWidget(self.select_file_button, 0 , 0)
@@ -155,7 +170,7 @@ class ReplayServerWindow(QMainWindow):
 
         # Playback Controls
         command_box = QGroupBox("Playback Controls")
-        self.grid_layout.addWidget(command_box, 1, 0, 1, 2)
+        self.grid_layout.addWidget(command_box, 2, 0, 1, 2)
         command_layout = QGridLayout()
         command_box.setLayout(command_layout)
 
@@ -188,6 +203,19 @@ class ReplayServerWindow(QMainWindow):
         command_layout.addWidget(self.fast_forward_button, 0, 2)
         command_layout.addWidget(stop_button, 0, 3)
 
+        # commander status
+        server_connection_box = QGroupBox("Connection")
+        # top_layout.addWidget(command_box, 1, 0) #no parrot
+        self.grid_layout.addWidget(server_connection_box, 1, 0)
+        server_connection_layout = QGridLayout()
+        server_connection_box.setLayout(server_connection_layout)
+        self.client_label = QLabel("Client Connection: None")
+        server_connection_layout.addWidget(self.client_label, 0, 0, 0, 4)
+
+        self.connection_indicator = IndicatorLightWidget(self, "", 16, "Red", Hbuffer=26, Wbuffer=15)
+        self.connection_indicator.setToolTip("Connections Disabled, No file loaded")
+        self.grid_layout.addWidget(self.connection_indicator, 1, 1)
+
         # start server connection thread
         # waits for clients and then creates a thread for each connection
         #self.t = threading.Thread(target=self.server_handler, daemon=True)
@@ -206,6 +234,74 @@ class ReplayServerWindow(QMainWindow):
 
         self.party_parrot.setConfused()
 
+        self.server_handler_thread = None
+
+        self.server_socket = None
+        self.client_socket = None
+
+    def serverHandler(self):
+
+        # Initialize socket
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # This allows instant restart from SIGKILL
+        self.server_socket.bind((self.host, self.port))
+
+        self.server_socket.listen(5)
+
+        # create connection
+        # establish connection with client
+        while True:
+            try:
+                cli, addr = self.server_socket.accept()
+            except ConnectionAbortedError:
+                # When we pull the plug on the server this is triggered
+                break
+
+            self.client_label.setText("Client Connection: " + addr[0])
+            self.connection_indicator.setIndicatorColor("Green")
+            self.connection_indicator.setToolTip("Client Connection: " + addr[0])
+            self.update()
+            # create thread to handle client
+            client_thread = threading.Thread(target=self.clientHandler,
+                                              args=(cli, addr), daemon=True)
+            client_thread.start()
+
+    def clientHandler(self, client_socket: socket.socket, server_addr: str):
+
+        self.client_socket = client_socket
+        while self.client_socket is not None:
+            msg = self.client_socket.recv(2048)
+
+            if msg == b'':
+                # remote connection closed
+                break
+            else:
+                command = pickle.loads(msg)
+                if command["command"] == 0:  # do nothing
+                    pass
+                elif command["command"] == 4:  # close connection
+                    break
+                else:
+                    print("Unrecognized Command Sent to Replay Server")
+
+                self.data_dict["commander"] = "ReplayServer"
+                data = pickle.dumps(self.data_dict)
+                self.client_socket.sendall(data)
+
+        # Close the socket when the loop breaks
+        self.client_socket.close()
+
+        # Only want to make this yellow if the file is still loaded, otherwise will be dealt with elsewhere
+        if self.csv_thread_active:
+            self.client_label.setText("Client Connection: None")
+            self.connection_indicator.setIndicatorColor("Yellow")
+            self.connection_indicator.setToolTip("Waiting for connection")
+            self.update()
+
+        self.client_socket = None
+        self.server_handler_thread.join()
+
     @pyqtSlot(int, object, object)
     def loadRunFileData(self, exit_code: int, header_items, units):
         """
@@ -223,9 +319,17 @@ class ReplayServerWindow(QMainWindow):
             self.sendStatusBarMessage("No file specified! File cannot be loaded", is_error=True)
         else:
             # Activate thread, we start the thread here, but will not populate data till is_playing is true
-            self.thread_active = True
+            self.csv_thread_active = True
             self.sendStatusBarMessage("File loaded")
-            self.thread.start()
+            self.csv_thread.start()
+
+            # Start server thread to allow incoming connections
+            self.server_handler_thread = threading.Thread(target=self.serverHandler, daemon=True)
+            self.server_handler_thread.start()
+
+            # Update connection indicator
+            self.connection_indicator.setIndicatorColor("Yellow")
+            self.connection_indicator.setToolTip("Waiting for connection")
 
             self.data_table.setRowCount(1)  # Do not change this, idk why but it makes it run way faster and not hang
 
@@ -248,6 +352,8 @@ class ReplayServerWindow(QMainWindow):
             self.play_button.setDisabled(False)
             self.fast_forward_button.setDisabled(False)
 
+            self.update()
+
     @pyqtSlot(int)
     def stopPlayback(self, exit_code: int = 0):
         """
@@ -257,9 +363,28 @@ class ReplayServerWindow(QMainWindow):
         """
 
         # Shutdown thread
-        self.thread_active = False
+        self.csv_thread_active = False
         self.is_playing = False
-        self.thread.shutdownThread()
+        self.csv_thread.shutdownThread()
+
+        # Close the sockets
+
+        # Send command to let client know to terminate it
+        if self.client_socket is not None:
+            dict_ = {"terminate": True}
+            data = pickle.dumps(dict_)
+            self.client_socket.sendall(data)
+
+        if self.server_socket is not None:
+            self.server_socket.close()
+            self.server_socket = None
+
+        # Reset the indicator
+        self.connection_indicator.setIndicatorColor("Red")
+        self.connection_indicator.setToolTip("Connections Disabled, No file loaded")
+        self.update()
+
+        self.client_label.setText("Client Connection: None")
 
         # Reset some vars
         self.fast_forward_multiplier = 1
@@ -345,8 +470,9 @@ class ReplayServerWindow(QMainWindow):
         :param dict_: dictionary with keys of header items and values the parsed value of the csv
         """
         self.party_parrot.step()
+        self.data_dict = dict_
         for i, data_item in enumerate(self.header_items):
-            self.data_table.setItem(i, 1, QTableWidgetItem(str(dict_[self.header_items[i]])))
+            self.data_table.setItem(i, 1, QTableWidgetItem(str(round(dict_[self.header_items[i]],1))))
 
     def loadFileNameLineEdited(self):
         """
@@ -357,7 +483,7 @@ class ReplayServerWindow(QMainWindow):
         if path.exists(file_path):
             self.updateRunFilePath(file_path)
         else:
-            self.thread.setRunFilePath(None)
+            self.csv_thread.setRunFilePath(None)
             if file_path is not "":
                 self.load_file_name_edit.setStyleSheet("color: red;")
             else:
@@ -370,7 +496,7 @@ class ReplayServerWindow(QMainWindow):
         """
         self.load_file_name_edit.setStyleSheet("")
         self.load_file_name_edit.setText(filePath)
-        self.thread.setRunFilePath(filePath)
+        self.csv_thread.setRunFilePath(filePath)
         self.sendStatusBarMessage("File path successfully updated")
 
     def sendStatusBarMessage(self, message: str, is_error: bool = False):
@@ -386,10 +512,19 @@ class ReplayServerWindow(QMainWindow):
             self.statusBar().setStyleSheet("")
             self.statusBar().showMessage(message)
 
+    @overrides
+    def update(self):
+        """
+        Overrides update function to make sure some sub-widgets get updated
+        """
+        super().update()
 
-class ReplayServerBackgroundThread(QThread):
+        self.connection_indicator.update()
+
+
+class ReplayServerBackgroundCSVThread(QThread):
     """
-    Class that handles background threading for the run class, this is to prevent the GUI from hanging
+    Class that handles csv background threading for the run class, this is to prevent the GUI from hanging
     """
 
     file_load = pyqtSignal(int, object, object)  # Emitted when the file is loaded
@@ -399,7 +534,7 @@ class ReplayServerBackgroundThread(QThread):
     def __init__(self, replayServer: ReplayServerWindow):
         """
         Initializer
-        :param run: The run instance that is currently active
+        :param replayServer: The replayServer instance that is currently active
         """
         super().__init__()
         self.gui = replayServer.gui
@@ -416,7 +551,7 @@ class ReplayServerBackgroundThread(QThread):
         This is the function that is constantly running in the background
         """
         # While the run is active keep the thread alive, will cleanly exit when run stops
-        while self.replay_server.thread_active:
+        while self.replay_server.csv_thread_active:
 
             if self.replay_server.is_playing:
                 # Update the MET every second, this can be increased but seems unnecessary
@@ -430,7 +565,6 @@ class ReplayServerBackgroundThread(QThread):
         Shutdown the thread
         """
         # Just close the file for now
-        # print("Replay Thread Shutdown")
         if self.run_file is not None:
             self.run_file.close()
 
@@ -449,7 +583,7 @@ class ReplayServerBackgroundThread(QThread):
 
         # Don't want the server timestamp, and garbage last entry
         header = next(self.csv_reader)
-        header = header[1:-1]
+        header = header[0:-1]
 
         header_len = len(header)
         units = {}
@@ -473,6 +607,9 @@ class ReplayServerBackgroundThread(QThread):
         # Emit the loaded data
         self.file_load.emit(0, header_items, units)
 
+        # Populate first value
+        self.readRunFile()
+
     def readRunFile(self):
         """
         Reads the next row of the run file
@@ -480,7 +617,7 @@ class ReplayServerBackgroundThread(QThread):
         try:
             # Read the next row
             next_raw_row = next(self.csv_reader)
-            self.parseData(data_row=next_raw_row[1:-1])  # Have to cut off for same reason mentioned in loadRunFile()
+            self.parseData(data_row=next_raw_row[0:-1])  # Have to cut off for same reason mentioned in loadRunFile()
         except StopIteration:
             # Exception caught when EOF is found
             self.shutdownThread()
@@ -495,7 +632,7 @@ class ReplayServerBackgroundThread(QThread):
         # For every piece of data in in the data_row, take it and stuff it in a dictionary with the headers as keys
         dict = {}
         for i, data_item in enumerate(data_row):
-            num_data = round(float(data_item), 1)
+            num_data = float(data_item)
             dict[self.replay_server.header_items[i]] = num_data
 
         # This emits a signal w/ dictionary that the run can pickup to update the server from the main thread
