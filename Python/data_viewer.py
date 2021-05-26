@@ -390,6 +390,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.col_action.triggered.connect(self.addCol)
         self.options_menu.addAction(self.col_action)
 
+        #Load data
+        self.load_data_action = QtGui.QAction("&Load data", self.options_menu)
+        self.load_data_action.triggered.connect(self.loadData)
+        self.options_menu.addAction(self.load_data_action)
+
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
         self.quit.setShortcut("Ctrl+Q")
@@ -442,6 +447,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 int(15*60*1000/self.cycle_time))  # cap data to 15 min
 
         # maybe only run if connection established?
+        for viewer in self.viewers:
+            if viewer.is_active():
+                viewer.update(self.database)
+
+    def loadData(self):
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(self.database)
