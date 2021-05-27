@@ -390,7 +390,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.col_action.triggered.connect(self.addCol)
         self.options_menu.addAction(self.col_action)
 
-        #Load data
+        # Load data
         self.load_data_action = QtGui.QAction("&Load data", self.options_menu)
         self.load_data_action.triggered.connect(self.loadData)
         self.options_menu.addAction(self.load_data_action)
@@ -452,9 +452,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
     def loadData(self):
+        loadname = QtGui.QFileDialog.getOpenFileName(
+            self, "Load Data", "", "Data log (*.csv)")[0]
+        with open(loadname, "r") as file:
+            dataFrame = pd.read_csv(file)
         for viewer in self.viewers:
-            if viewer.is_active():
-                viewer.update(self.database)
+            viewer.update(dataFrame)
+
 
     def exit(self):
         """Exit application"""
