@@ -213,6 +213,7 @@ class DataViewer(QtWidgets.QTabWidget):
             self.switches[i].setChecked(bool(curve_config[0]))
             self.series[i].setText(curve_config[1])
             self.colors[i].setColor(curve_config[2])
+            self.plot2.addCurve(curve_config[1], curve_config[2], curve_config[0])
         self.redraw_curves()
 
     def save_config(self):
@@ -459,6 +460,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         with open(loadname, "r") as file:
             dataFrame = pd.read_csv(file)
         #This uses the dataViewer update(). See the dataViewerWindow update() above. Do we need to go into changing self.database?
+        dataFrame.drop(dataFrame.index[0])
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(dataFrame)
