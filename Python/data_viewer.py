@@ -452,12 +452,16 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
     def loadData(self):
+        #select a csv file
         loadname = QtGui.QFileDialog.getOpenFileName(
             self, "Load Data", "", "Data log (*.csv)")[0]
+        #read in csv as dataframe. Not successful rn.
         with open(loadname, "r") as file:
             dataFrame = pd.read_csv(file)
+        #This uses the dataViewer update(). See the dataViewerWindow update() above. Do we need to go into changing self.database?
         for viewer in self.viewers:
-            viewer.update(dataFrame)
+            if viewer.is_active():
+                viewer.update(dataFrame)
 
 
     def exit(self):
