@@ -22,9 +22,8 @@ from plotWidgetWrapper import PlotWidgetWrapper
 
 class DataViewerDialog(QtWidgets.QDialog):
     def __init__(self, gui):
-
         super().__init__()
-        pg.setConfigOption('background', (67,67,67))
+        pg.setConfigOption('background', (67, 67, 67))
         pg.setConfigOptions(antialias=True)
 
         print("pyqtgraph Version: " + pg.__version__)
@@ -114,7 +113,6 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # Loop through the number of channels and populate the grid layout to contain all the inputs
         for i in range(num_channels):
-
             # Left/ right axis switch
             self.switches.append(Switch())
             self.switches[i].clicked.connect(
@@ -133,8 +131,8 @@ class DataViewer(QtWidgets.QTabWidget):
             channel_dropdown.setPlaceholderText("Channel Name")
             channel_dropdown.editingFinished.connect(lambda: self.redraw_curves())
             self.series.append(channel_dropdown)
-            self.config_layout.addWidget(self.series[i], i+1, 1)
-            
+            self.config_layout.addWidget(self.series[i], i + 1, 1)
+
             # Alias dropdown
             alias_dropdown = QtWidgets.QLineEdit()
             font = alias_dropdown.font()
@@ -150,13 +148,13 @@ class DataViewer(QtWidgets.QTabWidget):
             self.colors.append(ColorButton(
                 default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda: self.redraw_curves())
-            self.config_layout.addWidget(self.colors[i], i+1, 3)
+            self.config_layout.addWidget(self.colors[i], i + 1, 3)
 
         # setup duration field
         self.duration_edit = QtWidgets.QLineEdit("30")
         self.duration_label = QtWidgets.QLabel("Seconds")
-        self.config_layout.addWidget(self.duration_edit, num_channels+1, 0)
-        self.config_layout.addWidget(self.duration_label, num_channels+1, 1)
+        self.config_layout.addWidget(self.duration_edit, num_channels + 1, 0)
+        self.config_layout.addWidget(self.duration_label, num_channels + 1, 1)
         self.duration_edit.editingFinished.connect(self.duration_update)
         self.duration_update()
 
@@ -188,15 +186,14 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.setMouseEnabled(False, False)
 
-        #self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
+        # self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
 
-        self.plot2.addCurve("Garbage", self.colors[0].color(), axis = "left")
+        self.plot2.addCurve("Garbage", self.colors[0].color(), axis="left")
         self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
-        self.plot2.curves["Garbage"].setData(x = np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]), y = np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
+        self.plot2.curves["Garbage"].setData(x=np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]),
+                                             y=np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
 
         self.plot2.showLegend()
-
-
 
     def load_config(self, config: list):
         """Loads a DataViewer config
@@ -209,7 +206,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.duration_edit.setText(config[1])
         self.duration_update()
         for i in range(self.num_channels):
-            curve_config = config[i+2]
+            curve_config = config[i + 2]
             self.switches[i].setChecked(bool(curve_config[0]))
             self.series[i].setText(curve_config[1])
             self.colors[i].setColor(curve_config[2])
@@ -252,7 +249,6 @@ class DataViewer(QtWidgets.QTabWidget):
                 if self.plot2.right_view_box is None:
                     self.plot2.addRightAxis()
 
-
             # Get the color of the line
             color = QColor(255, 255, 255)  # defualt
             if self.colors[idx].color():
@@ -264,10 +260,11 @@ class DataViewer(QtWidgets.QTabWidget):
             if len(parsed[0]) > 0:
                 # If the parse finds nothing then parsed[0] will be the uncut string
                 if parsed[0] == "line" and len(parsed) == 2:
-                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0, axis = axis)
+                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0,
+                                                                       axis=axis)
 
                 else:
-                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
+                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis=axis)
                     if self.aliases[idx].text() is not "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
@@ -309,7 +306,22 @@ class DataViewer(QtWidgets.QTabWidget):
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
         """
         # super().update()
-        points = int(self.duration*1000/self.cycle_time)
+        points = int(self.duration * 1000 / self.cycle_time)
+        data = frame.tail(points)
+        for i in range(self.num_channels):
+            # get channel name
+            channel_name = self.series[i].text()
+            if channel_name in self.channels:
+                self.plot2.curves[channel_name].setData(
+                    x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
+
+    def update_load(self, frame: pd.DataFrame):
+        """Updates plot with new data. The reason we need this is that the channels have been duplicated
+
+        Args:
+            frame (pandas.DataFrame): Pandas DataFrame of telemetry data
+        """
+        points = int(self.duration * 1000 / self.cycle_time)
         data = frame.tail(points)
         for i in range(self.num_channels):
             # get channel name
@@ -324,7 +336,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     Window with client and DataViewer objects
     """
 
-    def __init__(self, gui = None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
+    def __init__(self, gui=None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250,
+                 client=None, *args, **kwargs):
         """Initializes window
 
         Args:
@@ -395,6 +408,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_data_action = QtGui.QAction("&Load data", self.options_menu)
         self.load_data_action.triggered.connect(self.loadData)
         self.options_menu.addAction(self.load_data_action)
+        self.num_load = 0
+        self.config = [] #globalizing config
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
@@ -410,10 +425,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # init viewers
         self.viewers = [DataViewer(
-            self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+            self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows * cols)]
         for i in range(rows):
             for j in range(cols):
-                idx = i*cols+j
+                idx = i * cols + j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
 
         self.starttime = datetime.now().timestamp()
@@ -422,7 +437,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def addRow(self):
 
         for i in range(self.cols):
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.viewers.append(
+                DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
 
         self.rows = self.rows + 1
@@ -430,7 +446,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def addCol(self):
 
         for i in range(self.rows):
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.viewers.append(
+                DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
 
         self.cols = self.cols + 1
@@ -445,7 +462,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.last_packet["time"] -= self.starttime  # time to elapsed
             last_frame = pd.DataFrame(self.last_packet, index=[0])
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
-                int(15*60*1000/self.cycle_time))  # cap data to 15 min
+                int(15 * 60 * 1000 / self.cycle_time))  # cap data to 15 min
 
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -453,17 +470,47 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
     def loadData(self):
-        #select a csv file
+        """Load data from a log file (csv).
+        This function can be called multiple times (?) to load data before graphing live data, or to load 2 log files."""
+
+        # keep track of how many files have been loaded
+        self.num_load += 1
+
+        # select a csv file
         loadname = QtGui.QFileDialog.getOpenFileName(
             self, "Load Data", "", "Data log (*.csv)")[0]
-        #read in csv as dataframe. Not successful rn.
+
+        # read in csv as dataframe
         with open(loadname, "r") as file:
             dataFrame = pd.read_csv(file)
-        #This uses the dataViewer update(). See the dataViewerWindow update() above. Do we need to go into changing self.database?
+
+        self.renameWithoutUnits(dataFrame)
+
+        """ if multiple files are loaded (or if we are also graphing live data, add suffix to config and also channels)
+        if self.num_load >= 2:
+            for cfg in self.config:
+                cfg = cfg + "_" + str(self.num_load)
+            print(self.config)
+        """
+
+        # delete the first empty line in the csv
         dataFrame.drop(dataFrame.index[0])
+
         for viewer in self.viewers:
             if viewer.is_active():
-                viewer.update(dataFrame)
+                viewer.update_load(dataFrame)
+
+    def renameWithoutUnits(self, frame: pd.DataFrame):
+        """
+        The log files have units attached to the headers of the DataFrame so they can not be recognized by channels.
+        This function re-formats the DataFrame.
+        """
+        print(list(frame.columns))
+        dictWithoutUnits = {
+            column: column.split()[0]
+            for column in frame.columns
+        }
+        frame.rename(columns=dictWithoutUnits, inplace=True)
 
 
     def exit(self):
@@ -560,4 +607,3 @@ if __name__ == "__main__":
     # run
     window.show()
     sys.exit(app.exec())
-
