@@ -408,8 +408,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_data_action = QtGui.QAction("&Load data", self.options_menu)
         self.load_data_action.triggered.connect(self.loadData)
         self.options_menu.addAction(self.load_data_action)
-        self.num_load = 0
-        self.config = [] #globalizing config
+        self.num_load = 0;
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
@@ -482,9 +481,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # read in csv as dataframe
         with open(loadname, "r") as file:
-            dataFrame = pd.read_csv(file)
+            df = pd.read_csv(file)
 
-        self.renameWithoutUnits(dataFrame)
+        self.renameWithoutUnits(df)
 
         """ if multiple files are loaded (or if we are also graphing live data, add suffix to config and also channels)
         if self.num_load >= 2:
@@ -494,23 +493,24 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """
 
         # delete the first empty line in the csv
-        dataFrame.drop(dataFrame.index[0])
+        df.drop(df.index[0])
 
         for viewer in self.viewers:
             if viewer.is_active():
-                viewer.update_load(dataFrame)
+                viewer.update_load(df)
 
-    def renameWithoutUnits(self, frame: pd.DataFrame):
+    def renameWithoutUnits(self, df: pd.DataFrame):
         """
         The log files have units attached to the headers of the DataFrame so they can not be recognized by channels.
         This function re-formats the DataFrame.
         """
-        print(list(frame.columns))
+        print(list(df.columns))
         dictWithoutUnits = {
             column: column.split()[0]
-            for column in frame.columns
+            for column in df.columns
         }
-        frame.rename(columns=dictWithoutUnits, inplace=True)
+        df.rename(columns=dictWithoutUnits, inplace=True)
+        df.rename(columns={'Time': 'time'})
 
 
     def exit(self):
