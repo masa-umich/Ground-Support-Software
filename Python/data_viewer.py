@@ -87,6 +87,9 @@ class DataViewer(QtWidgets.QTabWidget):
         completer = QtWidgets.QCompleter(self.channels)  # channel autocomplete
         completer.setCaseSensitivity(False)
 
+        # Globalize config. This is used for knowing what channels to duplicate when loading past data.
+        self.config = []
+
         # Create grid layout to put everything in
         self.config_layout = QtWidgets.QGridLayout()
         self.config_tab.setLayout(self.config_layout)
@@ -213,6 +216,9 @@ class DataViewer(QtWidgets.QTabWidget):
             self.plot2.addCurve(curve_config[1], curve_config[2], curve_config[0])
         self.redraw_curves()
 
+        # Globalize config. This is used for knowing what channels to duplicate when loading past data.
+        self.config = config
+
     def save_config(self):
         """Returns save config
 
@@ -315,20 +321,25 @@ class DataViewer(QtWidgets.QTabWidget):
                 self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
 
-    def update_load(self, frame: pd.DataFrame):
-        """Updates plot with new data. The reason we need this is that the channels have been duplicated
+    def update_load(self, frame: pd.DataFrame, window_num_load: int):
+        """Updates plot with new data. The reason we need this is that the channels have been duplicated.
 
         Args:
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
+            window_num_load (int): passed from dataViewerWindow, used along the naming of frame
         """
         points = int(self.duration * 1000 / self.cycle_time)
         data = frame.tail(points)
         for i in range(self.num_channels):
             # get channel name
-            channel_name = self.series[i].text()
+            # The error right now can be fixed by deleting everything starting at the plus sign
+            channel_name = self.series[i].text() + "_LOADED_" + str(window_num_load)
             if channel_name in self.channels:
+                # self.channels comes from the csv and I appended the _LOADED_ ones. channel_name comes from self.series
+                # What do we need for the legend to show up correctly tho? I don't understand plot2.curves facepalm
                 self.plot2.curves[channel_name].setData(
-                    x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
+                    x=data["time" + "_LOADED_" + str(window_num_load)].to_numpy(),
+                    y=data[channel_name + "_LOADED_" + str(window_num_load)].to_numpy())
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
@@ -479,34 +490,33 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         loadname = QtGui.QFileDialog.getOpenFileName(
             self, "Load Data", "", "Data log (*.csv)")[0]
 
-        # read in csv as dataframe
+        # read in csv as DataFrame
         with open(loadname, "r") as file:
             df = pd.read_csv(file)
 
-        self.renameWithoutUnits(df)
+        self.renameDF(df)
 
-        """ if multiple files are loaded (or if we are also graphing live data, add suffix to config and also channels)
-        if self.num_load >= 2:
-            for cfg in self.config:
-                cfg = cfg + "_" + str(self.num_load)
-            print(self.config)
-        """
+        # If multiple files are loaded (or if we are also graphing live data), add suffix to config
+        for viewer in self.viewers:
+            for i in range(viewer.num_channels):
+                viewer.channels.append(viewer.config[i+2][1] + "_LOADED_" + str(self.num_load))
+                # TODO: maybe fade the hex color, viewer.config[i+2][2]
 
         # delete the first empty line in the csv
         df.drop(df.index[0])
 
         for viewer in self.viewers:
             if viewer.is_active():
-                viewer.update_load(df)
+                viewer.update_load(df, self.num_load)
 
-    def renameWithoutUnits(self, df: pd.DataFrame):
+
+    def renameDF(self, df: pd.DataFrame):
         """
         The log files have units attached to the headers of the DataFrame so they can not be recognized by channels.
-        This function re-formats the DataFrame.
+        This function removed the units and added the suffix to match the channel names.
         """
-        print(list(df.columns))
         dictWithoutUnits = {
-            column: column.split()[0]
+            column: column.split()[0] + "_LOADED_" + str(self.num_load)
             for column in df.columns
         }
         df.rename(columns=dictWithoutUnits, inplace=True)
