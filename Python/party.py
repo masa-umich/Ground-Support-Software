@@ -24,7 +24,7 @@ class PartyParrot(QLabel):
         self.current_frame = (self.current_frame + 1) % 10
         self._set_frame()
     
-    @overrides
+    #@overrides
     def setFixedSize(self, h, w, *args, **kwargs):
         super().setFixedSize(h, w, *args, **kwargs)
         for i in range(10):

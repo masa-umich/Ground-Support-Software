@@ -30,7 +30,7 @@ class CustomLabel(QLabel):
         if self.widget is not None:
             self.show()
 
-    @overrides
+    #@overrides
     def setText(self, p_str, updateSize:bool = True):
         """
         Overrides the default function to provide some more functionality

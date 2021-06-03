@@ -71,7 +71,7 @@ class IndicatorLightWidget(QWidget):
         """
         self.indicatorColor = color
 
-    @overrides
+    #@overrides
     def paintEvent(self, e):
         """
         This event is called automatically in the background by pyQt. It is used to update the drawing on screen

@@ -51,7 +51,7 @@ class ObjectButton(QPushButton):
 
         assert dataType in self.allowed_data_types
 
-    @overrides
+    #@overrides
     def mousePressEvent(self, event: QMouseEvent):
         """
         Called when mouse is pressed on a button. Used for drag and drop of objects
@@ -66,7 +66,7 @@ class ObjectButton(QPushButton):
 
         super().mousePressEvent(event)
 
-    @overrides
+    #@overrides
     def mouseMoveEvent(self, event: QMouseEvent):
         """
         Called when mouse is moving a button. Used for drag and drop of objects
@@ -99,7 +99,7 @@ class ObjectButton(QPushButton):
 
         super().mouseMoveEvent(event)
 
-    @overrides
+    #@overrides
     def mouseReleaseEvent(self, event: QMouseEvent):
         """
         Called when mouse releases a button. Used for drag and drop of objects

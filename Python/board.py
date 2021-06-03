@@ -395,7 +395,7 @@ class Board(QWidget):
             self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
 
-    @overrides
+    #@overrides
     def paintEvent(self, e):
         """
         This event is called automatically in the background by pyQt. It is used to update the drawing on screen
@@ -470,7 +470,7 @@ class Board(QWidget):
 
         self.painter.end()
 
-    @overrides
+    #@overrides
     def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate):
         """
         Function to update board state

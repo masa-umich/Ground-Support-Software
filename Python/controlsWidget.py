@@ -169,7 +169,7 @@ class ControlsWidget(QWidget):
 
         self.update()
 
-    @overrides
+    #@overrides
     def paintEvent(self, e):
         """
         This event is called automatically in the background by pyQt. It is used to update the drawing on screen
@@ -195,7 +195,7 @@ class ControlsWidget(QWidget):
 
         self.painter.end()
 
-    @overrides
+    #@overrides
     def keyPressEvent(self, e:QKeyEvent):
         """
         Called whenever the user presses a button on the keyboard
@@ -223,7 +223,7 @@ class ControlsWidget(QWidget):
                 self.update()
 
 
-    @overrides
+    #@overrides
     def mousePressEvent(self, e:QMouseEvent):
         """"
         This event is called when the user is drawing a new line and wants to put 'bends' into the line
@@ -238,7 +238,7 @@ class ControlsWidget(QWidget):
 
 
 
-    @overrides
+    #@overrides
     def mouseMoveEvent(self, e:QMouseEvent):
         """"
         This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
@@ -255,7 +255,7 @@ class ControlsWidget(QWidget):
                     self.update()
 
 
-    @overrides
+    #@overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
         """
         This event is called when the user clicks on the widget background, ie. no buttons, labels, etc.
@@ -493,7 +493,7 @@ class ControlsWidget(QWidget):
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
 
-    @overrides
+    #@overrides
     def update(self):
 
         super().update() #lol

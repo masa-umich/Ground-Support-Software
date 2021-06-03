@@ -404,7 +404,7 @@ class ControlsWindow(QMainWindow):
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
 
-    @staticmethod  # Idk if this will stay static but for now
+    #@staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
         """
         Basically do nothing but close the dialog
@@ -515,7 +515,7 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
-    @staticmethod
+    #@staticmethod
     def updateAvionicsDialog(dropdowns: [], currentDropdown: QComboBox, boxNumber: int):
         """
         This function updates the avionics dialog dropdowns that appears when selecting which boards will be connected
@@ -713,7 +713,7 @@ class ControlsWindow(QMainWindow):
         window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
         window.activateWindow()
 
-    @overrides
+    #@overrides
     def update(self):
         super().update()
 
@@ -763,14 +763,14 @@ class ControlsCentralWidget(QWidget):
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
 
-    @overrides
+    #@overrides
     def update(self):
         super().update()
         self.controlsWidget.update()
         self.controlsSidebarWidget.update()
         self.missionWidget.update()
 
-    @overrides
+    #@overrides
     def resizeEvent(self, e: QResizeEvent):
         """
         Called when window is re-sized, updates height and width vas

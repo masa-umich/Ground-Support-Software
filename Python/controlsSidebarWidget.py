@@ -79,7 +79,7 @@ class ControlsSidebarWidget(QWidget):
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
 
-    @overrides
+    #@overrides
     def paintEvent(self, e):
         """
         This event is called automatically in the background by pyQt. It is used to update the drawing on screen
@@ -110,7 +110,7 @@ class ControlsSidebarWidget(QWidget):
 
         self.painter.end()
 
-    @overrides
+    #@overrides
     def update(self):
         super().update()
         self.last_packet = self.window.last_packet

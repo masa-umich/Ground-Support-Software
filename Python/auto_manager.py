@@ -87,13 +87,13 @@ class AutoTextEdit(QtGui.QTextEdit):
         self.setTextCursor(oldCur)
         return word
     
-    @overrides
+    #@overrides
     def focusInEvent(self, event):
         if self.completer:
             self.completer.setWidget(self)
         QtGui.QTextEdit.focusInEvent(self, event)
 
-    @overrides
+    #@overrides
     def keyPressEvent(self, event):
         if self.completer and self.completer.popup() and self.completer.popup().isVisible():
             if event.key() in (

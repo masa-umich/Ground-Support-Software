@@ -111,7 +111,7 @@ class S2_Interface:
     def parse_packet(self, packet):
         if len(packet) > 0:
             packet = self.unstuff_packet(packet)
-            # print(packet)
+            #print(packet)
             # TODO: modify packet header to include origin packet
             board_addr = self.get_board_addr_from_packet(packet)
             try:
@@ -218,6 +218,7 @@ class S2_Interface:
             for n in range(1, len(packet)):
                 temp = packet[n:n+1]
                 if (temp == 0):
+                    print("Broke")
                     break # early return on zero
                 if(n == index):
                     index = int(packet[n])+n

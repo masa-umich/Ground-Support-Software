@@ -39,7 +39,7 @@ class ObjectLabel(CustomLabel):
 
         self.setVisible(is_visible)
 
-    @overrides
+    #@overrides
     def setText(self, p_str):
         """
         Overrides the default function to provide some more functionality
@@ -50,7 +50,7 @@ class ObjectLabel(CustomLabel):
         super().setText(p_str)
         self.moveToPosition()
 
-    @overrides
+    #@overrides
     def setFontSize(self, size: int):
         """
         Updates the size of the font
@@ -133,7 +133,7 @@ class ObjectLabel(CustomLabel):
     #             painter.drawText(QPoint(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
     #     painter.end()
 
-    @overrides
+    #@overrides
     def mousePressEvent(self, event: QMouseEvent):
         """
         Called when mouse is pressed on a button. Used for drag and drop of objects
@@ -150,7 +150,7 @@ class ObjectLabel(CustomLabel):
 
         super().mousePressEvent(event)
 
-    @overrides
+    #@overrides
     def mouseMoveEvent(self, event: QMouseEvent):
         """
         Called when mouse is moving a button. Used for drag and drop of objects/ labels
@@ -181,7 +181,7 @@ class ObjectLabel(CustomLabel):
 
         super().mouseMoveEvent(event)
 
-    @overrides
+    #@overrides
     def mouseReleaseEvent(self, event: QMouseEvent):
         """
         Called when mouse releases a button. Used for drag and drop of objects/labels

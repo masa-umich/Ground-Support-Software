@@ -34,7 +34,8 @@ class _S2_InterfaceAutogen:
 			"set_stepper_speed"	:	30,
 			"set_telem"	:	31,
 			"set_presstank_status"	:	32,
-			"ambientize_pot"	:	33
+			"ambientize_pot"	:	33,
+                        "toggle_writing_data"   :       37
 		}
 
 		# A dictionary mapping packet_type (command ID) to a list of function argument information.
@@ -66,7 +67,8 @@ class _S2_InterfaceAutogen:
 			30	:	[('motor_num', 'uint8_t', 1), ('target_speed', 'uint16_t', 1)],
 			31	:	[('state', 'uint8_t', 1)],
 			32	:	[('tank_num', 'uint8_t', 1), ('state', 'uint8_t', 1)],
-			33	:	[('pot_num', 'uint8_t', 1)]
+			33	:	[('pot_num', 'uint8_t', 1)],
+                        37      :       []
 		}
 
 	"""
@@ -275,8 +277,37 @@ class _S2_InterfaceAutogen:
 		# Encode the packet with COBS
 		stuff_array(packet)
 
+		print(command_id)
+
 		# Write the bytes to serial
+		import time
 		ser.write(bytes(packet))
+
+		print(command_id)
+		if (command_id == 37):
+                        sent = 0
+                        with open("test.bin",  "rb") as file:
+                                
+                                byte = file.read(1)
+                                while byte:
+                                        out = b''
+                                        while byte:
+                                            out += byte
+                                            byte = file.read(1)
+                                            
+                                            if byte == b'\x00':
+                                                out += byte
+                                                byte = file.read(1)
+                                                break
+                                        print("\n")
+                                        print(out)
+                                        ser.write(out)
+                                        time.sleep(.05)
+                                        
+                                        sent = sent + 1
+                                        print(sent)
+                        ser.write(bytes(packet))
+                        print("Finished")
 
 """
 Takes in a byte packet and return a COBS encoded version

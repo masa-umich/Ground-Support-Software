@@ -58,7 +58,8 @@ class BinaryParser:
                 print(len(packet))
                 print(bytes(packet))
             try:
-                packet_addr = self.interface.parse_packet(packet)
+                print(packet)
+                packet_addr = self.interface.parse_packet(bytes(packet))
                 if packet_addr != -1:
                     new_data = self.interface.board_parser[packet_addr].dict
                     prefix = self.interface.getPrefix(

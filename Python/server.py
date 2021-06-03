@@ -609,7 +609,7 @@ class Server(QtWidgets.QMainWindow):
         self.command_log.close()
         self.data_log.close()
 
-    @overrides
+    #@overrides
     def update(self):
         """Main server update loop"""
         super().update()
@@ -632,6 +632,7 @@ class Server(QtWidgets.QMainWindow):
         try:
             if self.interface.ser.is_open:
                 if not self.command_queue.empty():
+                    print("test")
                     cmd = self.command_queue.get()
                     self.send_to_log(self.command_textedit, str(cmd))
                     self.interface.s2_command(cmd)

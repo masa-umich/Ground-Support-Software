@@ -81,7 +81,7 @@ class AnchorPoint(QPushButton):
                 self.widget.painter.drawLine(QPoint(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
                                                     QPoint(self.gui.screenResolution[0], self.y()))
 
-    @overrides
+    #@overrides
     def mousePressEvent(self, event: QMouseEvent):
         """
         Called when mouse is pressed on a anchor point. Used for drawing lines between objects
@@ -110,7 +110,7 @@ class AnchorPoint(QPushButton):
 
         super().mousePressEvent(event)
 
-    @overrides
+    #@overrides
     def deleteLater(self):
         if self.tube is not None:
             self.widget.tube_list.remove(self.tube)
@@ -118,10 +118,10 @@ class AnchorPoint(QPushButton):
 
         super().deleteLater()
 
-    @overrides
+    #@overrides
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
 
-    @overrides
+    #@overrides
     def mouseReleaseEvent(self, event: QMouseEvent):
         super().mouseReleaseEvent(event)

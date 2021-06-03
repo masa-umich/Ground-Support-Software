@@ -230,7 +230,7 @@ class MissionWidget(QWidget):
         self.titleLabel.adjustSize()
         self.update()
 
-    @overrides
+    #@overrides
     def paintEvent(self, e):
         """
         This event is called automatically in the background by pyQt. It is used to update the drawing on screen
@@ -284,7 +284,7 @@ class MissionWidget(QWidget):
         self.painter.drawPath(path)
         self.painter.end()
     
-    @overrides
+    #@overrides
     def update(self):
         super().update()
         # connection
