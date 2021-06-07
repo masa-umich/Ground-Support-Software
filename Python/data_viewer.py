@@ -29,7 +29,7 @@ class DataViewerDialog(QtWidgets.QDialog):
         print("pyqtgraph Version: " + pg.__version__)
 
         self.gui = gui
-        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=250)
+        self.data_viewer = DataViewerWindow(gui, num_channels=8, rows=1, cols=1, cycle_time=250)
         self.setWindowTitle("Data Viewer")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.data_viewer)
@@ -54,7 +54,7 @@ class DataViewer(QtWidgets.QTabWidget):
         # load data channels
         self.gui = gui
         self.channels = channels  # list of channel names
-        self.num_channels = num_channels  # number of data channels in plot
+        self.num_channels = int(num_channels/2)  # number of unique data channels in plot
         self.cycle_time = cycle_time  # cycle time of application in ms
         self.default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
                                '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']  # stolen from matplotlib
@@ -87,8 +87,9 @@ class DataViewer(QtWidgets.QTabWidget):
         completer = QtWidgets.QCompleter(self.channels)  # channel autocomplete
         completer.setCaseSensitivity(False)
 
+
         # Globalize config. This is used for knowing what channels to duplicate when loading past data.
-        self.config = []
+        self.config = None
 
         # Create grid layout to put everything in
         self.config_layout = QtWidgets.QGridLayout()
@@ -195,6 +196,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
         self.plot2.curves["Garbage"].setData(x=np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]),
                                              y=np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
+        self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
 
         self.plot2.showLegend()
 
@@ -211,13 +213,22 @@ class DataViewer(QtWidgets.QTabWidget):
         for i in range(self.num_channels):
             curve_config = config[i + 2]
             self.switches[i].setChecked(bool(curve_config[0]))
-            self.series[i].setText(curve_config[1])
+
             self.colors[i].setColor(curve_config[2])
+            if(curve_config[1] == ""):
+                self.series[i].setText("buffer")
+            else:
+                self.series[i].setText(curve_config[1])
+
             self.plot2.addCurve(curve_config[1], curve_config[2], curve_config[0])
         self.redraw_curves()
 
+
+
         # Globalize config. This is used for knowing what channels to duplicate when loading past data.
         self.config = config
+        #print(len(config))
+        #(self.plot2.curves)
 
     def save_config(self):
         """Returns save config
@@ -226,7 +237,7 @@ class DataViewer(QtWidgets.QTabWidget):
             list: Save config
         """
         config = [self.title_edit.text(), self.duration_edit.text()]
-        for i in range(self.num_channels):
+        for i in range(2*self.num_channels):
             config.append([self.switches[i].isChecked(),
                            self.series[i].text(), self.colors[i].color()])
         return config
@@ -246,7 +257,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # Loop through all channels
         hasRight = False
-        for idx in range(self.num_channels):
+        for idx in range(2*self.num_channels):
             # Check if the switch is checked and if so place everything on right axis
             axis = "left"  # default
             if self.switches[idx].isChecked():
@@ -314,7 +325,7 @@ class DataViewer(QtWidgets.QTabWidget):
         # super().update()
         points = int(self.duration * 1000 / self.cycle_time)
         data = frame.tail(points)
-        for i in range(self.num_channels):
+        for i in range(2*self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
@@ -328,18 +339,51 @@ class DataViewer(QtWidgets.QTabWidget):
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
             window_num_load (int): passed from dataViewerWindow, used along the naming of frame
         """
+        #print(self.config)
+        #print("pass")
+        #replicate current config for new set of data
+        for i in range(self.num_channels):
+            channel_pos = self.num_channels + i
+            curve_config = self.config[i+ 2] #this is still i cus its the original
+            #print(self.config[i+2])
+            # Rename the channels
+            root_name = curve_config[1]
+            curve_config[1] = root_name + "_LOADED_" + str(window_num_load)
+            # instantiate more channels
+            # Attach a curve
+            self.curves.append(pg.PlotCurveItem())
+            # fill in infor about channels
+            self.switches[channel_pos].setChecked(bool(curve_config[0]))
+            self.series[channel_pos].setText(curve_config[1])
+            self.colors[channel_pos].setColor(curve_config[2])
+            self.plot2.addCurve(curve_config[1], curve_config[2], curve_config[0])
+            self.plot2.showLegend()
+
+        self.redraw_curves()
+
+
+        # Load in the data points
         points = int(self.duration * 1000 / self.cycle_time)
         data = frame.tail(points)
+        suffix = "_LOADED_" + str(window_num_load)
+        print(self.channels)
+        print(suffix)
         for i in range(self.num_channels):
+            #print(i)
+            channel_pos = self.num_channels + i
             # get channel name
             # The error right now can be fixed by deleting everything starting at the plus sign
-            channel_name = self.series[i].text() + "_LOADED_" + str(window_num_load)
-            if channel_name in self.channels:
+            channel_name = self.series[channel_pos].text()
+            print(channel_name)
+            buffer_name = self.series[channel_pos].text()
+            print((channel_name in self.channels and suffix in channel_name))
+            if (channel_name in self.channels and suffix in channel_name and channel_name in data):
+                #print(self.plot2.curves)
                 # self.channels comes from the csv and I appended the _LOADED_ ones. channel_name comes from self.series
                 # What do we need for the legend to show up correctly tho? I don't understand plot2.curves facepalm
                 self.plot2.curves[channel_name].setData(
                     x=data["time" + "_LOADED_" + str(window_num_load)].to_numpy(),
-                    y=data[channel_name + "_LOADED_" + str(window_num_load)].to_numpy())
+                    y=data[channel_name].to_numpy())
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
@@ -510,6 +554,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update_load(df, self.num_load)
 
 
+
     def renameDF(self, df: pd.DataFrame):
         """
         The log files have units attached to the headers of the DataFrame so they can not be recognized by channels.
@@ -576,7 +621,7 @@ if __name__ == "__main__":
 
     # init window
     CYCLE_TIME = 250  # in ms
-    window = DataViewerWindow(num_channels=4, rows=1,
+    window = DataViewerWindow(num_channels=8, rows=1,
                               cols=1, cycle_time=CYCLE_TIME)
 
     # timer and tick updates

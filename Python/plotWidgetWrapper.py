@@ -152,7 +152,7 @@ class PlotWidgetWrapper(pg.PlotWidget):
 
         self.right_view_box = None
 
-    def addCurve(self, label: str, color: QColor, width: int = 4, axis: str = "left"):
+    def addCurve(self, label: str, color: QColor, width: int = 8, axis: str = "left"):
         self.curves[label] = pg.PlotCurveItem()
 
         self.curves[label].setPen(pg.mkPen(color, width = width))
