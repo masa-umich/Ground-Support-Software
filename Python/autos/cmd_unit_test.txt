@@ -1,15 +1,20 @@
 # unit test for commands
-set_vlv 0 1
-set_vlv 2 1
-set_vlv 4 1
-set_stepper_pos 0 360
-set_stepper_pos 1 180
-set_state 0
-set_state 1
-# set_state 2
-set_vlv 3 1
-set_vlv 0 0
-set_vlv 2 0
-set_vlv 4 0
-set_stepper_pos 0 180
-set_stepper_pos 1 360
+loop 5
+    set_vlv 0 1
+    set_vlv 2 1
+    set_vlv 3 1
+    set_vlv 4 1
+    set_stepper_pos 0 360
+    set_stepper_pos 1 180
+    set_state 1
+    # set_state 2
+    delay 2000
+    set_vlv 0 0
+    set_vlv 2 0
+    set_vlv 3 0
+    set_vlv 4 0
+    set_stepper_pos 0 0
+    set_stepper_pos 1 0
+    set_state 0
+    delay 2000
+end_loop

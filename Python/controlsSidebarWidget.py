@@ -27,7 +27,7 @@ class ControlsSidebarWidget(QWidget):
         self.top = 0
 
         self.width = self.centralWidget.panel_width
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Sets color of control panel
@@ -79,6 +79,8 @@ class ControlsSidebarWidget(QWidget):
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
 
+        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+
     @overrides
     def paintEvent(self, e):
         """
@@ -110,6 +112,17 @@ class ControlsSidebarWidget(QWidget):
 
         self.painter.end()
 
+    def generateSaveDict(self):
+        """
+        Generates the save dict for the boards
+        :return save_dict: returns the save dictionary
+        """
+        save_dict = {}
+        for i, board in enumerate(self.board_objects):
+            save_dict["Board"+str(i)] = board.name
+
+        return save_dict
+
     @overrides
     def update(self):
         super().update()
@@ -123,5 +136,15 @@ class ControlsSidebarWidget(QWidget):
                     board.update(self.last_packet[prefix+"e_batt"], 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt
                 elif board_name == "Black Box":
                     board.update(0, 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt, no e_batt
+                elif board_name == "Pressurization Controller":
+                    board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "i_batt"],
+                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
+                                 self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
+                                 self.last_packet[prefix + "state_rem_duration"])
+                elif board_name == "GSE Controller":
+                    board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
+                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
+                                 self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
+                                 0)  # no flash state yet
                 else:
-                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet
+                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet

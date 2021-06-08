@@ -53,6 +53,7 @@ class Board(QWidget):
         self.adc_rate = 0
         self.telem_rate = 0
 
+
         # Connection status indicator light
         self.connectionIndicator = IndicatorLightWidget(self, '', 10, "Red", 10, 10, 10, 1)
         self.connectionIndicator.setToolTip("No connection")
@@ -60,7 +61,7 @@ class Board(QWidget):
 
         # Board name label
         self.name_label = CustomLabel(self, self.gui, text=self.name)
-        self.name_label.setFontSize(16 * self.gui.font_scale_ratio)
+        self.name_label.setFontSize(16)
         self.name_label.setStyleSheet("color: white")
         self.name_label.setFixedHeight(self.connectionIndicator.circle_radius*2)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -79,25 +80,25 @@ class Board(QWidget):
         self.data_form_layout.setLabelAlignment(Qt.AlignLeft)
         self.data_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         EBatt_form_label = self.createDataFormLayoutLabel("ebatt:")
-        self.Ebatt_label = self.createDataFormLayoutLabel("11.1V")
+        self.Ebatt_label = self.createDataFormLayoutLabel("-")
 
         amp_form_label = self.createDataFormLayoutLabel("ibatt:")
-        self.amp_label = self.createDataFormLayoutLabel("2.2a")
+        self.amp_label = self.createDataFormLayoutLabel("-")
 
         # temp_form_label = self.createDataFormLayoutLabel("Temp:")
         # self.temp_label = self.createDataFormLayoutLabel("--K")
 
         flash_form_label = self.createDataFormLayoutLabel("Flash:")
-        self.flash_label = self.createDataFormLayoutLabel("Inactive")
+        self.flash_label = self.createDataFormLayoutLabel("-")
 
         LPT_form_label = self.createDataFormLayoutLabel("LP Time:")
-        self.LPT_label = self.createDataFormLayoutLabel("247ms")
+        self.LPT_label = self.createDataFormLayoutLabel("-")
 
         adcrate_form_label = self.createDataFormLayoutLabel("ADC Rate:")
-        self.adcrate_label = self.createDataFormLayoutLabel("200Hz")
+        self.adcrate_label = self.createDataFormLayoutLabel("-")
 
         telemrate_form_label = self.createDataFormLayoutLabel("Tx Rate:")
-        self.telemrate_label = self.createDataFormLayoutLabel("10Hz")
+        self.telemrate_label = self.createDataFormLayoutLabel("-")
 
         # Populate the layout with the above labels
         self.data_form_layout.addRow(EBatt_form_label, self.Ebatt_label)
@@ -112,6 +113,8 @@ class Board(QWidget):
         state_form_label = self.createDataFormLayoutLabel("State:")
         self.state_label = self.createDataFormLayoutLabel("Aggressively long string don't change")
 
+
+
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
@@ -123,12 +126,12 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(13 * self.gui.font_scale_ratio)
+        font.setPointSize(11 * self.gui.font_scale_ratio)
 
         if self.gui.platform == "OSX":
-            fwidth = self.width()/4 * 1
+            fwidth = self.width()/5 * .85
         else:
-            fwidth = self.width()/4 * .85
+            fwidth = self.width()/5 * .85
 
         # Create the buttons, make sure there is no default option, and connect to functions
         self.manual_button = QPushButton("Manual")
@@ -137,6 +140,7 @@ class Board(QWidget):
         self.manual_button.clicked.connect(lambda: self.sendBoardState("Manual-Disarm"))
         self.manual_button.setFont(font)
         self.manual_button.setFixedWidth(fwidth)
+        self.manual_button.setEnabled(True)
 
         self.arm_button = QPushButton("Arm")
         self.arm_button.setDefault(False)
@@ -153,12 +157,32 @@ class Board(QWidget):
         self.fire_button.setFont(font)
         self.fire_button.setFixedWidth(fwidth)
 
-        abort_button = QPushButton("Abort")
-        abort_button.setDefault(False)
-        abort_button.setAutoDefault(False)
-        abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
-        abort_button.setFont(font)
-        abort_button.setFixedWidth(fwidth)
+        self.continue_button = QPushButton("Cont.")
+        self.continue_button.setDefault(False)
+        self.continue_button.setAutoDefault(False)
+        self.continue_button.setDisabled(False)
+        self.continue_button.clicked.connect(lambda: self.sendBoardState("Continue"))
+        self.continue_button.setFont(font)
+        self.continue_button.setFixedWidth(fwidth)
+
+        self.abort_button = QPushButton("Abort")
+        self.abort_button.setDefault(False)
+        self.abort_button.setAutoDefault(False)
+        self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
+        self.abort_button.setFont(font)
+        self.abort_button.setFixedWidth(fwidth)
+
+        self.rem_timer = QLabel(self)
+        if self.name == "Pressurization Controller":
+         # Remaining time in state
+            rem_timer_font = QFont()
+            rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
+            rem_timer_font.setFamily(Constants.monospace_font)
+            rem_timer_font.setPointSizeF(14 * self.gui.font_scale_ratio)
+            self.rem_timer.setFont(rem_timer_font)
+            self.rem_timer.setText("00 s")
+            self.rem_timer.setStyleSheet("color: white")
+            self.rem_timer.show()
 
         # Set text depending on board
         if self.name == "Engine Controller":
@@ -173,7 +197,8 @@ class Board(QWidget):
         buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
-        buttonLayout.addWidget(abort_button)
+        buttonLayout.addWidget(self.continue_button)
+        buttonLayout.addWidget(self.abort_button)
 
         self.show()  # Need to show before able to access some data_frame values
         self.setBoardState(self.state)
@@ -189,8 +214,9 @@ class Board(QWidget):
             self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+        if self.name == "Pressurization Controller":
+            self.rem_timer.move(state_form_label.x() + state_form_label.width()+155, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
-
         self.board_background_button = QPushButton(self)
         self.board_background_button.setGeometry(self.board_pos.x(), self.board_pos.y(), self.board_width,self.board_height)
         self.board_background_button.setStyleSheet("background-color:transparent;border:0;")
@@ -201,6 +227,7 @@ class Board(QWidget):
         print(self.name + " clicked! But doing nothing about it")
         #self.showBoardSettingsDialog()
 
+    # TODO: THIS IS NOT CALLED EVER
     def showBoardSettingsDialog(self):
         """
         Shows a dialog when the motor is clicked. Allows the user to update the set point, zero and PID constants
@@ -209,6 +236,7 @@ class Board(QWidget):
         # Right now only have settings for press board
         if self.name != "Pressurization Controller":
             return
+
 
         # Create the dialog
         dialog = QDialog(self.window)
@@ -339,14 +367,35 @@ class Board(QWidget):
         if identifier == "Manual-Disarm":
             newState = 0
         elif identifier == "Arm":
+            if self.name == "Pressurization Controller":
+                cmd_dict = {
+                    "function_name": "set_system_clock",
+                    "target_board_addr": 3,
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [0]
+                }
+                # print(cmd_dict)
+                self.client.command(3, cmd_dict)
+                cmd_dict = {
+                    "function_name": "set_system_clock",
+                    "target_board_addr": 0,
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [0]
+                }
+                # print(cmd_dict)
+                self.client.command(3, cmd_dict)
             newState = 1
         # If state is armed, allow for state to be run
         elif identifier == "Run":
             if self.state == 1:
                 newState = 2
+            elif self.state == 2:
+                newState = 3
         # Anytime can call an abort to abort out
         elif identifier == "Abort":
-            newState = 5
+            newState = 6
+        elif identifier == "Continue":
+            newState = 255
         else:
             return
 
@@ -361,6 +410,7 @@ class Board(QWidget):
                 "args": [int(newState)]
             }
             self.client.command(3, cmd_dict)
+            #self.setBoardState(newState)
 
     def setBoardState(self, state: int):
         """
@@ -378,10 +428,12 @@ class Board(QWidget):
             1: "Armed",
             2: "Auto-Press",
             3: "Startup",
-            4: "Running",
-            5: "Abort",
-            6: "Post",
-            7: "Safe",
+            4: "Ignition",
+            5: "Hotfire",
+            6: "Abort",
+            7: "Post",
+            8: "Safe",
+            255: "Continue"
 
         }
 
@@ -391,9 +443,30 @@ class Board(QWidget):
         if self.state == 1:
             self.manual_button.setText("Disarm")
             self.fire_button.setEnabled(True)
+            self.continue_button.setDisabled(True)
+            self.manual_button.setEnabled(True)
         else:
             self.manual_button.setText("Manual")
             self.fire_button.setEnabled(False)
+
+        if self.state == 0 or self.state == 2:
+            self.continue_button.setDisabled(True)
+        if self.state == 2:
+            self.fire_button.setEnabled(True)
+        if self.state == 3:
+            self.continue_button.setEnabled(True)
+        if self.state == 4 or self.state == 5:
+            self.manual_button.setEnabled(False)
+        
+        if self.name == "GSE Controller":
+            self.fire_button.setDisabled(True)
+            self.continue_button.setDisabled(True)
+            self.manual_button.setDisabled(True)
+            self.arm_button.setDisabled(True)
+            self.abort_button.setDisabled(True)
+
+
+
 
     @overrides
     def paintEvent(self, e):
@@ -471,7 +544,7 @@ class Board(QWidget):
         self.painter.end()
 
     @overrides
-    def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate):
+    def update(self, ebatt, ibatt, state, flash, LPT, adc_rate, telem_rate, state_rem_time):
         """
         Function to update board state
         :param ebatt: bus voltage
@@ -491,5 +564,7 @@ class Board(QWidget):
         self.LPT_label.setText(str(int((LPT-self.LPT)/1000)) + "ms")
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
+        self.rem_timer.setText(str(state_rem_time/1000) + " s")
 
         self.LPT = LPT
+

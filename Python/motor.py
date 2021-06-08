@@ -76,7 +76,7 @@ class Motor(BaseObject):
 
         # The boxes the values go in
         self.boxWidth = 55 * self.gui.pixel_scale_ratio[0] * self.scale
-        self.boxHeight = 20 * self.gui.pixel_scale_ratio[0] * self.scale
+        self.boxHeight = 20 * self.gui.pixel_scale_ratio[1] * self.scale
 
         # State tracks the motor values
         self.setPoint = 0
@@ -134,13 +134,25 @@ class Motor(BaseObject):
         Move the motor labels to the correct position
         :return:
         """
-        self.set_pos_title_label.move(self.position.x(), self.position.y())
+
+        blankSpaceHeight = (self.height-self.boxHeight*3 - self.set_pos_title_label.height()*3)/4
+
+        self.set_pos_title_label.setFixedWidth(self.width)
+        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1))
+
+        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
-        
-        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + 4 * self.gui.pixel_scale_ratio[0])
+
+        self.current_pos_title_label.setFixedWidth(self.width)
+        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2))
+
+        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
-        
-        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + 8 * self.gui.pixel_scale_ratio[0])
+
+        self.pot_pos_title_label.setFixedWidth(self.width)
+        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3))
+
+        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
         self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
 
     @overrides
@@ -164,7 +176,7 @@ class Motor(BaseObject):
         x1 = (self.width - self.boxWidth)/2
         x2 = x1 + self.boxWidth
 
-        y1 = self.set_pos_title_label.height()
+        y1 = self.set_pos_title_label.y() - self.position.y() + self.set_pos_title_label.height()
         y2 = y1 + self.boxHeight
 
         y3 = self.current_pos_title_label.y()-self.position.y() + self.current_pos_title_label.height()
@@ -284,7 +296,7 @@ class Motor(BaseObject):
         zeroPotBtn.setAutoDefault(False)
         zeroPotBtn.clicked.connect(self.motorDialogZeroPotButtonClicked)
 
-        spinBoxes = [setPointBox,PPointBox,IPointBox,DPointBox]
+        spinBoxes = [setPointBox, PPointBox, IPointBox, DPointBox]
 
         label1 = QLabel("Set Point:")
         label1.setFont(font)
@@ -298,7 +310,6 @@ class Motor(BaseObject):
         label5.setFont(font)
         label6 = QLabel("Zero Pot:")
         label6.setFont(font)
-
         # Add to the layout
         formLayout.addRow(label1, setPointBox)
         formLayout.addRow(label2, PPointBox)
@@ -445,7 +456,26 @@ class Motor(BaseObject):
         super().setScale(scale)
 
         self.boxWidth = 55 * self.gui.pixel_scale_ratio[0] * self.scale
-        self.boxHeight = 20 * self.gui.pixel_scale_ratio[0] * self.scale
+        self.boxHeight = 20 * self.gui.pixel_scale_ratio[1] * self.scale
+
+        # Make the font bigger when scaled upwards
+        font = self.set_pos_title_label.font()
+        font.setPointSizeF(14 * scale * self.gui.font_scale_ratio)
+
+        self.set_pos_label.setFont(font)
+        self.set_pos_title_label.setFont(font)
+        self.set_pos_title_label.setFixedSize_()
+
+        self.current_pos_label.setFont(font)
+        self.current_pos_title_label.setFont(font)
+        self.current_pos_title_label.setFixedSize_()
+
+        self.pot_pos_label.setFont(font)
+        self.pot_pos_title_label.setFont(font)
+        self.pot_pos_title_label.setFixedSize_()
+
+        # Update Labels
+        self.moveLabelsToPosition()
 
     @overrides
     def move(self, point: QPoint):
@@ -464,12 +494,18 @@ class Motor(BaseObject):
         """
         self.avionics_board = board
 
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
         self.channel = channel
+
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
 
     def updateToolTip(self):
         """
@@ -485,6 +521,37 @@ class Motor(BaseObject):
         text += "D constant: " + str(self.Dconstant)
 
         self.setToolTip_(text)
+
+    @overrides
+    def lowerObject(self):
+        """
+        Lowers the object, overridden to make sure the callout labels does not get in the way
+        """
+        super().lowerObject()
+
+        # Lower the labels
+        self.set_pos_title_label.lower()
+        self.set_pos_label.lower()
+        self.current_pos_title_label.lower()
+        self.current_pos_label.lower()
+        self.pot_pos_title_label.lower()
+        self.pot_pos_label.lower()
+
+    @overrides
+    def setMouseEventTransparency(self, should_be_transparent):
+        """
+        Sets the object to be transparent to mouse or not, overridden for motor pos/ pot labels
+        :param should_be_transparent:
+        """
+        super().setMouseEventTransparency(should_be_transparent)
+        self.set_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.set_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
+        self.current_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.current_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+
+        self.pot_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.pot_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
 
     @overrides
     def generateSaveDict(self):
