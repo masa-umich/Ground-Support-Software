@@ -1,13 +1,15 @@
 import sys
 #import os
 from datetime import datetime
+from overrides import overrides
 
 from PyQt5 import QtGui, QtCore, QtWidgets
-#from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 
 from constants import Constants
 from s2Interface import S2_Interface
+
 
 
 class FlashDialog(QtWidgets.QDialog):
@@ -42,6 +44,11 @@ class FlashController(QtWidgets.QWidget):
         self.start_button = QtWidgets.QPushButton("Start Logging")
         self.stop_button = QtWidgets.QPushButton("Stop Logging")
 
+        self.rem_mem = QtWidgets.QLabel(self)
+        self.rem_mem.setFont(QtGui.QFont('Arial, 30'))
+        self.rem_mem.setText("0000 kb")
+        #self.rem_mem.setStyleSheet("color: black")
+
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.logo, 0, 0, 1, 2)
@@ -49,9 +56,10 @@ class FlashController(QtWidgets.QWidget):
         #self.layout.addWidget(self.file_selector, 2, 0, 1, 1)
         #self.layout.addWidget(self.file_button, 2, 1, 1, 1)
         self.layout.addWidget(self.download_button, 3, 0, 1, 2)
-        self.layout.addWidget(self.wipe_button, 4, 0, 1, 2)
-        self.layout.addWidget(self.start_button, 5, 0, 1, 2)
-        self.layout.addWidget(self.stop_button, 6, 0, 1, 2)
+        self.layout.addWidget(self.wipe_button, 6, 0, 1, 2)
+        self.layout.addWidget(self.start_button, 4, 0, 1, 2)
+        self.layout.addWidget(self.stop_button, 5, 0, 1, 2)
+        self.layout.addWidget(self.rem_mem, 2, 0, 1, 2)
 
         self.board_selector.addItems(Constants.boards)
 
@@ -60,6 +68,9 @@ class FlashController(QtWidgets.QWidget):
         self.wipe_button.clicked.connect(self.wipe)
         self.start_button.clicked.connect(self.start_logging)
         self.stop_button.clicked.connect(self.stop_logging)
+
+
+
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
@@ -71,37 +82,75 @@ class FlashController(QtWidgets.QWidget):
 
     def get_addr(self):
         name = self.board_selector.currentText()
-        return self.interface.getBoardAddr(name)
+        if name != "":
+            return self.interface.getBoardAddr(name)
+        else:
+            self.showDialog("Select a board.")
+            return -1
+
+    def showDialog(self, msg):
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+        msgBox.setText(msg)
+        msgBox.setWindowTitle("Error")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        return msgBox.exec()
+
 
     def dump(self):
-        self.client.command(5, self.get_addr())
+        addr = self.get_addr()
+        if addr != -1:
+            self.client.command(5, addr)
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Information)
+        msgBox.setText("It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper.")
+        msgBox.setWindowTitle("Notice!")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msgBox.exec()
 
     def wipe(self):
-        cmd_dict = {
-            "function_name": "wipe_flash",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        dialog = QtWidgets.QMessageBox.question(self, '', "Are you sure you want to wipe flash?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        if addr != -1 & dialog == QtWidgets.QMessageBox.Yes :
+            cmd_dict = {
+                "function_name": "wipe_flash",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
 
     def stop_logging(self):
-        cmd_dict = {
-            "function_name": "stop_logging",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        if addr != -1:
+            cmd_dict = {
+                "function_name": "stop_logging",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
 
     def start_logging(self):
-        cmd_dict = {
-            "function_name": "start_logging",
-            "target_board_addr": self.get_addr(),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        self.client.command(3, cmd_dict)
+        addr = self.get_addr()
+        if addr != -1:
+            cmd_dict = {
+                "function_name": "start_logging",
+                "target_board_addr": addr,
+                "timestamp": int(datetime.now().timestamp()),
+                "args": []
+            }
+            self.client.command(3, cmd_dict)
+
+    @overrides
+    def update(self, last_packet):
+        prefix = self.interface.getPrefix(self.board_selector.currentText())
+        key = prefix + "flash_mem"
+        if( key in last_packet.keys()):
+            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
+        else: 
+            rem_mem = 0
+        self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
 
 
 if __name__ == "__main__":

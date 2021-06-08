@@ -45,6 +45,7 @@ class Server(QtWidgets.QMainWindow):
         self.dump_addr = None
         self.database_lock = threading.Lock()
         self.abort_auto = False
+        self.is_actively_receiving = False
         self.history_idx = -1
         self.history = []
 
@@ -61,6 +62,9 @@ class Server(QtWidgets.QMainWindow):
         # init empty dataframe
         self.dataframe["commander"] = None
         self.dataframe["packet_num"] = 0
+        self.dataframe["ser_open"] = False
+        self.dataframe["actively_rx"] = False
+        self.dataframe["error_msg"] = "No Connection Attempted"
         self.dataframe["time"] = datetime.now().timestamp()
         for channel in self.interface.channels:  # hardcoded
             self.dataframe[channel] = 0
@@ -149,20 +153,23 @@ class Server(QtWidgets.QMainWindow):
         self.send_to_log(self.data_box, "Packet log disabled")
 
         # connection box (add to top_layout)
-        connection = QGroupBox("EC Connection")
+        connection = QGroupBox("Serial Port")
         top_layout.addWidget(connection, 0, 0)
         connection_layout = QGridLayout()
         connection.setLayout(connection_layout)
         self.packet_size_label = QLabel("Last Packet Size: 0")
-        connection_layout.addWidget(self.packet_size_label, 0, 5)
+        connection_layout.addWidget(self.packet_size_label, 0, 6)
         self.ports_box = QComboBox()
         connection_layout.addWidget(self.ports_box, 0, 0, 0, 2)
+        self.baudrate_box = QComboBox()
+        connection_layout.addWidget(self.baudrate_box, 0, 3)
+        self.baudrate_box.addItems(["3913043", "115200"])
         scan_button = QPushButton("Scan")
         scan_button.clicked.connect(self.scan)
-        connection_layout.addWidget(scan_button, 0, 3)
+        connection_layout.addWidget(scan_button, 0, 4)
         connect_button = QPushButton("Connect")
         connect_button.clicked.connect(self.connect)
-        connection_layout.addWidget(connect_button, 0, 4)
+        connection_layout.addWidget(connect_button, 0, 5)
 
         # heartbeat indicator
         self.party_parrot = PartyParrot()
@@ -242,8 +249,9 @@ class Server(QtWidgets.QMainWindow):
 
         try:
             port = str(self.ports_box.currentText())
+            baud = int(self.baudrate_box.currentText())
             if port:
-                self.interface.connect(port, 115200, 0.2)
+                self.interface.connect(port, baud, 0.2) # 3913043 or 115200
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
@@ -330,17 +338,7 @@ class Server(QtWidgets.QMainWindow):
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"]
-
-                        if new_runname in (None, ()):
-                            runname = datetime.now().strftime("%Y%m%d%H%M%S")
-                        elif isinstance(new_runname, str):
-                            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
-                        else:
-                            print("Error: Unhandled Runname")
-
-                        self.close_log()
-                        self.open_log(runname)
-                        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
+                        self.checkpoint_logs(new_runname)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -366,6 +364,8 @@ class Server(QtWidgets.QMainWindow):
                         else:
                             self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
+                        self.dataframe["ser_open"] = self.interface.ser.is_open
+                        self.dataframe["actively_rx"] = self.is_actively_receiving
                         data = pickle.dumps(self.dataframe)
                     except:
                         data = None
@@ -497,9 +497,29 @@ class Server(QtWidgets.QMainWindow):
                 elif cmd == "set_addr":  # set target addr
                     print("set_addr %s" % args[0])
                     addr = args[0]
+                elif cmd == "new_log":  # creates new log file
+                    
+                    if len(args) > 0:
+                        print("new_log %s" % args[0])
+                        self.checkpoint_logs(args[0])
+                    else:
+                        print("new_log")
+                        self.checkpoint_logs(None)
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
         
+    def checkpoint_logs(self, new_runname):
+        if new_runname in (None, (), []):
+            runname = datetime.now().strftime("%Y%m%d%H%M%S")
+        elif isinstance(new_runname, str):
+            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
+        else:
+            print("Error: Unhandled Runname")
+
+        self.close_log()
+        self.open_log(runname)
+        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
+
 
     def getHelp(self, selected_command):
         commands = list(self.interface.get_cmd_names_dict().keys())
@@ -518,6 +538,7 @@ class Server(QtWidgets.QMainWindow):
         tooltips["delay"] = "delay time(int, milliseconds)"
         tooltips["set_addr"] = "set_addr target_addr(int)"
         tooltips["auto"] = "auto auto_name(str)"
+        tooltips["new_log"] = "new_log logname(str)"
 
         return tooltips[selected_command]
 
@@ -541,7 +562,7 @@ class Server(QtWidgets.QMainWindow):
             if len(args) == 0:
                 self.send_to_log(
                     self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, timestamp=False)
-            elif args[0] in (["set_addr", "delay", "auto"] + commands):
+            elif args[0] in (["set_addr", "delay", "auto", "new_log"] + commands):
                 selected_cmd = args[0]
                 cmd_args = self.getHelp(selected_cmd)
                 self.send_to_log(
@@ -561,6 +582,13 @@ class Server(QtWidgets.QMainWindow):
                 auto_thread.start()
             except:
                 pass
+        
+        elif cmd == "new_log":
+            #print("new_log %s" % args[0])
+            if len(args) > 0:
+                self.checkpoint_logs(args[0])
+            else:
+                self.checkpoint_logs(None)
 
         self.command_line.clear()
 
@@ -651,9 +679,11 @@ class Server(QtWidgets.QMainWindow):
                     # read in packet from system
                     packet_addr = self.interface.parse_serial()  # returns origin address
                     # packet_addr = -1
-
-                    if packet_addr != -1:
+                    if packet_addr != -1 and packet_addr != -2:
                         # print("PARSER WORKED")
+                        self.is_actively_receiving = True
+                        self.dataframe["error_msg"] = "'Norminal' - Jon Insprucker"
+
                         raw_packet = self.interface.last_raw_packet
                         self.serial_log.write(datetime.now().strftime(
                             "%H:%M:%S,") + str(raw_packet) + '\n')
@@ -688,6 +718,11 @@ class Server(QtWidgets.QMainWindow):
                             self.database_lock.release()
                     else:
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
+                        self.is_actively_receiving = False
+                        if packet_addr == -1:
+                            self.dataframe["error_msg"] = "Serial Parse Failed"
+                        elif packet_addr == -2:
+                            self.dataframe["error_msg"] = "Packet Parse Failed"
                         pass
             self.party_parrot.step()
 

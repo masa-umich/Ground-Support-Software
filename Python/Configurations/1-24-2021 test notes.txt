@@ -1,0 +1,29 @@
+ignore this, old: 1.05 lbs of ullage
+
+correct: 2.675 lbs of ullage
+
+1st test: PID cosntants were 5 3 3. this was incorrect, should have been 5 2 3 (P I D), will do for 2nd test
+
+total wheight flowed 5.919 lbs
+
+motor seemed to be 150 degs to far opened after running a test where it was fully open then fully closed
+
+2nd test: PID cosntants 5 2 3
+1.075 lbs of ullage
+add 1.25 lbs to the ullage
+motor set position immediately went to max, causing motor to open to far and vent valve went off, went to manual during test
+
+
+for test 1 and 2, there was a bug in the firmware that caused the motor set position to go to the max value. this bug was fixed after the 2nd test
+
+Jefferson Vent solenoid was not working because valve channel 2 was not working, pending further investigation, was likely a press board hardware issue
+
+3rd test: same pid constants, control loop worked, test was terminated early because the hose fell off and threatened to get water on avionics. looked like mostly bang bang
+
+4th test: same pid constatns, control loop worked, ran test for full 8 seconds. started motor a bit open (7 degrees) the motor barely moved during this test and bang bang control of the control valve seemed to be sufficient to maintain tank pressure.
+
+set pressure of 40psi for all tests.
+
+for all tests, motor zero positon was likely a bit greater than the actual zero position, as it was zeroed visually
+
+100 Hz control calcs for all tests

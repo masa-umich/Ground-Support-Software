@@ -5,14 +5,36 @@ import json
 from datetime import datetime
 
 import pandas as pd
+import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from Switch import Switch
 from ColorButton import ColorButton
 from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
+from plotWidgetWrapper import PlotWidgetWrapper
+
+
+class DataViewerDialog(QtWidgets.QDialog):
+    def __init__(self, gui):
+
+        super().__init__()
+        pg.setConfigOption('background', (67,67,67))
+        pg.setConfigOptions(antialias=True)
+
+        print("pyqtgraph Version: " + pg.__version__)
+
+        self.gui = gui
+        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=250)
+        self.setWindowTitle("Data Viewer")
+        self.layout = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(self.data_viewer)
+        self.setLayout(self.layout)
 
 
 class DataViewer(QtWidgets.QTabWidget):
@@ -20,7 +42,7 @@ class DataViewer(QtWidgets.QTabWidget):
     Custom QtWidget to plot data
     """
 
-    def __init__(self, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
+    def __init__(self, gui, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
         """Initializes DataViewer object.
 
         Args:
@@ -31,61 +53,104 @@ class DataViewer(QtWidgets.QTabWidget):
         super().__init__(*args, **kwargs)
 
         # load data channels
+        self.gui = gui
         self.channels = channels  # list of channel names
         self.num_channels = num_channels  # number of data channels in plot
         self.cycle_time = cycle_time  # cycle time of application in ms
         self.default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
                                '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']  # stolen from matplotlib
 
+        # Some support if the gui is not attached
+        if self.gui is None:
+            self.font_scale_ratio = 1
+        else:
+            self.font_scale_ratio = self.gui.font_scale_ratio
+
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
         self.plot_tab = QtWidgets.QWidget()
         self.plot_layout = QtWidgets.QVBoxLayout()
-        self.plot_layout.setContentsMargins(20, 20, 20, 20)
+        self.plot_layout.setContentsMargins(10, 10, 10, 10)
         self.plot_tab.setLayout(self.plot_layout)
-        self.plot = pg.PlotWidget(background='w')
-        self.plot_layout.addWidget(self.plot)
-        self.addTab(self.config_tab, "Config")
-        self.addTab(self.plot_tab, "Plot")
 
-        # set up config
+        # Create plot
+        self.plot2 = PlotWidgetWrapper()
+        self.plot_layout.addWidget(self.plot2)
+
+        # Add in tabs
+        self.addTab(self.plot_tab, "Plot")
+        self.addTab(self.config_tab, "Config")
+
+        # Sets current tab to be config
+        self.setCurrentIndex(1)
+
+        # Set up config
         completer = QtWidgets.QCompleter(self.channels)  # channel autocomplete
         completer.setCaseSensitivity(False)
+
+        # Create grid layout to put everything in
         self.config_layout = QtWidgets.QGridLayout()
         self.config_tab.setLayout(self.config_layout)
         self.switches = []  # L/R switches
         self.series = []  # channel inputs
+        self.aliases = []  # channel input alias
         self.colors = []  # color selector
         self.curves = []  # pyqtgraph curve objects
 
-        # plot title
+        # Spacing of the grid layout
+        self.config_layout.setColumnStretch(0, 15)
+        self.config_layout.setColumnStretch(1, 45)
+        self.config_layout.setColumnStretch(2, 40)
+        self.config_layout.setColumnStretch(3, 5)
+
+        # Create input for title label
         self.title_edit = QtWidgets.QLineEdit()
         self.title_edit.setPlaceholderText("Plot Title")
-        self.config_layout.addWidget(self.title_edit, 0, 1)
+        self.config_layout.addWidget(self.title_edit, 0, 1, 1, 2)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(12 * self.font_scale_ratio)
         self.title_edit.setFont(font)
         self.title_edit.editingFinished.connect(self.title_update)
 
-        # setup channel rows
+        # Loop through the number of channels and populate the grid layout to contain all the inputs
         for i in range(num_channels):
+
+            # Left/ right axis switch
             self.switches.append(Switch())
             self.switches[i].clicked.connect(
                 lambda state: self.redraw_curves())
+            self.config_layout.addWidget(self.switches[i], i + 1, 0)
+
+            # Attach a curve
             self.curves.append(pg.PlotCurveItem())
-            self.config_layout.addWidget(self.switches[i], i+1, 0)
-            dropdown = QtWidgets.QLineEdit()
-            font = dropdown.font()
-            font.setPointSize(12)
-            dropdown.setFont(font)
-            dropdown.setCompleter(completer)
-            dropdown.editingFinished.connect(lambda: self.redraw_curves())
-            self.series.append(dropdown)
+
+            # Channel dropdown with autocomplete
+            channel_dropdown = QtWidgets.QLineEdit()
+            font = channel_dropdown.font()
+            font.setPointSize(12 * self.font_scale_ratio)
+            channel_dropdown.setFont(font)
+            channel_dropdown.setCompleter(completer)
+            channel_dropdown.setPlaceholderText("Channel Name")
+            channel_dropdown.editingFinished.connect(lambda: self.redraw_curves())
+            self.series.append(channel_dropdown)
             self.config_layout.addWidget(self.series[i], i+1, 1)
+            
+            # Alias dropdown
+            alias_dropdown = QtWidgets.QLineEdit()
+            font = alias_dropdown.font()
+            font.setPointSize(12 * self.font_scale_ratio)
+            alias_dropdown.setFont(font)
+            alias_dropdown.setPlaceholderText("Alias")
+            alias_dropdown.editingFinished.connect(lambda: self.redraw_curves())
+            self.aliases.append(alias_dropdown)
+            # TODO: Connect this to something
+            self.config_layout.addWidget(self.aliases[i], i + 1, 2)
+
+            # Color picker
             self.colors.append(ColorButton(
                 default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda: self.redraw_curves())
-            self.config_layout.addWidget(self.colors[i], i+1, 2)
+            self.config_layout.addWidget(self.colors[i], i+1, 3)
 
         # setup duration field
         self.duration_edit = QtWidgets.QLineEdit("30")
@@ -95,31 +160,43 @@ class DataViewer(QtWidgets.QTabWidget):
         self.duration_edit.editingFinished.connect(self.duration_update)
         self.duration_update()
 
-        # column sizing
-        self.config_layout.setColumnStretch(0, 15)
-        self.config_layout.setColumnStretch(1, 85)
-        self.config_layout.setColumnStretch(2, 5)
-
         # setup 2 axis plot
-        self.left = self.plot.plotItem
-        self.left.addLegend()
-        self.right = pg.ViewBox()
-        self.left.showAxis('right')
-        self.left.scene().addItem(self.right)
-        self.left.getAxis('right').linkToView(self.right)
-        self.right.setXLink(self.left)
-        self.view_update()
-        self.left.vb.sigResized.connect(self.view_update)
+        self.plot2.setBackgroundColor(40, 40, 40)
+        self.plot2.setTitle(" ")
 
-        # Plot formatting
-        font = QtGui.QFont()
-        font.setPixelSize(14)
-        self.left.getAxis("bottom").setTickFont(font)
-        self.left.getAxis("left").setTickFont(font)
-        self.left.getAxis("right").setTickFont(font)
-        self.left.showGrid(True, True)
-        self.left.legend.setOffset((5, 5))
-        self.plot.setMouseEnabled(False, False)
+        self.plot2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.plot2.setAxisLabel("left", " ")
+        self.plot2.setAxisLabelColor("bottom", "#FFF")  # who the fuck knows why this has to be hex
+        self.plot2.setAxisLabelColor("right", "#FFF")
+        self.plot2.setAxisLabelColor("left", "#FFF")
+
+        self.plot2.setAxisTickFont("bottom", font)
+        self.plot2.setAxisTickFont("left", font)
+        self.plot2.setAxisTickFont("right", font)
+        self.plot2.setTitle(" ")
+
+        self.plot2.setLegendFontColor(255, 255, 255)
+        self.plot2.setLegendTextSize(15)
+
+        self.plot2.showLegend()
+
+        self.plot2.setTitleSize("22pt")
+        self.plot2.setTitleColor("w")
+
+        self.plot2.showGrid(True, True, 0.3)
+
+        self.plot2.setMouseEnabled(False, False)
+
+        #self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
+
+        self.plot2.addCurve("Garbage", self.colors[0].color(), axis = "left")
+        self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
+        self.plot2.curves["Garbage"].setData(x = np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]), y = np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
+
+        self.plot2.showLegend()
+
+
 
     def load_config(self, config: list):
         """Loads a DataViewer config
@@ -159,55 +236,44 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def redraw_curves(self):
         """Redraws plot anytime paramaters are changed"""
-        # remove curves from legend
-        self.left.legend.clear()
 
-        if self.is_active():
-            # draw when plots active
-            self.left.legend.setBrush(pg.mkBrush(
-                255, 255, 255, 255))  # background
-            self.left.legend.setPen(pg.mkPen(0, 0, 0, 100))  # border
-        else:
-            # hide when not active
-            self.left.legend.setBrush(None)
-            self.left.legend.setPen(None)
+        # Remove all curves to start
+        self.plot2.removeAllCurves()
 
+        # Loop through all channels
+        hasRight = False
         for idx in range(self.num_channels):
-            # remove curve from plot
-            for dataobj in self.right.allChildren():
-                if dataobj is self.curves[idx]:
-                    self.right.removeItem(dataobj)
-
-            for dataobj in self.left.getViewBox().allChildren():
-                if dataobj is self.curves[idx]:
-                    self.left.removeItem(dataobj)
-
-            # handle lines
-            parsed = self.series[idx].text().split("=")  # parse
-            if len(parsed[0]) > 0:
-                if (parsed[0] == "line" and len(parsed) == 2):
-                    self.curves[idx] = pg.InfiniteLine(
-                        pos=parsed[1], angle=0)  # add infinite line
-                else:
-                    self.curves[idx] = pg.PlotCurveItem()  # add standard curve
-                    self.left.legend.addItem(
-                        self.curves[idx], parsed[0])  # add to legend
-
-            # set curve color
-            if self.colors[idx].color():
-                self.curves[idx].setPen(
-                    pg.mkPen(QtGui.QColor(self.colors[idx].color())))
-
-            # set curve to left or right side
+            # Check if the switch is checked and if so place everything on right axis
+            axis = "left"  # default
             if self.switches[idx].isChecked():
-                self.right.addItem(self.curves[idx])
-            else:
-                self.left.addItem(self.curves[idx])
+                axis = "right"
+                hasRight = True
+                if self.plot2.right_view_box is None:
+                    self.plot2.addRightAxis()
 
-    def view_update(self):
-        """Resize plot on window resize"""
-        self.right.setGeometry(self.left.vb.sceneBoundingRect())
-        self.right.linkedViewChanged(self.left.vb, self.right.XAxis)
+
+            # Get the color of the line
+            color = QColor(255, 255, 255)  # defualt
+            if self.colors[idx].color():
+                color = QColor(self.colors[idx].color())
+
+            # Add curves back in
+            # TODO: Add in alias junk here
+            parsed = self.series[idx].text().split("=")  # Parse for line=xx to see if that was inputted
+            if len(parsed[0]) > 0:
+                # If the parse finds nothing then parsed[0] will be the uncut string
+                if parsed[0] == "line" and len(parsed) == 2:
+                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0, axis = axis)
+
+                else:
+                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
+                    if self.aliases[idx].text() is not "":
+                        self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
+
+        if not hasRight and self.plot2.right_view_box is not None:
+            self.plot2.hideRightAxis()
+
+        self.plot2.showLegend()
 
     def get_active(self):
         """Returns a list of all the active channels
@@ -227,11 +293,13 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def title_update(self):
         """Updates plot title"""
-        self.plot.setTitle(self.title_edit.text())
+        self.plot2.setTitle(self.title_edit.text())
 
     def duration_update(self):
         """Updates plot duration on field edit"""
         self.duration = int(self.duration_edit.text())
+        self.plot2.setAxisLabel("bottom", "Time: -" + self.duration_edit.text() + " seconds")
+        self.plot2.setXRange(0, self.duration)
 
     def update(self, frame: pd.DataFrame):
         """Updates plot with new data
@@ -246,7 +314,7 @@ class DataViewer(QtWidgets.QTabWidget):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
-                self.curves[i].setData(
+                self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
 
 
@@ -255,7 +323,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     Window with client and DataViewer objects
     """
 
-    def __init__(self, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
+    def __init__(self, gui = None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
         """Initializes window
 
         Args:
@@ -266,11 +334,17 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """
         super().__init__(*args, **kwargs)
         # window top-level layout
+        self.gui = gui
         self.setWindowTitle("MASA Data Viewer")
         self.widget = QtWidgets.QWidget()
         self.setCentralWidget(self.widget)
         self.top_layout = QtWidgets.QGridLayout()
         self.widget.setLayout(self.top_layout)
+
+        self.rows = rows
+        self.cols = cols
+        self.num_channels = num_channels
+        self.cycle_time = cycle_time
 
         # set up client
         if not client:
@@ -304,6 +378,18 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
 
+        # Add row of graphs to view
+        self.row_action = QtGui.QAction("&Add Row", self.options_menu)
+        self.row_action.setShortcut("Ctrl+R")
+        self.row_action.triggered.connect(self.addRow)
+        self.options_menu.addAction(self.row_action)
+
+        # Add col of graphs to view
+        self.col_action = QtGui.QAction("&Add Column", self.options_menu)
+        self.col_action.setShortcut("Ctrl+C")
+        self.col_action.triggered.connect(self.addCol)
+        self.options_menu.addAction(self.col_action)
+
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
         self.quit.setShortcut("Ctrl+Q")
@@ -318,7 +404,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # init viewers
         self.viewers = [DataViewer(
-            self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+            self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
         for i in range(rows):
             for j in range(cols):
                 idx = i*cols+j
@@ -326,6 +412,22 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         self.starttime = datetime.now().timestamp()
         self.cycle_time = cycle_time
+
+    def addRow(self):
+
+        for i in range(self.cols):
+            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.top_layout.addWidget(self.viewers[-1], self.rows, i)
+
+        self.rows = self.rows + 1
+
+    def addCol(self):
+
+        for i in range(self.rows):
+            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.top_layout.addWidget(self.viewers[-1], i, self.cols)
+
+        self.cols = self.cols + 1
 
     # loop
     def update(self):
@@ -376,12 +478,15 @@ if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     QtWidgets.QApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-    #QtWidgets.QApplication.setHigh
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
+
+    # This has to be done early on, dark mode rn
+    pg.setConfigOption('background', (67, 67, 67))
+    pg.setConfigOptions(antialias=True)
 
     # initialize application
     APPID = 'MASA.DataViewer'  # arbitrary string
@@ -394,13 +499,43 @@ if __name__ == "__main__":
 
     # init window
     CYCLE_TIME = 250  # in ms
-    window = DataViewerWindow(num_channels=4, rows=2,
-                              cols=2, cycle_time=CYCLE_TIME)
+    window = DataViewerWindow(num_channels=4, rows=1,
+                              cols=1, cycle_time=CYCLE_TIME)
 
     # timer and tick updates
     timer = QtCore.QTimer()
     timer.timeout.connect(window.update)
     timer.start(CYCLE_TIME)
+
+    # TODO: Add in light mode
+    print("Python Version:" + str(sys.version_info))
+    print("QT Version: " + QT_VERSION_STR)
+
+    app.setStyle("Fusion")
+
+    darkPalette = QPalette()
+    darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
+    darkPalette.setColor(QPalette.WindowText, Qt.white)
+    darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
+    darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
+    darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
+    darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+    darkPalette.setColor(QPalette.Text, Qt.white)
+    darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
+    darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
+    darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
+    darkPalette.setColor(QPalette.ButtonText, Qt.white)
+    darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.BrightText, Qt.red)
+    darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
+    darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
+    darkPalette.setColor(QPalette.HighlightedText, Qt.white)
+    darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
+
+    app.setPalette(darkPalette)
 
     # run
     window.show()

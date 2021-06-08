@@ -32,9 +32,9 @@ class BinaryParser:
         Args:
             filename (str): Filename of binary dump
         """
+
         file = open(filename, 'rb')
-        datalog = open(filename.rstrip(".bin")+'_datalog.csv', 'w')
-        datalog.write(self.interface.get_header())
+        datalog = False  # Initially - so it knows it hasn't opened anything yet
 
         packets = []
         this_line = []
@@ -53,22 +53,46 @@ class BinaryParser:
         if verbose:
             print("Num Packets: %s, %s" % (n, len(packets)))
 
+        num_cons_zeros = 0  # Track consecutive 0s found in the binary - 2000 0's in a row signals the start of a log
+        num_logs = 0
+        open_new_file = False
         for packet in packets:
-            if verbose:
-                print(len(packet))
-                print(bytes(packet))
             try:
-                packet_addr = self.interface.parse_packet(packet)
-                if packet_addr != -1:
-                    new_data = self.interface.board_parser[packet_addr].dict
-                    prefix = self.interface.getPrefix(
-                        self.interface.getName(packet_addr))
-                    for key in new_data.keys():
-                        self.dataframe[str(prefix + key)] = new_data[key]
+                if len(packet) > 0:
+                    num_cons_zeros = 0
 
-                    datalog.write(self.get_logstring()+'\n')
+                    if open_new_file:
+                        datalog = open(filename.rstrip(".bin")+'_datalog_' + str(num_logs) + '.csv', 'w')  # tests are 1 indexed for consistency
+                        datalog.write(self.interface.get_header())  # csv header
+                        open_new_file = False
+
+                    if verbose:
+                        print(len(packet))
+                        print(bytes(packet))
+                    packet_addr = self.interface.parse_packet(packet)
+                    #print
+                    if packet_addr != -1:
+                        new_data = self.interface.board_parser[packet_addr].dict
+                        #print(new_data)
+                        prefix = self.interface.getPrefix(
+                            self.interface.getName(packet_addr))
+                        for key in new_data.keys():
+                            self.dataframe[str(prefix + key)] = new_data[key]
+                        #print(self.dataframe)
+                        if datalog:
+                            datalog.write(self.get_logstring()+'\n')
+                else:
+                    num_cons_zeros += 1
+                    if (num_cons_zeros >= 2000):  # Test delimiter
+                        open_new_file = True
+                        num_cons_zeros = 0
+                        num_logs += 1
+                        if datalog:
+                            datalog.close()
             except:
                 traceback.print_exc()
+        if datalog:
+            datalog.close()
 
 
 if __name__ == "__main__":
