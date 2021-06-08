@@ -17,6 +17,7 @@ data/
 Python/data/
 Python/oldgui/
 Python/flash_dump/
+Python/venv/
 
 # GUI Local files
 Python/LaunchFiles
