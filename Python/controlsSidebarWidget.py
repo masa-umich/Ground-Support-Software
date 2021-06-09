@@ -39,6 +39,7 @@ class ControlsSidebarWidget(QWidget):
         self.painter = QPainter()
 
         self.show()
+        self.noteBoxText = "Write notes here"
 
         # Create the label that will hold the status label, displays what task is being performed
         title_font = QFont()
@@ -55,6 +56,21 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         self.title_label.show()
 
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(12 * self.gui.font_scale_ratio)
+
+        self.noteBox = QTextEdit(self)
+        self.noteBox.setFont(font)
+        self.noteBox.setFixedWidth(self.width)
+        self.noteBox.setFixedHeight(self.width)
+        self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.noteBox.move(0, 85 * self.gui.pixel_scale_ratio[1])
+        self.noteBox.setText(self.noteBoxText)
+        self.noteBox.show()
+
+
         self.board_objects = []  # An empty array to start
 
     def addBoards(self, boardNames: []):
@@ -62,7 +78,7 @@ class ControlsSidebarWidget(QWidget):
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
         """
-        y_pos = 85 * self.gui.pixel_scale_ratio[1] + 1
+        y_pos = (88 * self.gui.pixel_scale_ratio[1] + 1) + self.width
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it

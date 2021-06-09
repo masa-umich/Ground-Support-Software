@@ -101,6 +101,10 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.triggered.connect(self.exitDebug)
         self.exitDebugAct.setDisabled(True)
 
+        # FILE -> Save Notes
+        self.saveNotesAct = QAction('&Save notes', self)
+        self.saveNotesAct.triggered.connect(self.saveNotes)
+
         # Run -> Add Boards
         self.screenSettingsAct = QAction('&Screen Draw Settings', self)
         self.screenSettingsAct.triggered.connect(self.showDrawingSettingsDialog)
@@ -205,6 +209,7 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(self.exitDebugAct)
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
+        file_menu.addAction(self.saveNotesAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -331,6 +336,26 @@ class ControlsWindow(QMainWindow):
             self.exitDebugAct.setEnabled(True)
             self.startRunAct.setEnabled(True)
             self.statusBar().showMessage("Exit Edit Mode")
+
+    def saveNotes(self):
+        """
+                Pulls up Save As dialog, saves notes to designated file and sets filename field
+        """
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, 'Save notes',
+                                                  self.gui.workspace_path + "/testNotes", "Text Files (*.txt)",
+                                                  options=options)
+        if fileName:
+            if fileName.find(".txt") == -1:
+                fileName = fileName + ".txt"
+
+        self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
+        with open(fileName, "w") as write_file:
+            write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
+
+
+
 
     def enterDebug(self):
         """
