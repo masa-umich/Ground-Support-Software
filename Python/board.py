@@ -52,6 +52,20 @@ class Board(QWidget):
         self.LPT = 0 #Last Ping Time
         self.adc_rate = 0
         self.telem_rate = 0
+        self.stateMap = {
+            -1: "",
+            0: "Manual",
+            1: "Armed",
+            2: "Auto-Press",
+            3: "Startup",
+            4: "Ignition",
+            5: "Hotfire",
+            6: "Abort",
+            7: "Post",
+            8: "Safe",
+            255: "Continue"
+
+        }
 
 
         # Connection status indicator light
@@ -411,6 +425,8 @@ class Board(QWidget):
             }
             self.client.command(3, cmd_dict)
             #self.setBoardState(newState)
+        if self.name == "Pressurization Controller":
+            self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
 
     def setBoardState(self, state: int):
         """
@@ -565,6 +581,8 @@ class Board(QWidget):
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
         self.rem_timer.setText(str(state_rem_time/1000) + " s")
+        if self.name == "Pressurization Controller":
+            self.controlsSidebarWidget.title_label.setText(self.stateMap[state])
 
         self.LPT = LPT
 
