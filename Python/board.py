@@ -9,6 +9,7 @@ from constants import Constants
 from customLabel import CustomLabel
 from indicatorLightWidget import IndicatorLightWidget
 
+from PyQt5 import QtWidgets
 
 class Board(QWidget):
 
@@ -362,6 +363,13 @@ class Board(QWidget):
         """
 
         newState = None
+
+        # Ask for confirmation for all buttons except for Abort
+        if identifier != "Abort":
+            dialog = QMessageBox.question(self, '', "Are you sure you want to change the state to " + identifier + "?",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if dialog == QtWidgets.QMessageBox.No:
+                return
 
         # If arm/disarmed command is sent toggle, only toggle if state is manual to arm, otherwise always disarm
         if identifier == "Manual-Disarm":
