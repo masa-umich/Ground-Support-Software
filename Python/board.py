@@ -420,6 +420,12 @@ class Board(QWidget):
             self.client.command(3, cmd_dict)
             #self.setBoardState(newState)
 
+        if identifier == "Abort":
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+            self.controlsSidebarWidget.setPalette(p)
+
     def setBoardState(self, state: int):
         """
         Sets the current board state, updates all the buttons and state labels
@@ -473,11 +479,6 @@ class Board(QWidget):
             self.arm_button.setDisabled(True)
             self.abort_button.setDisabled(True)
 
-        if self.state == 6:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
-            self.controlsSidebarWidget.setPalette(p)
 
 
     @overrides
