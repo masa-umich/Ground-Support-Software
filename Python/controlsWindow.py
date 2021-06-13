@@ -261,6 +261,7 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsWidget.saveData(self.fileName)
         else:
             self.saveFileDialog()
+            self.saveNotes()
     
     def checkpoint(self):
         if not self.gui.run.is_active:
