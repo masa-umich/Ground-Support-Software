@@ -87,11 +87,11 @@ class ControlsSidebarWidget(QWidget):
         self.noteBox.show()
 
         self.state_frame = QFrame(self)
-        self.state_frame.setGeometry(self.left, self.width*5, self.width*3,
-                                     100 * self.gui.pixel_scale_ratio[1])
+        self.state_frame.setGeometry(self.left, 0, self.width*3,
+                                     80 * self.gui.pixel_scale_ratio[1])
         # Vertical button layout
-        buttonLayout = QVBoxLayout(self.state_frame)
-        self.setLayout(buttonLayout)
+        self.buttonLayout = QVBoxLayout(self.state_frame)
+        self.setLayout(self.buttonLayout)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
@@ -103,12 +103,33 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button.setAutoDefault(False)
         self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width - 20)
-        #self.abort_button.move(1100, self.width)
-        #self.abort_button.show()
+        self.abort_button.setFixedWidth(120)
+
         self.abort_button.setDisabled(False)
-        buttonLayout.addWidget(self.abort_button)
-        #self.show()
+        self.buttonLayout.addStretch()
+        self.buttonLayout.addWidget(self.abort_button)
+        self.buttonLayout.setAlignment(self.abort_button, Qt.AlignBottom)
+
+
+        self.buffer_label = QLabel(self)
+        self.buffer_label.setFont(title_font)
+        self.buffer_label.setStyleSheet("color: white")
+        self.buffer_label.setText("  ")
+        self.buffer_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
+        self.buffer_label.setFixedWidth(5*self.width)
+        self.buffer_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.buffer_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
+        self.buttonLayout.addWidget(self.buffer_label)
+
+        self.buffer_label2 = QLabel(self)
+        self.buffer_label2.setFont(title_font)
+        self.buffer_label2.setStyleSheet("color: white")
+        self.buffer_label2.setText("  ")
+        self.buffer_label2.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
+        self.buffer_label2.setFixedWidth(5*self.width)
+        self.buffer_label2.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.buffer_label2.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
+        self.buttonLayout.addWidget(self.buffer_label2)
 
         self.board_objects = []  # An empty array to start
 
@@ -133,20 +154,6 @@ class ControlsSidebarWidget(QWidget):
             board.move(2, y_pos)
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
-
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(20 * self.gui.font_scale_ratio)
-
-        self.abort_button.setDefault(False)
-        self.abort_button.setAutoDefault(False)
-        self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
-        self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width)
-        #self.abort_button.move(1100, y_pos)
-        self.abort_button.show()
-        self.abort_button.setDisabled(False)
 
         self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
 
