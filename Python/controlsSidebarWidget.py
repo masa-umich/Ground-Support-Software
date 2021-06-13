@@ -65,7 +65,7 @@ class ControlsSidebarWidget(QWidget):
         self.state_time_label = QLabel(self)
         self.state_time_label.setFont(time_font)
         self.state_time_label.setStyleSheet("color: white")
-        self.state_time_label.setText("Rem Time: 00 qs")
+        self.state_time_label.setText("Rem Time: 00 s")
         self.state_time_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
         self.state_time_label.setFixedWidth(self.width)
         self.state_time_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
