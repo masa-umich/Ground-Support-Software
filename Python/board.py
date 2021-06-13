@@ -9,6 +9,7 @@ from constants import Constants
 from customLabel import CustomLabel
 from indicatorLightWidget import IndicatorLightWidget
 
+from PyQt5 import QtWidgets
 
 class Board(QWidget):
 
@@ -377,6 +378,13 @@ class Board(QWidget):
 
         newState = None
 
+        # Ask for confirmation for all buttons except for Abort
+        if identifier != "Abort":
+            dialog = QMessageBox.question(self, '', "Are you sure you want to change the state to " + identifier + "?",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if dialog == QtWidgets.QMessageBox.No:
+                return
+
         # If arm/disarmed command is sent toggle, only toggle if state is manual to arm, otherwise always disarm
         if identifier == "Manual-Disarm":
             newState = 0
@@ -427,6 +435,18 @@ class Board(QWidget):
             #self.setBoardState(newState)
         if self.name == "Pressurization Controller":
             self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
+
+        if identifier == "Abort":
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+            self.controlsSidebarWidget.setPalette(p)
+        else:
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+            self.controlsSidebarWidget.setPalette(p)
+
 
     def setBoardState(self, state: int):
         """
@@ -480,7 +500,6 @@ class Board(QWidget):
             self.manual_button.setDisabled(True)
             self.arm_button.setDisabled(True)
             self.abort_button.setDisabled(True)
-
 
 
 
@@ -587,3 +606,13 @@ class Board(QWidget):
 
         self.LPT = LPT
 
+        if self.state == 6:
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+            self.controlsSidebarWidget.setPalette(p)
+        else:
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+            self.controlsSidebarWidget.setPalette(p)
