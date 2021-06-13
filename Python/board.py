@@ -433,19 +433,19 @@ class Board(QWidget):
             }
             self.client.command(3, cmd_dict)
             #self.setBoardState(newState)
-        if self.name == "Pressurization Controller":
-            self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
+        #if self.name == "Pressurization Controller":
+         #   self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
 
-        if identifier == "Abort":
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
-            self.controlsSidebarWidget.setPalette(p)
-        else:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
-            self.controlsSidebarWidget.setPalette(p)
+       # if identifier == "Abort":
+       #     self.controlsSidebarWidget.setAutoFillBackground(True)
+       #     p = self.controlsSidebarWidget.palette()
+      #      p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+       #     self.controlsSidebarWidget.setPalette(p)
+      #  else:
+      #     self.controlsSidebarWidget.setAutoFillBackground(True)
+       #     p = self.controlsSidebarWidget.palette()
+       #     p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+       #     self.controlsSidebarWidget.setPalette(p)
 
 
     def setBoardState(self, state: int):
