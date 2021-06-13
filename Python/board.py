@@ -425,6 +425,12 @@ class Board(QWidget):
             p = self.controlsSidebarWidget.palette()
             p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
             self.controlsSidebarWidget.setPalette(p)
+        else:
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+            self.controlsSidebarWidget.setPalette(p)
+
 
     def setBoardState(self, state: int):
         """
@@ -585,4 +591,9 @@ class Board(QWidget):
             self.controlsSidebarWidget.setAutoFillBackground(True)
             p = self.controlsSidebarWidget.palette()
             p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+            self.controlsSidebarWidget.setPalette(p)
+        else:
+            self.controlsSidebarWidget.setAutoFillBackground(True)
+            p = self.controlsSidebarWidget.palette()
+            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
             self.controlsSidebarWidget.setPalette(p)
