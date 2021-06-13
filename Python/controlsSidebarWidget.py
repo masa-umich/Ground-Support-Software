@@ -56,6 +56,22 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         self.title_label.show()
 
+        time_font = QFont()
+        time_font.setStyleStrategy(QFont.PreferAntialias)
+        time_font.setFamily(Constants.default_font)
+        time_font.setPointSize(30 * self.gui.font_scale_ratio)
+
+        self.state_time_label = QLabel(self)
+        self.state_time_label = QLabel(self)
+        self.state_time_label.setFont(time_font)
+        self.state_time_label.setStyleSheet("color: white")
+        self.state_time_label.setText("Rem Time: 00 qs")
+        self.state_time_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
+        self.state_time_label.setFixedWidth(self.width)
+        self.state_time_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.state_time_label.move(10 * self.gui.pixel_scale_ratio[0], 85 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
+        self.state_time_label.show()
+
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
@@ -64,9 +80,9 @@ class ControlsSidebarWidget(QWidget):
         self.noteBox = QTextEdit(self)
         self.noteBox.setFont(font)
         self.noteBox.setFixedWidth(self.width)
-        self.noteBox.setFixedHeight(self.width)
+        self.noteBox.setFixedHeight(self.width - 85 * self.gui.pixel_scale_ratio[1])
         self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.noteBox.move(0, 85 * self.gui.pixel_scale_ratio[1])
+        self.noteBox.move(0, 160 * self.gui.pixel_scale_ratio[1])
         self.noteBox.setText(self.noteBoxText)
         self.noteBox.show()
 
