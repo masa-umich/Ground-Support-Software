@@ -86,6 +86,29 @@ class ControlsSidebarWidget(QWidget):
         self.noteBox.setText(self.noteBoxText)
         self.noteBox.show()
 
+        self.state_frame = QFrame(self)
+        self.state_frame.setGeometry(self.left, self.width*5, self.width*3,
+                                     100 * self.gui.pixel_scale_ratio[1])
+        # Vertical button layout
+        buttonLayout = QVBoxLayout(self.state_frame)
+        self.setLayout(buttonLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(50 * self.gui.font_scale_ratio)
+
+        self.abort_button = QPushButton("Abort")
+        self.abort_button.setDefault(False)
+        self.abort_button.setAutoDefault(False)
+        self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
+        self.abort_button.setFont(font)
+        self.abort_button.setFixedWidth(self.width - 20)
+        #self.abort_button.move(1100, self.width)
+        #self.abort_button.show()
+        self.abort_button.setDisabled(False)
+        buttonLayout.addWidget(self.abort_button)
+        #self.show()
 
         self.board_objects = []  # An empty array to start
 
@@ -110,6 +133,20 @@ class ControlsSidebarWidget(QWidget):
             board.move(2, y_pos)
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(20 * self.gui.font_scale_ratio)
+
+        self.abort_button.setDefault(False)
+        self.abort_button.setAutoDefault(False)
+        self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
+        self.abort_button.setFont(font)
+        self.abort_button.setFixedWidth(self.width)
+        #self.abort_button.move(1100, y_pos)
+        self.abort_button.show()
+        self.abort_button.setDisabled(False)
 
         self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
 
