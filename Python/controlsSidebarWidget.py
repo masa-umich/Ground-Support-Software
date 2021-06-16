@@ -102,23 +102,17 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button_enabled = False
         
         # Sidebar Abort Button Config
-        # self.abort_button_enabled = False     # ! currently present for testing purposes, but should be implemented in such a way to be modified by the "Enable Software Button" in the "Abort button" menu
         self.abort_button = QPushButton()
         self.abort_button.setDefault(False)
         self.abort_button.setAutoDefault(False)
         self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width - 20)
+        self.abort_button.setFixedWidth(self.width - 100)
         self.abort_button.clicked.connect(self.abort_init)
-
-
-            
-            
-
-
         self.abort_button.setDisabled(False)
+
         self.buttonLayout.addStretch()
         self.buttonLayout.addWidget(self.abort_button)
-        self.buttonLayout.setAlignment(self.abort_button, Qt.AlignBottom)
+        self.buttonLayout.setAlignment(self.abort_button, Qt.AlignBottom | Qt.AlignCenter)
 
 
         self.buffer_label = QLabel(self)
