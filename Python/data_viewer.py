@@ -372,7 +372,6 @@ class DataViewer(QtWidgets.QTabWidget):
             #print(i)
             channel_pos = self.num_channels + i
             # get channel name
-            # The error right now can be fixed by deleting everything starting at the plus sign
             channel_name = self.series[channel_pos].text()
             print(channel_name)
             buffer_name = self.series[channel_pos].text()
@@ -380,7 +379,6 @@ class DataViewer(QtWidgets.QTabWidget):
             if (channel_name in self.channels and suffix in channel_name and channel_name in data):
                 #print(self.plot2.curves)
                 # self.channels comes from the csv and I appended the _LOADED_ ones. channel_name comes from self.series
-                # What do we need for the legend to show up correctly tho? I don't understand plot2.curves facepalm
                 self.plot2.curves[channel_name].setData(
                     x=data["time" + "_LOADED_" + str(window_num_load)].to_numpy(),
                     y=data[channel_name].to_numpy())
