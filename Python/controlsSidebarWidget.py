@@ -99,6 +99,7 @@ class ControlsSidebarWidget(QWidget):
         font.setPointSize(50 * self.gui.font_scale_ratio)
 
         self.board_objects = []  # An empty array to start
+        self.abort_button_enabled = False
         
         # Sidebar Abort Button Config
         # self.abort_button_enabled = False     # ! currently present for testing purposes, but should be implemented in such a way to be modified by the "Enable Software Button" in the "Abort button" menu
@@ -107,23 +108,9 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button.setAutoDefault(False)
         self.abort_button.setFont(font)
         self.abort_button.setFixedWidth(self.width - 20)
+        self.abort_button.clicked.connect(self.abort_init)
 
-        if hasattr(self, "abort_button_enabled"): # checks if the class variable for enabling the button exists
-            if self.abort_button_enabled:
-                # if the button is enabled from the "Abort Button" settings menu
-                self.abort_button.setText("Abort")
-                self.abort_button.clicked.connect(self.abort_init)
-                self.abort_button.setStyleSheet("background-color : darkred")
-            else: # button is disabled (well, it just doesn't do anything)
-                self.abort_button.setText("Disabled")
-                self.abort_button.setStyleSheet("background-color : lightgray")
-                self.abort_button.setStyleSheet("color : gray")
-                # ? should I add a feature that displays a message window to clarify how the button can be enabled?
-        else: # this is useful during the initialization of the elements 
-            self.abort_button.setText("Disabled")
-            self.abort_button.setStyleSheet("background-color : lightgray")
-            self.abort_button.setStyleSheet("color : gray")
-        
+
             
             
 
@@ -253,3 +240,11 @@ class ControlsSidebarWidget(QWidget):
                                  0)  # no flash state yet
                 else:
                     board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet
+
+        if self.abort_button_enabled:
+            # if the button is enabled from the "Abort Button" settings menu
+            self.abort_button.setText("Abort")
+            self.abort_button.setStyleSheet("background-color : darkred")
+        else: # button is disabled (well, it just doesn't do anything)
+            self.abort_button.setText("Disabled")
+            self.abort_button.setStyleSheet("color : gray")
