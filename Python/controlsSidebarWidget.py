@@ -98,12 +98,35 @@ class ControlsSidebarWidget(QWidget):
         font.setFamily(Constants.default_font)
         font.setPointSize(50 * self.gui.font_scale_ratio)
 
-        self.abort_button = QPushButton("Abort")
+        self.board_objects = []  # An empty array to start
+        
+        # Sidebar Abort Button Config
+        # self.abort_button_enabled = False     # ! currently present for testing purposes, but should be implemented in such a way to be modified by the "Enable Software Button" in the "Abort button" menu
+        self.abort_button = QPushButton()
         self.abort_button.setDefault(False)
         self.abort_button.setAutoDefault(False)
-        self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(120)
+        self.abort_button.setFixedWidth(self.width - 20)
+
+        if hasattr(self, "abort_button_enabled"): # checks if the class variable for enabling the button exists
+            if self.abort_button_enabled:
+                # if the button is enabled from the "Abort Button" settings menu
+                self.abort_button.setText("Abort")
+                self.abort_button.clicked.connect(self.abort_init)
+                self.abort_button.setStyleSheet("background-color : darkred")
+            else: # button is disabled (well, it just doesn't do anything)
+                self.abort_button.setText("Disabled")
+                self.abort_button.setStyleSheet("background-color : lightgray")
+                self.abort_button.setStyleSheet("color : gray")
+                # ? should I add a feature that displays a message window to clarify how the button can be enabled?
+        else: # this is useful during the initialization of the elements 
+            self.abort_button.setText("Disabled")
+            self.abort_button.setStyleSheet("background-color : lightgray")
+            self.abort_button.setStyleSheet("color : gray")
+        
+            
+            
+
 
         self.abort_button.setDisabled(False)
         self.buttonLayout.addStretch()
@@ -131,7 +154,6 @@ class ControlsSidebarWidget(QWidget):
         self.buffer_label2.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         self.buttonLayout.addWidget(self.buffer_label2)
 
-        self.board_objects = []  # An empty array to start
 
     def addBoards(self, boardNames: []):
         """
@@ -156,6 +178,13 @@ class ControlsSidebarWidget(QWidget):
             y_pos = board.pos().y() + board.height()
 
         self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+
+    def abort_init(self):
+        """Changes the state of each board. 
+        """
+        if self.board_objects:
+            for board in self.board_objects:
+                board.sendBoardState("Abort")
 
     @overrides
     def paintEvent(self, e):

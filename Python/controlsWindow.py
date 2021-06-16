@@ -102,7 +102,7 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.setDisabled(True)
 
         # FILE -> Save Notes
-        self.saveNotesAct = QAction('&Save notes', self)
+        self.saveNotesAct = QAction('&Save notes', self)                                                                                                                                                                                                                                                                                                                                                                                                            
         self.saveNotesAct.triggered.connect(self.saveNotes)
 
         # Run -> Add Boards
@@ -252,6 +252,12 @@ class ControlsWindow(QMainWindow):
         # I have no clue why this is so strange, but see update function for more info
         self.central_widget_offset = None
 
+        # checks whether the button is enabled relative to the abort button settings menu
+        if self.button_box.is_soft_armed:
+            self.centralWidget.controlsSidebarWidget.abort_button_enabled = True
+        else:
+            self.centralWidget.controlsSidebarWidget.abort_button_enabled = False
+            
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
