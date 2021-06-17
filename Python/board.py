@@ -186,6 +186,7 @@ class Board(QWidget):
         self.abort_button.clicked.connect(lambda: self.sendBoardState("Abort"))
         self.abort_button.setFont(font)
         self.abort_button.setFixedWidth(fwidth)
+        self.abort_button.setDisabled(True)
 
         self.rem_timer = QLabel(self)
         if self.name == "Pressurization Controller":
