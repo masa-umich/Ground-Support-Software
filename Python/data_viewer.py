@@ -558,12 +558,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         The log files have units attached to the headers of the DataFrame so they can not be recognized by channels.
         This function removed the units and added the suffix to match the channel names.
         """
+        df.rename(columns={'Time': 'time'}, inplace=True)
         dictWithoutUnits = {
             column: column.split()[0] + "_LOADED_" + str(self.num_load)
             for column in df.columns
         }
         df.rename(columns=dictWithoutUnits, inplace=True)
-        df.rename(columns={'Time': 'time'})
+        
 
 
     def exit(self):
