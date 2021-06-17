@@ -120,7 +120,7 @@ class PlotWidgetWrapper(pg.PlotWidget):
             self.plot_item.addLegend()
 
         # This is so stupid I cant with this library
-        self.plot_item.legend.setLabelTextSize(str(size) + "pt")
+        #self.plot_item.legend.setLabelTextSize(str(size) + "pt")
 
     def addRightAxis(self):
         self.right_view_box = pg.ViewBox()

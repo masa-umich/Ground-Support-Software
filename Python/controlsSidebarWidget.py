@@ -106,7 +106,7 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button.setDefault(False)
         self.abort_button.setAutoDefault(False)
         self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width - 100)
+        self.abort_button.setFixedWidth(self.width)
         self.abort_button.clicked.connect(self.abort_init)
         self.abort_button.setDisabled(False)
 
