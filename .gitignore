@@ -21,3 +21,6 @@ Python/venv/
 
 # GUI Local files
 Python/LaunchFiles
+
+# VSCode Workspace Files
+MASA Avionics • GUI.code-workspace
