@@ -461,7 +461,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_data_action = QtGui.QAction("&Load data", self.options_menu)
         self.load_data_action.triggered.connect(self.loadData)
         self.options_menu.addAction(self.load_data_action)
-        self.num_load = 0;
+        self.num_load = 0
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
