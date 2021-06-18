@@ -347,12 +347,12 @@ class DataViewer(QtWidgets.QTabWidget):
             curve_config = self.config[i+ 2] #this is still i cus its the original
             #print(self.config[i+2])
             # Rename the channels
-            root_name = curve_config[1]
-            curve_config[1] = root_name + "_LOADED_" + str(window_num_load)
+            #root_name = curve_config[1]
+            #curve_config[1] = root_name + "_LOADED_" + str(window_num_load)
             # instantiate more channels
             # Attach a curve
             self.curves.append(pg.PlotCurveItem())
-            # fill in infor about channels
+            # fill in info about channels
             self.switches[channel_pos].setChecked(bool(curve_config[0]))
             self.series[channel_pos].setText(curve_config[1])
             self.colors[channel_pos].setColor(curve_config[2])
@@ -425,7 +425,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
-        self.is_data_loaded = False
 
         # connection menu item
         if not client:
@@ -463,13 +462,14 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.load_data_action.triggered.connect(self.loadData)
         self.options_menu.addAction(self.load_data_action)
         self.num_load = 0
+        self.is_data_loaded = False
+        self.loaded_data = None
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
         self.quit.setShortcut("Ctrl+Q")
         self.quit.triggered.connect(self.exit)
         self.options_menu.addAction(self.quit)
-        self.loaded_data = None
 
         # set up environment and database
         self.interface = S2_Interface()
@@ -552,8 +552,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.channels.append(viewer.config[i+2][1] + "_LOADED_" + str(self.num_load))
                 # TODO: maybe fade the hex color, viewer.config[i+2][2]
 
-        # delete the first empty line in the csv
-        df.drop(df.index[0])
         #self.database = pd.concat([self.database, df], axis=1, ignore_index=True)
         #print(self.database.head())
         self.is_data_loaded = True
@@ -576,7 +574,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             for column in df.columns
         }
         df.rename(columns=dictWithoutUnits, inplace=True)
-        
+
+        # delete the first empty line in the csv
+        df.drop(index=0, inplace=True)
 
 
     def exit(self):
