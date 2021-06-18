@@ -19,6 +19,8 @@ from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
 from plotWidgetWrapper import PlotWidgetWrapper
 
+from colorsys import rgb_to_hls, hls_to_rgb
+
 
 class DataViewerDialog(QtWidgets.QDialog):
     def __init__(self, gui):
@@ -349,18 +351,19 @@ class DataViewer(QtWidgets.QTabWidget):
             # Rename the channels: this is commented out because every time update() adds another "_LOADED_1" to the back
             #root_name = curve_config[1]
             #curve_config[1] = root_name + "_LOADED_" + str(window_num_load)
+
             # instantiate more channels
             # Attach a curve
             self.curves.append(pg.PlotCurveItem())
             # fill in info about channels
             self.switches[channel_pos].setChecked(bool(curve_config[0]))
             self.series[channel_pos].setText(curve_config[1] + "_LOADED_" + str(window_num_load))
-            self.colors[channel_pos].setColor(curve_config[2])
+            # darken the color of loaded data plots
+            self.colors[channel_pos].setColor(self.darken(curve_config[2], 0.6))
             self.plot2.addCurve(curve_config[1] + "_LOADED_" + str(window_num_load), curve_config[2], curve_config[0])
             self.plot2.showLegend()
 
         self.redraw_curves()
-
 
         # Load in the data points
         points = int(self.duration * 1000 / self.cycle_time)
@@ -380,6 +383,32 @@ class DataViewer(QtWidgets.QTabWidget):
                 self.plot2.curves[channel_name].setData(
                     x=data["time" + "_LOADED_" + str(window_num_load)].to_numpy(),
                     y=data[channel_name].to_numpy())
+
+
+    def darken(self, original: str, factor: float):
+        """
+        Helper function to darken the color of loaded data plots.
+        :param original: original color in hex from curve_config[2]
+        :param factor: factor to darken by. 1 is original
+        :return: str of hex color
+        """
+        r = int(original[1:3], 16)
+        g = int(original[3:5], 16)
+        b = int(original[5:], 16)
+        h, l, s = rgb_to_hls(r / 255.0, g / 255.0, b / 255.0)
+        l = max(min(l * factor, 1.0), 0.0)
+        r, g, b = hls_to_rgb(h, l, s)
+        r = str(format(int(r * 255), 'x'))
+        if len(r) < 2:
+            r = "0" + r
+        g = str(format(int(g * 255), 'x'))
+        if len(g) < 2:
+            g = "0" + g
+        b = str(format(int(b * 255), 'x'))
+        if len(b) < 2:
+            b = "0" + b
+
+        return "#" + r + g + b
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
@@ -550,8 +579,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 # TODO: maybe fade the hex color, viewer.config[i+2][2]
 
         #self.database = pd.concat([self.database, df], axis=1, ignore_index=True)
-        #print(self.database.head())
         self.is_data_loaded = True
+        # loaded_data is a deep copy of df, not a reference
         self.loaded_data = df.copy()
         # "time_LOADED" only need to be dropped once
         self.loaded_data.drop("time_LOADED_" + str(self.num_load), axis=1, inplace=True)
