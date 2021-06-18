@@ -344,9 +344,9 @@ class DataViewer(QtWidgets.QTabWidget):
         #replicate current config for new set of data
         for i in range(self.num_channels):
             channel_pos = self.num_channels + i
-            curve_config = self.config[i+ 2] #this is still i cus its the original
+            curve_config = self.config[i + 2] #this is still i cus its the original
             #print(self.config[i+2])
-            # Rename the channels
+            # Rename the channels: this is commented out because every time update() adds another "_LOADED_1" to the back
             #root_name = curve_config[1]
             #curve_config[1] = root_name + "_LOADED_" + str(window_num_load)
             # instantiate more channels
@@ -354,9 +354,9 @@ class DataViewer(QtWidgets.QTabWidget):
             self.curves.append(pg.PlotCurveItem())
             # fill in info about channels
             self.switches[channel_pos].setChecked(bool(curve_config[0]))
-            self.series[channel_pos].setText(curve_config[1])
+            self.series[channel_pos].setText(curve_config[1] + "_LOADED_" + str(window_num_load))
             self.colors[channel_pos].setColor(curve_config[2])
-            self.plot2.addCurve(curve_config[1], curve_config[2], curve_config[0])
+            self.plot2.addCurve(curve_config[1] + "_LOADED_" + str(window_num_load), curve_config[2], curve_config[0])
             self.plot2.showLegend()
 
         self.redraw_curves()
@@ -366,16 +366,14 @@ class DataViewer(QtWidgets.QTabWidget):
         points = int(self.duration * 1000 / self.cycle_time)
         data = frame.tail(points)
         suffix = "_LOADED_" + str(window_num_load)
-        print(self.channels)
-        print(suffix)
+        #print("channels: ", self.channels)
         for i in range(self.num_channels):
-            #print(i)
             channel_pos = self.num_channels + i
             # get channel name
             channel_name = self.series[channel_pos].text()
-            print(channel_name)
+            #print("channel name: ", channel_name)
             buffer_name = self.series[channel_pos].text()
-            print((channel_name in self.channels and suffix in channel_name))
+            # print((channel_name in self.channels and suffix in channel_name))
             if (channel_name in self.channels and suffix in channel_name and channel_name in data):
                 #print(self.plot2.curves)
                 # self.channels comes from the csv and I appended the _LOADED_ ones. channel_name comes from self.series
@@ -463,7 +461,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.options_menu.addAction(self.load_data_action)
         self.num_load = 0
         self.is_data_loaded = False
-        self.loaded_data = None
+        self.loaded_data = pd.DataFrame(None)
 
         # quit application menu item
         self.quit = QtGui.QAction("&Quit", self.options_menu)
@@ -518,8 +516,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
                 int(15 * 60 * 1000 / self.cycle_time))  # cap data to 15 min
         if self.is_data_loaded:
-            self.loaded_data.drop('time_LOADED_' + str(self.num_load), axis = 1)
-            self.loaded_data = pd.concat([self.loaded_data, self.database['time']], axis=1, ignore_index=True)
+            self.loaded_data = pd.concat([self.database['time'], self.loaded_data], axis=1, ignore_index=True)
 
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -555,7 +552,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         #self.database = pd.concat([self.database, df], axis=1, ignore_index=True)
         #print(self.database.head())
         self.is_data_loaded = True
-        self.loaded_data = df
+        self.loaded_data = df.copy()
+        # "time_LOADED" only need to be dropped once
+        self.loaded_data.drop("time_LOADED_" + str(self.num_load), axis=1, inplace=True)
 
         for viewer in self.viewers:
             if viewer.is_active():
