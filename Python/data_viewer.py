@@ -328,7 +328,7 @@ class DataViewer(QtWidgets.QTabWidget):
         for i in range(2*self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
-            if channel_name in self.channels:
+            if channel_name in self.channels and not("LOADED" in channel_name):
                 self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
 
@@ -425,6 +425,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
+        self.is_data_loaded = False
 
         # connection menu item
         if not client:
@@ -468,6 +469,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.quit.setShortcut("Ctrl+Q")
         self.quit.triggered.connect(self.exit)
         self.options_menu.addAction(self.quit)
+        self.loaded_data = None
 
         # set up environment and database
         self.interface = S2_Interface()
@@ -515,18 +517,21 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             last_frame = pd.DataFrame(self.last_packet, index=[0])
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
                 int(15 * 60 * 1000 / self.cycle_time))  # cap data to 15 min
+        if self.is_data_loaded:
+            self.loaded_data.drop('time_LOADED_' + str(self.num_load), axis = 1)
+            self.loaded_data = pd.concat([self.loaded_data, self.database['time']], axis=1, ignore_index=True)
 
         # maybe only run if connection established?
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(self.database)
+                if self.is_data_loaded:
+                    viewer.update_load(self.loaded_data, self.num_load)
 
     def loadData(self):
         """Load data from a log file (csv).
         This function can be called multiple times (?) to load data before graphing live data, or to load 2 log files."""
 
-        # keep track of how many files have been loaded
-        self.num_load += 1
 
         # select a csv file
         loadname = QtGui.QFileDialog.getOpenFileName(
@@ -535,6 +540,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # read in csv as DataFrame
         with open(loadname, "r") as file:
             df = pd.read_csv(file)
+
+        # keep track of how many files have been loaded
+        self.num_load += 1
 
         self.renameDF(df)
 
@@ -546,6 +554,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # delete the first empty line in the csv
         df.drop(df.index[0])
+        #self.database = pd.concat([self.database, df], axis=1, ignore_index=True)
+        #print(self.database.head())
+        self.is_data_loaded = True
+        self.loaded_data = df
 
         for viewer in self.viewers:
             if viewer.is_active():
