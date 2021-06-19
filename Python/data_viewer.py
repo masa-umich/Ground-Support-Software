@@ -360,7 +360,9 @@ class DataViewer(QtWidgets.QTabWidget):
             self.series[channel_pos].setText(curve_config[1] + "_LOADED_" + str(window_num_load))
             # darken the color of loaded data plots
             self.colors[channel_pos].setColor(self.darken(curve_config[2], 0.6))
-            self.plot2.addCurve(curve_config[1] + "_LOADED_" + str(window_num_load), curve_config[2], curve_config[0])
+            self.plot2.addCurve(curve_config[1] + "_LOADED_" + str(window_num_load),
+                                self.darken(curve_config[2], 0.6),
+                                curve_config[0])
             self.plot2.showLegend()
 
         self.redraw_curves()
@@ -544,8 +546,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             last_frame = pd.DataFrame(self.last_packet, index=[0])
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
                 int(15 * 60 * 1000 / self.cycle_time))  # cap data to 15 min
-        if self.is_data_loaded:
-            self.loaded_data = pd.concat([self.database['time'], self.loaded_data], axis=1, ignore_index=True)
+        #if self.is_data_loaded:
+            #self.loaded_data = pd.concat([self.database['time'], self.loaded_data], axis=1, ignore_index=True)
+            #self.loaded_data.rename(columns={"time": "time_LOADED_" + str(self.num_load)})
 
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -556,8 +559,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
     def loadData(self):
         """Load data from a log file (csv).
-        This function can be called multiple times (?) to load data before graphing live data, or to load 2 log files."""
-
+        This function can be called multiple times to load data and graphing live data, or to load 2 log files."""
 
         # select a csv file
         loadname = QtGui.QFileDialog.getOpenFileName(
@@ -576,14 +578,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for viewer in self.viewers:
             for i in range(viewer.num_channels):
                 viewer.channels.append(viewer.config[i+2][1] + "_LOADED_" + str(self.num_load))
-                # TODO: maybe fade the hex color, viewer.config[i+2][2]
 
         #self.database = pd.concat([self.database, df], axis=1, ignore_index=True)
         self.is_data_loaded = True
         # loaded_data is a deep copy of df, not a reference
         self.loaded_data = df.copy()
         # "time_LOADED" only need to be dropped once
-        self.loaded_data.drop("time_LOADED_" + str(self.num_load), axis=1, inplace=True)
+        # self.loaded_data.drop("time_LOADED_" + str(self.num_load), axis=1, inplace=True)
 
         for viewer in self.viewers:
             if viewer.is_active():
