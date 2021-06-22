@@ -251,7 +251,7 @@ class Server(QtWidgets.QMainWindow):
             port = str(self.ports_box.currentText())
             baud = int(self.baudrate_box.currentText())
             if port:
-                self.interface.connect(port, baud, 0.2) # 3913043 or 115200
+                self.interface.connect(port, baud, 0.5) # 3913043 or 115200
                 self.interface.parse_serial()
         except:
             # traceback.print_exc()
