@@ -9,8 +9,8 @@ class Switch(QtWidgets.QPushButton):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setCheckable(True)
-        self.setMinimumWidth(82)
-        self.setMinimumHeight(22)
+        self.setMinimumWidth(86)
+        self.setMinimumHeight(34)
 
     def paintEvent(self, event):
         label = "R" if self.isChecked() else "L"

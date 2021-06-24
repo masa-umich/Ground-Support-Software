@@ -8,6 +8,7 @@ from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
+from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
 from flash import FlashDialog
 from abort_button import AbortButton
@@ -31,9 +32,10 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('Images/M_icon.png'))
-        self.client_dialog = ClientDialog(True) # control client
+        self.client_dialog = ClientDialog(True, self) # control client
         self.last_packet = {}
         self.interface = S2_Interface()
+        self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
@@ -44,12 +46,20 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
+        self.data_viewer_dialog = DataViewerDialog(self.gui)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
         else:
             pass
+
+        # Setup Status bar
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSizeF(14 * self.gui.font_scale_ratio)
+        self.statusBar().setFont(font)
 
 
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
@@ -60,7 +70,6 @@ class ControlsWindow(QMainWindow):
         # The next several segments of code create objects to represent each button action for the toolbar
         # Each segment has a comment above it describing what action it implements
         # The third line of each segment calls a function, defined below, that carries out the action of the button
-
         # FILE -> New
         newAct = QAction('&New Configuration', self)
         newAct.setShortcut('Ctrl+N')
@@ -91,6 +100,10 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.setShortcut('Ctrl+Shift+D')
         self.exitDebugAct.triggered.connect(self.exitDebug)
         self.exitDebugAct.setDisabled(True)
+
+        # FILE -> Save Notes
+        self.saveNotesAct = QAction('&Save notes', self)                                                                                                                                                                                                                                                                                                                                                                                                            
+        self.saveNotesAct.triggered.connect(self.saveNotes)
 
         # Run -> Add Boards
         self.screenSettingsAct = QAction('&Screen Draw Settings', self)
@@ -128,6 +141,10 @@ class ControlsWindow(QMainWindow):
         self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
         self.connect.setShortcut('Alt+C')
 
+        # Run -> Connection Settings
+        data_view_dialog = QAction("&Data Viewer", self)
+        data_view_dialog.triggered.connect(lambda: self.show_window(self.data_viewer_dialog))
+
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
@@ -137,6 +154,15 @@ class ControlsWindow(QMainWindow):
         self.checkpointAct = QAction('Checkpoint &Log', self)
         self.checkpointAct.setShortcut('Ctrl+L')
         self.checkpointAct.triggered.connect(self.checkpoint)
+
+        #Run -> Tare Load Cells
+        self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
+        self.tareLoadCellAct.triggered.connect(self.tareLoadCell)
+
+        # Run -> Zero Board System Time
+        self.zeroTimeAct = QAction('Zero Board System Clocks', self)
+        self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
+
 
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('Abort &Button', self)
@@ -155,8 +181,8 @@ class ControlsWindow(QMainWindow):
 
         self.ambientizeMenu = QMenu('Ambientize',self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
-        self.ambientizeMenu.addAction("Engine Controller")
-        self.ambientizeMenu.addAction("Pressurization Controller")
+        for board in Constants.boards:
+            self.ambientizeMenu.addAction(board)
 
         # Run -> Level Sensing
         self.level_action = QAction("&Level Sensing", self)
@@ -166,6 +192,7 @@ class ControlsWindow(QMainWindow):
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
+        menuBar.setStyleSheet("background-color:white;border:0;color:black;")
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
         #view_menu = menuBar.addMenu('View')
@@ -182,6 +209,7 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(self.exitDebugAct)
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
+        file_menu.addAction(self.saveNotesAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -190,15 +218,28 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
-        menuBar.addAction(self.connect)
         run_menu.addAction(self.addAvionicsAct)
-        menuBar.addAction(self.flashsettings)
         run_menu.addAction(self.checkpointAct)
-        menuBar.addAction(self.buttonBoxAct)
+        run_menu.addAction(data_view_dialog)
         run_menu.addMenu(self.ambientizeMenu)
-        menuBar.addAction(self.limit_action)
-        menuBar.addAction(self.auto_action)
-        menuBar.addAction(self.level_action)
+        run_menu.addAction(self.tareLoadCellAct)
+        run_menu.addAction(self.zeroTimeAct)
+
+        # If the gui is being run on windows, dont use the menu bar
+        if self.gui.platform == "Windows":
+            menuBar.addAction(self.connect)
+            menuBar.addAction(self.flashsettings)
+            menuBar.addAction(self.buttonBoxAct)
+            menuBar.addAction(self.limit_action)
+            menuBar.addAction(self.auto_action)
+            menuBar.addAction(self.level_action)
+        elif self.gui.platform == "OSX":
+            run_menu.addAction(self.connect)
+            run_menu.addAction(self.flashsettings)
+            run_menu.addAction(self.buttonBoxAct)
+            run_menu.addAction(self.limit_action)
+            run_menu.addAction(self.auto_action)
+            run_menu.addAction(self.level_action)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -208,6 +249,11 @@ class ControlsWindow(QMainWindow):
         
         self.showMaximized()
 
+        # I have no clue why this is so strange, but see update function for more info
+        self.central_widget_offset = None
+
+
+            
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
@@ -217,6 +263,7 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsWidget.saveData(self.fileName)
         else:
             self.saveFileDialog()
+            self.saveNotes()
     
     def checkpoint(self):
         if not self.gui.run.is_active:
@@ -253,11 +300,15 @@ class ControlsWindow(QMainWindow):
         Creates new blank untitled file. Basically just erases everything and sets filename to unset
         """
         self.fileName = ""
+        self.centralWidget.controlsPanelWidget.removeAllEditingObjects()
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
-        self.centralWidget.controlsWidget.tube_list = []
+        for tube in self.centralWidget.controlsWidget.tube_list:
+            tube.deleteTube()
+
+        self.statusBar().showMessage("New configuration started")
 
     def enterEdit(self):
         """
@@ -271,6 +322,8 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setEnabled(True)
             self.debugAct.setDisabled(True)
             self.exitDebugAct.setDisabled(True)
+            self.startRunAct.setDisabled(True)
+            self.statusBar().showMessage("Enter Edit Mode")
 
     def exitEdit(self):
         """
@@ -284,6 +337,28 @@ class ControlsWindow(QMainWindow):
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
+            self.startRunAct.setEnabled(True)
+            self.statusBar().showMessage("Exit Edit Mode")
+
+    def saveNotes(self):
+        """
+                Pulls up Save As dialog, saves notes to designated file and sets filename field
+        """
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, 'Save notes',
+                                                  self.gui.workspace_path + "/testNotes", "Text Files (*.txt)",
+                                                  options=options)
+        if fileName:
+            if fileName.find(".txt") == -1:
+                fileName = fileName + ".txt"
+
+        self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
+        with open(fileName, "w") as write_file:
+            write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
+
+
+
 
     def enterDebug(self):
         """
@@ -296,6 +371,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setDisabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
+        self.statusBar().showMessage("Enter Debug Mode")
 
     def exitDebug(self):
         """
@@ -307,6 +383,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
+        self.statusBar().showMessage("Exit Debug Mode")
 
     def showRunDialog(self):
         """
@@ -388,6 +465,7 @@ class ControlsWindow(QMainWindow):
 
         self.gui.run.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
+        self.statusBar().showMessage("Run: " + run_name + " started")
 
     def endRun(self):
         """
@@ -403,6 +481,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
+        self.statusBar().showMessage("Run: " + self.gui.run.title + " ended")
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -662,21 +741,6 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
-    def ambientizeCmd(self, action: QAction):
-        """
-        Sends command to ambientize pts
-        :param action: Qaction that was clicked
-        :return:
-        """
-        cmd_dict = {
-            "function_name": "ambientize_pressure_transducers",
-            "target_board_addr": self.interface.getBoardAddr(action.text()),
-            "timestamp": int(datetime.now().timestamp()),
-            "args": []
-        }
-        # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
-
     def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """
         This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
@@ -699,6 +763,54 @@ class ControlsWindow(QMainWindow):
         # Save the gui preferences and reboot
         self.gui.savePreferences()
         QCoreApplication.exit(self.gui.EXIT_CODE_REBOOT)
+
+    def ambientizeCmd(self, action: QAction):
+        """
+        Sends command to ambientize pts
+        :param action: Qaction that was clicked
+        :return:
+        """
+        cmd_dict = {
+            "function_name": "ambientize_pressure_transducers",
+            "target_board_addr": self.interface.getBoardAddr(action.text()),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+
+    def tareLoadCell(self):
+        """
+        Sends command to tare load cells
+        :param action: Qaction that was clicked
+        :return:
+        """
+        cmd_dict = {
+            "function_name": "tare_load_cells",
+            "target_board_addr": 0,
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+
+    def zeroSystemClock(self):
+        cmd_dict = {
+            "function_name": "set_system_clock",
+            "target_board_addr": 3,
+            "timestamp": int(datetime.now().timestamp()),
+            "args": [0]
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
+        cmd_dict = {
+            "function_name": "set_system_clock",
+            "target_board_addr": 0,
+            "timestamp": int(datetime.now().timestamp()),
+            "args": [0]
+        }
+        # print(cmd_dict)
+        self.client_dialog.client.command(3, cmd_dict)
     
     def show_window(self, window: QWidget):
         """Shows a window or brings it to the front if already open.
@@ -707,7 +819,7 @@ class ControlsWindow(QMainWindow):
             window (QWidget): window to show
         """
         # open window
-        window.show() 
+        window.show()
 
         # bring to front
         window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
@@ -716,6 +828,15 @@ class ControlsWindow(QMainWindow):
     @overrides
     def update(self):
         super().update()
+
+        # So the window does not move to its final position till after exec_ is called on the gui, which means it cannot
+        # go in the init_ function. This seems very strange but this appears to be the best solution
+        if self.central_widget_offset is None:
+            # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
+            if self.gui.platform == "Windows":
+                self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+            elif self.gui.platform == "OSX":
+                self.central_widget_offset = self.pos()
 
         packet = self.client_dialog.client.cycle()
         if packet != None: # on exception
@@ -726,6 +847,15 @@ class ControlsWindow(QMainWindow):
         self.button_box.cycle()
         self.limits.update_limits(self.last_packet)
         self.tank_levels.update_values(self.last_packet)
+        self.flash_dialog.flash_controller.update(self.last_packet)
+
+        # checks whether the button is enabled relative to the abort button settings menu
+        if self.button_box.is_soft_armed:
+            self.centralWidget.controlsSidebarWidget.abort_button_enabled = True
+        else:
+            self.centralWidget.controlsSidebarWidget.abort_button_enabled = False
+
+
 
 
 class ControlsCentralWidget(QWidget):
@@ -751,6 +881,7 @@ class ControlsCentralWidget(QWidget):
         # Width of the panel on the right hand side
         # HMM: Should this go here or in the ControlsPanelWidget Class?
         self.panel_width = 300 * self.gui.pixel_scale_ratio[0]
+        self.status_bar_height = self.parent.statusBar().height()
 
         # Marker for if the controls area is being edited
         self.is_editing = False
@@ -773,7 +904,7 @@ class ControlsCentralWidget(QWidget):
     @overrides
     def resizeEvent(self, e: QResizeEvent):
         """
-        Called when window is re-sized, updates height and width vas
+        Called when window is re-sized, updates height and width values
 
         :param e: variable holding event data
         """

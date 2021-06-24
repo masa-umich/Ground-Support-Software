@@ -31,7 +31,7 @@ def parse_auto(command_list: list, i: int = 0):
                 #in_loop = True
                 (loop, i) = parse_auto(command_list, i+1)
                 constructed += (loop * loop_len)
-            elif cmd in (commands + ["set_addr", "delay"]):  # add commands to loop
+            elif cmd in (commands + ["set_addr", "delay", "new_log"]):  # add commands to loop
                 constructed.append(line)
             elif cmd == "auto":
                 seq = args[0]

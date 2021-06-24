@@ -20,6 +20,7 @@ from overrides import overrides
 from termcolor import colored
 
 import json
+import traceback
 
 """
 This file contains the class to create the main controls widget (where the P&ID is)
@@ -55,15 +56,15 @@ class ControlsWidget(QWidget):
         self.top = 0
 
         self.width = self.gui.screenResolution[0] - self.parent.panel_width
-        self.height = self.gui.screenResolution[1]
+        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
 
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, ThreeWayValve, Tank, GenSensor, Chamber,
-                                 ThrottleValve, HeatEx, Regulator, CheckValve, Motor]
+        self.object_type_list = [Solenoid, Tank, Motor, GenSensor, ThreeWayValve, Chamber,
+                                 ThrottleValve, HeatEx, Regulator, CheckValve]
 
         # Object Tracker
         self.object_list = []
@@ -109,11 +110,11 @@ class ControlsWidget(QWidget):
         self.masa_logo.setPixmap(pixmap)
 
         if self.gui.platform == "OSX":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
+            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
                                        (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                        100 * self.gui.pixel_scale_ratio[1])
         elif self.gui.platform == "Windows":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1] -
+            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
                                    (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
 
@@ -136,6 +137,8 @@ class ControlsWidget(QWidget):
         for object_type in self.object_type_list:
             self.context_menu.addAction("New " + object_type.object_name)
 
+        self.context_menu.addAction("New Tube")
+
     def toggleEdit(self):
         """
         Toggles if the window is in edit mode or not
@@ -145,11 +148,17 @@ class ControlsWidget(QWidget):
         # Leaving edit mode, nothing to do when entering
         if not self.centralWidget.is_editing:
             self.controlsPanel.edit_frame.hide()
-            self.controlsPanel.removeEditingObject()
+            self.controlsPanel.removeAllEditingObjects()
             if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
                 self.window.saveFileDialog()
+
+            # Prevents tube from drawing in run mode
+            if self.is_drawing:
+                for tube in self.tube_list:
+                    if tube.is_being_drawn:
+                        tube.completeTube()
 
         # Tells painter to update screen
         self.update()
@@ -164,10 +173,43 @@ class ControlsWidget(QWidget):
         # Remove object from any tracker lists
         self.object_list.remove(object_)
 
+        if object_ in self.centralWidget.controlsPanelWidget.editing_object_list:
+            self.centralWidget.controlsPanelWidget.editing_object_list.remove(object_)
+
         # Tells the object to delete itself
         object_.deleteSelf()
 
         self.update()
+
+    def moveObjectGroup(self, dif):
+        """
+        Moves a group of editing objects to a new position
+        :param dif: this is the the difference to move each object, the relative distance essentially
+        """
+
+        # For every object in the group, move them
+        for obj in self.centralWidget.controlsPanelWidget.editing_object_list:
+            obj.move(dif + obj.position)
+
+    def setObjectsMouseTransparency(self, isTransparent: bool):
+        """
+        For all objects drawn onscreen, set the objects mouse transparency. Mouse events will not be
+        triggered if an object is transparent
+        :param isTransparent: should the objects be transparent, True/ False
+        """
+
+        for obj in self.object_list:
+            obj.setMouseEventTransparency(isTransparent)
+
+    def resetObjectsAnchorPointAlignment(self):
+        """
+        Resets all objects anchor point alignment, basically prevents lines from being accidentally drawn once a
+        process is done
+        """
+        for obj in self.object_list:
+            for obj_ap in obj.anchor_points:
+                obj_ap.x_aligned = False
+                obj_ap.y_aligned = False
 
     @overrides
     def paintEvent(self, e):
@@ -196,7 +238,7 @@ class ControlsWidget(QWidget):
         self.painter.end()
 
     @overrides
-    def keyPressEvent(self, e:QKeyEvent):
+    def keyPressEvent(self, e: QKeyEvent):
         """
         Called whenever the user presses a button on the keyboard
         :param e:
@@ -211,13 +253,13 @@ class ControlsWidget(QWidget):
         elif e.key() == Qt.Key_Escape:
             for tube in self.tube_list:
                 if tube.is_being_drawn:
-                    self.tube_list.remove(tube)
-                    self.is_drawing = False
-                    del tube
+                    tube.deleteTube()
+                    self.resetObjectsAnchorPointAlignment()
                     self.update()
-        #If 'r' key is pressed:
-        elif e.key() == 82:
-            #Calls rotate method on last object in editing list
+                    self.window.statusBar().showMessage("Tube canceled")
+        # If 'r' key is pressed:
+        elif e.key() == Qt.Key_R:
+            # Calls rotate method on last object in editing list
             if self.controlsPanel.object_editing is not None:
                 self.controlsPanel.object_editing.rotate()
                 self.update()
@@ -264,7 +306,7 @@ class ControlsWidget(QWidget):
 
         # If we are not expecting a release don't remove all objects
         if not self.should_ignore_mouse_release:
-            self.controlsPanel.removeEditingObject()
+            self.controlsPanel.removeAllEditingObjects()
         else:
             self.should_ignore_mouse_release = False
 
@@ -280,12 +322,21 @@ class ControlsWidget(QWidget):
         """
 
         # If window is in edit mode
-        if self.parent.is_editing:
+        if self.parent.is_editing and not self.is_drawing:
             action = self.context_menu.exec_(self.mapToGlobal(point))
 
             # Below ifs creates new objects at the point where the right click
             if action is not None:
-                self.controlsPanel.removeEditingObject()
+                point = self.centralWidget.mapToGlobal(point)
+                if self.gui.platform == "OSX" and self.window.isFullScreen():
+                    point = point - self.window.pos()
+                elif self.gui.platform == "Windows" and self.window.isFullScreen():
+                    point = point - self.window.pos() - self.window.central_widget_offset + self.centralWidget.pos()
+                else:
+                    point = point - self.window.central_widget_offset - self.window.pos()
+                # TODO: This is a suppppppper janky fix but it works
+                point = QPoint(point.x() / self.gui.pixel_scale_ratio[0], point.y() / self.gui.pixel_scale_ratio[1])
+
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
@@ -307,10 +358,22 @@ class ControlsWidget(QWidget):
                     self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=0))
                 elif action.text() == "New Check Valve":
                     self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=0))
+                elif action.text() == "New Tube":
+                    self.tube_list.append(Tube(self, [],Constants.fluid["HE"], [self]))
+                    self.setMouseTracking(True)
                 else:
                     print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
 
-                self.controlsPanel.addEditingObject(self.object_list[-1])
+                # Add editing object, and move back because the position is scaled and I am lazy
+                if action.text() == "New Tube":
+                    self.is_drawing = True
+                    self.tube_list[-1].is_being_drawn = True
+                else:
+                    #mod = QApplication.keyboardModifiers()
+                    self.controlsPanel.addEditingObject(self.object_list[-1])
+                    self.object_list[-1].move(point)
+
+                self.window.statusBar().showMessage(action.text() + " created")
 
             self.update()
 
@@ -331,9 +394,13 @@ class ControlsWidget(QWidget):
         for tube in self.tube_list:
             data = {**data, **(tube.generateSaveDict())}
 
+        data = {**data, **(self.centralWidget.controlsSidebarWidget.generateSaveDict())}
+
         # With the open file, write to json with a tab as an indent
         with open(filename, "w") as write_file:
             json.dump(data, write_file, indent="\t")
+
+        self.window.statusBar().showMessage("Configuration saved to " + filename)
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
@@ -346,6 +413,9 @@ class ControlsWidget(QWidget):
         with open(fileName, "r") as read_file:
             data = json.load(read_file)
 
+        boards = []
+
+        # TODO: Move this out of controls widget
         # TODO: I was really lazy so I just copy pasted but can be done nicer
         # Quickly parses json data dict and calls the right object initializer to add it to screen
         for i in data:
@@ -382,7 +452,7 @@ class ControlsWidget(QWidget):
                                              long_name_label_font_size=tnk["long name label"]["font size"],
                                              long_name_label_local_pos=QPoint(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
                                              long_name_label_rows=tnk["long name label"]["rows"],long_name_visible=tnk["long name label"]["is visible"],
-                                             serial_number_visible=tnk["serial number label"]["is visible"]))
+                                             serial_number_visible=tnk["serial number label"]["is visible"], board=tnk["board"], channel=tnk["channel"]))
             if i.split()[0] == "Motor":
                 motor = data[i]
                 self.object_list.append(Motor(self, _id=motor["id"], position=QPoint(motor["pos"]["x"],motor["pos"]["y"]),
@@ -489,9 +559,17 @@ class ControlsWidget(QWidget):
                 points = []
                 for j in tube["bend positions"]:
                     points.append(QPoint(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
-                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[0]))
+                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
 
-                self.tube_list.append(Tube(self, tube_id=tube["tube id"], fluid=tube["fluid"], points=points))
+                self.tube_list.append(Tube(self, tube_id=tube["tube id"], attachment_aps=[], fluid=tube["fluid"], points=points, line_width=tube["line width"]))
+
+            if i.split()[0] == "Board":
+                boards.append(data[i])
+
+        self.gui.run.boards = boards
+        self.centralWidget.controlsSidebarWidget.addBoards(boards)
+
+        self.window.statusBar().showMessage("Configuration opened from " + fileName)
 
     @overrides
     def update(self):
@@ -503,50 +581,53 @@ class ControlsWidget(QWidget):
             #self.last_packet["time"] -= self.starttime # time to elapsed
             # update objects
             for obj in self.object_list: # update objects
-                if type(obj) == GenSensor:
-                    this_channel = obj.channel
-                    if this_channel in self.channels:
-                        obj.setMeasurement(self.last_packet[this_channel])
-                        #print(this_channel + str())
-                if type(obj) == Solenoid or type(obj) == ThreeWayValve:
-                    board = obj.avionics_board
-                    if board != "Undefined":
-                        prefix = self.interface.getPrefix(board)
-                        if obj.channel != "Undefined":
-                            channel_name = prefix + "vlv" + str(obj.channel)
-                            state = self.last_packet[channel_name + ".en"]
-                            voltage = self.last_packet[channel_name + ".e"]
-                            if (channel_name + ".i") in self.last_packet.keys():
-                                current = self.last_packet[channel_name + ".i"]
-                            else:
-                                current = None
-                            obj.setState(state, voltage, current)
-                            #print(channel_name)
-                if type(obj) == Motor:
-                    board = obj.avionics_board
-                    if board != "Undefined":
-                        prefix = self.interface.getPrefix(board)
-                        if obj.channel != "Undefined":
-                            channel_name = prefix + "mtr" + str(obj.channel)
-                            curra = self.last_packet[channel_name + ".ia"]
-                            currb = self.last_packet[channel_name + ".ib"]
-                            pos = self.last_packet[channel_name + ".pos"]
-                            pot_pos = self.last_packet[channel_name + ".pot"]
-                            setp = self.last_packet[channel_name + ".set"]
-                            p = self.last_packet[channel_name + ".p"]
-                            i = self.last_packet[channel_name + ".i"]
-                            d = self.last_packet[channel_name + ".d"]
-                            obj.updateValues(curra,currb,pos,pot_pos,setp,p,i,d)
-                if type(obj) == Tank:
-                    board = obj.avionics_board
-                    if board != "Undefined":
-                        prefix = self.interface.getPrefix(board)
-                        if obj.channel != "Undefined":
-                            channel_name = prefix + "tnk" + str(obj.channel)
-                            setPoint = self.last_packet[channel_name + ".tp"]
-                            lowbound = self.last_packet[channel_name + ".lp"]
-                            highBound = self.last_packet[channel_name + ".hp"]
-                            obj.updateValues(setPoint,lowbound,highBound)
+                try:
+                    if type(obj) == GenSensor:
+                        this_channel = obj.channel
+                        if this_channel in self.channels:
+                            obj.setMeasurement(self.last_packet[this_channel])
+                            #print(this_channel + str())
+                    if type(obj) == Solenoid or type(obj) == ThreeWayValve:
+                        board = obj.avionics_board
+                        if board != "Undefined":
+                            prefix = self.interface.getPrefix(board)
+                            if obj.channel != "Undefined":
+                                channel_name = prefix + "vlv" + str(obj.channel)
+                                state = self.last_packet[channel_name + ".en"]
+                                voltage = self.last_packet[channel_name + ".e"]
+                                if (channel_name + ".i") in self.last_packet.keys():
+                                    current = self.last_packet[channel_name + ".i"]
+                                else:
+                                    current = None
+                                obj.setState(state, voltage, current)
+                                #print(channel_name)
+                    if type(obj) == Motor:
+                        board = obj.avionics_board
+                        if board != "Undefined":
+                            prefix = self.interface.getPrefix(board)
+                            if obj.channel != "Undefined":
+                                channel_name = prefix + "mtr" + str(obj.channel)
+                                curra = self.last_packet[channel_name + ".ia"]
+                                currb = self.last_packet[channel_name + ".ib"]
+                                pos = self.last_packet[channel_name + ".pos"]
+                                pot_pos = self.last_packet[channel_name + ".pot"]
+                                setp = self.last_packet[channel_name + ".set"]
+                                p = self.last_packet[channel_name + ".p"]
+                                i = self.last_packet[channel_name + ".i"]
+                                d = self.last_packet[channel_name + ".d"]
+                                obj.updateValues(curra,currb,pos,pot_pos,setp,p,i,d)
+                    if type(obj) == Tank:
+                        board = obj.avionics_board
+                        if board != "Undefined":
+                            prefix = self.interface.getPrefix(board)
+                            if obj.channel != "Undefined":
+                                channel_name = prefix + "tnk" + str(obj.channel)
+                                setPoint = self.last_packet[channel_name + ".tp"]
+                                lowbound = self.last_packet[channel_name + ".lp"]
+                                highBound = self.last_packet[channel_name + ".hp"]
+                                obj.updateValues(setPoint,lowbound,highBound)
+                except:
+                    traceback.print_exc()
 
 
 

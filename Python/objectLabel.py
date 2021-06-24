@@ -24,7 +24,6 @@ class ObjectLabel(CustomLabel):
         # Have to scale it, not sure if this is best location
         self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
         self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])
-        self.rows = rows
 
         # Need to init values before you call super
         super().__init__(widget_parent, gui)
@@ -35,6 +34,7 @@ class ObjectLabel(CustomLabel):
         self.setFont_()
         self.setFontSize(font_size)
         self.setText(text)
+        self.setRows(rows)
         self.show()
 
         self.setVisible(is_visible)
