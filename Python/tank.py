@@ -216,12 +216,18 @@ class Tank(BaseObject):
         """
         self.avionics_board = board
 
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
         self.channel = channel
+
+        self.central_widget.window.statusBar().showMessage(
+            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
 
     def updateToolTip(self):
         """
@@ -301,13 +307,13 @@ class Tank(BaseObject):
         setPointBox = QDoubleSpinBox()
         setPointBox.setDecimals(1)
         setPointBox.setMinimum(0)
-        setPointBox.setMaximum(650)
+        setPointBox.setMaximum(1001)
         setPointBox.setValue(0) if self.pressureSetPoint is None else setPointBox.setValue(self.pressureSetPoint)
         setPointBox.setSuffix("psi")
         setPointBox.setFont(font)
 
         lowBoundBox = QDoubleSpinBox()
-        lowBoundBox.setMaximum(650)
+        lowBoundBox.setMaximum(1001)
         lowBoundBox.setMinimum(0)
         lowBoundBox.setValue(0) if self.pressureLowerBounds is None else lowBoundBox.setValue(self.pressureLowerBounds)
         lowBoundBox.setSuffix("psi")
@@ -315,7 +321,7 @@ class Tank(BaseObject):
         lowBoundBox.setFont(font)
         
         highBoundBox = QDoubleSpinBox()
-        highBoundBox.setMaximum(650)
+        highBoundBox.setMaximum(1001)
         highBoundBox.setMinimum(0)
         highBoundBox.setValue(0) if self.pressureUpperBounds is None else highBoundBox.setValue(self.pressureUpperBounds)
         highBoundBox.setSuffix("psi")

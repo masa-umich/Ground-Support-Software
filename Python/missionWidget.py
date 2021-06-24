@@ -131,9 +131,9 @@ class MissionWidget(QWidget):
         self.systemIndicator.move(self.commandIndicator.pos().x() + self.commandIndicator.width(), 0)
         self.systemIndicator.setToolTip("He Tank Overpressure\n No pneumatic pressure")
 
-        self.stateIndicator = IndicatorLightWidget(self, 'State', 20, "Red", 14, 20, 5, 2)
-        self.stateIndicator.move(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
-        self.stateIndicator.setToolTip("No state data")
+        # self.stateIndicator = IndicatorLightWidget(self, 'State', 20, "Red", 14, 20, 5, 2)
+        # self.stateIndicator.move(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
+        # self.stateIndicator.setToolTip("No state data")
 
         # Create the label that will hold the status label, displays what task is being performed
         self.status_label = QLabel(self)
@@ -141,9 +141,9 @@ class MissionWidget(QWidget):
         self.status_label.setText("GUI Configuration")
         self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
-        self.status_label.setFixedWidth(self.width - (self.stateIndicator.pos().x() + self.stateIndicator.width()))
+        self.status_label.setFixedWidth(self.width - (self.systemIndicator.pos().x() + self.systemIndicator.width()))
         self.status_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.status_label.move(self.stateIndicator.pos().x() + self.stateIndicator.width() + self.mainBarWBuffer, 0 - 4 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
+        self.status_label.move(self.systemIndicator.pos().x() + self.systemIndicator.width() + self.mainBarWBuffer, 0 - 4 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
         self.status_label.show()
 
         # Connect the start of the run to function to allow updating
@@ -277,8 +277,8 @@ class MissionWidget(QWidget):
         pen.setWidth(Constants.line_width)
         self.painter.setPen(pen)
         # Draw the vertical line to the right of indicators
-        path.moveTo(self.stateIndicator.pos().x() + self.stateIndicator.width(), self.mainHeight - 1)
-        path.lineTo(self.stateIndicator.pos().x() + self.stateIndicator.width(), 0)
+        path.moveTo(self.systemIndicator.pos().x() + self.systemIndicator.width(), self.mainHeight - 1)
+        path.lineTo(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
 
         # Draw path and end
         self.painter.drawPath(path)
@@ -288,12 +288,19 @@ class MissionWidget(QWidget):
     def update(self):
         super().update()
         # connection
-        if self.client.is_connected:
+
+        if self.client.is_connected and self.window.last_packet["actively_rx"]:
             self.connectionIndicator.setIndicatorColor("Green")
-            self.connectionIndicator.setToolTip("Connected")
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nGood Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+        elif self.client.is_connected and self.window.last_packet["ser_open"]:
+            self.connectionIndicator.setIndicatorColor("Yellow")
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+        elif self.client.is_connected and self.window.last_packet["ser_open"]:
+            self.connectionIndicator.setIndicatorColor("Yellow")
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
         else:
             self.connectionIndicator.setIndicatorColor("Red")
-            self.connectionIndicator.setToolTip("No connection")
+            self.connectionIndicator.setToolTip("No Server Connection")
         
         # commander
         if self.client.is_commander:

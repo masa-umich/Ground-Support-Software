@@ -198,12 +198,16 @@ class Solenoid(BaseObject):
         """
         self.avionics_board = board
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the object
         """
         self.channel = channel
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
 
     def toggle(self):
         """

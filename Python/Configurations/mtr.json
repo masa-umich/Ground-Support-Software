@@ -1,0 +1,278 @@
+{
+	"Motor 1": {
+		"id": 1,
+		"pos": {
+			"x": 95.0,
+			"y": 461.1111111111111
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 78.0,
+		"name": "Motor",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.5,
+				"y": 48.888888888888886
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.0,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 380.83333333333337,
+			"y": 450.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 5": {
+		"id": 5,
+		"pos": {
+			"x": 510.0,
+			"y": 454.44444444444446
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 6": {
+		"id": 6,
+		"pos": {
+			"x": 635.0,
+			"y": 454.44444444444446
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "2",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Generic Sensor 7": {
+		"id": 7,
+		"pos": {
+			"x": 330.0,
+			"y": 185.55555555555554
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 25.0,
+				"y": 30.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "epot[1]",
+		"board": "Pressurization Controller"
+	},
+	"Tank 8": {
+		"id": 8,
+		"pos": {
+			"x": 899.1666666666667,
+			"y": 512.2222222222222
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1.0,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 41.66666666666667,
+				"y": 230.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26.666666666666668,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 9": {
+		"id": 9,
+		"pos": {
+			"x": 895.8333333333334,
+			"y": 230.0
+		},
+		"fluid": 0,
+		"width": 55.0,
+		"height": 20.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 25.0,
+				"y": 30.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -25.555555555555554
+			},
+			"rows": 1,
+			"font size": 11.999999999999998,
+			"is visible": true
+		},
+		"channel": "valve_states",
+		"board": "Pressurization Controller"
+	}
+}

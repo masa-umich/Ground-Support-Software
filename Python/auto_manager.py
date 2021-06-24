@@ -13,7 +13,7 @@ from parse_auto import parse_auto
 
 INTERFACE = S2_Interface()
 COMMANDS = list(INTERFACE.get_cmd_names_dict().keys())
-KEYWORDS = ["set_addr", "delay", "loop", "end_loop", "auto"] + COMMANDS
+KEYWORDS = ["set_addr", "delay", "loop", "end_loop", "auto", "new_log"] + COMMANDS
 
 TOOLTIPS = {}
 for cmd in COMMANDS:
@@ -30,6 +30,7 @@ TOOLTIPS["set_addr"] = "<nobr><b>set_addr</b> target_addr<i>(int)</i></nobr>"
 TOOLTIPS["loop"] = "<nobr><b>loop</b> num_loops<i>(int)</i></nobr>"
 TOOLTIPS["end_loop"] = "<nobr><b>end_loop</b></nobr>"
 TOOLTIPS["auto"] = "<nobr><b>auto</b> auto_name<i>(str)</i></nobr>"
+TOOLTIPS["new_log"] = "<nobr><b>new_log</b> logname<i>(str)</i></nobr>"
 
 class DictionaryCompleter(QtGui.QCompleter):
     insertText = QtCore.pyqtSignal(str)
