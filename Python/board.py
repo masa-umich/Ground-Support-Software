@@ -604,16 +604,7 @@ class Board(QWidget):
         if self.name == "Pressurization Controller":
             self.controlsSidebarWidget.title_label.setText(self.stateMap[state])
             self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
-            if self.state == 6:
-                self.controlsSidebarWidget.setAutoFillBackground(True)
-                p = self.controlsSidebarWidget.palette()
-                p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
-                self.controlsSidebarWidget.setPalette(p)
-            else:
-                self.controlsSidebarWidget.setAutoFillBackground(True)
-                p = self.controlsSidebarWidget.palette()
-                p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
-                self.controlsSidebarWidget.setPalette(p)
+
 
         self.LPT = LPT
 

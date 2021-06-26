@@ -228,6 +228,16 @@ class ControlsSidebarWidget(QWidget):
                                  self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
                                  self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
                                  self.last_packet[prefix + "state_rem_duration"])
+                    if board.state == 6:
+                        self.setAutoFillBackground(True)
+                        p = self.palette()
+                        p.setColor(self.backgroundRole(), Constants.Indicator_Red_color)
+                        self.setPalette(p)
+                    else:
+                        self.setAutoFillBackground(True)
+                        p = self.palette()
+                        p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
+                        self.setPalette(p)
                 elif board_name == "GSE Controller":
                     board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
                                  self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
