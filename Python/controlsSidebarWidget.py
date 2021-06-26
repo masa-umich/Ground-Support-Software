@@ -109,7 +109,7 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button.setFont(font)
         self.abort_button.setFixedWidth(self.width)
         self.abort_button.clicked.connect(self.abort_init)
-        self.abort_button.setDisabled(False)
+        self.abort_button.setDisabled(True)
 
         self.buttonLayout.addStretch()
         self.buttonLayout.addWidget(self.abort_button)
@@ -240,6 +240,7 @@ class ControlsSidebarWidget(QWidget):
             # if the button is enabled from the "Abort Button" settings menu
             self.abort_button.setText("Abort")
             self.abort_button.setStyleSheet("background-color : darkred")
+            self.abort_button.setDisabled(False)
         else: # button is disabled (well, it just doesn't do anything)
             self.abort_button.setText("Disabled")
             self.abort_button.setStyleSheet("color : gray")
