@@ -15,15 +15,6 @@ from PyQt5 import QtWidgets
 class Board(QWidget):
 
     object_name = "Board"
-    
-    # List of valid boards
-    valid_board_names = {
-        "Engine Controller",
-        "Flight Computer",
-        "Pressurization Controller",
-        "Recovery Controller",
-        "GSE Controller"
-    }
 
     def __init__(self, parent, name: str):
         """
@@ -65,7 +56,7 @@ class Board(QWidget):
         self.telem_rate = 0
 
         # Quick error check
-        if name not in Board.valid_board_names:
+        if name not in Constants.boards:
             print(name + " is not a valid board name.")
 
         # Set the board state mappings based on board name
