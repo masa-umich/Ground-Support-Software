@@ -212,6 +212,7 @@ class ControlsSidebarWidget(QWidget):
 
     @overrides
     def update(self):
+        doesContainPress = False  # used to set sidebar state when press board is removed
         super().update()
         self.last_packet = self.window.last_packet
         if self.last_packet:
@@ -228,7 +229,7 @@ class ControlsSidebarWidget(QWidget):
                                  self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
                                  self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
                                  self.last_packet[prefix + "state_rem_duration"])
-                    if board.state == 6:
+                    if self.last_packet[prefix + "STATE"] == 6:
                         self.setAutoFillBackground(True)
                         p = self.palette()
                         p.setColor(self.backgroundRole(), Constants.Indicator_Red_color)
@@ -238,6 +239,7 @@ class ControlsSidebarWidget(QWidget):
                         p = self.palette()
                         p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
                         self.setPalette(p)
+                    doesContainPress = True # used to set sidebar state when press board is removed
                 elif board_name == "GSE Controller":
                     board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
                                  self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
@@ -245,7 +247,13 @@ class ControlsSidebarWidget(QWidget):
                                  0)  # no flash state yet
                 else:
                     board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet
-
+            if not doesContainPress: # used to set sidebar state when press board is removed
+                self.setAutoFillBackground(True)
+                p = self.palette()
+                p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
+                self.setPalette(p)
+                self.title_label.setText('Avionics')
+                    
         if self.abort_button_enabled:
             # if the button is enabled from the "Abort Button" settings menu
             self.abort_button.setText("Abort")
