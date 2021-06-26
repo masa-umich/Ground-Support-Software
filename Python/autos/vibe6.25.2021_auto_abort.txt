@@ -6,3 +6,4 @@ delay 100
 set_vlv 3 1 #open downstream valve
 delay 1000
 set_vlv 3 0 #close downstream valve
+delay 55000
