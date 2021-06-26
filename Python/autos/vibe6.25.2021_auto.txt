@@ -1,0 +1,19 @@
+#run on pres board, set proper address
+set_adddr 3
+
+#initial valve states, both closed
+set_vlv 4 0
+set_vlv 3 0
+
+
+#loop through 20 times
+loop 18
+    set_vlv 4 1 #open upstream valve
+    delay 500 #delay 0.5 seconds
+    set_vlv 4 0
+    delay 1000
+    set_vlv 3 1 #begin venting
+    delay 1000
+    set_vlv 3 0 #close downstream valve
+    delay 100
+end_loop
