@@ -235,3 +235,11 @@ class ControlsSidebarWidget(QWidget):
                                  0)  # no flash state yet
                 else:
                     board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet
+
+        if self.abort_button_enabled:
+            # if the button is enabled from the "Abort Button" settings menu
+            self.abort_button.setText("Abort")
+            self.abort_button.setStyleSheet("background-color : darkred")
+        else: # button is disabled (well, it just doesn't do anything)
+            self.abort_button.setText("Disabled")
+            self.abort_button.setStyleSheet("color : gray")
