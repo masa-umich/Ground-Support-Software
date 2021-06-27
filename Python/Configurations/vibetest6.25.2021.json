@@ -1,0 +1,203 @@
+{
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 407.5,
+			"y": 233.33333333333331
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Upstream Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.833333333333336,
+				"y": 34.44444444444444
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -17.5,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "press.pressure[2]",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 5": {
+		"id": 5,
+		"pos": {
+			"x": 635.0,
+			"y": 233.33333333333331
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Downstream Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.833333333333336,
+				"y": 34.44444444444444
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -25.0,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "press.pressure[1]",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 6": {
+		"id": 6,
+		"pos": {
+			"x": 760.8333333333334,
+			"y": 280.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "tyler vent",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5.833333333333334,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "3",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 545.0,
+			"y": 280.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "rohun clark",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.5,
+				"y": 26.666666666666664
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -11.666666666666668,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "4",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 584.1666666666667,
+				"y": 288.88888888888886
+			},
+			"1": {
+				"x": 762.5,
+				"y": 288.88888888888886
+			},
+			"2": {
+				"x": 762.5,
+				"y": 292.22222222222223
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 4": {
+		"tube id": 4,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 545.0,
+				"y": 294.44444444444446
+			},
+			"1": {
+				"x": 368.33333333333337,
+				"y": 294.44444444444446
+			},
+			"2": {
+				"x": 368.33333333333337,
+				"y": 294.44444444444446
+			},
+			"3": {
+				"x": 368.33333333333337,
+				"y": 294.44444444444446
+			}
+		},
+		"line width": 1.0
+	},
+	"Board0": "Pressurization Controller"
+}

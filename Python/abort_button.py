@@ -35,7 +35,7 @@ class AbortButton(QtWidgets.QDialog):
         self.board_selector.addItems(Constants.boards)
 
         # Button enable toggle
-        self.arming_button = QtGui.QPushButton("Enable Button")
+        self.arming_button = QtGui.QPushButton("Enable Hardware Button")
         self.layout.addWidget(self.arming_button)
         self.arming_button.clicked.connect(self.arm_toggle)
 
@@ -124,10 +124,10 @@ class AbortButton(QtWidgets.QDialog):
             self.is_armed = True
             #self.last_state = False # to ensure abort triggers if button already depressed
             #self.state = False
-            self.arming_button.setText("Disable Button")
+            self.arming_button.setText("Disable Hardware Button")
         else:
             self.is_armed = False
-            self.arming_button.setText("Enable Button")
+            self.arming_button.setText("Enable Hardware Button")
     
     def cycle(self):
         # Update function for button object
