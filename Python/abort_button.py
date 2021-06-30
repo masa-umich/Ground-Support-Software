@@ -24,6 +24,7 @@ class AbortButton(QtWidgets.QDialog):
         self.ser = serial.Serial(port=None, baudrate=9600, timeout=1)
         self.port = None
         self.is_armed = False
+        self.is_soft_armed = False
         self.state = False # True is abort, False is no abort
         self.last_state = False
         self.last_abort_time = datetime.now().timestamp()
@@ -34,9 +35,14 @@ class AbortButton(QtWidgets.QDialog):
         self.board_selector.addItems(Constants.boards)
 
         # Button enable toggle
-        self.arming_button = QtGui.QPushButton("Enable Button")
+        self.arming_button = QtGui.QPushButton("Enable Hardware Button")
         self.layout.addWidget(self.arming_button)
         self.arming_button.clicked.connect(self.arm_toggle)
+
+        # Software Button enable toggle
+        self.soft_arming_button = QPushButton("Enable Software Button")
+        self.layout.addWidget(self.soft_arming_button)
+        self.soft_arming_button.clicked.connect(self.soft_arm_toggle)
 
         # Serial port connection box
         connection = QtGui.QGroupBox("Button Connection")
@@ -96,11 +102,21 @@ class AbortButton(QtWidgets.QDialog):
             "function_name": "set_state",
             "target_board_addr": self.get_addr(),
             "timestamp": int(datetime.now().timestamp()),
-            "args": [5]
+            "args": [6]
         }
         if self.client:
             self.client.command(3, cmd_dict)
     
+    def soft_arm_toggle(self):
+        """Enables the software abort button that appears in the lower right corner of the sidebar
+        """
+        if self.is_soft_armed == False:
+            self.is_soft_armed = True
+            self.soft_arming_button.setText("Disable Software Button")
+        else:
+            self.is_soft_armed = False
+            self.soft_arming_button.setText("Enable Software Button")
+
     def arm_toggle(self):
         # toggle to enable use of button 
         # (mainly if you want to test if button works without calling an abort)
@@ -108,10 +124,10 @@ class AbortButton(QtWidgets.QDialog):
             self.is_armed = True
             #self.last_state = False # to ensure abort triggers if button already depressed
             #self.state = False
-            self.arming_button.setText("Disable Button")
+            self.arming_button.setText("Disable Hardware Button")
         else:
             self.is_armed = False
-            self.arming_button.setText("Enable Button")
+            self.arming_button.setText("Enable Hardware Button")
     
     def cycle(self):
         # Update function for button object

@@ -7,15 +7,16 @@ import hashlib
 import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtWidgets import QMainWindow
 import pyqtgraph as pg
 
 from LedIndicatorWidget import LedIndicator
 
 
 class ClientDialog(QtWidgets.QDialog):
-    def __init__(self, commandable):
+    def __init__(self, commandable, gui_window: QMainWindow = None):
         super().__init__()
-        self.client = ClientWidget(commandable=commandable)
+        self.client = ClientWidget(commandable=commandable, gui_window = gui_window)
 
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
@@ -24,7 +25,7 @@ class ClientDialog(QtWidgets.QDialog):
 
 
 class ClientWidget(QtWidgets.QWidget):
-    def __init__(self, commandable: bool=True, *args, **kwargs):
+    def __init__(self, commandable: bool=True, gui_window: QMainWindow = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
         #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,6 +33,8 @@ class ClientWidget(QtWidgets.QWidget):
         self.is_commander = False
         self.is_connected = False
         self.last_packet = None
+
+        self.gui_window = gui_window
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
@@ -97,6 +100,11 @@ class ClientWidget(QtWidgets.QWidget):
 
         if command != 0:
             print(command_dict)
+            if self.gui_window is not None:
+                if command_dict["command"] == 3:
+                    self.gui_window.statusBar().showMessage("Command sent to server: " + str(command_dict["args"]))
+                else:
+                    self.gui_window.statusBar().showMessage("Command sent to client: " + str(command_dict))
 
         # add to queue
         if self.is_connected:
@@ -110,6 +118,8 @@ class ClientWidget(QtWidgets.QWidget):
             self.s.connect((self.host.currentText(), int(
                 self.port.text())))  # connect to socket
             self.is_connected = True  # update status
+            if self.gui_window is not None:
+                self.gui_window.statusBar().showMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
         except:
             self.is_connected = False  # update status
         #print(self.is_connected)
@@ -118,6 +128,8 @@ class ClientWidget(QtWidgets.QWidget):
         # send disconnect message
         self.command(4)
         self.is_connected = False
+        if self.gui_window is not None:
+            self.gui_window.statusBar().showMessage("Disconnected from server")
 
     def command_toggle(self):
         # toggle to take/give up command

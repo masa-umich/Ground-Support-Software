@@ -7,7 +7,6 @@ from objectButton import ObjectButton
 from objectLabel import ObjectLabel
 from anchorPoint import AnchorPoint
 
-
 """
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
@@ -66,7 +65,6 @@ class BaseObject:
             self._id = self.widget_parent.last_object_id + 1
             self.widget_parent.last_object_id = self._id
 
-
         self.position = position
         # Have to scale it, not sure if this is best location
         self.position.setX(self.position.x() * self.gui.pixel_scale_ratio[0])
@@ -101,10 +99,11 @@ class BaseObject:
         self.anchor_points = []
 
         self._initAnchorPoints()
-        self.editContextMenuItems = ["Delete Object"]
+        self.editContextMenuItems = ["Lower Object", "Raise Object","Delete Object"]
         self.runContextMenuItems = []
         self._initContextMenu()
         self._initToolTip()
+
 
     def _initAnchorPoints(self):
         """
@@ -112,10 +111,10 @@ class BaseObject:
         Should only be called from __init__
         """
         # Default points are the midpoints of the four sides.
-        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(0, int(self.height / 2)), self, parent=self.widget_parent),
-                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, parent=self.widget_parent)
+        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, 0, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, 1, parent=self.widget_parent),
+                         AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
+                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, 3, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
 
@@ -168,6 +167,8 @@ class BaseObject:
         self.long_name = name
         self.long_name_label.setText(name)
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + " component name changed to " + name)
+
     def setShortName(self, name):
         """
         Sets serial number and label of object
@@ -178,6 +179,8 @@ class BaseObject:
 
         # Moves the label to keep it in the center if it changes length
         self.serial_number_label.moveToPosition()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
 
     def setScale(self, scale):
         """
@@ -208,6 +211,8 @@ class BaseObject:
         # Update some other dependent values
         self.setAnchorPoints()
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
+
         # Tells widget painter to update screen
         self.widget_parent.update()
 
@@ -218,6 +223,8 @@ class BaseObject:
         """
         self.fluid = Constants.fluid[fluid]
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
+
         # Tells widget painter to update screen
         self.widget_parent.update()
 
@@ -226,6 +233,8 @@ class BaseObject:
         Sets if the position of on object is locked
         :param is_locked: is the position locked
         """
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
 
         self.position_locked = is_locked
 
@@ -267,8 +276,11 @@ class BaseObject:
         # If the widget is in edit mode and an object is clicked, toggle if it is editing or now
         if self.central_widget.is_editing:
             if self.is_being_edited:
-                self.central_widget.controlsPanelWidget.removeEditingObject()
-
+                mod = QApplication.keyboardModifiers()
+                if mod == Qt.ShiftModifier:
+                    self.central_widget.controlsPanelWidget.setEditingObjectFocus(self)
+                else:
+                    self.central_widget.controlsPanelWidget.removeOtherEditingObjects(self)
             else:
                 self.central_widget.controlsPanelWidget.addEditingObject(self)
 
@@ -279,6 +291,7 @@ class BaseObject:
         """
         Sets the object and its labels to be mouse transparent or not. When transparent the mouse events are not
         triggered on the buttons/ labels
+        :param should_be_transparent: should the mouse be transparent to the object
         """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -314,12 +327,20 @@ class BaseObject:
         """
         Draws a thin yellow box around selected object
         :param pen: Pen that will be used to draw
-        """ 
-        wbuffer = 8 * self.gui.pixel_scale_ratio[0]  # Space between the object and the highlight line
-        hbuffer = 8 * self.gui.pixel_scale_ratio[1]
+        """
+
+        wbuffer = 10 * self.gui.pixel_scale_ratio[0]  # Space between the object and the highlight line
+        hbuffer = 10 * self.gui.pixel_scale_ratio[1]
+
+        # Draw a thin dotted line
         pen.setStyle(Qt.DotLine)
         pen.setWidth(Constants.line_width-1)
-        pen.setColor(QColor(255, 255, 0))
+
+        # If the object has focus, draw a orange line, otherwise draw a yellow one
+        if self.doesObjectHaveFocus():
+            pen.setColor(QColor(255, 140, 0))
+        else:
+            pen.setColor(QColor(255, 255, 0))
         self.widget_parent.painter.setPen(pen)
         self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
@@ -342,6 +363,8 @@ class BaseObject:
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
         self.deleteConnectedTubes()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -371,6 +394,8 @@ class BaseObject:
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
+
         # Tells widget painter to update screen
         self.widget_parent.update()
 
@@ -391,6 +416,18 @@ class BaseObject:
 
         # TODO: Think real hard about a better less costly solution to this. Currently runs Ok? though
 
+        # Nasty lists for holding onto all the aps, distances, and snap locations if a snap can occur
+        x_aligned_aps = []
+        x_aligned_dif = []
+        x_aligned_snap = []
+
+        y_aligned_aps = []
+        y_aligned_dif = []
+        y_aligned_snap = []
+
+        # By default the snap position is the position of the mouse
+        snap_pos = pos
+
         # Determines if the object should be 'snapped' into place
         # Triple for loop :(. First for loop runs through all anchor points on the object, then for every object
         # onscreen, checks to see if the current anchor point, is near another object anchor point
@@ -398,18 +435,72 @@ class BaseObject:
             anchor_point.x_aligned = False
             anchor_point.y_aligned = False
             for obj in self.widget_parent.object_list:
-                if obj is not self:
+                if obj is not self and obj not in self.central_widget.controlsPanelWidget.editing_object_list:
                     for obj_ap in obj.anchor_points:
-                        if obj_ap.x() - 5 < anchor_point.x() < obj_ap.x() + 5 and abs(
-                                pos.x() - self.position.x()) < 5:
-                            pos = QPoint(obj_ap.x() + (self.position.x() - anchor_point.x()), pos.y())
-                            anchor_point.x_aligned = True
-                        if obj_ap.y() - 5 < anchor_point.y() < obj_ap.y() + 5 and abs(
-                                pos.y() - self.position.y()) < 5:
-                            pos = QPoint(pos.x(), obj_ap.y() + (self.position.y() - anchor_point.y()))
-                            anchor_point.y_aligned = True
+                        if obj_ap.x() - 2 < anchor_point.x() < obj_ap.x() + 2 and abs(
+                                pos.x() - self.position.x()) < 2:
 
-        return pos
+                            x_aligned_aps.append(anchor_point)
+                            x_aligned_dif.append(abs(anchor_point.x() - obj_ap.x()))
+                            x_aligned_snap.append(obj_ap.x() + (self.position.x() - anchor_point.x()))
+
+                        if obj_ap.y() - 2 < anchor_point.y() < obj_ap.y() + 2 and abs(
+                                pos.y() - self.position.y()) < 2:
+
+                            y_aligned_aps.append(anchor_point)
+                            y_aligned_dif.append(abs(anchor_point.y() - obj_ap.y()))
+                            y_aligned_snap.append(obj_ap.y() + (self.position.y() - anchor_point.y()))
+
+        # After finding all the aps that meet the above conditions, determine which ones are the closest match to snap
+        # to. This is to essentially present from many lines occurring, and the object snapping to an ap point that is
+        # farther than others,
+        if y_aligned_dif:
+            miny = (min(y_aligned_dif))
+            for i, dif in enumerate(y_aligned_dif):
+                # If this ap distance to the object is or equal to the minimum distance draw it and snap it
+                if dif == miny:
+                    y_aligned_aps[i].y_aligned = True
+                    snap_pos.setY(y_aligned_snap[i])
+
+        if x_aligned_dif:
+            minx = (min(x_aligned_dif))
+            for i, dif in enumerate(x_aligned_dif):
+                # If this ap distance to the object is or equal to the minimum distance draw it and snap it
+                if dif == minx:
+                    x_aligned_aps[i].x_aligned = True
+                    snap_pos.setX(x_aligned_snap[i])
+
+        # Return the position we want the object to snap to, either the found ap snap position, or the default
+        # input position
+        return snap_pos
+
+    def lowerObject(self):
+        """
+        Lowers the object so the user can select items that on top
+        :return:
+        """
+        self.button.lower()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
+
+    def raiseObject(self):
+        """
+        Raises the object so the user can select items that on bottom
+        :return:
+        """
+        self.button.raise_()
+
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
+
+    def doesObjectHaveFocus(self):
+        """
+        Checks to see if the object has focus, or if the object menu does
+        """
+
+        if self.button.hasFocus() or self.central_widget.controlsPanelWidget.object_editing is self:
+            return True
+        else:
+            return False
 
     """----------------------------------------------------------------------------------------------------------------
     EVENTS 
@@ -423,14 +514,25 @@ class BaseObject:
         """
         # If window is in edit mode
         if self.central_widget.is_editing:
+            # Make sure the button is marked as editing
+            self.central_widget.controlsPanelWidget.addEditingObject(self)
+            self.button.setFocus()  # Make sure object has focus
             action = self.edit_context_menu.exec_(self.button.mapToGlobal(event))
         else:
             action = self.run_context_menu.exec_(self.button.mapToGlobal(event))
 
         # The actions that go in here can be found in the _initContextMenu function in this class
+        # TODO: Honestly the face we are iterating over obects inside the object class feels wrong. Figure out a cleaner solution
         if action is not None:
             if action.text() == "Delete Object":
-                self.widget_parent.deleteObject(self)
+                for obj in reversed(self.central_widget.controlsPanelWidget.editing_object_list):
+                    self.widget_parent.deleteObject(obj)
+            elif action.text() == "Lower Object":
+                for obj in self.central_widget.controlsPanelWidget.editing_object_list:
+                    obj.lowerObject()
+            elif action.text() == "Raise Object":
+                for obj in self.central_widget.controlsPanelWidget.editing_object_list:
+                    obj.raiseObject()
 
         # TODO: Re-implement this when plotting is ready
         # self.plotMenuActions = []
@@ -488,6 +590,8 @@ class BaseObject:
         Called for object to delete itself
         """
 
+        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
+
         self.button.deleteLater()
         del self.button
         self.serial_number_label.deleteLater()
@@ -507,9 +611,7 @@ class BaseObject:
 
         for ap in self.anchor_points:
             if ap.tube is not None:
-                self.widget_parent.tube_list.remove(ap.tube)
-                del ap.tube
-                ap.tube = None
+                ap.tube.deleteTube()
 
         self.widget_parent.update()
 
