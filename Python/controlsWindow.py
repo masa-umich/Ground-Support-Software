@@ -2,6 +2,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import sys
+from PyQt5 import QtGui, QtCore, QtWidgets
+
 from controlsWidget import ControlsWidget
 from controlsPanelWidget import ControlsPanelWidget
 from controlsSidebarWidget import ControlsSidebarWidget
@@ -47,6 +50,7 @@ class ControlsWindow(QMainWindow):
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
+        self.scrollArea = None
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -189,6 +193,12 @@ class ControlsWindow(QMainWindow):
         self.level_action.triggered.connect(lambda: self.show_window(self.tank_levels))
         #self.level_action.setShortcut('Alt+D')
 
+        #Run -> Sensor Calibrations
+        self.sensor_calibration = QMenu("Sensor Calibrations", self)
+        self.sensor_calibration.triggered.connect(self.calibrateSensorsWindow)
+        for board in Constants.boards:
+            self.sensor_calibration.addAction(board)
+
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -233,6 +243,7 @@ class ControlsWindow(QMainWindow):
             menuBar.addAction(self.limit_action)
             menuBar.addAction(self.auto_action)
             menuBar.addAction(self.level_action)
+            menuBar.addMenu(self.sensor_calibration)
         elif self.gui.platform == "OSX":
             run_menu.addAction(self.connect)
             run_menu.addAction(self.flashsettings)
@@ -240,6 +251,7 @@ class ControlsWindow(QMainWindow):
             run_menu.addAction(self.limit_action)
             run_menu.addAction(self.auto_action)
             run_menu.addAction(self.level_action)
+            run_menu.addMenu(self.sensor_calibration)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
@@ -778,6 +790,153 @@ class ControlsWindow(QMainWindow):
         }
         # print(cmd_dict)
         self.client_dialog.client.command(3, cmd_dict)
+
+    def calibrateSensorsWindow(self, action: QAction):
+        #EC: 20
+        #Press: 6
+        #GSE controller: 22
+
+
+        channel_settings = ["pt_cal_lower_voltage","pt_cal_upper_voltage", "pt_cal_upper_pressure"]
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Sensor Channels")
+        dialog.setWindowModality(Qt.ApplicationModal)
+        channel_count = 0
+
+
+
+        # Vertical layout to hold everything
+        verticalLayout = QGridLayout(dialog)
+
+
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        if (action.text() == "Pressurization Controller"):
+            channel_count = 6
+        elif(action.text() == "Flight Computer"):
+            print(action.text())
+        elif (action.text() == "Engine Controller"):
+            channel_count = 20
+        elif (action.text() == "Recovery Controller"):
+            print(action.text())
+        elif (action.text() == "GSE Controller"):
+            channel_count = 22
+
+
+        lower_voltage = []
+        upper_voltage = []
+        upper_pressure = []
+
+        #probably make a global channel var to store all the calibrations to load in
+        #or make a function to refresh the channels that passes in one setting/count at a time and call it here
+        #ask how refresh channel works
+        end = 0
+        for x in range(channel_count):
+            # Create the form layout that will hold the text box
+            formLayout = QtWidgets.QGridLayout()
+            labelLayout =QtWidgets.QGridLayout()
+
+
+            lower_voltage_box = QDoubleSpinBox()
+            lower_voltage_box.setMaximum(9999)
+            lower_voltage_box.setValue(0)
+            lower_voltage_box.setDecimals(2)
+
+
+            upper_voltage_box = QDoubleSpinBox()
+            upper_voltage_box.setMaximum(9999)
+            upper_voltage_box.setValue(0)
+            upper_voltage_box.setDecimals(2)
+
+            upper_pressure_box = QDoubleSpinBox()
+            upper_pressure_box.setMaximum(9999)
+            upper_pressure_box.setValue(0)
+            upper_pressure_box.setDecimals(0)
+
+            lower_voltage.append(lower_voltage_box)
+            upper_voltage.append(upper_voltage_box)
+            upper_pressure.append(upper_pressure_box)
+
+            label = QLabel("PT Channel " + str(x))
+            label.setFont(font)
+
+            label_buffer = QLabel("              ")
+            label1 = QLabel("Lower Voltage")
+            label2 = QLabel("Upper Voltage")
+            label3 = QLabel("Pressure Range")
+            font.setPointSize(18 * self.gui.font_scale_ratio)
+            label.setFont(font)
+            label1.setFont(font)
+            label2.setFont(font)
+            label3.setFont(font)
+
+            labelLayout.addWidget(label_buffer, 0, 1)
+            labelLayout.addWidget(label1, 0, 2)
+            labelLayout.addWidget(label2, 0, 3)
+            labelLayout.addWidget(label3, 0, 4)
+
+
+            formLayout.addWidget(label, 0, 1)
+            formLayout.addWidget(lower_voltage_box, 0, 2)
+            formLayout.addWidget(upper_voltage_box, 0, 3)
+            formLayout.addWidget(upper_pressure_box, 0, 4)
+
+            verticalLayout.addLayout(labelLayout, 2 * x + 1, 0)
+            verticalLayout.addLayout(formLayout,2*x + 2,0)
+            #verticalLayout.setColumnStretch(x, 20)
+
+            end = 2*x + 2
+
+        end +=1
+
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setBackgroundRole(QPalette.Dark)
+        self.scrollArea.setWidget(dialog)
+        self.scrollArea.setWidgetResizable(True)
+        self. scrollArea.setFixedHeight(1000*self.gui.pixel_scale_ratio[0])
+        self.scrollArea.setFixedWidth(800*self.gui.pixel_scale_ratio[0])
+
+
+        #Horizontal button layout
+        buttonLayout = QHBoxLayout()
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setFont(font)
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        font.setPointSize(20 * self.gui.font_scale_ratio)
+
+        save_button = QPushButton("Save")
+        save_button.setFont(font)
+        save_button.setDefault(False)
+        save_button.setAutoDefault(False)
+        save_button.clicked.connect(lambda: print("lol"))
+        save_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])
+
+        refresh_button = QPushButton("Refresh")
+        refresh_button.setFont(font)
+        refresh_button.setDefault(False)
+        refresh_button.setAutoDefault(False)
+        refresh_button.clicked.connect(lambda: print("lol"))
+        refresh_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full
+
+        #buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(save_button)
+        buttonLayout.addWidget(refresh_button)
+
+        verticalLayout.addLayout(buttonLayout, 0, 0)
+
+        dialog.show()
+        self.scrollArea.show()
+        #sys.exit(app.exec_())
+        #self.show_window(scrollArea)
 
     def tareLoadCell(self):
         """
