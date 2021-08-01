@@ -61,7 +61,7 @@ git checkout <desired-branch> // switches into branch
 
 
 # Information about operators/new members
-![image/20210801152044.png](/images/20210801152044.png)
+![image/20210801152044.png](https://gitlab.eecs.umich.edu/masa/avionics/gui/-/blob/develop/images/Pasted%20image%2020210801152044.png)
 
 
 ## Setting up a configuration
