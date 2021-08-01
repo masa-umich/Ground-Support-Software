@@ -61,19 +61,19 @@ git checkout <desired-branch> // switches into branch
 
 
 # Information about operators/new members
-![image/20210801152044.png](image/20210801152044.png)
+![image/20210801152044.png](images/20210801152044.png)
 
 
 ## Setting up a configuration
 In order to add components, enter edit mode using `ctrl + E` where you can then right-click in the edit area to add, connect and set up various components. When you have completing the config, you can then exit using `ctrl + shift + E`. If it is a new configuration, you will be prompted to save and name it. 
 
 Here is an example of how it could be set up:
-![image/20210801152906.png](image/20210801152906.png)
+![image/20210801152906.png](images/20210801152906.png)
 
 Clicking on various components oustide edit mode can allow you to edit various attributes (e.g. changing setpoints on motors).  Selecting most components in edit mode will provide graphical information, as well as the board and channel they belong to.
 
 ## Setting up boards on the GUI
-![image/20210801152735.png](image/20210801152735.png)
+![image/20210801152735.png](images/20210801152735.png)
 In order to add a board to the gui, go into `run -> add avionics` and select the specific board. You will then see a board widget pop up in the side bar with various information about the board including the:
 - state
 - Ebatt
@@ -86,9 +86,9 @@ The GUI also enables operators to send a command to change a boards state as see
 
 ## Abort 
 In order to enable the abort button, click the `Abort Button` action in the toolbar open a window to connect/enable the hardware and software abort buttons. This should then enable a clear red abort button for ermergencies:
-![image/20210801154206.png](image/20210801154206.png)
+![image/20210801154206.png](images/20210801154206.png)
 
-When the abort button is enabled, the sidebar will become red alongside the state indication at the top to emphasize the current systems status to the operator: ![[image/20210801154426.png]]
+When the abort button is enabled, the sidebar will become red alongside the state indication at the top to emphasize the current systems status to the operator: ![[images/20210801154426.png]]
 
 ## Flash
 ## Connecting to the server
@@ -96,7 +96,7 @@ In order to connect to the server, press the `connection` action in the toolbar.
 
 ## Other features
 ### Limits
-![image/20210801155749.png](image/20210801155749.png)
+![image/20210801155749.png](images/20210801155749.png)
 When pressing the `Limits` action in the toolbar, a checklist that contains the necessary conditions before beginning a test. This helps to ensure that sensors are reading values in the appropriate ranges. A condition met is indicated by the light on the left.
 ### Textbox
 There is a textbox on the side bar to store any notes related to the test. When saving, you will be prompted to save these notes in a seperate text file in addition to the config file.
