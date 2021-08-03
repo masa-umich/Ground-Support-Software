@@ -443,12 +443,14 @@ class Server(QtWidgets.QMainWindow):
         cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
 
         # make sure it has the right number of args
-        if sum([a.isnumeric() for a in args]) == len(cmd_args):
+        #if sum([a.isnumeric() for a in args]) == len(cmd_args):
+        if len(args) == len(cmd_args):
             cmd_dict = {
                 "function_name": cmd,
                 "target_board_addr": int(addr),
                 "timestamp": int(datetime.now().timestamp()),
-                "args": [float(a) for a in args if a.isnumeric()]
+                #"args": [float(a) for a in args if a.isnumeric()]
+                "args": [float(a) for a in args]
             }
             print(cmd_dict)
             self.command_queue.put(cmd_dict)  # add command to queue
