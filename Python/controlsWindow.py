@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 import sys
+import time
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 from controlsWidget import ControlsWidget
@@ -18,6 +19,8 @@ from abort_button import AbortButton
 from limits import LimitWindow
 from auto_manager import AutoManager
 from dp import TankLevelDialog
+
+#from sensor_calibrations import SensorCalibrationDialog
 
 from overrides import overrides
 import os
@@ -49,8 +52,13 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
+        #self.sensor_calibration = None
         self.data_viewer_dialog = DataViewerDialog(self.gui)
         self.scrollArea = None
+        self.lower_voltage = []
+        self.upper_voltage = []
+        self.upper_pressure = []
+        self.channel_count = 0
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -791,6 +799,11 @@ class ControlsWindow(QMainWindow):
         # print(cmd_dict)
         self.client_dialog.client.command(3, cmd_dict)
 
+    #def openCalibrationSensorsWindow(self, action: QAction):
+     #   self.sensor_calibration = SensorCalibrationDialog(action.text())
+      #  self.show_window(self.sensor_calibration)
+
+
     def calibrateSensorsWindow(self, action: QAction):
         #EC: 20
         #Press: 6
@@ -801,7 +814,7 @@ class ControlsWindow(QMainWindow):
         dialog = QDialog(self)
         dialog.setWindowTitle("Sensor Channels")
         dialog.setWindowModality(Qt.ApplicationModal)
-        channel_count = 0
+        self.channel_count = 0
 
 
 
@@ -816,26 +829,23 @@ class ControlsWindow(QMainWindow):
         font.setPointSize(14 * self.gui.font_scale_ratio)
 
         if (action.text() == "Pressurization Controller"):
-            channel_count = 6
+            self.channel_count = 6
         elif(action.text() == "Flight Computer"):
             print(action.text())
         elif (action.text() == "Engine Controller"):
-            channel_count = 20
+            self.channel_count = 20
         elif (action.text() == "Recovery Controller"):
             print(action.text())
         elif (action.text() == "GSE Controller"):
-            channel_count = 22
+            self.channel_count = 22
 
 
-        lower_voltage = []
-        upper_voltage = []
-        upper_pressure = []
 
         #probably make a global channel var to store all the calibrations to load in
         #or make a function to refresh the channels that passes in one setting/count at a time and call it here
         #ask how refresh channel works
         end = 0
-        for x in range(channel_count):
+        for x in range(self.channel_count):
             # Create the form layout that will hold the text box
             formLayout = QtWidgets.QGridLayout()
             labelLayout =QtWidgets.QGridLayout()
@@ -857,9 +867,9 @@ class ControlsWindow(QMainWindow):
             upper_pressure_box.setValue(0)
             upper_pressure_box.setDecimals(0)
 
-            lower_voltage.append(lower_voltage_box)
-            upper_voltage.append(upper_voltage_box)
-            upper_pressure.append(upper_pressure_box)
+            self.lower_voltage.append(lower_voltage_box)
+            self.upper_voltage.append(upper_voltage_box)
+            self.upper_pressure.append(upper_pressure_box)
 
             label = QLabel("PT Channel " + str(x))
             label.setFont(font)
@@ -924,7 +934,7 @@ class ControlsWindow(QMainWindow):
         refresh_button.setFont(font)
         refresh_button.setDefault(False)
         refresh_button.setAutoDefault(False)
-        refresh_button.clicked.connect(lambda: print("lol"))
+        refresh_button.clicked.connect(lambda: self.get_calibrate_sensors(action.text()))
         refresh_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full
 
         #buttonLayout.addWidget(cancel_button)
@@ -932,11 +942,39 @@ class ControlsWindow(QMainWindow):
         buttonLayout.addWidget(refresh_button)
 
         verticalLayout.addLayout(buttonLayout, 0, 0)
+        self.get_calibrate_sensors(action.text())
+
 
         dialog.show()
         self.scrollArea.show()
         #sys.exit(app.exec_())
         #self.show_window(scrollArea)
+
+    def get_calibrate_sensors(self, board_name):
+        packet = None
+        timeout = 0.5
+        prefix = self.interface.getPrefix(board_name)
+        cmd_dict = {
+            "function_name": "unpack_calibrate",
+            "target_board_addr": self.interface.getBoardAddr(board_name),
+            "timestamp": int(datetime.now().timestamp()),
+            "args": []
+        }
+        self.client_dialog.client.command(3, cmd_dict)
+        while True:
+            packet = self.client_dialog.client.cycle()
+            if packet != None and packet[prefix + "packet_type"] == 2:  # on exception
+                cal_packet = packet
+            if time.time() > timeout:
+                break
+        if packet == None:
+            return
+
+        for x in range(self.channel_count):
+            self.lower_voltage[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"])
+            self.upper_voltage[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"])
+            self.upper_pressure[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"])
+
 
     def tareLoadCell(self):
         """
