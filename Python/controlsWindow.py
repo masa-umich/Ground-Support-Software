@@ -927,7 +927,7 @@ class ControlsWindow(QMainWindow):
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
-        save_button.clicked.connect(lambda: print("lol"))
+        save_button.clicked.connect(lambda: self.send_sensor_calibrations(action.text()))
         save_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])
 
         refresh_button = QPushButton("Refresh")
@@ -942,13 +942,40 @@ class ControlsWindow(QMainWindow):
         buttonLayout.addWidget(refresh_button)
 
         verticalLayout.addLayout(buttonLayout, 0, 0)
-        self.get_calibrate_sensors(action.text())
+        #self.get_calibrate_sensors(action.text())
 
 
         dialog.show()
         self.scrollArea.show()
         #sys.exit(app.exec_())
         #self.show_window(scrollArea)
+
+    def send_sensor_calibrations(self,board_name):
+        timeout = 0.5
+        prefix = self.interface.getPrefix(board_name)
+        for x in range(self.channel_count):
+            cmd_dict = {
+                "function_name": "set_pt_lower_voltage",
+                "target_board_addr": self.interface.getBoardAddr(board_name),
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [x,self.lower_voltage[x].value()]
+            }
+            self.client_dialog.client.command(3, cmd_dict)
+            cmd_dict = {
+                "function_name": "set_pt_upper_voltage",
+                "target_board_addr": self.interface.getBoardAddr(board_name),
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [x,self.upper_voltage[x].value()]
+            }
+            self.client_dialog.client.command(3, cmd_dict)
+            cmd_dict = {
+                "function_name": "set_pt_upper_pressure",
+                "target_board_addr": self.interface.getBoardAddr(board_name),
+                "timestamp": int(datetime.now().timestamp()),
+                "args": [x,self.upper_pressure[x].value()]
+            }
+            self.client_dialog.client.command(3, cmd_dict)
+
 
     def get_calibrate_sensors(self, board_name):
         packet = None
