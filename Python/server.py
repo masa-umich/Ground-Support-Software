@@ -15,6 +15,7 @@ from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QPalette, QColor
 
 from party import PartyParrot
 from s2Interface import S2_Interface
@@ -80,10 +81,9 @@ class Server(QtWidgets.QMainWindow):
         self.setCentralWidget(w)
         top_layout = QtWidgets.QGridLayout()
         w.setLayout(top_layout)
-        base_size = 500
+        base_size = 750
         AR = 1.5  # H/W
-        self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
+        self.resize(int(AR * base_size), int(base_size))
 
         # server log
         tab = QTabWidget()
@@ -125,6 +125,7 @@ class Server(QtWidgets.QMainWindow):
 
         # telemetry table
         self.data_table = QTableWidget()
+        self.data_table.setAlternatingRowColors(True);
         self.data_table.setRowCount(self.num_items)
         self.data_table.setColumnCount(3)
         header = self.data_table.horizontalHeader()
@@ -139,42 +140,44 @@ class Server(QtWidgets.QMainWindow):
             self.data_table.setItem(n, 2, QTableWidgetItem(
                 self.interface.units[self.interface.channels[n]]))
 
-        packet_layout.addWidget(self.data_box)
+        #packet_layout.addWidget(self.data_box)
         packet_layout.addWidget(self.data_table)
 
         # tabs
         tab.addTab(self.log_box, "Server Log")
-        tab.addTab(packet_widget, "Packet Log")
+        #tab.addTab(packet_widget, "Packet Log")
         tab.addTab(command_widget, "Command Line")
         # top_layout.addWidget(tab, 2, 0) # no parrot
-        top_layout.addWidget(tab, 2, 0, 1, 2)
+        top_layout.addWidget(tab, 2, 0, 1, 1)
+        top_layout.addWidget(packet_widget, 2, 1, 1, 1)
 
         # please ask Alex before reenabling, need to add circular buffer
-        self.send_to_log(self.data_box, "Packet log disabled")
+        #self.send_to_log(self.data_box, "Packet log disabled")
 
         # connection box (add to top_layout)
-        connection = QGroupBox("Serial Port")
-        top_layout.addWidget(connection, 0, 0)
+        connection = QGroupBox()
+        
+        top_layout.addWidget(connection, 0, 0, 1, 2)
         connection_layout = QGridLayout()
         connection.setLayout(connection_layout)
         self.packet_size_label = QLabel("Last Packet Size: 0")
-        connection_layout.addWidget(self.packet_size_label, 0, 6)
+        connection_layout.addWidget(self.packet_size_label, 1, 6)
         self.ports_box = QComboBox()
-        connection_layout.addWidget(self.ports_box, 0, 0, 0, 2)
+        connection_layout.addWidget(self.ports_box, 1, 0, 1, 2)
         self.baudrate_box = QComboBox()
-        connection_layout.addWidget(self.baudrate_box, 0, 3)
+        connection_layout.addWidget(self.baudrate_box, 1, 3)
         self.baudrate_box.addItems(["3913043", "115200"])
         scan_button = QPushButton("Scan")
         scan_button.clicked.connect(self.scan)
-        connection_layout.addWidget(scan_button, 0, 4)
+        connection_layout.addWidget(scan_button, 1, 4)
         connect_button = QPushButton("Connect")
         connect_button.clicked.connect(self.connect)
-        connection_layout.addWidget(connect_button, 0, 5)
-
+        connection_layout.addWidget(connect_button, 1, 5)
+        connection_layout.addWidget(QLabel("Serial Port"), 0, 0)
         # heartbeat indicator
         self.party_parrot = PartyParrot()
-        self.party_parrot.setFixedSize(60, 60)
-        top_layout.addWidget(self.party_parrot, 0, 1)
+        self.party_parrot.setFixedSize(50, 50)
+        connection_layout.addWidget(self.party_parrot, 1, 7)
 
         # populate port box
         self.scan()
@@ -182,16 +185,42 @@ class Server(QtWidgets.QMainWindow):
             self.connect()
 
         # commander status
-        command_box = QGroupBox("Command Status")
+        command_box = QGroupBox()
         # top_layout.addWidget(command_box, 1, 0) #no parrot
         top_layout.addWidget(command_box, 1, 0, 1, 2)
         command_layout = QGridLayout()
         command_box.setLayout(command_layout)
         self.commander_label = QLabel("Commander: None")
-        command_layout.addWidget(self.commander_label, 0, 0, 0, 4)
+        command_layout.addWidget(self.commander_label, 1, 0)
+        command_layout.addWidget(QLabel("Command Status"), 0, 0)
         override_button = QPushButton("Override")
         override_button.clicked.connect(self.override_commander)
-        command_layout.addWidget(override_button, 0, 4)
+        command_layout.addWidget(override_button, 1, 4)
+
+        # Dark mode
+
+        stylesheet = """
+            QWidget {background: #121212; color: white;}
+            QComboBox {background-color: #505050; border: 1px solid #777777}
+            QGroupBox>QLabel {margin-top: 5pt; background-color: #363636;}
+            QPushButton {background-color: #777777; border: 1px solid #777777; padding: 5px 0px;}
+            QPushButton:pressed {background-color: #777777; border: 1px solid #777777; padding: 5px 0px;}
+            QGroupBox {background: #363636; border: 1px solid white; border-radius: 5px;}
+            QTableWidget {background-color: #242424; alternate-background-color: #363636; border: 1px solid #aaaaaa; border-radius: 5px; margin-top: 13px;}
+            QTableWidget>QHeaderView::section {background-color: #242424; alternate-background-color: #363636;}
+            QTableWidget>QTableCornerButton::section{background-color: #242424; alternate-background-color: #363636;}
+            QTableWidget>Cell {padding-left: 5pt;}
+            QWidget>QWidget {background-color: #242424;}
+            QLineEdit {background-color: #242424; border: 0;}
+            QTextEdit {background-color: #242424;}
+            QTabWidget::pane { border: 1px solid #aaaaaa; border-radius: 5px;}
+            QTabBar::tab {background: #505050; border: 1px solid #aaaaaa; padding: 3px 5px;}
+            QTabBar::tab:selected {background: #363636;}
+            QTabWidget>QWidget>QWidget{background: #242424;}
+            """
+
+        self.setStyleSheet(stylesheet)
+        
 
         # start server connection thread
         # waits for clients and then creates a thread for each connection
