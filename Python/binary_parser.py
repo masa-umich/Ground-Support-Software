@@ -69,7 +69,7 @@ class BinaryParser:
                     if verbose:
                         print(len(packet))
                         print(bytes(packet))
-                    packet_addr = self.interface.parse_packet(packet)
+                    packet_addr, packet_type = self.interface.parse_packet(packet)
                     #print
                     if packet_addr != -1:
                         new_data = self.interface.board_parser[packet_addr].dict

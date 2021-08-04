@@ -955,7 +955,7 @@ class ControlsWindow(QMainWindow):
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
         cmd_dict = {
-            "function_name": "unpack_calibrate",
+            "function_name": "refresh_calibrations",
             "target_board_addr": self.interface.getBoardAddr(board_name),
             "timestamp": int(datetime.now().timestamp()),
             "args": []

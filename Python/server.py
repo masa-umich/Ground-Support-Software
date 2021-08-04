@@ -679,7 +679,7 @@ class Server(QtWidgets.QMainWindow):
 
                 else:
                     # read in packet from system
-                    packet_addr = self.interface.parse_serial()  # returns origin address
+                    packet_addr, packet_type = self.interface.parse_serial()  # returns origin address
                     # packet_addr = -1
                     if packet_addr != -1 and packet_addr != -2:
                         # print("PARSER WORKED")
@@ -697,7 +697,15 @@ class Server(QtWidgets.QMainWindow):
                         # disabled to stop server logs becoming massive, see just below send_to_log
 
                         # parse packet and aggregate
+
+                        # default to board_parser
                         new_data = self.interface.board_parser[packet_addr].dict
+
+                        # Override with correct parser if packet type != 0
+                        if (packet_type == 2):
+                            new_data = self.interface.calibration_parser[packet_addr].dict
+                        # New parsers get called here as they get added
+
                         prefix = self.interface.getPrefix(
                             self.interface.getName(packet_addr))
 
@@ -713,7 +721,7 @@ class Server(QtWidgets.QMainWindow):
                                 key = self.interface.channels[n]
                                 self.data_table.setItem(
                                     n, 1, QTableWidgetItem(str(self.dataframe[key])))
-                                # print([n, key, dataframe[key]])
+                                #print([n, key, dataframe[key]])
 
                             self.data_log.write(self.get_logstring() + '\n')
                         finally:
@@ -728,9 +736,9 @@ class Server(QtWidgets.QMainWindow):
                         pass
             self.party_parrot.step()
 
-        except:
+        except Exception as e:
             #traceback.print_exc()
-            pass
+            print("Parser failed with error ", e)
 
         # update server state
         self.packet_num += 1
