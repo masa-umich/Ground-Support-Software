@@ -144,7 +144,7 @@ class S2_Interface:
                     #print(str(self.calibration_parser[board_addr].dict))
                 return (board_addr, packet_type)
             except Exception as e:
-                #traceback.print_exc()
+                traceback.print_exc()
                 print("Packet lost with error ", e)
         # Return -2 if the packet parse fails
         return (-2, -2)
