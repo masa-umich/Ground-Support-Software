@@ -961,19 +961,15 @@ class ControlsWindow(QMainWindow):
             "args": []
         }
         self.client_dialog.client.command(3, cmd_dict)
-        while True:
-            packet = self.client_dialog.client.cycle()
-            if packet != None and packet[prefix + "packet_type"] == 2:  # on exception
-                cal_packet = packet
-            if time.time() > timeout:
-                break
-        if packet == None:
-            return
+        #while True:
+        #    if time.time() > timeout:
+        #        break
+        time.sleep(timeout)  # Wait for the refresh to finish
 
         for x in range(self.channel_count):
-            self.lower_voltage[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"])
-            self.upper_voltage[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"])
-            self.upper_pressure[x].setValue(cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"])
+            self.lower_voltage[x].setValue(self.last_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"])
+            self.upper_voltage[x].setValue(self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"])
+            self.upper_pressure[x].setValue(self.last_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"])
 
 
     def tareLoadCell(self):
