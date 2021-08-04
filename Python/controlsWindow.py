@@ -59,6 +59,7 @@ class ControlsWindow(QMainWindow):
         self.upper_voltage = []
         self.upper_pressure = []
         self.channel_count = 0
+        self.cal_packet = None
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -907,7 +908,7 @@ class ControlsWindow(QMainWindow):
         self.scrollArea.setBackgroundRole(QPalette.Dark)
         self.scrollArea.setWidget(dialog)
         self.scrollArea.setWidgetResizable(True)
-        self. scrollArea.setFixedHeight(1000*self.gui.pixel_scale_ratio[0])
+        self.scrollArea.setFixedHeight(1000*self.gui.pixel_scale_ratio[0])
         self.scrollArea.setFixedWidth(800*self.gui.pixel_scale_ratio[0])
 
 
@@ -953,28 +954,44 @@ class ControlsWindow(QMainWindow):
     def send_sensor_calibrations(self,board_name):
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
+
         for x in range(self.channel_count):
-            cmd_dict = {
-                "function_name": "set_pt_lower_voltage",
-                "target_board_addr": self.interface.getBoardAddr(board_name),
-                "timestamp": int(datetime.now().timestamp()),
-                "args": [x,self.lower_voltage[x].value()]
-            }
-            self.client_dialog.client.command(3, cmd_dict)
-            cmd_dict = {
-                "function_name": "set_pt_upper_voltage",
-                "target_board_addr": self.interface.getBoardAddr(board_name),
-                "timestamp": int(datetime.now().timestamp()),
-                "args": [x,self.upper_voltage[x].value()]
-            }
-            self.client_dialog.client.command(3, cmd_dict)
-            cmd_dict = {
-                "function_name": "set_pt_upper_pressure",
-                "target_board_addr": self.interface.getBoardAddr(board_name),
-                "timestamp": int(datetime.now().timestamp()),
-                "args": [x,self.upper_pressure[x].value()]
-            }
-            self.client_dialog.client.command(3, cmd_dict)
+            update_lower_voltage = True
+            update_upper_voltage = True
+            update_upper_pressure = True
+
+            if(self.cal_packet != None):
+                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
+                    update_lower_voltage = False
+                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
+                    update_upper_voltage = False
+                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
+                    update_upper_pressure = False
+            if update_lower_voltage:
+                cmd_dict = {
+                    "function_name": "set_pt_lower_voltage",
+                    "target_board_addr": self.interface.getBoardAddr(board_name),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [x, self.lower_voltage[x].value()]
+                }
+                self.client_dialog.client.command(3, cmd_dict)
+
+            if update_upper_voltage:
+                cmd_dict = {
+                    "function_name": "set_pt_upper_voltage",
+                    "target_board_addr": self.interface.getBoardAddr(board_name),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [x, self.upper_voltage[x].value()]
+                }
+                self.client_dialog.client.command(3, cmd_dict)
+            if update_upper_pressure:
+                cmd_dict = {
+                    "function_name": "set_pt_upper_pressure",
+                    "target_board_addr": self.interface.getBoardAddr(board_name),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [x, self.upper_pressure[x].value()]
+                }
+                self.client_dialog.client.command(3, cmd_dict)
 
 
     def get_calibrate_sensors(self, board_name):
@@ -992,7 +1009,7 @@ class ControlsWindow(QMainWindow):
         #    if time.time() > timeout:
         #        break
         time.sleep(timeout)  # Wait for the refresh to finish
-
+        self.cal_packet = self.last_packet
         for x in range(self.channel_count):
             self.lower_voltage[x].setValue(self.last_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"])
             self.upper_voltage[x].setValue(self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"])
