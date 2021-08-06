@@ -1,10 +1,10 @@
-PyQt5
+PyQt5==5.15.4
 matplotlib
 numpy
 overrides==3.1.0
 termcolor
 pandas
-pyqtgraph
+pyqtgraph==0.12.1
 pyserial
 dash
 dash_table
