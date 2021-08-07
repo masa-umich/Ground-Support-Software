@@ -28,7 +28,7 @@ from binary_parser import BinaryParser
 
 
 class S2_Interface:
-    def __init__(self, ser=serial.Serial(port=None)):
+    def __init__(self, ser=serial.Serial(port=None, timeout=None)):
         self.ser            = ser
         self.ports_box      = []
         self.serial_name    = ""
@@ -106,14 +106,17 @@ class S2_Interface:
                 return self.parse_packet(packet)
         except Exception as e:
             #traceback.print_exc()
+            print("Error parsing ", e)
             pass
         # Return -1 is the serial parse fails
         return -1
 
     def parse_packet(self, packet):
         if len(packet) > 0:
+            print("length ", len(packet))
+            print("stuffed ", packet)
             packet = self.unstuff_packet(packet)
-            #print(packet)
+            print("unstuffed ", packet)
             # TODO: modify packet header to include origin packet
             board_addr = self.get_board_addr_from_packet(packet)
             #print("board_addr:", board_addr)

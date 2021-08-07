@@ -1,0 +1,6 @@
+loop 50
+	set_vlv 0 1
+	delay 1000
+	set_vlv 0 0
+	delay 1000
+end_loop
