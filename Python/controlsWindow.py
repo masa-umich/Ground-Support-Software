@@ -908,8 +908,8 @@ class ControlsWindow(QMainWindow):
         self.scrollArea.setBackgroundRole(QPalette.Dark)
         self.scrollArea.setWidget(dialog)
         self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setFixedHeight(1000*self.gui.pixel_scale_ratio[0])
-        self.scrollArea.setFixedWidth(800*self.gui.pixel_scale_ratio[0])
+        #self.scrollArea.setFixedHeight(500*self.gui.pixel_scale_ratio[0])
+        #self.scrollArea.setFixedWidth(600*self.gui.pixel_scale_ratio[0])
 
 
         #Horizontal button layout
