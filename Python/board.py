@@ -72,6 +72,7 @@ class Board(QWidget):
                 6: "Abort",
                 7: "Post",
                 8: "Safe",
+                9: "IgnitionFail",
                 255: "Continue"
             }
             self.stateNum = {
@@ -85,6 +86,7 @@ class Board(QWidget):
                 "Abort": 6,
                 "Post": 7,
                 "Safe": 8,
+                "IgnitionFail": 9,
                 "Continue": 255
             }
             """  TODO fill this out when we figure out other boards' state mappings
@@ -620,7 +622,7 @@ class Board(QWidget):
         self.LPT = LPT
 
         # Draw red background in abort state
-        if self.state == 6:
+        if self.name == "Pressurization Controller" and self.state == self.stateNum["Abort"]:
             self.controlsSidebarWidget.setAutoFillBackground(True)
             p = self.controlsSidebarWidget.palette()
             p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
@@ -714,25 +716,10 @@ class Board(QWidget):
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
 
-
-
-            """
-            if self.state == 1:
+            elif self.state == self.stateNum["IgnitionFail"]:
                 self.manual_button.setText("Disarm")
-                self.fire_button.setEnabled(True)
-                self.continue_button.setDisabled(True)
                 self.manual_button.setEnabled(True)
-            else:
-                self.manual_button.setText("Manual")
+                self.arm_button.setEnabled(False)
                 self.fire_button.setEnabled(False)
-
-            if self.state == 0 or self.state == 2:
-                self.continue_button.setDisabled(True)
-            if self.state == 2:
-                self.fire_button.setEnabled(True)
-            if self.state == 3:
-                self.continue_button.setEnabled(True)
-            if self.state == 4 or self.state == 5:
-                self.manual_button.setEnabled(False)
-            """
-            
+                self.continue_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
