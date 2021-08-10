@@ -2,8 +2,8 @@
 	"Solenoid 67": {
 		"id": 67,
 		"pos": {
-			"x": 532.5,
-			"y": 266.6666666666666
+			"x": 530.0,
+			"y": 254.81481481481472
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -42,8 +42,8 @@
 	"Solenoid 68": {
 		"id": 68,
 		"pos": {
-			"x": 532.5,
-			"y": 370.3703703703702
+			"x": 530.0,
+			"y": 358.51851851851836
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -83,7 +83,7 @@
 		"id": 69,
 		"pos": {
 			"x": 540.0,
-			"y": 488.8888888888887
+			"y": 477.03703703703684
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -123,7 +123,7 @@
 		"id": 70,
 		"pos": {
 			"x": 530.0,
-			"y": 604.4444444444442
+			"y": 592.5925925925924
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -163,7 +163,7 @@
 		"id": 71,
 		"pos": {
 			"x": 540.0,
-			"y": 734.8148148148146
+			"y": 722.9629629629627
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -202,8 +202,8 @@
 	"Solenoid 72": {
 		"id": 72,
 		"pos": {
-			"x": 537.5,
-			"y": 853.333333333333
+			"x": 535.0,
+			"y": 841.4814814814812
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -243,7 +243,7 @@
 		"id": 73,
 		"pos": {
 			"x": 525.0,
-			"y": 954.0740740740737
+			"y": 942.2222222222218
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -282,8 +282,8 @@
 	"Solenoid 74": {
 		"id": 74,
 		"pos": {
-			"x": 532.5,
-			"y": 1060.7407407407404
+			"x": 530.0,
+			"y": 1048.8888888888885
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -322,8 +322,8 @@
 	"Solenoid 75": {
 		"id": 75,
 		"pos": {
-			"x": 542.5,
-			"y": 1185.1851851851848
+			"x": 540.0,
+			"y": 1173.3333333333328
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -363,7 +363,7 @@
 		"id": 76,
 		"pos": {
 			"x": 620.0,
-			"y": 263.7037037037036
+			"y": 251.85185185185176
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -403,7 +403,7 @@
 		"id": 77,
 		"pos": {
 			"x": 1190.0,
-			"y": 216.29629629629622
+			"y": 204.44444444444437
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -442,7 +442,7 @@
 		"id": 78,
 		"pos": {
 			"x": 1190.0,
-			"y": 346.6666666666665
+			"y": 334.81481481481467
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -481,7 +481,7 @@
 		"id": 80,
 		"pos": {
 			"x": 1190.0,
-			"y": 471.1111111111109
+			"y": 459.25925925925907
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -520,7 +520,7 @@
 		"id": 81,
 		"pos": {
 			"x": 1190.0,
-			"y": 592.5925925925924
+			"y": 580.7407407407405
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -559,7 +559,7 @@
 		"id": 82,
 		"pos": {
 			"x": 1190.0,
-			"y": 722.9629629629627
+			"y": 711.1111111111109
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -598,7 +598,7 @@
 		"id": 83,
 		"pos": {
 			"x": 1190.0,
-			"y": 844.4444444444441
+			"y": 832.5925925925923
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -637,7 +637,7 @@
 		"id": 84,
 		"pos": {
 			"x": 1190.0,
-			"y": 959.9999999999997
+			"y": 948.1481481481478
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -676,7 +676,7 @@
 		"id": 85,
 		"pos": {
 			"x": 1190.0,
-			"y": 1081.481481481481
+			"y": 1069.629629629629
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -714,8 +714,8 @@
 	"Tank 86": {
 		"id": 86,
 		"pos": {
-			"x": 781.25,
-			"y": 663.7037037037035
+			"x": 780.0,
+			"y": 651.8518518518516
 		},
 		"fluid": 0,
 		"width": 88.0,
@@ -754,7 +754,7 @@
 		"id": 87,
 		"pos": {
 			"x": 900.0,
-			"y": 663.7037037037035
+			"y": 651.8518518518516
 		},
 		"fluid": 0,
 		"width": 88.0,
@@ -793,7 +793,7 @@
 		"id": 88,
 		"pos": {
 			"x": 785.0,
-			"y": 251.85185185185176
+			"y": 239.99999999999991
 		},
 		"fluid": 0,
 		"width": 70.0,
@@ -832,7 +832,7 @@
 		"id": 89,
 		"pos": {
 			"x": 910.0,
-			"y": 260.74074074074065
+			"y": 248.8888888888888
 		},
 		"fluid": 0,
 		"width": 70.0,
@@ -870,8 +870,8 @@
 	"Generic Sensor 90": {
 		"id": 90,
 		"pos": {
-			"x": 1007.5,
-			"y": 272.5925925925925
+			"x": 1005.0,
+			"y": 260.74074074074065
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -903,14 +903,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr1.kp",
+		"channel": "press.mtr1.p",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 91": {
 		"id": 91,
 		"pos": {
 			"x": 1010.0,
-			"y": 376.29629629629613
+			"y": 364.4444444444443
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -942,14 +942,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr1.ki",
+		"channel": "press.mtr1.i",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 92": {
 		"id": 92,
 		"pos": {
-			"x": 1007.5,
-			"y": 482.96296296296276
+			"x": 1005.0,
+			"y": 477.03703703703684
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -981,14 +981,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr1.kd",
+		"channel": "press.mtr1.d",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 93": {
 		"id": 93,
 		"pos": {
-			"x": 697.5,
-			"y": 257.77777777777766
+			"x": 695.0,
+			"y": 245.92592592592584
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1020,14 +1020,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr0.kp",
+		"channel": "press.mtr0.p",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 94": {
 		"id": 94,
 		"pos": {
-			"x": 697.5,
-			"y": 370.3703703703702
+			"x": 695.0,
+			"y": 358.51851851851836
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1059,14 +1059,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr0.ki",
+		"channel": "press.mtr0.i",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 95": {
 		"id": 95,
 		"pos": {
-			"x": 697.5,
-			"y": 471.1111111111109
+			"x": 695.0,
+			"y": 465.185185185185
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1098,14 +1098,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.mtr0.kd",
+		"channel": "press.mtr0.d",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 96": {
 		"id": 96,
 		"pos": {
 			"x": 1000.0,
-			"y": 717.0370370370367
+			"y": 711.1111111111109
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1137,14 +1137,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk1.target_pres",
+		"channel": "press.tnk1.tp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 97": {
 		"id": 97,
 		"pos": {
-			"x": 1002.5,
-			"y": 829.6296296296293
+			"x": 1000.0,
+			"y": 817.7777777777775
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1176,14 +1176,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk1.low_pres",
+		"channel": "press.tnk1.lp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 98": {
 		"id": 98,
 		"pos": {
-			"x": 1002.5,
-			"y": 945.1851851851848
+			"x": 1000.0,
+			"y": 933.3333333333329
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1215,14 +1215,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk1.high_pres",
+		"channel": "press.tnk1.hp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 99": {
 		"id": 99,
 		"pos": {
-			"x": 697.5,
-			"y": 728.8888888888886
+			"x": 695.0,
+			"y": 717.0370370370367
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1254,14 +1254,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk0.target_pres",
+		"channel": "press.tnk0.tp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 100": {
 		"id": 100,
 		"pos": {
-			"x": 697.5,
-			"y": 847.407407407407
+			"x": 695.0,
+			"y": 835.5555555555552
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1293,14 +1293,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk0.low_pres",
+		"channel": "press.tnk0.lp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 101": {
 		"id": 101,
 		"pos": {
-			"x": 691.25,
-			"y": 954.0740740740737
+			"x": 690.0,
+			"y": 942.2222222222218
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1332,14 +1332,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.tnk0.high_pres",
+		"channel": "press.tnk0.hp",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 102": {
 		"id": 102,
 		"pos": {
-			"x": 792.5,
-			"y": 933.3333333333329
+			"x": 790.0,
+			"y": 841.4814814814812
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1377,8 +1377,8 @@
 	"Generic Sensor 103": {
 		"id": 103,
 		"pos": {
-			"x": 910.0,
-			"y": 915.5555555555552
+			"x": 911.25,
+			"y": 832.5925925925923
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1416,8 +1416,8 @@
 	"Generic Sensor 104": {
 		"id": 104,
 		"pos": {
-			"x": 787.5,
-			"y": 743.7037037037034
+			"x": 785.0,
+			"y": 731.8518518518515
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1456,7 +1456,7 @@
 		"id": 105,
 		"pos": {
 			"x": 915.0,
-			"y": 737.7777777777775
+			"y": 725.9259259259256
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1488,14 +1488,14 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.pressure[2]",
+		"channel": "press.pressure[1]",
 		"board": "Pressurization Controller"
 	},
 	"Generic Sensor 106": {
 		"id": 106,
 		"pos": {
 			"x": 695.0,
-			"y": 1223.7037037037032
+			"y": 1211.8518518518513
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1533,8 +1533,8 @@
 	"Generic Sensor 107": {
 		"id": 107,
 		"pos": {
-			"x": 787.5,
-			"y": 1226.6666666666663
+			"x": 785.0,
+			"y": 1214.8148148148143
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1542,7 +1542,7 @@
 		"name": "PT",
 		"scale": 1,
 		"serial number": "",
-		"long name": "ellapsed time",
+		"long name": "State time remaining",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
@@ -1559,7 +1559,7 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
+				"x": -23.75,
 				"y": -38.518518518518505
 			},
 			"rows": 1,
@@ -1572,8 +1572,8 @@
 	"Generic Sensor 108": {
 		"id": 108,
 		"pos": {
-			"x": 892.5,
-			"y": 1220.7407407407402
+			"x": 890.0,
+			"y": 1208.8888888888885
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1612,7 +1612,7 @@
 		"id": 109,
 		"pos": {
 			"x": 1075.0,
-			"y": 1176.2962962962958
+			"y": 1164.444444444444
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1651,7 +1651,7 @@
 		"id": 110,
 		"pos": {
 			"x": 1075.0,
-			"y": 1282.9629629629624
+			"y": 1271.1111111111106
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1659,7 +1659,7 @@
 		"name": "PT",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Chamber Pres Fault Counter",
+		"long name": "Chamber Pres Low Counter",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
@@ -1676,15 +1676,131 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -42.5,
+				"x": -40.0,
 				"y": -38.518518518518505
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "press.chamber_pressure_low_count",
+		"channel": "press.chamber_pres_low_count",
 		"board": "Pressurization Controller"
 	},
-	"Board0": "Pressurization Controller"
+	"Generic Sensor 111": {
+		"id": 111,
+		"pos": {
+			"x": 1075.0,
+			"y": 1392.5925925925922
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Chamber Pres High Counter",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -41.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "press.chamber_pres_high_count",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 112": {
+		"id": 112,
+		"pos": {
+			"x": 790.0,
+			"y": 957.0370370370366
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "TPC0 Active",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -1.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "press.tnk0.tpc.active",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 114": {
+		"id": 114,
+		"pos": {
+			"x": 902.5,
+			"y": 933.3333333333329
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "TPC1 Active",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 1.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "press.tnk1.tpc.active",
+		"board": "Pressurization Controller"
+	}
 }

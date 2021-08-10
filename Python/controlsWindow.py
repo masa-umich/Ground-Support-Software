@@ -896,11 +896,11 @@ class ControlsWindow(QMainWindow):
             formLayout.addWidget(upper_voltage_box, 0, 3)
             formLayout.addWidget(upper_pressure_box, 0, 4)
 
-            verticalLayout.addLayout(labelLayout, 2 * x + 1, 0)
-            verticalLayout.addLayout(formLayout,2*x + 2,0)
+            verticalLayout.addLayout(labelLayout, 2 * x + 2, 0)
+            verticalLayout.addLayout(formLayout,2*x + 3,0)
             #verticalLayout.setColumnStretch(x, 20)
 
-            end = 2*x + 2
+            end = 2*x + 3
 
         end +=1
 
@@ -942,8 +942,20 @@ class ControlsWindow(QMainWindow):
         buttonLayout.addWidget(save_button)
         buttonLayout.addWidget(refresh_button)
 
-        verticalLayout.addLayout(buttonLayout, 0, 0)
-        #self.get_calibrate_sensors(action.text())
+        verticalLayout.addLayout(buttonLayout, 1, 0)
+
+        warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n" \
+            + "CALS TAKE A LONG TIME TO SAVE\n" \
+            + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n" \
+            + "KNOWN BUG: THIS WINDOW ONLY WORKS ONCE\n" \
+            + "AFTER CLOSING, REBOOT GUI TO USE AGAIN")
+        font.setPointSize(20 * self.gui.font_scale_ratio)
+        warning_label.setFont(font)
+        warningLayout =QtWidgets.QGridLayout()
+        warningLayout.addWidget(warning_label)
+
+        verticalLayout.addLayout(warningLayout, 0, 0)
+        
 
 
         dialog.show()
@@ -955,6 +967,7 @@ class ControlsWindow(QMainWindow):
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
 
+
         for x in range(self.channel_count):
             update_lower_voltage = True
             update_upper_voltage = True
@@ -963,10 +976,12 @@ class ControlsWindow(QMainWindow):
             if(self.cal_packet != None):
                 if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
                     update_lower_voltage = False
-                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
+                if (self.cal_packet[prefix + "pt_cal_upper_voltage[" + str(x) +"]"] == self.upper_voltage[x].value()):
                     update_upper_voltage = False
-                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) +"]"] == self.lower_voltage[x].value()):
+                if (self.cal_packet[prefix + "pt_cal_upper_pressure[" + str(x) +"]"] == self.upper_pressure[x].value()):
                     update_upper_pressure = False
+
+
             if update_lower_voltage:
                 cmd_dict = {
                     "function_name": "set_pt_lower_voltage",
