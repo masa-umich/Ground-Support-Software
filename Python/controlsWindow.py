@@ -60,6 +60,7 @@ class ControlsWindow(QMainWindow):
         self.upper_pressure = []
         self.channel_count = 0
         self.cal_packet = None
+        self.startup =True
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -851,26 +852,27 @@ class ControlsWindow(QMainWindow):
             formLayout = QtWidgets.QGridLayout()
             labelLayout =QtWidgets.QGridLayout()
 
+            if self.startup:
+                lower_voltage_box = QDoubleSpinBox()
+                lower_voltage_box.setMaximum(9999)
+                lower_voltage_box.setValue(0)
+                lower_voltage_box.setDecimals(2)
 
-            lower_voltage_box = QDoubleSpinBox()
-            lower_voltage_box.setMaximum(9999)
-            lower_voltage_box.setValue(0)
-            lower_voltage_box.setDecimals(2)
 
+                upper_voltage_box = QDoubleSpinBox()
+                upper_voltage_box.setMaximum(9999)
+                upper_voltage_box.setValue(0)
+                upper_voltage_box.setDecimals(2)
 
-            upper_voltage_box = QDoubleSpinBox()
-            upper_voltage_box.setMaximum(9999)
-            upper_voltage_box.setValue(0)
-            upper_voltage_box.setDecimals(2)
+                upper_pressure_box = QDoubleSpinBox()
+                upper_pressure_box.setMaximum(9999)
+                upper_pressure_box.setValue(0)
+                upper_pressure_box.setDecimals(0)
 
-            upper_pressure_box = QDoubleSpinBox()
-            upper_pressure_box.setMaximum(9999)
-            upper_pressure_box.setValue(0)
-            upper_pressure_box.setDecimals(0)
+                self.lower_voltage.append(lower_voltage_box)
+                self.upper_voltage.append(upper_voltage_box)
+                self.upper_pressure.append(upper_pressure_box)
 
-            self.lower_voltage.append(lower_voltage_box)
-            self.upper_voltage.append(upper_voltage_box)
-            self.upper_pressure.append(upper_pressure_box)
 
             label = QLabel("PT Channel " + str(x))
             label.setFont(font)
@@ -890,11 +892,16 @@ class ControlsWindow(QMainWindow):
             labelLayout.addWidget(label2, 0, 3)
             labelLayout.addWidget(label3, 0, 4)
 
-
             formLayout.addWidget(label, 0, 1)
-            formLayout.addWidget(lower_voltage_box, 0, 2)
-            formLayout.addWidget(upper_voltage_box, 0, 3)
-            formLayout.addWidget(upper_pressure_box, 0, 4)
+            if self.startup:
+                formLayout.addWidget(lower_voltage_box, 0, 2)
+                formLayout.addWidget(upper_voltage_box, 0, 3)
+                formLayout.addWidget(upper_pressure_box, 0, 4)
+            else:
+                formLayout.addWidget(self.lower_voltage[x], 0, 2)
+                formLayout.addWidget(self.upper_voltage_box[x], 0, 3)
+                formLayout.addWidget(self.upper_pressure_box[x], 0, 4)
+
 
             verticalLayout.addLayout(labelLayout, 2 * x + 2, 0)
             verticalLayout.addLayout(formLayout,2*x + 3,0)
@@ -960,6 +967,9 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
         self.scrollArea.show()
+
+        if self.startup == True:
+            self.stratup = False
         #sys.exit(app.exec_())
         #self.show_window(scrollArea)
 
