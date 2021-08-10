@@ -2,11 +2,11 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 62.5,
-			"y": 222.22222222222214
+			"x": 60.00000000000001,
+			"y": 220.83333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,25 +28,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
-		"channel": "0",
+		"channel": "9",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 2": {
 		"id": 2,
 		"pos": {
-			"x": 62.5,
-			"y": 334.81481481481467
+			"x": 60.00000000000001,
+			"y": 255.8333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -58,8 +58,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -68,25 +68,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
-		"channel": "1",
+		"channel": "10",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 3": {
 		"id": 3,
 		"pos": {
-			"x": 62.5,
-			"y": 441.4814814814813
+			"x": 60.00000000000001,
+			"y": 293.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -98,8 +98,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -108,25 +108,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
-		"channel": "2",
+		"channel": "11",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 4": {
 		"id": 4,
 		"pos": {
-			"x": 62.5,
-			"y": 559.9999999999998
+			"x": 66.66666666666667,
+			"y": 328.33333333333326
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -138,8 +138,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -148,25 +148,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
-		"channel": "3",
+		"channel": "12",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 5": {
 		"id": 5,
 		"pos": {
-			"x": 62.5,
-			"y": 660.7407407407405
+			"x": 60.00000000000001,
+			"y": 658.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -178,8 +178,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -188,11 +188,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "4",
@@ -202,11 +202,11 @@
 	"Solenoid 6": {
 		"id": 6,
 		"pos": {
-			"x": 62.5,
-			"y": 785.1851851851849
+			"x": 60.00000000000001,
+			"y": 783.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -218,8 +218,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -228,11 +228,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "5",
@@ -242,11 +242,11 @@
 	"Solenoid 7": {
 		"id": 7,
 		"pos": {
-			"x": 62.5,
-			"y": 894.8148148148144
+			"x": 60.00000000000001,
+			"y": 892.4999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -258,8 +258,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -268,11 +268,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "6",
@@ -282,11 +282,11 @@
 	"Solenoid 8": {
 		"id": 8,
 		"pos": {
-			"x": 62.5,
-			"y": 1004.444444444444
+			"x": 60.00000000000001,
+			"y": 1002.4999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -298,8 +298,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -308,11 +308,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "7",
@@ -322,11 +322,11 @@
 	"Solenoid 9": {
 		"id": 9,
 		"pos": {
-			"x": 62.5,
-			"y": 1111.1111111111106
+			"x": 60.00000000000001,
+			"y": 1109.9999999999998
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -338,8 +338,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -348,11 +348,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "8",
@@ -362,11 +362,11 @@
 	"Solenoid 10": {
 		"id": 10,
 		"pos": {
-			"x": 62.5,
-			"y": 1235.555555555555
+			"x": 60.00000000000001,
+			"y": 1233.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -378,8 +378,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -388,11 +388,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "9",
@@ -402,11 +402,11 @@
 	"Solenoid 11": {
 		"id": 11,
 		"pos": {
-			"x": 132.5,
-			"y": 222.22222222222214
+			"x": 521.1111111111112,
+			"y": 210.83333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -418,8 +418,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -428,11 +428,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "10",
@@ -442,11 +442,11 @@
 	"Solenoid 12": {
 		"id": 12,
 		"pos": {
-			"x": 132.5,
-			"y": 334.81481481481467
+			"x": 535.5555555555557,
+			"y": 239.99999999999997
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -458,8 +458,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -468,11 +468,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "11",
@@ -482,11 +482,11 @@
 	"Solenoid 13": {
 		"id": 13,
 		"pos": {
-			"x": 132.5,
-			"y": 447.4074074074072
+			"x": 530.0,
+			"y": 274.99999999999994
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -498,8 +498,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -508,11 +508,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "12",
@@ -522,11 +522,11 @@
 	"Solenoid 14": {
 		"id": 14,
 		"pos": {
-			"x": 132.5,
-			"y": 559.9999999999998
+			"x": 523.3333333333334,
+			"y": 302.49999999999994
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -538,8 +538,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -548,25 +548,25 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
-		"channel": "13",
+		"channel": "30",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 15": {
 		"id": 15,
 		"pos": {
-			"x": 132.5,
-			"y": 660.7407407407405
+			"x": 130.0,
+			"y": 658.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -578,8 +578,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -588,11 +588,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "14",
@@ -602,11 +602,11 @@
 	"Solenoid 16": {
 		"id": 16,
 		"pos": {
-			"x": 132.5,
-			"y": 785.1851851851849
+			"x": 130.0,
+			"y": 783.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -618,8 +618,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -628,11 +628,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "15",
@@ -642,11 +642,11 @@
 	"Solenoid 17": {
 		"id": 17,
 		"pos": {
-			"x": 132.5,
-			"y": 894.8148148148144
+			"x": 130.0,
+			"y": 892.4999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -658,8 +658,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -668,11 +668,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "16",
@@ -682,11 +682,11 @@
 	"Solenoid 18": {
 		"id": 18,
 		"pos": {
-			"x": 135.0,
-			"y": 1007.407407407407
+			"x": 133.33333333333334,
+			"y": 1005.8333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -698,8 +698,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -708,11 +708,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "17",
@@ -722,11 +722,11 @@
 	"Solenoid 19": {
 		"id": 19,
 		"pos": {
-			"x": 132.5,
-			"y": 1099.259259259259
+			"x": 130.0,
+			"y": 1097.4999999999998
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -738,8 +738,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -748,11 +748,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "18",
@@ -762,11 +762,11 @@
 	"Solenoid 20": {
 		"id": 20,
 		"pos": {
-			"x": 132.5,
-			"y": 1247.407407407407
+			"x": 130.0,
+			"y": 1245.8333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -778,8 +778,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -788,11 +788,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "19",
@@ -802,11 +802,11 @@
 	"Solenoid 21": {
 		"id": 21,
 		"pos": {
-			"x": 210.0,
-			"y": 222.22222222222214
+			"x": 748.8888888888889,
+			"y": 124.99999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -818,8 +818,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -828,11 +828,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "20",
@@ -842,11 +842,11 @@
 	"Solenoid 22": {
 		"id": 22,
 		"pos": {
-			"x": 210.0,
-			"y": 322.9629629629628
+			"x": 748.8888888888889,
+			"y": 168.33333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -858,8 +858,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -868,11 +868,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "21",
@@ -882,11 +882,11 @@
 	"Solenoid 23": {
 		"id": 23,
 		"pos": {
-			"x": 210.0,
-			"y": 435.5555555555554
+			"x": 748.8888888888889,
+			"y": 195.83333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -898,8 +898,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -908,11 +908,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "22",
@@ -922,11 +922,11 @@
 	"Solenoid 24": {
 		"id": 24,
 		"pos": {
-			"x": 210.0,
-			"y": 559.9999999999998
+			"x": 748.8888888888889,
+			"y": 229.99999999999997
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -938,8 +938,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -948,11 +948,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "23",
@@ -962,11 +962,11 @@
 	"Solenoid 25": {
 		"id": 25,
 		"pos": {
-			"x": 207.5,
-			"y": 666.6666666666664
+			"x": 205.55555555555557,
+			"y": 664.9999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -978,8 +978,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -988,11 +988,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "24",
@@ -1002,11 +1002,11 @@
 	"Solenoid 26": {
 		"id": 26,
 		"pos": {
-			"x": 207.5,
-			"y": 785.1851851851849
+			"x": 205.55555555555557,
+			"y": 783.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1018,8 +1018,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1028,11 +1028,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "25",
@@ -1042,11 +1042,11 @@
 	"Solenoid 27": {
 		"id": 27,
 		"pos": {
-			"x": 210.0,
-			"y": 894.8148148148144
+			"x": 207.7777777777778,
+			"y": 892.4999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1058,8 +1058,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1068,11 +1068,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "26",
@@ -1082,11 +1082,11 @@
 	"Solenoid 28": {
 		"id": 28,
 		"pos": {
-			"x": 205.0,
-			"y": 1004.444444444444
+			"x": 203.33333333333334,
+			"y": 1002.4999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1098,8 +1098,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1108,11 +1108,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "27",
@@ -1122,11 +1122,11 @@
 	"Solenoid 29": {
 		"id": 29,
 		"pos": {
-			"x": 207.5,
-			"y": 1105.1851851851848
+			"x": 205.55555555555557,
+			"y": 1103.3333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1138,8 +1138,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1148,11 +1148,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "28",
@@ -1162,11 +1162,11 @@
 	"Solenoid 30": {
 		"id": 30,
 		"pos": {
-			"x": 210.0,
-			"y": 1241.481481481481
+			"x": 207.7777777777778,
+			"y": 1239.9999999999998
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1178,8 +1178,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1188,11 +1188,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "29",
@@ -1202,11 +1202,11 @@
 	"Solenoid 31": {
 		"id": 31,
 		"pos": {
-			"x": 301.25,
-			"y": 222.22222222222214
+			"x": 1005.5555555555557,
+			"y": 178.33333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1218,8 +1218,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1228,11 +1228,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "30",
@@ -1242,11 +1242,11 @@
 	"Solenoid 32": {
 		"id": 32,
 		"pos": {
-			"x": 301.25,
-			"y": 334.81481481481467
+			"x": 998.888888888889,
+			"y": 220.83333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -1258,8 +1258,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1268,15 +1268,246 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -5.0,
-				"y": -38.518518518518505
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "31",
 		"board": "GSE Controller",
 		"normally open": false
+	},
+	"Solenoid 33": {
+		"id": 33,
+		"pos": {
+			"x": 66.66666666666667,
+			"y": 358.33333333333326
+		},
+		"fluid": 0,
+		"width": 40.00000000000001,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "13",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 34": {
+		"id": 34,
+		"pos": {
+			"x": 71.11111111111111,
+			"y": 398.33333333333326
+		},
+		"fluid": 0,
+		"width": 40.00000000000001,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "14",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 35": {
+		"id": 35,
+		"pos": {
+			"x": 74.44444444444446,
+			"y": 434.99999999999994
+		},
+		"fluid": 0,
+		"width": 40.00000000000001,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "15",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 36": {
+		"id": 36,
+		"pos": {
+			"x": 81.11111111111111,
+			"y": 476.6666666666666
+		},
+		"fluid": 0,
+		"width": 40.00000000000001,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "16",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 37": {
+		"id": 37,
+		"pos": {
+			"x": 83.33333333333334,
+			"y": 508.33333333333326
+		},
+		"fluid": 0,
+		"width": 40.00000000000001,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.222222222222223,
+				"y": -14.999999999999998
+			},
+			"rows": 1,
+			"font size": 12.000000000000002,
+			"is visible": true
+		},
+		"channel": "17",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 91.11111111111111,
+				"y": 398.33333333333326
+			},
+			"1": {
+				"x": 91.11111111111111,
+				"y": 449.1666666666666
+			},
+			"2": {
+				"x": 305.5555555555556,
+				"y": 449.1666666666666
+			},
+			"3": {
+				"x": 305.5555555555556,
+				"y": 417.49999999999994
+			},
+			"4": {
+				"x": 305.5555555555556,
+				"y": 417.49999999999994
+			},
+			"5": {
+				"x": 305.5555555555556,
+				"y": 417.49999999999994
+			}
+		},
+		"line width": 1.0
 	}
 }

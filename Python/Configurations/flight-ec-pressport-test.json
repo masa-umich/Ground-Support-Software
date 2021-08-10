@@ -2,11 +2,11 @@
 	"Solenoid 67": {
 		"id": 67,
 		"pos": {
-			"x": 530.0,
-			"y": 248.8888888888888
+			"x": 528.8888888888889,
+			"y": 247.49999999999997
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,11 +28,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -12.5,
-				"y": -38.518518518518505
+				"x": -23.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "0",
@@ -42,11 +42,11 @@
 	"Solenoid 68": {
 		"id": 68,
 		"pos": {
-			"x": 530.0,
-			"y": 352.59259259259244
+			"x": 528.8888888888889,
+			"y": 351.66666666666663
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -58,8 +58,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -68,11 +68,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6.25,
-				"y": -38.518518518518505
+				"x": -14.444444444444446,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "1",
@@ -82,11 +82,11 @@
 	"Solenoid 69": {
 		"id": 69,
 		"pos": {
-			"x": 540.0,
-			"y": 471.1111111111109
+			"x": 538.8888888888889,
+			"y": 470.83333333333326
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -98,8 +98,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -108,11 +108,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -20.0,
-				"y": -38.518518518518505
+				"x": -32.22222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "2",
@@ -122,11 +122,11 @@
 	"Solenoid 70": {
 		"id": 70,
 		"pos": {
-			"x": 530.0,
-			"y": 586.6666666666664
+			"x": 528.8888888888889,
+			"y": 585.8333333333333
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -138,8 +138,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -148,11 +148,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -13.75,
-				"y": -38.518518518518505
+				"x": -23.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "3",
@@ -162,11 +162,11 @@
 	"Solenoid 71": {
 		"id": 71,
 		"pos": {
-			"x": 540.0,
-			"y": 717.0370370370367
+			"x": 538.8888888888889,
+			"y": 716.6666666666665
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -178,8 +178,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -188,11 +188,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -21.25,
-				"y": -38.518518518518505
+				"x": -34.44444444444445,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "4",
@@ -202,11 +202,11 @@
 	"Solenoid 72": {
 		"id": 72,
 		"pos": {
-			"x": 535.0,
-			"y": 835.5555555555552
+			"x": 534.4444444444445,
+			"y": 834.9999999999999
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -218,8 +218,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -228,11 +228,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -20.0,
-				"y": -38.518518518518505
+				"x": -32.22222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "5",
@@ -242,11 +242,11 @@
 	"Solenoid 73": {
 		"id": 73,
 		"pos": {
-			"x": 525.0,
-			"y": 936.296296296296
+			"x": 524.4444444444445,
+			"y": 935.8333333333331
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -258,8 +258,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -268,11 +268,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 0.0,
-				"y": -38.518518518518505
+				"x": -5.555555555555556,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "6",
@@ -282,11 +282,11 @@
 	"Solenoid 74": {
 		"id": 74,
 		"pos": {
-			"x": 530.0,
-			"y": 1042.9629629629626
+			"x": 528.8888888888889,
+			"y": 1041.6666666666665
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -298,8 +298,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -308,11 +308,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -15.0,
-				"y": -38.518518518518505
+				"x": -25.555555555555557,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "7",
@@ -322,11 +322,11 @@
 	"Solenoid 75": {
 		"id": 75,
 		"pos": {
-			"x": 540.0,
-			"y": 1167.407407407407
+			"x": 538.8888888888889,
+			"y": 1166.6666666666665
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -338,8 +338,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -348,11 +348,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 1.25,
-				"y": -38.518518518518505
+				"x": -3.3333333333333335,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "8",
@@ -362,11 +362,11 @@
 	"Solenoid 76": {
 		"id": 76,
 		"pos": {
-			"x": 431.25,
-			"y": 245.92592592592584
+			"x": 430.00000000000006,
+			"y": 244.99999999999997
 		},
 		"fluid": 0,
-		"width": 40.0,
+		"width": 40.00000000000001,
 		"height": 18.0,
 		"name": "Solenoid",
 		"scale": 1,
@@ -378,8 +378,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.25,
-				"y": 50.37037037037035
+				"x": 16.666666666666668,
+				"y": 15.83333333333333
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -388,11 +388,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -35.0,
-				"y": -38.518518518518505
+				"x": -53.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "9",
@@ -402,8 +402,8 @@
 	"Generic Sensor 77": {
 		"id": 77,
 		"pos": {
-			"x": 1190.0,
-			"y": 198.51851851851845
+			"x": 1190.0000000000002,
+			"y": 197.49999999999997
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -418,8 +418,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -428,11 +428,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -10.0,
-				"y": -38.518518518518505
+				"x": -23.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.ignitor_on_delay",
@@ -441,8 +441,8 @@
 	"Generic Sensor 78": {
 		"id": 78,
 		"pos": {
-			"x": 1190.0,
-			"y": 328.88888888888874
+			"x": 1190.0000000000002,
+			"y": 327.49999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -457,8 +457,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -467,11 +467,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -23.75,
-				"y": -38.518518518518505
+				"x": -42.22222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.ignitor_high_duration",
@@ -480,8 +480,8 @@
 	"Generic Sensor 80": {
 		"id": 80,
 		"pos": {
-			"x": 1190.0,
-			"y": 453.33333333333314
+			"x": 1190.0000000000002,
+			"y": 452.49999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -496,8 +496,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -506,11 +506,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 5.0,
-				"y": -38.518518518518505
+				"x": -3.3333333333333335,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.pid_delay",
@@ -519,8 +519,8 @@
 	"Generic Sensor 81": {
 		"id": 81,
 		"pos": {
-			"x": 1190.0,
-			"y": 574.8148148148146
+			"x": 1190.0000000000002,
+			"y": 573.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -535,8 +535,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -545,11 +545,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -13.75,
-				"y": -38.518518518518505
+				"x": -27.777777777777782,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.fuel_mpv_delay",
@@ -558,8 +558,8 @@
 	"Generic Sensor 82": {
 		"id": 82,
 		"pos": {
-			"x": 1190.0,
-			"y": 705.1851851851849
+			"x": 1190.0000000000002,
+			"y": 704.9999999999999
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -574,8 +574,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -584,11 +584,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -16.25,
-				"y": -38.518518518518505
+				"x": -31.111111111111114,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.nozzle_film_cooling_delay",
@@ -597,8 +597,8 @@
 	"Generic Sensor 83": {
 		"id": 83,
 		"pos": {
-			"x": 1190.0,
-			"y": 826.6666666666663
+			"x": 1190.0000000000002,
+			"y": 825.8333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -613,8 +613,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -623,11 +623,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -11.25,
-				"y": -38.518518518518505
+				"x": -25.555555555555557,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.test_duration",
@@ -636,8 +636,8 @@
 	"Generic Sensor 84": {
 		"id": 84,
 		"pos": {
-			"x": 1190.0,
-			"y": 942.2222222222218
+			"x": 1190.0000000000002,
+			"y": 941.6666666666665
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -652,8 +652,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -662,11 +662,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -1.25,
-				"y": -38.518518518518505
+				"x": -10.000000000000002,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.deg_corr_factor",
@@ -675,8 +675,8 @@
 	"Generic Sensor 85": {
 		"id": 85,
 		"pos": {
-			"x": 1190.0,
-			"y": 1063.7037037037032
+			"x": 1190.0000000000002,
+			"y": 1062.4999999999998
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -691,8 +691,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -701,11 +701,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -18.75,
-				"y": -38.518518518518505
+				"x": -35.55555555555556,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.enable_auto_aborts",
@@ -714,12 +714,12 @@
 	"Tank 86": {
 		"id": 86,
 		"pos": {
-			"x": 780.0,
-			"y": 645.9259259259256
+			"x": 778.8888888888889,
+			"y": 644.9999999999999
 		},
 		"fluid": 0,
 		"width": 88.0,
-		"height": 170.0,
+		"height": 169.99999999999997,
 		"name": "Tank",
 		"scale": 1,
 		"serial number": "",
@@ -730,8 +730,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.0,
-				"y": 411.8518518518517
+				"x": 41.111111111111114,
+				"y": 129.99999999999997
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -740,11 +740,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 25.0,
-				"y": -38.518518518518505
+				"x": 20.000000000000004,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "0",
@@ -753,12 +753,12 @@
 	"Tank 87": {
 		"id": 87,
 		"pos": {
-			"x": 900.0,
-			"y": 645.9259259259256
+			"x": 898.888888888889,
+			"y": 644.9999999999999
 		},
 		"fluid": 0,
 		"width": 88.0,
-		"height": 170.0,
+		"height": 169.99999999999997,
 		"name": "Tank",
 		"scale": 1,
 		"serial number": "",
@@ -769,8 +769,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.0,
-				"y": 411.8518518518517
+				"x": 41.111111111111114,
+				"y": 129.99999999999997
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -779,11 +779,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 27.5,
-				"y": -38.518518518518505
+				"x": 22.222222222222225,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "1",
@@ -792,12 +792,12 @@
 	"Motor 88": {
 		"id": 88,
 		"pos": {
-			"x": 785.0,
-			"y": 234.074074074074
+			"x": 784.4444444444446,
+			"y": 233.3333333333333
 		},
 		"fluid": 0,
 		"width": 70.0,
-		"height": 117.0,
+		"height": 116.99999999999999,
 		"name": "Motor",
 		"scale": 1,
 		"serial number": "",
@@ -808,8 +808,8 @@
 		"serial number label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 73.75,
-				"y": 130.37037037037032
+				"x": 73.33333333333334,
+				"y": 41.66666666666666
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -818,11 +818,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 16.25,
-				"y": -38.518518518518505
+				"x": 12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "0",
@@ -831,12 +831,12 @@
 	"Motor 89": {
 		"id": 89,
 		"pos": {
-			"x": 910.0,
-			"y": 242.96296296296288
+			"x": 908.888888888889,
+			"y": 241.66666666666663
 		},
 		"fluid": 0,
 		"width": 70.0,
-		"height": 117.0,
+		"height": 116.99999999999999,
 		"name": "Motor",
 		"scale": 1,
 		"serial number": "",
@@ -847,8 +847,8 @@
 		"serial number label": {
 			"pos string": "Right",
 			"local pos": {
-				"x": 73.75,
-				"y": 130.37037037037032
+				"x": 73.33333333333334,
+				"y": 41.66666666666666
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -857,11 +857,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 16.25,
-				"y": -38.518518518518505
+				"x": 12.222222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "1",
@@ -870,8 +870,8 @@
 	"Generic Sensor 90": {
 		"id": 90,
 		"pos": {
-			"x": 1005.0,
-			"y": 254.81481481481472
+			"x": 1004.4444444444446,
+			"y": 253.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -886,8 +886,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -896,11 +896,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 23.75,
-				"y": -38.518518518518505
+				"x": 23.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.p",
@@ -909,8 +909,8 @@
 	"Generic Sensor 91": {
 		"id": 91,
 		"pos": {
-			"x": 1010.0,
-			"y": 358.51851851851836
+			"x": 1008.888888888889,
+			"y": 357.49999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -925,8 +925,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -935,11 +935,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 26.25,
-				"y": -38.518518518518505
+				"x": 25.555555555555557,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.i",
@@ -948,8 +948,8 @@
 	"Generic Sensor 92": {
 		"id": 92,
 		"pos": {
-			"x": 1005.0,
-			"y": 471.1111111111109
+			"x": 1004.4444444444446,
+			"y": 470.83333333333326
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -964,8 +964,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -974,11 +974,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 23.75,
-				"y": -38.518518518518505
+				"x": 22.222222222222225,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.d",
@@ -987,8 +987,8 @@
 	"Generic Sensor 93": {
 		"id": 93,
 		"pos": {
-			"x": 695.0,
-			"y": 239.99999999999991
+			"x": 694.4444444444445,
+			"y": 238.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1003,8 +1003,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1013,11 +1013,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 22.5,
-				"y": -38.518518518518505
+				"x": 21.111111111111114,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.p",
@@ -1026,8 +1026,8 @@
 	"Generic Sensor 94": {
 		"id": 94,
 		"pos": {
-			"x": 695.0,
-			"y": 352.59259259259244
+			"x": 694.4444444444445,
+			"y": 351.66666666666663
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1042,8 +1042,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1052,11 +1052,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 25.0,
-				"y": -38.518518518518505
+				"x": 23.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.i",
@@ -1065,8 +1065,8 @@
 	"Generic Sensor 95": {
 		"id": 95,
 		"pos": {
-			"x": 695.0,
-			"y": 459.25925925925907
+			"x": 694.4444444444445,
+			"y": 458.33333333333326
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1081,8 +1081,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1091,11 +1091,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 22.5,
-				"y": -38.518518518518505
+				"x": 20.000000000000004,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.d",
@@ -1104,8 +1104,8 @@
 	"Generic Sensor 96": {
 		"id": 96,
 		"pos": {
-			"x": 1000.0,
-			"y": 705.1851851851849
+			"x": 998.888888888889,
+			"y": 704.9999999999999
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1120,8 +1120,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1130,11 +1130,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 11.25,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk1.tp",
@@ -1143,8 +1143,8 @@
 	"Generic Sensor 97": {
 		"id": 97,
 		"pos": {
-			"x": 1000.0,
-			"y": 811.8518518518515
+			"x": 998.888888888889,
+			"y": 810.8333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1159,8 +1159,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1169,11 +1169,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk1.lp",
@@ -1182,8 +1182,8 @@
 	"Generic Sensor 98": {
 		"id": 98,
 		"pos": {
-			"x": 1000.0,
-			"y": 927.407407407407
+			"x": 998.888888888889,
+			"y": 926.6666666666665
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1198,8 +1198,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1208,11 +1208,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk1.hp",
@@ -1221,8 +1221,8 @@
 	"Generic Sensor 99": {
 		"id": 99,
 		"pos": {
-			"x": 695.0,
-			"y": 711.1111111111109
+			"x": 694.4444444444445,
+			"y": 710.8333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1237,8 +1237,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1247,11 +1247,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 10.0,
-				"y": -38.518518518518505
+				"x": 4.444444444444445,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk0.tp",
@@ -1260,8 +1260,8 @@
 	"Generic Sensor 100": {
 		"id": 100,
 		"pos": {
-			"x": 695.0,
-			"y": 829.6296296296293
+			"x": 694.4444444444445,
+			"y": 828.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1276,8 +1276,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1286,11 +1286,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk0.lp",
@@ -1299,8 +1299,8 @@
 	"Generic Sensor 101": {
 		"id": 101,
 		"pos": {
-			"x": 690.0,
-			"y": 936.296296296296
+			"x": 688.8888888888889,
+			"y": 935.8333333333331
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1315,8 +1315,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1325,11 +1325,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk0.hp",
@@ -1338,8 +1338,8 @@
 	"Generic Sensor 102": {
 		"id": 102,
 		"pos": {
-			"x": 790.0,
-			"y": 835.5555555555552
+			"x": 788.8888888888889,
+			"y": 834.9999999999999
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1354,8 +1354,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1364,11 +1364,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 18.75,
-				"y": -38.518518518518505
+				"x": 16.666666666666668,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk0.en",
@@ -1377,8 +1377,8 @@
 	"Generic Sensor 103": {
 		"id": 103,
 		"pos": {
-			"x": 910.0,
-			"y": 826.6666666666663
+			"x": 908.888888888889,
+			"y": 825.8333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1393,8 +1393,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1403,11 +1403,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 21.25,
-				"y": -38.518518518518505
+				"x": 18.88888888888889,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk1.en",
@@ -1416,8 +1416,8 @@
 	"Generic Sensor 104": {
 		"id": 104,
 		"pos": {
-			"x": 785.0,
-			"y": 725.9259259259256
+			"x": 784.4444444444446,
+			"y": 724.9999999999999
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1432,8 +1432,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1442,11 +1442,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 7.777777777777779,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.pressure[0]",
@@ -1455,8 +1455,8 @@
 	"Generic Sensor 105": {
 		"id": 105,
 		"pos": {
-			"x": 915.0,
-			"y": 719.9999999999998
+			"x": 914.4444444444446,
+			"y": 718.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1471,8 +1471,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1481,11 +1481,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 15.0,
-				"y": -38.518518518518505
+				"x": 10.000000000000002,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.pressure[2]",
@@ -1494,8 +1494,8 @@
 	"Generic Sensor 106": {
 		"id": 106,
 		"pos": {
-			"x": 695.0,
-			"y": 1205.9259259259254
+			"x": 694.4444444444445,
+			"y": 1204.9999999999998
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1510,8 +1510,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1520,11 +1520,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 17.5,
-				"y": -38.518518518518505
+				"x": 13.333333333333334,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.STATE",
@@ -1533,8 +1533,8 @@
 	"Generic Sensor 107": {
 		"id": 107,
 		"pos": {
-			"x": 785.0,
-			"y": 1208.8888888888885
+			"x": 784.4444444444446,
+			"y": 1207.4999999999998
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1549,8 +1549,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1559,11 +1559,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -23.75,
-				"y": -38.518518518518505
+				"x": -42.22222222222223,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.state_rem_duration",
@@ -1572,8 +1572,8 @@
 	"Generic Sensor 108": {
 		"id": 108,
 		"pos": {
-			"x": 890.0,
-			"y": 1202.9629629629626
+			"x": 888.888888888889,
+			"y": 1201.6666666666665
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1588,8 +1588,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1598,11 +1598,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 1.25,
-				"y": -38.518518518518505
+				"x": -7.777777777777779,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.timestamp",
@@ -1611,8 +1611,8 @@
 	"Generic Sensor 109": {
 		"id": 109,
 		"pos": {
-			"x": 1075.0,
-			"y": 1158.518518518518
+			"x": 1074.4444444444446,
+			"y": 1157.4999999999998
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1627,8 +1627,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1637,11 +1637,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -25.0,
-				"y": -38.518518518518505
+				"x": -43.333333333333336,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.ignitor_break_count",
@@ -1650,8 +1650,8 @@
 	"Generic Sensor 110": {
 		"id": 110,
 		"pos": {
-			"x": 1075.0,
-			"y": 1265.1851851851848
+			"x": 1074.4444444444446,
+			"y": 1264.9999999999998
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1666,8 +1666,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1676,11 +1676,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -40.0,
-				"y": -38.518518518518505
+				"x": -63.33333333333334,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.chamber_pres_low_count",
@@ -1689,8 +1689,8 @@
 	"Generic Sensor 111": {
 		"id": 111,
 		"pos": {
-			"x": 1075.0,
-			"y": 1386.666666666666
+			"x": 1074.4444444444446,
+			"y": 1385.833333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1705,8 +1705,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1715,11 +1715,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -41.25,
-				"y": -38.518518518518505
+				"x": -65.55555555555556,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.chamber_pres_high_count",
@@ -1728,8 +1728,8 @@
 	"Generic Sensor 112": {
 		"id": 112,
 		"pos": {
-			"x": 790.0,
-			"y": 951.1111111111107
+			"x": 788.8888888888889,
+			"y": 950.8333333333331
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1744,8 +1744,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1754,11 +1754,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -1.25,
-				"y": -38.518518518518505
+				"x": -11.111111111111112,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk0.tpc.active",
@@ -1767,8 +1767,8 @@
 	"Generic Sensor 114": {
 		"id": 114,
 		"pos": {
-			"x": 900.0,
-			"y": 927.407407407407
+			"x": 898.888888888889,
+			"y": 926.6666666666665
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1783,8 +1783,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1793,11 +1793,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 1.25,
-				"y": -38.518518518518505
+				"x": -8.88888888888889,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.tnk1.tpc.active",
@@ -1806,8 +1806,8 @@
 	"Generic Sensor 115": {
 		"id": 115,
 		"pos": {
-			"x": 1090.0,
-			"y": 251.85185185185176
+			"x": 1088.888888888889,
+			"y": 250.8333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1822,8 +1822,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1832,11 +1832,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.kp_err",
@@ -1845,8 +1845,8 @@
 	"Generic Sensor 116": {
 		"id": 116,
 		"pos": {
-			"x": 1090.0,
-			"y": 355.55555555555543
+			"x": 1088.888888888889,
+			"y": 354.99999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1861,8 +1861,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1871,11 +1871,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.ki_err",
@@ -1884,8 +1884,8 @@
 	"Generic Sensor 117": {
 		"id": 117,
 		"pos": {
-			"x": 1090.0,
-			"y": 465.185185185185
+			"x": 1088.888888888889,
+			"y": 464.99999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1900,8 +1900,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1910,11 +1910,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr1.kd_err",
@@ -1923,8 +1923,8 @@
 	"Generic Sensor 118": {
 		"id": 118,
 		"pos": {
-			"x": 612.5,
-			"y": 239.99999999999991
+			"x": 611.1111111111112,
+			"y": 238.3333333333333
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1939,8 +1939,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1949,11 +1949,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.kp_err",
@@ -1962,8 +1962,8 @@
 	"Generic Sensor 119": {
 		"id": 119,
 		"pos": {
-			"x": 612.5,
-			"y": 352.59259259259244
+			"x": 611.1111111111112,
+			"y": 351.66666666666663
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -1978,8 +1978,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -1988,11 +1988,11 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.ki_err",
@@ -2001,8 +2001,8 @@
 	"Generic Sensor 120": {
 		"id": 120,
 		"pos": {
-			"x": 615.0,
-			"y": 465.185185185185
+			"x": 614.4444444444445,
+			"y": 464.99999999999994
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -2017,8 +2017,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 28.75,
-				"y": 65.18518518518516
+				"x": 30.000000000000004,
+				"y": 19.999999999999996
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -2027,15 +2027,14 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 12.5,
-				"y": -38.518518518518505
+				"x": 6.666666666666667,
+				"y": -14.999999999999998
 			},
 			"rows": 1,
-			"font size": 12.0,
+			"font size": 12.000000000000002,
 			"is visible": true
 		},
 		"channel": "press.mtr0.kd_err",
 		"board": "Pressurization Controller"
-	},
-	"Board0": "Pressurization Controller"
+	}
 }

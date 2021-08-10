@@ -130,7 +130,7 @@ class S2_Interface:
             packet = self.unstuff_packet(packet)
             packet_type = self.get_packet_type_from_packet(packet)
             board_addr = self.get_board_addr_from_packet(packet)
-            # print(packet)
+            #print(packet)
             # TODO: modify packet header to include origin packet
             try:
                 if packet_type == 0:
