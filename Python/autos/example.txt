@@ -3,7 +3,7 @@
 
 # By default it will send commands to the board selected in the server
 # Or start with a set_addr statement like this:
-# set_addr 2
+set_addr 3
 set_vlv 4 1
 
 # You can add delays (in ms)
@@ -18,7 +18,7 @@ set_addr 1
 set_vlv 4 1
 
 # Call other autos
-auto sub
+#auto sub
 
 # Commands are case insensitive
 DELAY 1000

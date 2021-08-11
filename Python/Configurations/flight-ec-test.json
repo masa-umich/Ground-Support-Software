@@ -1,0 +1,2395 @@
+{
+	"Solenoid 1": {
+		"id": 1,
+		"pos": {
+			"x": 30.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "LOX Control (0)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 115.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Control (1)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -20.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 200.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "LOX Vent (2)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -13.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "2",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 275.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Vent (3)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -13.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "3",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 5": {
+		"id": 5,
+		"pos": {
+			"x": 360.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "MPV Purge (4)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -18.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "4",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 6": {
+		"id": 6,
+		"pos": {
+			"x": 455.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel MPV Vent (5)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -27.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "5",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 565.0,
+			"y": 228.14814814814807
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "LOX MPV Vent (6)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -26.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "6",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 8": {
+		"id": 8,
+		"pos": {
+			"x": 30.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "MPV Press (7)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -16.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "7",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 9": {
+		"id": 9,
+		"pos": {
+			"x": 115.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Film Cooling (8)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "8",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 10": {
+		"id": 10,
+		"pos": {
+			"x": 200.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Ignitor (9)",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -7.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "9",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 11": {
+		"id": 11,
+		"pos": {
+			"x": 275.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "vlv10",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "10",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 12": {
+		"id": 12,
+		"pos": {
+			"x": 360.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "vlv11",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 6.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "11",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 13": {
+		"id": 13,
+		"pos": {
+			"x": 455.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "vlv12",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "12",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 14": {
+		"id": 14,
+		"pos": {
+			"x": 565.0,
+			"y": 376.29629629629613
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "vlv13",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 50.37037037037035
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "13",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Generic Sensor 16": {
+		"id": 16,
+		"pos": {
+			"x": 45.0,
+			"y": 607.4074074074072
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[0]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 17": {
+		"id": 17,
+		"pos": {
+			"x": 45.0,
+			"y": 755.5555555555552
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 25.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[1]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 18": {
+		"id": 18,
+		"pos": {
+			"x": 45.0,
+			"y": 879.9999999999997
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p2",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[2]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 19": {
+		"id": 19,
+		"pos": {
+			"x": 45.0,
+			"y": 998.5185185185181
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p3",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 23.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[3]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 20": {
+		"id": 20,
+		"pos": {
+			"x": 45.0,
+			"y": 1119.9999999999995
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p4",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[4]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 21": {
+		"id": 21,
+		"pos": {
+			"x": 45.0,
+			"y": 1256.2962962962958
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p5",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[5]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 22": {
+		"id": 22,
+		"pos": {
+			"x": 45.0,
+			"y": 1398.518518518518
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p6",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[6]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 23": {
+		"id": 23,
+		"pos": {
+			"x": 45.0,
+			"y": 1534.814814814814
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p7",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[7]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 24": {
+		"id": 24,
+		"pos": {
+			"x": 140.0,
+			"y": 607.4074074074072
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p8",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[8]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 25": {
+		"id": 25,
+		"pos": {
+			"x": 140.0,
+			"y": 749.6296296296293
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p9",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[9]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 26": {
+		"id": 26,
+		"pos": {
+			"x": 140.0,
+			"y": 879.9999999999997
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p10",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[10]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 27": {
+		"id": 27,
+		"pos": {
+			"x": 140.0,
+			"y": 998.5185185185181
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p11",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[11]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 28": {
+		"id": 28,
+		"pos": {
+			"x": 140.0,
+			"y": 1119.9999999999995
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p12",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[12]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 29": {
+		"id": 29,
+		"pos": {
+			"x": 140.0,
+			"y": 1256.2962962962958
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p13",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[13]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 30": {
+		"id": 30,
+		"pos": {
+			"x": 140.0,
+			"y": 1398.518518518518
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p14",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[14]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 31": {
+		"id": 31,
+		"pos": {
+			"x": 140.0,
+			"y": 1534.814814814814
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p15",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[15]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 32": {
+		"id": 32,
+		"pos": {
+			"x": 240.0,
+			"y": 607.4074074074072
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p16",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[16]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 33": {
+		"id": 33,
+		"pos": {
+			"x": 240.0,
+			"y": 755.5555555555552
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p17",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[17]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 34": {
+		"id": 34,
+		"pos": {
+			"x": 240.0,
+			"y": 879.9999999999997
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p18",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[18]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 35": {
+		"id": 35,
+		"pos": {
+			"x": 240.0,
+			"y": 998.5185185185181
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "p19",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pressure[19]",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 38": {
+		"id": 38,
+		"pos": {
+			"x": 710.0,
+			"y": 207.40740740740733
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "time",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 17.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.timestamp",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 39": {
+		"id": 39,
+		"pos": {
+			"x": 710.0,
+			"y": 325.9259259259258
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "state",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 17.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.STATE",
+		"board": "Engine Controller"
+	},
+	"Motor 40": {
+		"id": 40,
+		"pos": {
+			"x": 970.0,
+			"y": 189.62962962962956
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "mtr0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 73.75,
+				"y": 130.37037037037032
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 18.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Engine Controller"
+	},
+	"Motor 41": {
+		"id": 41,
+		"pos": {
+			"x": 1060.0,
+			"y": 189.62962962962956
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "mtr1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 73.75,
+				"y": 130.37037037037032
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 21.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 42": {
+		"id": 42,
+		"pos": {
+			"x": 870.0,
+			"y": 198.51851851851845
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "P0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr0.kp",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 43": {
+		"id": 43,
+		"pos": {
+			"x": 870.0,
+			"y": 314.07407407407396
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "I0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 25.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr0.ki",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 44": {
+		"id": 44,
+		"pos": {
+			"x": 870.0,
+			"y": 426.6666666666665
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "D0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr0.kd",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 45": {
+		"id": 45,
+		"pos": {
+			"x": 1170.0,
+			"y": 198.51851851851845
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "P1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 23.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr1.kp",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 46": {
+		"id": 46,
+		"pos": {
+			"x": 1170.0,
+			"y": 314.07407407407396
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "I1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr1.ki",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 47": {
+		"id": 47,
+		"pos": {
+			"x": 1170.0,
+			"y": 426.6666666666665
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "D1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 23.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.mtr1.kd",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 49": {
+		"id": 49,
+		"pos": {
+			"x": 975.0,
+			"y": 577.7777777777776
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "tnk.en0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 10.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk0.en",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 50": {
+		"id": 50,
+		"pos": {
+			"x": 1060.0,
+			"y": 580.7407407407405
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "tnk.en1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 12.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk1.en",
+		"board": "Engine Controller"
+	},
+	"Tank 51": {
+		"id": 51,
+		"pos": {
+			"x": 950.0,
+			"y": 711.1111111111109
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank 0",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.0,
+				"y": 411.8518518518517
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 23.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 52": {
+		"id": 52,
+		"pos": {
+			"x": 375.0,
+			"y": 604.4444444444442
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Test Duration",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.test_duration",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 53": {
+		"id": 53,
+		"pos": {
+			"x": 375.0,
+			"y": 725.9259259259256
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel MPV Delay",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -10.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.fuel_mpv_delay",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 54": {
+		"id": 54,
+		"pos": {
+			"x": 375.0,
+			"y": 850.37037037037
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "PID Delay",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.pid_delay",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 55": {
+		"id": 55,
+		"pos": {
+			"x": 865.0,
+			"y": 737.7777777777775
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Setpoint 0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 3.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk0.target_pres",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 56": {
+		"id": 56,
+		"pos": {
+			"x": 1175.0,
+			"y": 734.8148148148146
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Setpoint 1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk1.target_pres",
+		"board": "Engine Controller"
+	},
+	"Tank 57": {
+		"id": 57,
+		"pos": {
+			"x": 1065.0,
+			"y": 711.1111111111109
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank 1",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.0,
+				"y": 411.8518518518517
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 26.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 59": {
+		"id": 59,
+		"pos": {
+			"x": 865.0,
+			"y": 1004.444444444444
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "High toggle 0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5.0,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk0.high_pres",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 60": {
+		"id": 60,
+		"pos": {
+			"x": 865.0,
+			"y": 879.9999999999997
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Low toggle 0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk0.low_pres",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 61": {
+		"id": 61,
+		"pos": {
+			"x": 1175.0,
+			"y": 1004.444444444444
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "High toggle 1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk1.high_pres",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 62": {
+		"id": 62,
+		"pos": {
+			"x": 1175.0,
+			"y": 879.9999999999997
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Low toggle 1",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -1.25,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.tnk1.low_pres",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 63": {
+		"id": 63,
+		"pos": {
+			"x": 375.0,
+			"y": 968.8888888888885
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Ignitor On Delay",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.ignitor_on_delay",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 64": {
+		"id": 64,
+		"pos": {
+			"x": 375.0,
+			"y": 1099.259259259259
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Ignitor High Duration",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -23.75,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.ignitor_high_duration",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 65": {
+		"id": 65,
+		"pos": {
+			"x": 375.0,
+			"y": 1220.7407407407402
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fiilm Cooling Start Delay",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -32.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.nozzle_film_cooling_delay",
+		"board": "Engine Controller"
+	},
+	"Generic Sensor 66": {
+		"id": 66,
+		"pos": {
+			"x": 375.0,
+			"y": 1342.2222222222217
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.000000000000004,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Init Motor Pos Correction",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 28.75,
+				"y": 65.18518518518516
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -32.5,
+				"y": -38.518518518518505
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "ec.deg_corr_factor",
+		"board": "Engine Controller"
+	}
+}
