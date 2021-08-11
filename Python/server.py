@@ -443,15 +443,21 @@ class Server(QtWidgets.QMainWindow):
         cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
 
         # make sure it has the right number of args
-        if sum([a.isnumeric() for a in args]) == len(cmd_args):
-            cmd_dict = {
-                "function_name": cmd,
-                "target_board_addr": int(addr),
-                "timestamp": int(datetime.now().timestamp()),
-                "args": [float(a) for a in args if a.isnumeric()]
-            }
-            print(cmd_dict)
-            self.command_queue.put(cmd_dict)  # add command to queue
+        #if sum([a.isnumeric() for a in args]) == len(cmd_args):
+        try:
+            if len(args) == len(cmd_args):
+                cmd_dict = {
+                    "function_name": cmd,
+                    "target_board_addr": int(addr),
+                    "timestamp": int(datetime.now().timestamp()),
+                    #"args": [float(a) for a in args if a.isnumeric()]
+                    "args": [float(a) for a in args]
+                }
+                print(cmd_dict)
+                self.command_queue.put(cmd_dict)  # add command to queue
+        except Exception as e:
+            print("Error: could not send command because of error ", e)
+
 
     
     def run_auto(self, lines: list, addr: int, remote: bool = False):
@@ -677,7 +683,7 @@ class Server(QtWidgets.QMainWindow):
 
                 else:
                     # read in packet from system
-                    packet_addr = self.interface.parse_serial()  # returns origin address
+                    packet_addr, packet_type = self.interface.parse_serial()  # returns origin address
                     # packet_addr = -1
                     if packet_addr != -1 and packet_addr != -2:
                         # print("PARSER WORKED")
@@ -695,7 +701,15 @@ class Server(QtWidgets.QMainWindow):
                         # disabled to stop server logs becoming massive, see just below send_to_log
 
                         # parse packet and aggregate
+
+                        # default to board_parser
                         new_data = self.interface.board_parser[packet_addr].dict
+
+                        # Override with correct parser if packet type != 0
+                        if (packet_type == 2):
+                            new_data = self.interface.calibration_parser[packet_addr].dict
+                        # New parsers get called here as they get added
+
                         prefix = self.interface.getPrefix(
                             self.interface.getName(packet_addr))
 
@@ -711,7 +725,7 @@ class Server(QtWidgets.QMainWindow):
                                 key = self.interface.channels[n]
                                 self.data_table.setItem(
                                     n, 1, QTableWidgetItem(str(self.dataframe[key])))
-                                # print([n, key, dataframe[key]])
+                                #print([n, key, dataframe[key]])
 
                             self.data_log.write(self.get_logstring() + '\n')
                         finally:
@@ -726,9 +740,9 @@ class Server(QtWidgets.QMainWindow):
                         pass
             self.party_parrot.step()
 
-        except:
+        except Exception as e:
             #traceback.print_exc()
-            pass
+            print("Parser failed with error ", e)
 
         # update server state
         self.packet_num += 1
