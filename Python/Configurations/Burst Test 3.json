@@ -1,0 +1,200 @@
+{
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 544.0,
+			"y": 376.8673607967406
+		},
+		"fluid": 0,
+		"width": 176.0,
+		"height": 340.00000000000006,
+		"name": "Tank",
+		"scale": 2.000000000000001,
+		"serial number": "",
+		"long name": "Burst Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 84.0,
+				"y": 437.98098687188775
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 41.333333333333336,
+				"y": -30.556813037573566
+			},
+			"rows": 1,
+			"font size": 17.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 669.3333333333334,
+			"y": 298.77772747849707
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "PT Channel 0",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 29.333333333333332,
+				"y": 35.64961521050249
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666667,
+				"y": -22.068809416025353
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "press.pressure[0]",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 5": {
+		"id": 5,
+		"pos": {
+			"x": 564.0,
+			"y": 288.59212313263924
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Vent",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.0,
+				"y": 27.16161158895428
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 4.0,
+				"y": -22.068809416025353
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Tube 6": {
+		"tube id": 6,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 701.3333333333334,
+				"y": 329.33454051607066
+			},
+			"1": {
+				"x": 701.3333333333334,
+				"y": 395.5409687641467
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 9": {
+		"tube id": 9,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 584.0,
+				"y": 310.66093254866456
+			},
+			"1": {
+				"x": 584.0,
+				"y": 383.6577636939792
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 12": {
+		"tube id": 12,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 0.0,
+				"y": 881.0547759167044
+			},
+			"1": {
+				"x": 633.3333333333334,
+				"y": 881.0547759167044
+			},
+			"2": {
+				"x": 633.3333333333334,
+				"y": 809.7555454956995
+			},
+			"3": {
+				"x": 632.0,
+				"y": 809.7555454956995
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 14": {
+		"tube id": 14,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 0.0,
+				"y": 858.9859665006791
+			},
+			"1": {
+				"x": 488.0,
+				"y": 858.9859665006791
+			},
+			"2": {
+				"x": 488.0,
+				"y": 358.1937528293346
+			},
+			"3": {
+				"x": 565.3333333333334,
+				"y": 358.1937528293346
+			},
+			"4": {
+				"x": 565.3333333333334,
+				"y": 397.23856948845633
+			}
+		},
+		"line width": 1.0
+	}
+}

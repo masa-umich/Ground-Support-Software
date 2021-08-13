@@ -140,7 +140,9 @@ class S2_Interface:
                     # print(self.parser.dict)
                 elif packet_type == 2:
                     # TODO: remove the packet header from this one
-                    #print(packet)
+                    print(packet)
+                    print(len(packet))
+                    print()
                     self.calibration_parser[board_addr].parse_packet(packet)
                     #print(str(self.calibration_parser[board_addr].dict))
                 return (board_addr, packet_type)
