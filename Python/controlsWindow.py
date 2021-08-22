@@ -989,7 +989,7 @@ class ControlsWindow(QMainWindow):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [x, self.lower_voltage[x].value()]
                 }
-                self.client_dialog.client.command(3, cmd_dict)
+                #self.client_dialog.client.command(3, cmd_dict)
 
             if update_upper_voltage:
                 cmd_dict = {
@@ -998,7 +998,7 @@ class ControlsWindow(QMainWindow):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [x, self.upper_voltage[x].value()]
                 }
-                self.client_dialog.client.command(3, cmd_dict)
+                #self.client_dialog.client.command(3, cmd_dict)
             if update_upper_pressure:
                 cmd_dict = {
                     "function_name": "set_pt_upper_pressure",
@@ -1006,7 +1006,7 @@ class ControlsWindow(QMainWindow):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [x, self.upper_pressure[x].value()]
                 }
-                self.client_dialog.client.command(3, cmd_dict)
+                #self.client_dialog.client.command(3, cmd_dict)
 
 
     def get_calibrate_sensors(self, board_name):
@@ -1019,7 +1019,7 @@ class ControlsWindow(QMainWindow):
             "timestamp": int(datetime.now().timestamp()),
             "args": []
         }
-        self.client_dialog.client.command(3, cmd_dict)
+        #self.client_dialog.client.command(3, cmd_dict)
         #while True:
         #    if time.time() > timeout:
         #        break
