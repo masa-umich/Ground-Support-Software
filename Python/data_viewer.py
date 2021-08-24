@@ -314,8 +314,10 @@ class DataViewer(QtWidgets.QTabWidget):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
+                #print(type(data["time"].to_numpy()))
+                #print(type(data[channel_name].to_numpy()))
                 self.plot2.curves[channel_name].setData(
-                    x=data["time"].to_numpy(), y=data[channel_name].to_numpy())
+                    x=data["time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
