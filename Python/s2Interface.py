@@ -134,11 +134,11 @@ class S2_Interface:
             #print(packet)
             # TODO: modify packet header to include origin packet
             try:
-                if packet_type == 0:
+                if packet_type == 0 and (len(packet) == self.board_parser[board_addr].packet_byte_size + 1):  # +1 because COBS w/o 
                     self.board_parser[board_addr].parse_packet(packet)
                     self.unpack_valves(board_addr)
                     # print(self.parser.dict)
-                elif packet_type == 2:
+                elif packet_type == 2 and (len(packet) == self.calibration_parser[board_addr].packet_byte_size + 1):
                     # TODO: remove the packet header from this one
                     #print(packet)
                     self.calibration_parser[board_addr].parse_packet(packet)
