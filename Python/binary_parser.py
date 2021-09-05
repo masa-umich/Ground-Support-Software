@@ -36,6 +36,8 @@ class BinaryParser:
         file = open(filename, 'rb')
         datalog = False  # Initially - so it knows it hasn't opened anything yet
 
+        #print("loading file...")
+
         packets = []
         this_line = []
         n = 0
@@ -52,6 +54,8 @@ class BinaryParser:
 
         if verbose:
             print("Num Packets: %s, %s" % (n, len(packets)))
+
+        #print("reading packets...")
 
         num_cons_zeros = 0  # Track consecutive 0s found in the binary - 2000 0's in a row signals the start of a log
         num_logs = 0
@@ -72,6 +76,7 @@ class BinaryParser:
                     packet_addr, packet_type = self.interface.parse_packet(packet)
                     #print
                     if packet_addr != -1:
+                        #print(packet_addr)
                         new_data = self.interface.board_parser[packet_addr].dict
                         #print(new_data)
                         prefix = self.interface.getPrefix(
