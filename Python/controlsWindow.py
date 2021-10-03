@@ -265,8 +265,6 @@ class ControlsWindow(QMainWindow):
         # I have no clue why this is so strange, but see update function for more info
         self.central_widget_offset = None
 
-
-            
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
@@ -295,7 +293,7 @@ class ControlsWindow(QMainWindow):
             self.fileName = fileName
             self.centralWidget.controlsWidget.saveData(fileName)
 
-        self.saveNotes(fileName.removesuffix('.json'))
+            self.saveNotes(fileName.removesuffix('.json'))
 
     def openFileDialog(self):
         """
@@ -311,11 +309,11 @@ class ControlsWindow(QMainWindow):
             self.fileName = fileName
             self.centralWidget.controlsWidget.loadData(fileName)
 
-        with open(fileName.removesuffix('.json') + '.txt', "r") as read_file:
-            data = read_file.read()
+            with open(fileName.removesuffix('.json') + '.txt', "r") as read_file:
+                data = read_file.read()
 
-        # rewrites the notes in the notebox
-        self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
+            # rewrites the notes in the notebox
+            self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
 
     def newFile(self):
         """
@@ -376,9 +374,9 @@ class ControlsWindow(QMainWindow):
             if fileName.find(".txt") == -1:
                 fileName = fileName + ".txt"
 
-        self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
-        with open(fileName, "w") as write_file:
-            write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
+            self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
+            with open(fileName, "w") as write_file:
+                write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
     def enterDebug(self):
         """
