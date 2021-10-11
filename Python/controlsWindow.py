@@ -655,7 +655,7 @@ class ControlsWindow(QMainWindow):
         # Set the run to have these boards attached
         self.gui.run.boards = boards
 
-        self.centralWidget.controlsSidebarWidget.addBoards(boards)
+        self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         dialog.done(2)
 
     def showDrawingSettingsDialog(self):
