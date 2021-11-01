@@ -331,6 +331,8 @@ class ControlsWindow(QMainWindow):
 
         self.statusBar().showMessage("New configuration started")
 
+        self.centralWidget.controlsSidebarWidget.noteBox.setText("Write notes here")
+
     def enterEdit(self):
         """
         If not already editing, calls toggle edit to enter edit mode
