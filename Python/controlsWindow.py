@@ -107,7 +107,7 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.setDisabled(True)
 
         # FILE -> Save Notes
-        self.saveNotesAct = QAction('&Save notes', self)                                                                                                                                                                                                                                                                                                                                                                                                            
+        self.saveNotesAct = QAction('&Save notes', self)
         self.saveNotesAct.triggered.connect(self.saveNotes)
 
         # Run -> Add Boards
@@ -220,7 +220,7 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(self.exitDebugAct)
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
-        file_menu.addAction(self.saveNotesAct)
+        #file_menu.addAction(self.saveNotesAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -272,9 +272,10 @@ class ControlsWindow(QMainWindow):
         """
         if self.fileName != "":
             self.centralWidget.controlsWidget.saveData(self.fileName)
+            self.saveNotes(self.fileName.removesuffix('.json'))
         else:
             self.saveFileDialog()
-            self.saveNotes()
+            #self.saveNotes()
     
     def checkpoint(self):
         if not self.gui.run.is_active:
