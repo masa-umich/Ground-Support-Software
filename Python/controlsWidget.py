@@ -470,7 +470,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"],long_name_visible=motor["long name label"]["is visible"],
                                                  serial_number_visible=motor["serial number label"]["is visible"]))
 
-            if i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
+            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
                 pt = data[i]
                 self.object_list.append(GenSensor(self, _id=pt["id"], position=QPoint(pt["pos"]["x"], pt["pos"]["y"]),
                                                  fluid=pt["fluid"], width=pt["width"], height=pt["height"],
@@ -504,7 +504,7 @@ class ControlsWidget(QWidget):
                                                 long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
                                                 long_name_label_rows=idx["long name label"]["rows"]))
 
-            if i.split()[0] + " " + i.split()[1] == "Throttle Valve":  
+            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "Throttle Valve":
                 idx = data[i]
                 self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -520,7 +520,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
-            if i.split()[0] + " " + i.split()[1] == "3 Way":  
+            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "3 Way":
                 idx = data[i]
                 self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -536,7 +536,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
-            if i.split()[0] + " " + i.split()[1] == "Heat Exchanger":  
+            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "Heat Exchanger":
                 idx = data[i]
                 self.object_list.append(HeatEx(self, _id=idx["id"], position=QPoint(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -551,7 +551,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPoint(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
-                
+
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             if i.split()[0] == "Tube":
                 tube = data[i]

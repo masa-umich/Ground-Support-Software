@@ -136,7 +136,6 @@ class ControlsSidebarWidget(QWidget):
         self.buffer_label2.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         #self.buttonLayout.addWidget(self.buffer_label2)
 
-
     def addBoards(self, boardNames: []):
         """
         Add in boards to be shown on the sidebar. Only need to pass in the name
@@ -206,7 +205,7 @@ class ControlsSidebarWidget(QWidget):
         """
         save_dict = {}
         for i, board in enumerate(self.board_objects):
-            save_dict["Board"+str(i)] = board.name
+            save_dict["Board "+str(i)] = board.name
 
         return save_dict
 

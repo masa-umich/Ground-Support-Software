@@ -515,7 +515,7 @@ class Board(QWidget):
         elif self.name == "GSE Controller":
             pass
         else:
-            print("Invalid board somehow used in setBoardState, it should never get to this point lol")
+            print("Invalid board somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
             return
 
     @overrides
