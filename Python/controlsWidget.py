@@ -566,7 +566,6 @@ class ControlsWidget(QWidget):
             if i.split()[0] == "Board":
                 boards.append(data[i])
 
-        self.gui.run.boards = boards
         self.centralWidget.controlsSidebarWidget.addBoards(boards)
 
         self.window.statusBar().showMessage("Configuration opened from " + fileName)

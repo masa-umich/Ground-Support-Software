@@ -572,9 +572,9 @@ class ControlsWindow(QMainWindow):
         dropdowns = [dropdown1, dropdown2, dropdown3, dropdown4, dropdown5]
 
         # If boards are already set, populate the dropdowns
-        if self.gui.run.boards:
-            for i in range(len(self.gui.run.boards)):
-                dropdowns[i].setCurrentText(self.gui.run.boards[i])
+        if self.centralWidget.controlsSidebarWidget.board_objects:
+            for i in range(len(self.centralWidget.controlsSidebarWidget.board_objects)):
+                dropdowns[i].setCurrentText(self.centralWidget.controlsSidebarWidget.board_objects[i].name)
                 self.updateAvionicsDialog(dropdowns, dropdowns[i], i+1)
 
         # Callback functions
@@ -666,8 +666,6 @@ class ControlsWindow(QMainWindow):
         if not boards:
             return  # Do nothing if the user selected nothing
 
-        # Set the run to have these boards attached
-        self.gui.run.boards = boards
 
         self.centralWidget.controlsSidebarWidget.addBoards(boards)
         dialog.done(2)

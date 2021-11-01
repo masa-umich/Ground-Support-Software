@@ -145,6 +145,7 @@ class ControlsSidebarWidget(QWidget):
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it
+        print(self.board_objects)
         for board in self.board_objects:
             board.deleteLater()
             board = None
