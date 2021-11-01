@@ -2,6 +2,7 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
+<<<<<<< Updated upstream
 			"x": 412.38095238095235,
 			"y": 285.7142857142857
 		},
@@ -44,6 +45,10 @@
 		"pos": {
 			"x": 755.2380952380952,
 			"y": 488.0
+=======
+			"x": 592.3809523809524,
+			"y": 292.57142857142856
+>>>>>>> Stashed changes
 		},
 		"fluid": 0,
 		"width": 70.0,
@@ -78,5 +83,47 @@
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
+<<<<<<< Updated upstream
 	"Board 0": "Engine Controller"
+=======
+	"Generic Sensor 2": {
+		"id": 2,
+		"pos": {
+			"x": 764.7619047619047,
+			"y": 385.14285714285717
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	}
+>>>>>>> Stashed changes
 }

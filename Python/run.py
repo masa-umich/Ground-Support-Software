@@ -7,6 +7,10 @@ This file contains the class and functions to handle the 'run' or test being con
 """
 
 
+class Campaign:
+    pass
+
+
 class Run(QObject):  #
     """
     Class that holds all the functions for a new run

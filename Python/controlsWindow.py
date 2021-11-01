@@ -25,6 +25,7 @@ from dp import TankLevelDialog
 from overrides import overrides
 import os
 import ctypes
+import webbrowser
 from datetime import datetime
 
 """
@@ -118,6 +119,10 @@ class ControlsWindow(QMainWindow):
         self.saveNotesAct = QAction('&Save notes', self)                                                                                                                                                                                                                                                                                                                                                                                                            
         self.saveNotesAct.triggered.connect(self.saveNotes)
 
+        # FILE -> Report Issue
+        reportIssueAct = QAction('&Report Issue', self)
+        reportIssueAct.triggered.connect(self.reportIssue)
+
         # Run -> Add Boards
         self.screenSettingsAct = QAction('&Screen Draw Settings', self)
         self.screenSettingsAct.triggered.connect(self.showDrawingSettingsDialog)
@@ -176,7 +181,6 @@ class ControlsWindow(QMainWindow):
         self.zeroTimeAct = QAction('Zero Board System Clocks', self)
         self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
 
-
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('Abort &Button', self)
         self.buttonBoxAct.setShortcut('Alt+B')
@@ -229,6 +233,7 @@ class ControlsWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
         file_menu.addAction(self.saveNotesAct)
+        file_menu.addAction(reportIssueAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -380,6 +385,12 @@ class ControlsWindow(QMainWindow):
 
 
 
+
+    def reportIssue(self):
+        """
+            Opens a link to the gitlab issue ticket form so people can quickly fill out
+        """
+        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/new?issue%5Bmilestone_id%5D=')
 
     def enterDebug(self):
         """
