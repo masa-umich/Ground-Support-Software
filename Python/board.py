@@ -177,8 +177,6 @@ class Board(QWidget):
         state_form_label = self.createDataFormLayoutLabel("State:")
         self.state_label = self.createDataFormLayoutLabel("Aggressively long string don't change")
 
-
-
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)

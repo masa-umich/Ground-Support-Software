@@ -172,10 +172,10 @@ class CampaignBackgroundThread(QThread):
 
                 if self.campaign.is_active:
                     # TODO: Not sure if this goes here, or under actively_rx, seem weird to try to push bad data
-                    self.lastPacketDataSignal.emit(
-                        {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
-                         "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,
-                         "gse.telem_rate": 10}) #change to packet when ready
+                    # {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
+                    #                          "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,
+                    #                          "gse.telem_rate": 10, "gse.flash_mem": 1053, "time": 353}
+                    self.lastPacketDataSignal.emit(packet)  # change to packet when ready
 
             else:
                 # Server to GUI connection bad, no info to display at the time

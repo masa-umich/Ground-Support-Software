@@ -13,9 +13,9 @@ from s2Interface import S2_Interface
 
 
 class FlashDialog(QtWidgets.QDialog):
-    def __init__(self, client):
+    def __init__(self, client, gui=None):
         super().__init__()
-        self.flash_controller = FlashController(client)
+        self.flash_controller = FlashController(client, gui)
 
         self.setWindowTitle("Flash Controller")
         self.layout = QtWidgets.QVBoxLayout()
@@ -24,10 +24,13 @@ class FlashDialog(QtWidgets.QDialog):
 
 
 class FlashController(QtWidgets.QWidget):
-    def __init__(self, client, *args, **kwargs):
+    def __init__(self, client, gui = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.interface = S2_Interface()
         self.client = client
+        self.gui = gui
+
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
         self.logo = QtGui.QLabel()
@@ -45,7 +48,11 @@ class FlashController(QtWidgets.QWidget):
         self.stop_button = QtWidgets.QPushButton("Stop Logging")
 
         self.rem_mem = QtWidgets.QLabel(self)
-        self.rem_mem.setFont(QtGui.QFont('Arial, 30'))
+        rem_mem_font = QtGui.QFont()
+        rem_mem_font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        rem_mem_font.setFamily(Constants.monospace_font)
+        rem_mem_font.setPointSizeF(14 * self.gui.font_scale_ratio)
+        self.rem_mem.setFont(rem_mem_font)
         self.rem_mem.setText("0000 kb")
         #self.rem_mem.setStyleSheet("color: black")
 
@@ -142,15 +149,25 @@ class FlashController(QtWidgets.QWidget):
             }
             self.client.command(3, cmd_dict)
 
-    @overrides
-    def update(self, last_packet):
+    # @overrides
+    # def update(self, last_packet):
+    #     prefix = self.interface.getPrefix(self.board_selector.currentText())
+    #     key = prefix + "flash_mem"
+    #     if( key in last_packet.keys()):
+    #         rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
+    #     else:
+    #         rem_mem = 0
+    #     self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
+
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
         prefix = self.interface.getPrefix(self.board_selector.currentText())
         key = prefix + "flash_mem"
-        if( key in last_packet.keys()):
-            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
-        else: 
+        if key in data_packet.keys():
+            rem_mem = (134086656 - int(data_packet[prefix + "flash_mem"])) / 1024
+        else:
             rem_mem = 0
-        self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
+        self.rem_mem.setText("Bytes Used: %.2f kB" % rem_mem)
 
 
 if __name__ == "__main__":

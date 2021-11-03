@@ -301,7 +301,6 @@ class MissionWidget(QWidget):
                 "Server Connected\nSerial Open\nNo Data\nServer Error Message: " + error_string)
         # Server to GUI connection is good, but there is no open serial (no way for pacets to be recieved)
         elif status == 2:
-            print("Test")
             self.connectionIndicator.setIndicatorColor("Yellow")
             self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data\nServer Error Message: " + error_string)
         # Server to GUI connection bad, no info to display at the time

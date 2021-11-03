@@ -42,7 +42,6 @@ class GUI:
         # Check if the launch files exist, if so load preferences from there
         if os.path.isdir(GUI.LAUNCH_DIRECTORY):
             self.loadPreferences()
-
         # If this is the first time running, create required directories, and guess at scaling values
         else:
             # Ask user for workspace directory to search for configurations
@@ -78,6 +77,9 @@ class GUI:
             # Write the save file
             self.savePreferences()
 
+        print("Launch Directory: " + os.path.abspath(self.LAUNCH_DIRECTORY))
+        print("Workspace Path: " + self.workspace_path)
+
         # Add in fonts
         QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
         QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
@@ -101,6 +103,12 @@ class GUI:
         # set client path for run class (for server checkpointing)
         self.campaign.setClient(self.controlsWindow.client_dialog.client)
         self.campaign.startThread()
+
+    def postInit(self):
+        """
+        Function for doing some things that can't be done in init
+        """
+        self.controlsWindow.postInit()
 
     def update(self):
         self.controlsWindow.update()
@@ -146,6 +154,7 @@ class GUI:
             self.workspace_path = str(QFileDialog.getExistingDirectory(None, "Workspace not found: Select Workspace Directory", options=options))
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
+
 
 if __name__ == '__main__':
 
@@ -194,6 +203,7 @@ if __name__ == '__main__':
         timer = QTimer()
         timer.timeout.connect(gui.update)
         timer.start(cycle_time)
+        QTimer.singleShot(100, gui.postInit) # Need to call this after exec_ for proper screen placement
         currentExitCode = app.exec_()
         #print(currentExitCode)
         gui.savePreferences()

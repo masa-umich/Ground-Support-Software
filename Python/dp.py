@@ -191,9 +191,13 @@ class LevelWidget(QtWidgets.QGroupBox):
 
             
 class TankLevelDialog(QtWidgets.QDialog):
-    def __init__(self, dual=False):
+    def __init__(self, dual=False, gui=None):
         super().__init__()
         self._dual = dual
+        self.gui = gui
+
+        if self.gui is not None:
+            self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
         self.setWindowTitle("Tank Level Calculator")
         layout = QtWidgets.QVBoxLayout()
@@ -216,6 +220,9 @@ class TankLevelDialog(QtWidgets.QDialog):
         if self._dual:
             self.level1.update_values(last_packet)
 
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        self.update_values(data_packet)
   
 
 if __name__ == "__main__":

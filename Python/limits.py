@@ -179,7 +179,7 @@ class LimitWidget(QtWidgets.QWidget):
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, client=None, *args, **kwargs):
+    def __init__(self, num_channels, gui=None, client=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # menu bar
@@ -197,11 +197,14 @@ class LimitWindow(QtWidgets.QMainWindow):
             self.options_menu.addAction(self.connect)
         else:
             self.client_dialog = client
+
+        self.gui = gui
+        if self.gui is not None:
+            self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
         
         self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
-        
 
         # save menu item
         self.save_action = QtGui.QAction("&Save Config", self.options_menu)
@@ -251,6 +254,10 @@ class LimitWindow(QtWidgets.QMainWindow):
     
     def update_limits(self, last_packet: dict):
         self.widget.update_limits(last_packet)
+
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        self.update_limits(data_packet)
 
 
 if __name__ == "__main__":

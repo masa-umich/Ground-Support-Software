@@ -2,8 +2,8 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 660.952380952381,
-			"y": 248.0
+			"x": 481.90476190476187,
+			"y": 292.57142857142856
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -35,90 +35,9 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "Undefined",
-		"board": "Undefined",
+		"channel": "0",
+		"board": "GSE Controller",
 		"normally open": false
 	},
-	"Motor 2": {
-		"id": 2,
-		"pos": {
-			"x": 500.0,
-			"y": 393.14285714285717
-		},
-		"fluid": 0,
-		"width": 70.0,
-		"height": 117.0,
-		"name": "Motor",
-		"scale": 1,
-		"serial number": "",
-		"long name": "Motor",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"serial number label": {
-			"pos string": "Right",
-			"local pos": {
-				"x": 72.38095238095238,
-				"y": 67.42857142857143
-			},
-			"rows": 1,
-			"font size": 10.0,
-			"is visible": true
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": 15.238095238095237,
-				"y": -20.571428571428573
-			},
-			"rows": 1,
-			"font size": 12.0,
-			"is visible": true
-		},
-		"channel": "Undefined",
-		"board": "Undefined"
-	},
-	"3 Way Valve 3": {
-		"id": 3,
-		"pos": {
-			"x": 847.6190476190476,
-			"y": 437.7142857142857
-		},
-		"fluid": 0,
-		"width": 40.0,
-		"height": 27.0,
-		"name": "3 Way Valve",
-		"scale": 1,
-		"serial number": "",
-		"long name": "3 Way Valve",
-		"is vertical": 0,
-		"is locked": false,
-		"is pos locked": false,
-		"serial number label": {
-			"pos string": "Bottom",
-			"local pos": {
-				"x": 17.142857142857142,
-				"y": 35.42857142857143
-			},
-			"rows": 1,
-			"font size": 10.0,
-			"is visible": true
-		},
-		"long name label": {
-			"pos string": "Top",
-			"local pos": {
-				"x": -16.19047619047619,
-				"y": -20.571428571428573
-			},
-			"rows": 1,
-			"font size": 12.0,
-			"is visible": true
-		},
-		"channel": "Undefined",
-		"board": "Undefined"
-	},
-	"Board 0": "Engine Controller",
-	"Board 1": "Pressurization Controller",
-	"Board 2": "Recovery Controller",
-	"Board 3": "Flight Computer"
+	"Board 0": "GSE Controller"
 }

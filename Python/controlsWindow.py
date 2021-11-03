@@ -48,11 +48,11 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
-        self.flash_dialog = FlashDialog(self.client_dialog.client)
+        self.flash_dialog = FlashDialog(self.client_dialog.client, self.gui)
         self.button_box = AbortButton(self.client_dialog.client)
-        self.limits = LimitWindow(8, self.client_dialog.client)
+        self.limits = LimitWindow(8, gui=self.gui, client = self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
-        self.tank_levels = TankLevelDialog(dual=False)
+        self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
 
@@ -268,8 +268,18 @@ class ControlsWindow(QMainWindow):
         
         self.showMaximized()
 
-        # I have no clue why this is so strange, but see update function for more info
+        # Can't assign here see below for more info
         self.central_widget_offset = None
+
+    def postInit(self):
+        # So the window does not move to its final position till after exec_ is called on the gui, which means it cannot
+        # go in the init_ function. This seems very strange but this appears to be the best solution
+
+        # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
+        if self.gui.platform == "Windows":
+            self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+        elif self.gui.platform == "OSX":
+            self.central_widget_offset = self.pos()
 
     def saveRegular(self):
         """
@@ -867,14 +877,12 @@ class ControlsWindow(QMainWindow):
     def update(self):
         super().update()
 
-        # So the window does not move to its final position till after exec_ is called on the gui, which means it cannot
-        # go in the init_ function. This seems very strange but this appears to be the best solution
-        if self.central_widget_offset is None:
-            # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
-            if self.gui.platform == "Windows":
-                self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
-            elif self.gui.platform == "OSX":
-                self.central_widget_offset = self.pos()
+        # if self.central_widget_offset is None:
+        #     # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
+        #     if self.gui.platform == "Windows":
+        #         self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+        #     elif self.gui.platform == "OSX":
+        #         self.central_widget_offset = self.pos()
 
         packet = self.client_dialog.client.cycle()
         if packet != None: # on exception
@@ -882,10 +890,12 @@ class ControlsWindow(QMainWindow):
         
         self.centralWidget.update()
 
+        # TODO: This does not need data so new signal? Once again campaign class poorly organized
         self.button_box.cycle()
-        self.limits.update_limits(self.last_packet)
-        self.tank_levels.update_values(self.last_packet)
-        self.flash_dialog.flash_controller.update(self.last_packet)
+
+        # self.limits.update_limits(self.last_packet)
+        #self.tank_levels.update_values(self.last_packet)
+        #self.flash_dialog.flash_controller.update(self.last_packet)
 
         # checks whether the button is enabled relative to the abort button settings menu
         if self.button_box.is_soft_armed:
