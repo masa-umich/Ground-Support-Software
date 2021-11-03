@@ -180,7 +180,6 @@ class ControlsSidebarWidget(QWidget):
 
         # Delete all the current shown boards, if any
         # TODO: Make this feel better because this is a lazy way to do it
-        print(self.board_objects)
         for board in self.board_objects:
             board.deleteLater()
             board = None
@@ -248,29 +247,31 @@ class ControlsSidebarWidget(QWidget):
     @overrides
     def update(self):
         super().update()
-        self.last_packet = self.window.last_packet
-        if self.last_packet:
-            for board in self.board_objects:
-                board_name = board.name
-                prefix = self.interface.getPrefix(board_name)
-                
-                if board_name == "Flight Computer":
-                    board.update(self.last_packet[prefix+"e_batt"], 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt
-                elif board_name == "Black Box":
-                    board.update(0, 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt, no e_batt
-                elif board_name == "Pressurization Controller":
-                    board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "i_batt"],
-                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
-                                 self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
-                                 self.last_packet[prefix + "state_rem_duration"])
-                elif board_name == "GSE Controller":
-                    board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
-                                 self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
-                                 self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
-                                 0)  # no flash state yet
-                else:
-                    board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet
+        # self.last_packet = self.window.last_packet
+        # if self.last_packet:
+        #     for board in self.board_objects:
+        #         board_name = board.name
+        #         prefix = self.interface.getPrefix(board_name)
+        #
+        #         if board_name == "Flight Computer":
+        #             board.update(self.last_packet[prefix+"e_batt"], 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt
+        #         elif board_name == "Black Box":
+        #             board.update(0, 0, self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"]) # no flash state yet, no i_batt, no e_batt
+        #         elif board_name == "Pressurization Controller":
+        #             board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "i_batt"],
+        #                          self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
+        #                          self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
+        #                          self.last_packet[prefix + "state_rem_duration"])
+        #         elif board_name == "GSE Controller":
+        #             board.update(self.last_packet[prefix + "e_batt"], self.last_packet[prefix + "ibus"],
+        #                          self.last_packet[prefix + "STATE"], self.last_packet[prefix + "LOGGING_ACTIVE"], self.last_packet[prefix + "timestamp"],
+        #                          self.last_packet[prefix + "adc_rate"], self.last_packet[prefix + "telem_rate"],
+        #                          0)  # no flash state yet
+        #         else:
+        #             board.update(self.last_packet[prefix+"e_batt"], self.last_packet[prefix+"i_batt"], self.last_packet[prefix+"STATE"], False, self.last_packet[prefix+"timestamp"], self.last_packet[prefix+"adc_rate"], self.last_packet[prefix+"telem_rate"], 0) # no flash state yet
 
+
+        # TODO: see https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/41
         # checks whether the Software Abort Button is enabled or not
         if self.abort_button_enabled:
             # if the button is enabled from the "Abort Button" settings menu

@@ -11,7 +11,8 @@ from anchorPoint import AnchorPoint
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
 
-class BaseObject:
+
+class BaseObject(QObject):
 
     object_name = "Default Object"
 
@@ -549,6 +550,7 @@ class BaseObject:
         # menu.exec_(self.button.mapToGlobal(event))
 
         return action
+
 
     """----------------------------------------------------------------------------------------------------------------
    File save and Loading

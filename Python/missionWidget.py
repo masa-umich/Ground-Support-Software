@@ -52,6 +52,10 @@ class MissionWidget(QWidget):
         self.underBarWBuffer = 3 * self.gui.pixel_scale_ratio[0]
         self.mainBarWBuffer = 10 * self.gui.pixel_scale_ratio[0]
 
+        self.gui.campaign.connectionStatusSignal.connect(self.updateConnectionStatus)
+        # TODO: Currently one of these in the controlsWidget class so maybe combine
+        self.gui.campaign.updateScreenSignal.connect(self.update)
+
         self.show()
 
         # Painter controls the drawing of everything on the widget
@@ -63,24 +67,24 @@ class MissionWidget(QWidget):
         p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
         self.setPalette(p)
 
-        # Create the label that will hold the MET counter
-        self.MET_label = QLabel(self)
-        MET_font = QFont()
-        MET_font.setStyleStrategy(QFont.PreferAntialias)
-        MET_font.setFamily(Constants.monospace_font)
-        MET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
-        self.MET_label.setFont(MET_font)
-        self.MET_label.setText("MET-00:00:00")
-        self.MET_label.setStyleSheet("color: white")
-        self.MET_label.setFixedHeight(self.mainHeight)
-        self.MET_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.MET_label.move(0, 0-4*self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
-        self.MET_label.show()
-        # The right position of the MET label, with a 10 pixel buffer
-        self.MET_labelRPos = self.MET_label.width() + self.mainBarWBuffer
+        # Create the label that will hold the CET counter
+        self.CET_label = QLabel(self)
+        CET_font = QFont()
+        CET_font.setStyleStrategy(QFont.PreferAntialias)
+        CET_font.setFamily(Constants.monospace_font)
+        CET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
+        self.CET_label.setFont(CET_font)
+        self.CET_label.setText("CET-00:00:00")
+        self.CET_label.setStyleSheet("color: white")
+        self.CET_label.setFixedHeight(self.mainHeight)
+        self.CET_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.CET_label.move(0, 0-4*self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
+        self.CET_label.show()
+        # The right position of the CET label, with a 10 pixel buffer
+        self.CET_labelRPos = self.CET_label.width() + self.mainBarWBuffer
 
-        # Connect the MET label to the Run MET update function
-        self.gui.run.updateMETSignal.connect(self.updateMETLabel)
+        # Connect the CET label to the Run CET update function
+        self.gui.campaign.updateCETSignal.connect(self.updateCETLabel)
 
         # Light mono space font to use
         monospace_light_font = QFont()
@@ -115,19 +119,19 @@ class MissionWidget(QWidget):
         self.titleLabel.show()
 
         # Set all the indicators, move into position
-        self.runIndicator = IndicatorLightWidget(self, 'Run', 20, "Red", 14, 20, 5, 2)
-        self.runIndicator.setToolTip("Run has not started")
-        self.runIndicator.move(self.MET_labelRPos, 0)
+        self.campaignIndicator = IndicatorLightWidget(self, 'Campaign', 20, "Red", 14, 30, 5, 2)
+        self.campaignIndicator.setToolTip("Campaign has not started")
+        self.campaignIndicator.move(self.CET_labelRPos, 0)
 
-        self.connectionIndicator = IndicatorLightWidget(self, 'Connection', 20, "Red", 14, 20, 5, 2)
-        self.connectionIndicator.move(self.runIndicator.pos().x() + self.runIndicator.width(), 0)
+        self.connectionIndicator = IndicatorLightWidget(self, 'Connection', 20, "Red", 14, 30, 5, 2)
+        self.connectionIndicator.move(self.campaignIndicator.pos().x() + self.campaignIndicator.width(), 0)
         self.connectionIndicator.setToolTip("No connection")
 
-        self.commandIndicator = IndicatorLightWidget(self, 'Command', 20, "Red", 14, 20, 5, 2)
+        self.commandIndicator = IndicatorLightWidget(self, 'Command', 20, "Red", 14, 30, 5, 2)
         self.commandIndicator.move(self.connectionIndicator.pos().x() + self.connectionIndicator.width(), 0)
         self.commandIndicator.setToolTip("In command")
 
-        self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Red", 14, 20, 5, 1)
+        self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Red", 14, 30, 5, 1)
         self.systemIndicator.move(self.commandIndicator.pos().x() + self.commandIndicator.width(), 0)
         self.systemIndicator.setToolTip("He Tank Overpressure\n No pneumatic pressure")
 
@@ -137,7 +141,7 @@ class MissionWidget(QWidget):
 
         # Create the label that will hold the status label, displays what task is being performed
         self.status_label = QLabel(self)
-        self.status_label.setFont(MET_font)
+        self.status_label.setFont(CET_font)
         self.status_label.setText("GUI Configuration")
         self.status_label.setStyleSheet("color: white")
         self.status_label.setFixedHeight(self.mainHeight)
@@ -147,22 +151,22 @@ class MissionWidget(QWidget):
         self.status_label.show()
 
         # Connect the start of the run to function to allow updating
-        self.gui.run.runStartSignal.connect(self.updateWidgetOnRunStart)
-        self.gui.run.runEndSignal.connect(self.updateWidgetOnRunEnd)
+        self.gui.campaign.campaignStartSignal.connect(self.updateWidgetOnCampaignStart)
+        self.gui.campaign.campaignEndSignal.connect(self.updateWidgetOnCampaignEnd)
 
         self.show()
 
-    def updateMETLabel(self, MET_time):
+    def updateCETLabel(self, CET_time):
         """
-        This function is called to update the MET label, this function is connected to signal in run class
-        :param MET_time: The MET time in milliseconds
+        This function is called to update the CET label, this function is connected to signal in run class
+        :param CET_time: The CET time in milliseconds
         """
         # Convert to Qtime to allow for easier string creation
         qtime = QTime(0, 0, 0)  # Can't pass in directly because the initializer does not like secs above 59
-        qtime = qtime.addSecs(math.floor(MET_time/1000.0))
+        qtime = qtime.addSecs(math.floor(CET_time/1000.0))
 
         # Updating Label text
-        self.MET_label.setText("MET-" + qtime.toString("hh:mm:ss"))
+        self.CET_label.setText("CET-" + qtime.toString("hh:mm:ss"))
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
@@ -177,7 +181,6 @@ class MissionWidget(QWidget):
             self.status_label.setStyleSheet("color:" + Constants.MASA_Maize_color.name())
         else:
             self.status_label.setStyleSheet("color: white")
-
 
     def updateDateTimeLabel(self):
         """
@@ -204,27 +207,27 @@ class MissionWidget(QWidget):
         dateTimeString = currentDateTime.toString("MMMM dd") + dayString + currentDateTime.toString("yyyy, hh:mmap")
         self.dateTimeLabel.setText(dateTimeString)
 
-    def updateWidgetOnRunStart(self):
+    def updateWidgetOnCampaignStart(self):
         """
         Function that is called when a run is started to populate the widget with updated values
         """
         # Update start time tooltip
-        self.MET_label.setToolTip("Start time: " + self.gui.run.startDateTime.time().toString("h:mmap"))
+        self.CET_label.setToolTip("Start time: " + self.gui.campaign.startDateTime.time().toString("h:mmap"))
         # Add in title label
-        self.titleLabel.setText(self.gui.run.title)
+        self.titleLabel.setText(self.gui.campaign.title)
         self.titleLabel.adjustSize()
         # Set run indicator to green
-        self.runIndicator.setIndicatorColor("Green")
-        self.runIndicator.setToolTip("Run is Active")
+        self.campaignIndicator.setIndicatorColor("Green")
+        self.campaignIndicator.setToolTip("Campaign is Active")
 
         self.update()
 
-    def updateWidgetOnRunEnd(self):
+    def updateWidgetOnCampaignEnd(self):
         """
         Function that is called when a run is ended to populate the widget with updated values
         """
-        self.runIndicator.setIndicatorColor("Red")
-        self.runIndicator.setToolTip("Run has stopped")
+        self.campaignIndicator.setIndicatorColor("Red")
+        self.campaignIndicator.setToolTip("Campaign has stopped")
          # Add in title label
         self.titleLabel.setText("")
         self.titleLabel.adjustSize()
@@ -251,9 +254,9 @@ class MissionWidget(QWidget):
         path.moveTo(0, self.mainHeight-1)  # Bottom left corner
         path.lineTo(self.width, self.mainHeight-1)  # Straight across
 
-        # Draw the vertical line to the right of MET
-        path.moveTo(self.MET_labelRPos, self.mainHeight-1)
-        path.lineTo(self.MET_labelRPos, 0)
+        # Draw the vertical line to the right of CET
+        path.moveTo(self.CET_labelRPos, self.mainHeight-1)
+        path.lineTo(self.CET_labelRPos, 0)
 
         self.painter.drawPath(path)
 
@@ -283,32 +286,55 @@ class MissionWidget(QWidget):
         # Draw path and end
         self.painter.drawPath(path)
         self.painter.end()
-    
-    @overrides
-    def update(self):
-        super().update()
-        # connection
 
-        if self.client.is_connected and self.window.last_packet["actively_rx"]:
+    @pyqtSlot(int, str, bool)
+    def updateConnectionStatus(self, status: int, error_string: str, is_commander: bool):
+        # All is well
+        if status == 0:
             self.connectionIndicator.setIndicatorColor("Green")
-            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nGood Data\nServer Error Message: " + self.window.last_packet["error_msg"])
-        elif self.client.is_connected and self.window.last_packet["ser_open"]:
+            self.connectionIndicator.setToolTip(
+                "Server Connected\sSerial Open\nGood Data\nServer Error Message: " + error_string)
+        # Server to GUI connection is good, but data should be coming from board, but it is bad or is delayed
+        elif status == 1:
             self.connectionIndicator.setIndicatorColor("Yellow")
-            self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
-        elif self.client.is_connected and self.window.last_packet["ser_open"]:
+            self.connectionIndicator.setToolTip(
+                "Server Connected\nSerial Open\nNo Data\nServer Error Message: " + error_string)
+        # Server to GUI connection is good, but there is no open serial (no way for pacets to be recieved)
+        elif status == 2:
+            print("Test")
             self.connectionIndicator.setIndicatorColor("Yellow")
-            self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
-        else:
+            self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data\nServer Error Message: " + error_string)
+        # Server to GUI connection bad, no info to display at the time
+        elif status == 3:
             self.connectionIndicator.setIndicatorColor("Red")
             self.connectionIndicator.setToolTip("No Server Connection")
-        
+
         # commander
-        if self.client.is_commander:
+        if is_commander:
             self.commandIndicator.setIndicatorColor("Green")
             self.commandIndicator.setToolTip("In Command")
         else:
             self.commandIndicator.setIndicatorColor("Red")
             self.commandIndicator.setToolTip("No Command Authority")
+    
+    # @overrides
+    # def update(self):
+    #     super().update()
+    #     # connection
+    #
+    #     if self.client.is_connected and self.window.last_packet["actively_rx"]:
+    #         self.connectionIndicator.setIndicatorColor("Green")
+    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nGood Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+    #     elif self.client.is_connected and self.window.last_packet["ser_open"]:
+    #         self.connectionIndicator.setIndicatorColor("Yellow")
+    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
+    #     elif self.client.is_connected and self.window.last_packet["ser_open"]: #supposed to be not ser_open I think
+    #         self.connectionIndicator.setIndicatorColor("Yellow")
+    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
+    #     else:
+    #         self.connectionIndicator.setIndicatorColor("Red")
+    #         self.connectionIndicator.setToolTip("No Server Connection")
+
 
 
 class MissionWidgetBackgroundThread(QThread):

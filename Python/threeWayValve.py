@@ -90,6 +90,8 @@ class ThreeWayValve(BaseObject):
         self.client = self.widget_parent.window.client_dialog.client
 
         self.updateToolTip()
+
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
         
     @overrides
     def draw(self):
@@ -269,11 +271,6 @@ class ThreeWayValve(BaseObject):
             text += "State: De-energized\n"
         
         text += "Voltage: %s V\nCurrent: %s A" % (self.voltage, self.current)
-        
-        # if self.normally_open:
-        #     text += "Normally Open"
-        # else:
-        #     text += "Normally Closed"
 
         self.setToolTip_(text)
 
@@ -299,3 +296,14 @@ class ThreeWayValve(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
     
         return super_dict
+
+    @pyqtSlot(object) # copied from solenoid, not great
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "vlv" + str(self.channel)
+            state = data_packet[channel_name + ".en"]
+            voltage = data_packet[channel_name + ".e"]
+            current = data_packet[channel_name + ".i"]
+            self.setState(state, voltage, current)

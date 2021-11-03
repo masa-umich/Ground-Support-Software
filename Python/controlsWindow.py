@@ -31,6 +31,7 @@ from datetime import datetime
 This file contains the class to create the main window
 """
 
+
 class ControlsWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
@@ -38,7 +39,7 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('Images/M_icon.png'))
-        self.client_dialog = ClientDialog(True, self) # control client
+        self.client_dialog = ClientDialog(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()
         self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
@@ -283,7 +284,7 @@ class ControlsWindow(QMainWindow):
             #self.saveNotes()
     
     def checkpoint(self):
-        if not self.gui.run.is_active:
+        if not self.gui.campaign.is_active:
             self.client_dialog.client.command(6, None)
 
     def saveFileDialog(self):
@@ -334,9 +335,16 @@ class ControlsWindow(QMainWindow):
         for tube in self.centralWidget.controlsWidget.tube_list:
             tube.deleteTube()
 
-        self.statusBar().showMessage("New configuration started")
+        for board in self.centralWidget.controlsSidebarWidget.board_objects:
+            board.deleteLater()
+            board = None
+            del board
+
+        self.centralWidget.controlsSidebarWidget.board_objects.clear()
 
         self.centralWidget.controlsSidebarWidget.noteBox.setText("Write notes here")
+
+        self.statusBar().showMessage("New configuration started")
 
     def enterEdit(self):
         """
@@ -495,7 +503,7 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.setEnabled(True)
         self.screenSettingsAct.setDisabled(True)
 
-        self.gui.run.startRun(run_name)
+        self.gui.campaign.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
         self.statusBar().showMessage("Run: " + run_name + " started")
 
@@ -504,8 +512,8 @@ class ControlsWindow(QMainWindow):
         Called from a keyboard shortcut or the menu bar, will end run
         """
         # Must ensure that the run is active
-        if self.gui.run.is_active:
-            self.gui.run.endRun()
+        if self.gui.campaign.is_active:
+            self.gui.campaign.endRun()
 
         # Allow editing to happen when run is not active
         self.enterEditAct.setEnabled(True)
@@ -513,7 +521,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
-        self.statusBar().showMessage("Run: " + self.gui.run.title + " ended")
+        self.statusBar().showMessage("Run: " + self.gui.campaign.title + " ended")
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -925,9 +933,9 @@ class ControlsCentralWidget(QWidget):
     @overrides
     def update(self):
         super().update()
-        self.controlsWidget.update()
+        # self.controlsWidget.update()
         self.controlsSidebarWidget.update()
-        self.missionWidget.update()
+        # self.missionWidget.update()
 
     @overrides
     def resizeEvent(self, e: QResizeEvent):

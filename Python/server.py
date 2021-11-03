@@ -64,7 +64,7 @@ class Server(QtWidgets.QMainWindow):
         self.dataframe["packet_num"] = 0
         self.dataframe["ser_open"] = False
         self.dataframe["actively_rx"] = False
-        self.dataframe["error_msg"] = "No Connection Attempted"
+        self.dataframe["error_msg"] = "No Board Connection Attempted"
         self.dataframe["time"] = datetime.now().timestamp()
         for channel in self.interface.channels:  # hardcoded
             self.dataframe[channel] = 0
@@ -364,7 +364,9 @@ class Server(QtWidgets.QMainWindow):
                         else:
                             self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
+                        # if the serial to the board is even open
                         self.dataframe["ser_open"] = self.interface.ser.is_open
+                        # is actively recieving good data
                         self.dataframe["actively_rx"] = self.is_actively_receiving
                         data = pickle.dumps(self.dataframe)
                     except:

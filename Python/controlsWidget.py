@@ -97,6 +97,8 @@ class ControlsWidget(QWidget):
         p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
         self.setPalette(p)
 
+        self.gui.campaign.updateScreenSignal.connect(self.update)
+
         # TODO: move these somewhere when file system is initiated
         #self.loadData()
 
@@ -569,63 +571,63 @@ class ControlsWidget(QWidget):
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         self.window.statusBar().showMessage("Configuration opened from " + fileName)
 
-    @overrides
-    def update(self):
-
-        super().update() #lol
-        self.last_packet = self.window.last_packet
-        #print(self.last_packet)
-        if self.client.is_connected:
-            #self.last_packet["time"] -= self.starttime # time to elapsed
-            # update objects
-            for obj in self.object_list: # update objects
-                try:
-                    if type(obj) == GenSensor:
-                        this_channel = obj.channel
-                        if this_channel in self.channels:
-                            obj.setMeasurement(self.last_packet[this_channel])
-                            #print(this_channel + str())
-                    if type(obj) == Solenoid or type(obj) == ThreeWayValve:
-                        board = obj.avionics_board
-                        if board != "Undefined":
-                            prefix = self.interface.getPrefix(board)
-                            if obj.channel != "Undefined":
-                                channel_name = prefix + "vlv" + str(obj.channel)
-                                state = self.last_packet[channel_name + ".en"]
-                                voltage = self.last_packet[channel_name + ".e"]
-                                if (channel_name + ".i") in self.last_packet.keys():
-                                    current = self.last_packet[channel_name + ".i"]
-                                else:
-                                    current = None
-                                obj.setState(state, voltage, current)
-                                #print(channel_name)
-                    if type(obj) == Motor:
-                        board = obj.avionics_board
-                        if board != "Undefined":
-                            prefix = self.interface.getPrefix(board)
-                            if obj.channel != "Undefined":
-                                channel_name = prefix + "mtr" + str(obj.channel)
-                                curra = self.last_packet[channel_name + ".ia"]
-                                currb = self.last_packet[channel_name + ".ib"]
-                                pos = self.last_packet[channel_name + ".pos"]
-                                pot_pos = self.last_packet[channel_name + ".pot"]
-                                setp = self.last_packet[channel_name + ".set"]
-                                p = self.last_packet[channel_name + ".p"]
-                                i = self.last_packet[channel_name + ".i"]
-                                d = self.last_packet[channel_name + ".d"]
-                                obj.updateValues(curra,currb,pos,pot_pos,setp,p,i,d)
-                    if type(obj) == Tank:
-                        board = obj.avionics_board
-                        if board != "Undefined":
-                            prefix = self.interface.getPrefix(board)
-                            if obj.channel != "Undefined":
-                                channel_name = prefix + "tnk" + str(obj.channel)
-                                setPoint = self.last_packet[channel_name + ".tp"]
-                                lowbound = self.last_packet[channel_name + ".lp"]
-                                highBound = self.last_packet[channel_name + ".hp"]
-                                obj.updateValues(setPoint,lowbound,highBound)
-                except:
-                    traceback.print_exc()
+    # @overrides
+    # def update(self):
+    #
+    #     super().update() #lol
+    #     self.last_packet = self.window.last_packet
+    #     #print(self.last_packet)
+    #     if self.client.is_connected:
+    #         #self.last_packet["time"] -= self.starttime # time to elapsed
+    #         # update objects
+    #         for obj in self.object_list: # update objects
+    #             try:
+    #                 if type(obj) == GenSensor:
+    #                     this_channel = obj.channel
+    #                     if this_channel in self.channels:
+    #                         obj.setMeasurement(self.last_packet[this_channel])
+    #                         #print(this_channel + str())
+    #                 if type(obj) == Solenoid or type(obj) == ThreeWayValve:
+    #                     board = obj.avionics_board
+    #                     if board != "Undefined":
+    #                         prefix = self.interface.getPrefix(board)
+    #                         if obj.channel != "Undefined":
+    #                             channel_name = prefix + "vlv" + str(obj.channel)
+    #                             state = self.last_packet[channel_name + ".en"]
+    #                             voltage = self.last_packet[channel_name + ".e"]
+    #                             if (channel_name + ".i") in self.last_packet.keys():
+    #                                 current = self.last_packet[channel_name + ".i"]
+    #                             else:
+    #                                 current = None
+    #                             obj.setState(state, voltage, current)
+    #                             #print(channel_name)
+    #                 if type(obj) == Motor:
+    #                     board = obj.avionics_board
+    #                     if board != "Undefined":
+    #                         prefix = self.interface.getPrefix(board)
+    #                         if obj.channel != "Undefined":
+    #                             channel_name = prefix + "mtr" + str(obj.channel)
+    #                             curra = self.last_packet[channel_name + ".ia"]
+    #                             currb = self.last_packet[channel_name + ".ib"]
+    #                             pos = self.last_packet[channel_name + ".pos"]
+    #                             pot_pos = self.last_packet[channel_name + ".pot"]
+    #                             setp = self.last_packet[channel_name + ".set"]
+    #                             p = self.last_packet[channel_name + ".p"]
+    #                             i = self.last_packet[channel_name + ".i"]
+    #                             d = self.last_packet[channel_name + ".d"]
+    #                             obj.updateValues(curra,currb,pos,pot_pos,setp,p,i,d)
+    #                 if type(obj) == Tank:
+    #                     board = obj.avionics_board
+    #                     if board != "Undefined":
+    #                         prefix = self.interface.getPrefix(board)
+    #                         if obj.channel != "Undefined":
+    #                             channel_name = prefix + "tnk" + str(obj.channel)
+    #                             setPoint = self.last_packet[channel_name + ".tp"]
+    #                             lowbound = self.last_packet[channel_name + ".lp"]
+    #                             highBound = self.last_packet[channel_name + ".hp"]
+    #                             obj.updateValues(setPoint,lowbound,highBound)
+    #             except:
+    #                 traceback.print_exc()
 
 
 

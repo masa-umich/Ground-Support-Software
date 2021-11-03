@@ -86,6 +86,8 @@ class Tank(BaseObject):
 
         self.client = self.widget_parent.window.client_dialog.client
 
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+
     @overrides
     def onClick(self):
         """
@@ -442,3 +444,15 @@ class Tank(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
         return super_dict
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "tnk" + str(self.channel)
+
+            setPoint = data_packet[channel_name + ".tp"]
+            lowbound = data_packet[channel_name + ".lp"]
+            highBound = data_packet[channel_name + ".hp"]
+            self.updateValues(setPoint, lowbound, highBound)

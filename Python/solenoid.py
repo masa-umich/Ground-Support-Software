@@ -89,6 +89,8 @@ class Solenoid(BaseObject):
 
         self.client = self.widget_parent.window.client_dialog.client
 
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+
     # TODO: Use this withe new configuration manager
     # @classmethod
     # def initFromObject(cls, object):
@@ -221,6 +223,10 @@ class Solenoid(BaseObject):
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
 
+    # @pyqtSlot(object)
+    # def updateFromDataPacket(self,  data_packet: dict):
+    #     pass
+
     def setState(self, state: bool, voltage: float, current: float):
         """
         Set the state of the solenoid
@@ -273,3 +279,15 @@ class Solenoid(BaseObject):
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
         return super_dict
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "vlv" + str(self.channel)
+            state = data_packet[channel_name + ".en"]
+            voltage = data_packet[channel_name + ".e"]
+            current = data_packet[channel_name + ".i"]
+            self.setState(state, voltage, current)
+

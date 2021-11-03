@@ -76,6 +76,8 @@ class GenSensor(BaseObject):
 
         self.updateToolTip()
 
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+
         #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
     def _initMeasurementLabel(self):
@@ -119,7 +121,7 @@ class GenSensor(BaseObject):
     def setChannel(self, channel: str):
         """
         Sets channel of object
-        :param channel: channel of the object
+        :param channel: channel of the obbject
         """
         self.channel = channel
         self.setUnits()
@@ -210,7 +212,6 @@ class GenSensor(BaseObject):
 
         super().setMouseEventTransparency(should_be_transparent)
         self.measurement_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-
         
     @overrides
     def deleteSelf(self):
@@ -251,3 +252,8 @@ class GenSensor(BaseObject):
         text = ""
         text += self.channel
         self.setToolTip_(text)
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        if self.channel in self.interface.channels:
+            self.setMeasurement(data_packet[self.channel])

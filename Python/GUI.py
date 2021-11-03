@@ -13,7 +13,7 @@ from plotWindow import PlotWindow
 
 from configurationManager import ConfigurationManager
 
-from run import Run
+from run import Campaign
 
 """
 Program start point. This class handles all child windows of the gui
@@ -87,7 +87,7 @@ class GUI:
         QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         # This variable holds the current Run class that is being used to conduct the test
-        self.run = Run()
+        self.campaign = Campaign()
         #self.configuration = ConfigurationManager(self)
 
         # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
@@ -99,8 +99,9 @@ class GUI:
         self.controlsWindow.statusBar().showMessage("GUI startup")
         
         # set client path for run class (for server checkpointing)
-        self.run.setClient(self.controlsWindow.client_dialog.client)
-    
+        self.campaign.setClient(self.controlsWindow.client_dialog.client)
+        self.campaign.startThread()
+
     def update(self):
         self.controlsWindow.update()
 

@@ -125,6 +125,8 @@ class Motor(BaseObject):
 
         self.client = self.widget_parent.window.client_dialog.client
 
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+
     # TODO: Use this withe new configuration manager
     # @classmethod
     # def initFromObject(cls, object):
@@ -593,3 +595,20 @@ class Motor(BaseObject):
         del self.pot_pos_title_label
 
         super().deleteSelf()
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "mtr" + str(self.channel)
+
+            curra = data_packet[channel_name + ".ia"]
+            currb = data_packet[channel_name + ".ib"]
+            pos = data_packet[channel_name + ".pos"]
+            pot_pos = data_packet[channel_name + ".pot"]
+            setp = data_packet[channel_name + ".set"]
+            p = data_packet[channel_name + ".p"]
+            i = data_packet[channel_name + ".i"]
+            d = data_packet[channel_name + ".d"]
+            self.updateValues(curra, currb, pos, pot_pos, setp, p, i, d)

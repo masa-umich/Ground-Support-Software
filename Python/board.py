@@ -290,6 +290,8 @@ class Board(QWidget):
         self.board_background_button.clicked.connect(self.onClick)
         self.board_background_button.show()
 
+        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+
     def onClick(self):
         print(self.name + " clicked! But doing nothing about it")
         #self.showBoardSettingsDialog()
@@ -498,7 +500,6 @@ class Board(QWidget):
        #     p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
        #     self.controlsSidebarWidget.setPalette(p)
 
-
     def setBoardState(self, state: int):
         """
         Sets the current board state, updates all the buttons and state labels
@@ -517,7 +518,7 @@ class Board(QWidget):
         elif self.name == "GSE Controller":
             pass
         else:
-            print("Invalid board somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
+            print("Invalid board(" + self.name + ") somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
             return
 
     @overrides
@@ -725,3 +726,34 @@ class Board(QWidget):
                 self.fire_button.setEnabled(False)
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        prefix = self.gui.controlsWindow.interface.getPrefix(self.name)
+
+        if self.name == "Flight Computer":
+            self.update(data_packet[prefix + "e_batt"], 0, data_packet[prefix + "STATE"], False,
+                         data_packet[prefix + "timestamp"], data_packet[prefix + "adc_rate"],
+                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt
+        elif self.name == "Black Box":
+            self.update(0, 0, data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"],
+                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt, no e_batt
+        elif self.name == "Pressurization Controller":
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "i_batt"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                         data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         data_packet[prefix + "state_rem_duration"])
+        elif self.name == "GSE Controller":
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "ibus"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                         data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         0)  # no flash state yet
+        else:
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "i_batt"],
+                         data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         0)  # no flash state yet
