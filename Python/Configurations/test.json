@@ -2,9 +2,8 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-<<<<<<< Updated upstream
-			"x": 412.38095238095235,
-			"y": 285.7142857142857
+			"x": 660.952380952381,
+			"y": 248.0
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -43,12 +42,8 @@
 	"Motor 2": {
 		"id": 2,
 		"pos": {
-			"x": 755.2380952380952,
-			"y": 488.0
-=======
-			"x": 592.3809523809524,
-			"y": 292.57142857142856
->>>>>>> Stashed changes
+			"x": 500.0,
+			"y": 393.14285714285717
 		},
 		"fluid": 0,
 		"width": 70.0,
@@ -83,30 +78,27 @@
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
-<<<<<<< Updated upstream
-	"Board 0": "Engine Controller"
-=======
-	"Generic Sensor 2": {
-		"id": 2,
+	"3 Way Valve 3": {
+		"id": 3,
 		"pos": {
-			"x": 764.7619047619047,
-			"y": 385.14285714285717
+			"x": 847.6190476190476,
+			"y": 437.7142857142857
 		},
 		"fluid": 0,
-		"width": 66.0,
-		"height": 24.0,
-		"name": "PT",
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Sensor",
+		"long name": "3 Way Valve",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30.476190476190474,
-				"y": 32.0
+				"x": 17.142857142857142,
+				"y": 35.42857142857143
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -115,7 +107,7 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 11.428571428571429,
+				"x": -16.19047619047619,
 				"y": -20.571428571428573
 			},
 			"rows": 1,
@@ -124,6 +116,9 @@
 		},
 		"channel": "Undefined",
 		"board": "Undefined"
-	}
->>>>>>> Stashed changes
+	},
+	"Board 0": "Engine Controller",
+	"Board 1": "Pressurization Controller",
+	"Board 2": "Recovery Controller",
+	"Board 3": "Flight Computer"
 }

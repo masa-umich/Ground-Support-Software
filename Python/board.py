@@ -12,6 +12,7 @@ from enum import Enum
 
 from PyQt5 import QtWidgets
 
+
 class Board(QWidget):
 
     object_name = "Board"
@@ -30,7 +31,7 @@ class Board(QWidget):
         self.client = self.controlsSidebarWidget.window.client_dialog.client
 
         # The height value is updated later
-        self.setGeometry(0, 0, self.controlsSidebarWidget.width, 200*self.gui.pixel_scale_ratio[1])
+        self.setGeometry(0, 0, self.controlsSidebarWidget.width - 30, 200*self.gui.pixel_scale_ratio[1])
 
         # Set background color to match
         self.setAutoFillBackground(True)
@@ -189,7 +190,7 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(11 * self.gui.font_scale_ratio)
+        font.setPointSize(9 * self.gui.font_scale_ratio)
 
         if self.gui.platform == "OSX":
             fwidth = self.width()/5 * .85
@@ -510,6 +511,7 @@ class Board(QWidget):
         # Update labels
         self.state_label.setText(self.stateMap[self.state])
 
+        # TODO: not sure what this does???
         if self.name == "Pressurization Controller":
             pass
         elif self.name == "GSE Controller":
@@ -571,7 +573,7 @@ class Board(QWidget):
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            
+
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
             self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
