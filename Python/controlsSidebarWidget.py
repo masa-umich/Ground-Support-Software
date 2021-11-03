@@ -79,17 +79,17 @@ class ControlsSidebarWidget(QWidget):
 
         self.noteBox = QTextEdit(self)
         self.noteBox.setFont(font)
-        self.noteBox.setFixedWidth(self.width)
+        self.noteBox.setFixedWidth(self.width - 15)
         self.noteBox_height = int(self.width/3)
         self.noteBox.setFixedHeight(self.noteBox_height)
         self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.noteBox.move(0, 160 * self.gui.pixel_scale_ratio[1])
+        self.noteBox.move(10, 160 * self.gui.pixel_scale_ratio[1])
         self.noteBox.setText(self.noteBoxText)
         self.noteBox.show()
 
         self.state_frame = QFrame(self)
-        self.state_frame.setGeometry(self.left, 0, self.width*3,
-                                     80 * self.gui.pixel_scale_ratio[1])
+        self.state_frame.setGeometry(self.left, 0, self.width*3, 80 * self.gui.pixel_scale_ratio[1])
+
         # Vertical button layout
         self.buttonLayout = QVBoxLayout(self.state_frame)
         self.setLayout(self.buttonLayout)
@@ -107,14 +107,25 @@ class ControlsSidebarWidget(QWidget):
         self.abort_button.setDefault(False)
         self.abort_button.setAutoDefault(False)
         self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width)
+        self.abort_button.setFixedWidth(self.width - 15)
         self.abort_button.clicked.connect(self.abort_init)
         self.abort_button.setDisabled(True)
 
-        self.buttonLayout.addStretch()
+        # Scroll Bar Layout
+        self.scroll = QScrollArea(self)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scrollAreaLayout = QVBoxLayout()
+        self.scrollAreaLayoutBox = QWidget()
+        self.scrollAreaLayoutBox.setLayout(self.scrollAreaLayout)
+        self.scroll.setWidget(self.scrollAreaLayoutBox)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedWidth(self.parent.panel_width - 2)
+        self.scroll.move(2, (150 * self.gui.pixel_scale_ratio[1]) + self.noteBox_height + 10)
+        self.scroll.setFixedHeight(700 * self.gui.pixel_scale_ratio[1])
+        self.scroll.show()
+
         self.buttonLayout.addWidget(self.abort_button)
         self.buttonLayout.setAlignment(self.abort_button, Qt.AlignBottom | Qt.AlignCenter)
-
 
         self.buffer_label = QLabel(self)
         self.buffer_label.setFont(title_font)
@@ -136,8 +147,31 @@ class ControlsSidebarWidget(QWidget):
         self.buffer_label2.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
         #self.buttonLayout.addWidget(self.buffer_label2)
 
+    def addBoardsToScrollWidget(self, boardNames: []):
+        """
+        Add in boards to be shown on the sidebar. Only need to pass in the name
+        :param boardNames: A list of board names that needs to be passed
+        """
 
-    def addBoards(self, boardNames: []):
+        # Reset Layout
+        for i in reversed(range(self.scrollAreaLayout.count())):
+            self.scrollAreaLayout.itemAt(i).widget().deleteLater()
+
+        for board in self.board_objects:
+            board.deleteLater()
+            board = None
+            del board
+        self.board_objects.clear()
+
+        # Add in all the boards, update the next position to insert them
+        for name in boardNames:
+            board = Board(self, name)
+            self.scrollAreaLayout.addWidget(board)
+            self.board_objects.append(board)
+
+        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+
+    '''def addBoards(self, boardNames: []):
         """
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
@@ -159,7 +193,7 @@ class ControlsSidebarWidget(QWidget):
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
 
-        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")'''
 
     def abort_init(self):
         """Changes the state of each board. 
