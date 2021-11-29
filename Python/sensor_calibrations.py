@@ -26,6 +26,76 @@ import ctypes
 from datetime import datetime
 
 
+class RangesLayout(QGridLayout):
+    """
+    Handles each horizontal channel layout individually, so they can be updated without changing the others.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.rangesItems = QHBoxLayout()
+
+    def addRanges(self):
+        DropDownList = ("Voltage/Pressure Range", "Slope/Offset")
+
+        DropDownMenu = QComboBox()
+        DropDownMenu.addItems(DropDownList)
+
+        self.addWidget(DropDownMenu, 1, 2)
+        DropDownMenu.activated[str].connect(self.updateRanges)
+
+        # Deletes the items in rangesItems
+        for i in reversed(range(self.rangesItems.count())):
+            self.rangesItems.itemAt(i).widget().deleteLater()
+
+        self.rangesItems.addWidget(QLabel("Voltage Max:"))
+        voltageMaxSpin = QDoubleSpinBox()
+        self.rangesItems.addWidget(voltageMaxSpin)
+        self.rangesItems.addWidget(QLabel("Voltage Min:"))
+        voltageMinSpin = QDoubleSpinBox()
+        self.rangesItems.addWidget(voltageMinSpin)
+        self.rangesItems.addWidget(QLabel("Pressure Max:"))
+        pressureMaxSpin = QDoubleSpinBox()
+        self.rangesItems.addWidget(pressureMaxSpin)
+
+        self.addLayout(self.rangesItems, 1, 0)
+
+        return self
+
+    def updateRanges(self, text):
+        print(text)
+        if text == "Voltage/Pressure Range":
+            # Deletes the items in rangesItems
+            for i in reversed(range(self.rangesItems.count())):
+                self.rangesItems.itemAt(i).widget().deleteLater()
+
+            self.rangesItems.addWidget(QLabel("Voltage Max:"))
+            voltageMaxSpin = QDoubleSpinBox()
+            self.rangesItems.addWidget(voltageMaxSpin)
+            self.rangesItems.addWidget(QLabel("Voltage Min:"))
+            voltageMinSpin = QDoubleSpinBox()
+            self.rangesItems.addWidget(voltageMinSpin)
+            self.rangesItems.addWidget(QLabel("Pressure Max:"))
+            pressureMaxSpin = QDoubleSpinBox()
+            self.rangesItems.addWidget(pressureMaxSpin)
+
+            self.addLayout(self.rangesItems, 1, 0)
+
+        else:
+            # Deletes the items in rangesItems
+            for i in reversed(range(self.rangesItems.count())):
+                self.rangesItems.itemAt(i).widget().deleteLater()
+
+            self.rangesItems.addWidget(QLabel("Slope:"))
+            Slope = QDoubleSpinBox()
+            self.rangesItems.addWidget(Slope)
+            self.rangesItems.addWidget(QLabel("Offset:"))
+            Offset = QDoubleSpinBox()
+            self.rangesItems.addWidget(Offset)
+
+            self.addLayout(self.rangesItems, 1, 0)
+
+
 class SensorCalibrationDialog(QtWidgets.QDialog):
     def __init__(self, parent):
         super().__init__()
@@ -35,26 +105,71 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         self.gui = parent
         self.scrollArea = None
-        self.lower_voltage = []
-        self.upper_voltage = []
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+        self.slope = []
+        self.offset = []
         self.upper_pressure = []
         self.channel_count = 0
         self.cal_packet = None
         self.channel_count = 0
-
-    def calibrateSensorsWindow(self, action: QAction):
-        channel_settings = ["pt_cal_lower_voltage", "pt_cal_upper_voltage", "pt_cal_upper_pressure"]
-
-        dialog = QDialog(self)
+        self.dialog = QDialog(self)
+        self.rangeList = []
+        self.formLayout = QGridLayout()
 
         # Vertical layout to hold everything
-        verticalLayout = QGridLayout(dialog)
+        self.verticalLayout = QGridLayout(self.dialog)
+
+    # TODO: technically this "works", but it doesn't update the layouts on the screen because they need to be called
+    #  again. Probably want to make a separate function that handles all of the "updates" that happen on the screen
+    #  so that it could be called multiple times without messing everything up! 
+
+    # def addRangeItems(self, text):
+    #     print(text)
+
+        # if text == "Voltage/Pressure Range":
+        #     # Deletes the items in rangesItems
+        #     for i in reversed(range(self.rangesItems.count())):
+        #         self.rangesItems.itemAt(i).widget().deleteLater()
+        #
+        #     self.rangesItems.addWidget(QLabel("Voltage Max:"))
+        #     voltageMaxSpin = QDoubleSpinBox()
+        #     self.rangesItems.addWidget(voltageMaxSpin)
+        #     self.rangesItems.addWidget(QLabel("Voltage Min:"))
+        #     voltageMinSpin = QDoubleSpinBox()
+        #     self.rangesItems.addWidget(voltageMinSpin)
+        #     self.rangesItems.addWidget(QLabel("Pressure Max:"))
+        #     pressureMaxSpin = QDoubleSpinBox()
+        #     self.rangesItems.addWidget(pressureMaxSpin)
+        #
+        #     self.rangesLayout.addLayout(self.rangesItems)
+        #
+        # else:
+        #     # Deletes the items in rangesItems
+        #     for i in reversed(range(self.rangesItems.count())):
+        #         self.rangesItems.itemAt(i).widget().deleteLater()
+        #
+        #     self.rangesItems.addWidget(QLabel("Slope:"))
+        #     Slope = QDoubleSpinBox()
+        #     self.rangesItems.addWidget(Slope)
+        #     self.rangesItems.addWidget(QLabel("Offset:"))
+        #     Offset = QDoubleSpinBox()
+        #     self.rangesItems.addWidget(Offset)
+        #
+        #     self.rangesLayout.addLayout(self.rangesItems)
+
+    def calibrateSensorsWindow(self, action: QAction):
+        self.__init__(self.gui)  # Resets the values - most importantly the layout
+                                 # Without this, the layout keeps appending itself and requires a reboot of the GUI
+
+        channel_settings = ["pt_cal_lower_voltage", "pt_cal_upper_voltage", "pt_cal_upper_pressure"]
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
         font.setPointSize(14 * self.gui.font_scale_ratio)
 
+        # TODO: does the "flight computer" and "recovery controller" have boards? If not, then should I remove them
         if action.text() == "Pressurization Controller":
             self.channel_count = 6
         elif action.text() == "Flight Computer":
@@ -66,77 +181,151 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         elif action.text() == "GSE Controller":
             self.channel_count = 22
 
-        # probably make a global channel var to store all the calibrations to load in
-        # or make a function to refresh the channels that passes in one setting/count at a time and call it here
-        # ask how refresh channel works
         end = 0
+
         for x in range(self.channel_count):
-            # Create the form layout that will hold the text box
-            formLayout = QtWidgets.QGridLayout()
-            labelLayout = QtWidgets.QGridLayout()
-
-            lower_voltage_box = QDoubleSpinBox()
-            lower_voltage_box.setMaximum(9999)
-            lower_voltage_box.setValue(0)
-            lower_voltage_box.setDecimals(2)
-
-            upper_voltage_box = QDoubleSpinBox()
-            upper_voltage_box.setMaximum(9999)
-            upper_voltage_box.setValue(0)
-            upper_voltage_box.setDecimals(2)
-
-            upper_pressure_box = QDoubleSpinBox()
-            upper_pressure_box.setMaximum(9999)
-            upper_pressure_box.setValue(0)
-            upper_pressure_box.setDecimals(0)
-
-            self.lower_voltage.append(lower_voltage_box)
-            self.upper_voltage.append(upper_voltage_box)
-            self.upper_pressure.append(upper_pressure_box)
-
-            label = QLabel("PT Channel " + str(x))
-            label.setFont(font)
-
-            label_buffer = QLabel("              ")
-            label1 = QLabel("Lower Voltage")
-            label2 = QLabel("Upper Voltage")
-            label3 = QLabel("Pressure Range")
+            """
+            Iterates through and creates individual channels
+            """
             font.setPointSize(18 * self.gui.font_scale_ratio)
+            label = QLabel("\n\nPT Channel " + str(x))
             label.setFont(font)
-            label1.setFont(font)
-            label2.setFont(font)
-            label3.setFont(font)
 
-            labelLayout.addWidget(label_buffer, 0, 1)
-            labelLayout.addWidget(label1, 0, 2)
-            labelLayout.addWidget(label2, 0, 3)
-            labelLayout.addWidget(label3, 0, 4)
+            rangeLayout = RangesLayout()
 
-            formLayout.addWidget(label, 0, 1)
-            formLayout.addWidget(lower_voltage_box, 0, 2)
-            formLayout.addWidget(upper_voltage_box, 0, 3)
-            formLayout.addWidget(upper_pressure_box, 0, 4)
+            ranges = rangeLayout.addRanges()
 
-            verticalLayout.addLayout(labelLayout, 2 * x + 2, 0)
-            verticalLayout.addLayout(formLayout, 2 * x + 3, 0)
-            # verticalLayout.setColumnStretch(x, 20)
+            self.verticalLayout.addWidget(label, 2 * x + 2, 0)
+            self.verticalLayout.addLayout(ranges, 2 * x + 3, 0)
 
-            end = 2 * x + 3
+            self.rangeList.append(ranges)
+
+        # Old Code
+        # for x in range(self.channel_count):
+        #     # self.rangeList.append()
+        #
+        #     # Create the form layout that will hold the text box
+        #     # self.formLayout = QGridLayout()
+        #     # labelLayout = QGridLayout()
+        #
+        #     # font.setPointSize(18 * self.gui.font_scale_ratio)
+        #
+        #     # slope_box = QLabel("Slope: 0.0")
+        #     # slope_box.setStyleSheet('''QLabel {
+        #     #     color: rgb(80, 175, 255);
+        #     # }''')
+        #     # slope_box.setFont(font)
+        #     #
+        #     # offset_box = QLabel("Offset: 0.0")
+        #     # offset_box.setStyleSheet('''QLabel {
+        #     #     color: rgb(210, 105, 30);
+        #     #     }''')
+        #     # offset_box.setFont(font)
+        #
+        #     # font.setPointSize(12 * self.gui.font_scale_ratio)
+        #
+        #     # DropDownMenu = QComboBox()
+        #     # DropDownList = ("Voltage/Pressure Range", "Slope/Offset")
+        #     # DropDownMenu.addItems(DropDownList)
+        #     #
+        #     # self.formLayout.addWidget(DropDownMenu, 1, 2)
+        #     # DropDownMenu.activated[str].connect(self.addRangeItems)
+        #     # self.addRangeItems(DropDownList[0])
+        #
+        #     # pRangeLabel = QLabel("Pressure Min:")
+        #     # pRangeLabel.setFont(font)
+        #
+        #     # pressureRange = QHBoxLayout()
+        #     # pRange = QDoubleSpinBox()
+        #     # pressureRange.addWidget(DropDownMenu)
+        #     # pressureRange.addWidget(pRange)
+        #
+        #     # vRangeLabel = QLabel("Voltage Min/Max:    ")
+        #     # vRangeLabel.setFont(font)
+        #     # vRange1 = QDoubleSpinBox()
+        #     # vRange2 = QDoubleSpinBox()
+        #     #
+        #     # voltageRange = QHBoxLayout()
+        #     # voltageRange.addWidget(vRangeLabel)
+        #     # voltageRange.addWidget(vRange1)
+        #     # voltageRange.addWidget(vRange2)
+        #
+        #     # self.slope.append(slope_box)
+        #     # self.offset.append(offset_box)
+        #
+        #     '''
+        #     lower_voltage_box = QDoubleSpinBox()
+        #     lower_voltage_box.setMaximum(9999)
+        #     lower_voltage_box.setValue(0)
+        #     lower_voltage_box.setDecimals(2)
+        #
+        #     upper_voltage_box = QDoubleSpinBox()
+        #     upper_voltage_box.setMaximum(9999)
+        #     upper_voltage_box.setValue(0)
+        #     upper_voltage_box.setDecimals(2)
+        #
+        #     upper_pressure_box = QDoubleSpinBox()
+        #     upper_pressure_box.setMaximum(9999)
+        #     upper_pressure_box.setValue(0)
+        #     upper_pressure_box.setDecimals(0)
+        #
+        #     self.lower_voltage.append(lower_voltage_box)
+        #     self.upper_voltage.append(upper_voltage_box)
+        #     self.upper_pressure.append(upper_pressure_box)
+        #     '''
+        #
+        #     # font.setPointSize(18 * self.gui.font_scale_ratio)
+        #     # label = QLabel("PT Channel " + str(x))
+        #     # label.setFont(font)
+        #     #
+        #     # label_buffer = QLabel("              ")
+        #     # labelLayout.addWidget(label_buffer, 1, 1)
+        #
+        #     """if x == 0:
+        #         label_buffer = QLabel(" ")
+        #         # label1 = QLabel("Slope")
+        #         # label1.setStyleSheet('''QLabel {
+        #         # color: rgb(80, 175, 255);
+        #         # }''')
+        #         #
+        #         # label2 = QLabel("Offset")
+        #         # label2.setStyleSheet('''QLabel {
+        #         # color: rgb(210, 105, 30);
+        #         # }''')
+        #
+        #         font.setPointSize(18 * self.gui.font_scale_ratio)
+        #         label.setFont(font)
+        #         # label1.setFont(font)
+        #         # label2.setFont(font)
+        #
+        #         #labelLayout.addWidget(label_buffer, 0, 1)
+        #         #labelLayout.addWidget(label1, 0, 2)
+        #         #labelLayout.addWidget(label2, 0, 3)"""
+        #
+        #     # self.formLayout.addWidget(label, 0, 0)
+        #     # self.formLayout.addWidget(label_buffer, 2, 0)
+        #     # self.formLayout.addWidget(slope_box, 0, 3)
+        #     # self.formLayout.addWidget(offset_box, 0, 4)
+        #     # self.formLayout.addLayout(self.rangesLayout, 1, 0)
+        #     # self.formLayout.addLayout(voltageRange, 2, 1)
+        #     # self.formLayout.addWidget(label_buffer, 2, 0)
+        #
+        #     # verticalLayout.addLayout(labelLayout, 2 * x + 2, 0)
+        #     # verticalLayout.addLayout(self.formLayout, 2 * x + 3, 0)
+        #
+        #     # end = 2 * x + 3
 
         end += 1
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setBackgroundRole(QPalette.Dark)
-        self.scrollArea.setWidget(dialog)
+        self.scrollArea.setWidget(self.dialog)
 
         # set initial window size
-        self.scrollArea.setMinimumHeight(800 * self.gui.pixel_scale_ratio[0])
-        self.scrollArea.setMinimumWidth(1000 * self.gui.pixel_scale_ratio[0])
+        self.scrollArea.setFixedHeight(800 * self.gui.pixel_scale_ratio[0])
+        self.scrollArea.setFixedWidth(1000 * self.gui.pixel_scale_ratio[0])
 
         self.scrollArea.setWidgetResizable(True)
-
-        # added the title to the correct window
-        self.scrollArea.setWindowTitle("Sensor Calibrations: " + action.text())
 
         # Horizontal button layout
         buttonLayout = QHBoxLayout()
@@ -145,7 +334,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         cancel_button.setFont(font)
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
-        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.clicked.connect(lambda: self.dialog.done(1))
         cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
         font.setPointSize(20 * self.gui.font_scale_ratio)
@@ -164,33 +353,45 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         refresh_button.clicked.connect(lambda: self.get_calibrate_sensors(action.text()))
         refresh_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full
 
-        # buttonLayout.addWidget(cancel_button)
+        calc_button = QPushButton("Calculate")
+        calc_button.setFont(font)
+        calc_button.setDefault(False)
+        calc_button.setAutoDefault(False)
+        calc_button.clicked.connect(lambda: self.calculate())  # TODO: update for actual calculate function
+        calc_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])
+
+        #buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)
         buttonLayout.addWidget(refresh_button)
+        buttonLayout.addWidget(calc_button)
+        buttonsWidget = QWidget()
+        buttonsWidget.setLayout(buttonLayout)
 
-        verticalLayout.addLayout(buttonLayout, 1, 0)
+        self.verticalLayout.addLayout(buttonLayout, 1, 0)
 
-        warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n" \
-                               + "CALS TAKE A LONG TIME TO SAVE\n" \
-                               + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n" \
-                               + "KNOWN BUG: THIS WINDOW ONLY WORKS ONCE\n" \
-                               + "AFTER CLOSING, REBOOT GUI TO USE AGAIN")
+        warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n"
+                               + "CALS TAKE A LONG TIME TO SAVE\n"
+                               + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n")
+        # Fixed GUI Reboot Issue (I think!)
+
+        warning_label.setStyleSheet('''QLabel {
+            color: rgb(200, 0, 0);
+        }''')
 
         font.setPointSize(20 * self.gui.font_scale_ratio)
         warning_label.setFont(font)
         warningLayout = QtWidgets.QGridLayout()
         warningLayout.addWidget(warning_label)
 
-        verticalLayout.addLayout(warningLayout, 0, 0)
+        self.verticalLayout.addLayout(warningLayout, 0, 0)
 
-        dialog.show()
-        self.scrollArea.show()
-        # sys.exit(app.exec_())
-        # self.show_window(scrollArea)
-        
-    '''
-    don't think the code below works!
-    '''
+        # added the title to the correct window
+        self.setWindowTitle("Sensor Calibrations: " + action.text())
+
+        self.dialog.show()
+        self.layout.addWidget(self.scrollArea)
+        self.layout.addWidget(buttonsWidget)
+        self.show()
 
     def get_calibrate_sensors(self, board_name):
         packet = None
@@ -213,6 +414,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             self.upper_voltage[x].setValue(self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"])
             self.upper_pressure[x].setValue(self.last_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"])
 
+    # TODO: This needs to be fixed as it is now slope and offset!
     def send_sensor_calibrations(self, board_name):
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
