@@ -31,53 +31,71 @@ class RangesLayout(QGridLayout):
     Handles each horizontal channel layout individually, so they can be updated without changing the others.
     """
 
-    def __init__(self):
+    def __init__(self, parent=None):
         super().__init__()
         self.rangesItems = QHBoxLayout()
+        self.parent = parent
 
-    def addRanges(self):
+    def addRanges(self, channelNum):
         DropDownList = ("Voltage/Pressure Range", "Slope/Offset")
 
         DropDownMenu = QComboBox()
         DropDownMenu.addItems(DropDownList)
+        DropDownMenu.wheelEvent = lambda event: None
 
         self.addWidget(DropDownMenu, 1, 2)
-        DropDownMenu.activated[str].connect(self.updateRanges)
+        DropDownMenu.activated[str].connect(lambda x: self.updateRanges(x, channelNum))
 
         # Deletes the items in rangesItems
         for i in reversed(range(self.rangesItems.count())):
             self.rangesItems.itemAt(i).widget().deleteLater()
 
         self.rangesItems.addWidget(QLabel("Voltage Max:"))
-        voltageMaxSpin = QDoubleSpinBox()
-        self.rangesItems.addWidget(voltageMaxSpin)
+        voltageMax = QLineEdit()
+        voltageMax.setValidator(QDoubleValidator())
+        voltageMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMax"))
+        self.rangesItems.addWidget(voltageMax)
         self.rangesItems.addWidget(QLabel("Voltage Min:"))
-        voltageMinSpin = QDoubleSpinBox()
-        self.rangesItems.addWidget(voltageMinSpin)
+        voltageMin = QLineEdit()
+        voltageMin.setValidator(QDoubleValidator())
+        voltageMin.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMin"))
+        self.rangesItems.addWidget(voltageMin)
         self.rangesItems.addWidget(QLabel("Pressure Max:"))
-        pressureMaxSpin = QDoubleSpinBox()
-        self.rangesItems.addWidget(pressureMaxSpin)
+        pressureMax = QLineEdit()
+        pressureMax.setValidator(QDoubleValidator())
+        pressureMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "pressureMax"))
+        self.rangesItems.addWidget(pressureMax)
 
         self.addLayout(self.rangesItems, 1, 0)
 
         return self
 
-    def updateRanges(self, text):
-        print(text)
+    def updateRanges(self, text, channelNum):
+        # print(text)
+
         if text == "Voltage/Pressure Range":
             # Deletes the items in rangesItems
             for i in reversed(range(self.rangesItems.count())):
                 self.rangesItems.itemAt(i).widget().deleteLater()
 
             self.rangesItems.addWidget(QLabel("Voltage Max:"))
-            voltageMaxSpin = QDoubleSpinBox()
-            self.rangesItems.addWidget(voltageMaxSpin)
+            voltageMax = QLineEdit()
+            voltageMax.setValidator(QDoubleValidator())
+            voltageMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMax"))
+            voltageMax.setText(self.parent.voltagePressureGrid[channelNum][0])
+            self.rangesItems.addWidget(voltageMax)
             self.rangesItems.addWidget(QLabel("Voltage Min:"))
-            voltageMinSpin = QDoubleSpinBox()
-            self.rangesItems.addWidget(voltageMinSpin)
+            voltageMin = QLineEdit()
+            voltageMin.setValidator(QDoubleValidator())
+            voltageMin.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMin"))
+            voltageMin.setText(self.parent.voltagePressureGrid[channelNum][1])
+            self.rangesItems.addWidget(voltageMin)
             self.rangesItems.addWidget(QLabel("Pressure Max:"))
-            pressureMaxSpin = QDoubleSpinBox()
-            self.rangesItems.addWidget(pressureMaxSpin)
+            pressureMax = QLineEdit()
+            pressureMax.setValidator(QDoubleValidator())
+            pressureMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "pressureMax"))
+            pressureMax.setText(self.parent.voltagePressureGrid[channelNum][2])
+            self.rangesItems.addWidget(pressureMax)
 
             self.addLayout(self.rangesItems, 1, 0)
 
@@ -87,13 +105,39 @@ class RangesLayout(QGridLayout):
                 self.rangesItems.itemAt(i).widget().deleteLater()
 
             self.rangesItems.addWidget(QLabel("Slope:"))
-            Slope = QDoubleSpinBox()
-            self.rangesItems.addWidget(Slope)
+            slope = QLineEdit()
+            slope.setValidator(QDoubleValidator())
+            slope.textChanged.connect(lambda x: self.textChanged(x, channelNum, "slope"))
+            slope.setText(self.parent.slopeOffsetGrid[channelNum][0])
+            self.rangesItems.addWidget(slope)
             self.rangesItems.addWidget(QLabel("Offset:"))
-            Offset = QDoubleSpinBox()
-            self.rangesItems.addWidget(Offset)
+            offset = QLineEdit()
+            offset.setValidator(QDoubleValidator())
+            offset.textChanged.connect(lambda x: self.textChanged(x, channelNum, "offset"))
+            offset.setText(self.parent.slopeOffsetGrid[channelNum][1])
+            self.rangesItems.addWidget(offset)
 
             self.addLayout(self.rangesItems, 1, 0)
+
+    def textChanged(self, text, channel=-1, input="None"):
+        if channel != -1:
+            if input == "voltageMax":
+                self.parent.voltagePressureGrid[channel] = (text, self.parent.voltagePressureGrid[channel][1], self.parent.voltagePressureGrid[channel][2])
+            elif input == "voltageMin":
+                self.parent.voltagePressureGrid[channel] = (self.parent.voltagePressureGrid[channel][0], text, self.parent.voltagePressureGrid[channel][2])
+            elif input == "pressureMax":
+                self.parent.voltagePressureGrid[channel] = (self.parent.voltagePressureGrid[channel][0], self.parent.voltagePressureGrid[channel][1], text)
+            elif input == "slope":
+                self.parent.slopeOffsetGrid[channel] = (text, self.parent.slopeOffsetGrid[channel][1])
+            elif input == "offset":
+                self.parent.slopeOffsetGrid[channel] = (self.parent.slopeOffsetGrid[channel][0], text)
+
+            print(text + ", from Channel: " + str(channel) + " " + input)
+            print("Voltage/Pressure Range: " + str(self.parent.voltagePressureGrid[channel]))
+            print("Slope/Offset Range: " + str(self.parent.slopeOffsetGrid[channel]))
+
+        else:
+            print('error with Channels: check "textChanged" function')
 
 
 class SensorCalibrationDialog(QtWidgets.QDialog):
@@ -114,15 +158,14 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         self.cal_packet = None
         self.channel_count = 0
         self.dialog = QDialog(self)
-        self.rangeList = []
         self.formLayout = QGridLayout()
 
         # Vertical layout to hold everything
         self.verticalLayout = QGridLayout(self.dialog)
 
-    # TODO: technically this "works", but it doesn't update the layouts on the screen because they need to be called
-    #  again. Probably want to make a separate function that handles all of the "updates" that happen on the screen
-    #  so that it could be called multiple times without messing everything up! 
+        self.voltagePressureGrid = []
+        self.slopeOffsetGrid = []
+
 
     # def addRangeItems(self, text):
     #     print(text)
@@ -158,6 +201,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         #
         #     self.rangesLayout.addLayout(self.rangesItems)
 
+    def closeEvent(self, a0):
+        print('close')
+
     def calibrateSensorsWindow(self, action: QAction):
         self.__init__(self.gui)  # Resets the values - most importantly the layout
                                  # Without this, the layout keeps appending itself and requires a reboot of the GUI
@@ -191,14 +237,15 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             label = QLabel("\n\nPT Channel " + str(x))
             label.setFont(font)
 
-            rangeLayout = RangesLayout()
+            rangeLayout = RangesLayout(parent=self)
 
-            ranges = rangeLayout.addRanges()
+            ranges = rangeLayout.addRanges(x)
 
             self.verticalLayout.addWidget(label, 2 * x + 2, 0)
             self.verticalLayout.addLayout(ranges, 2 * x + 3, 0)
 
-            self.rangeList.append(ranges)
+            self.voltagePressureGrid.append(("", "", ""))
+            self.slopeOffsetGrid.append(("", ""))
 
         # Old Code
         # for x in range(self.channel_count):
@@ -394,6 +441,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         self.show()
 
     def get_calibrate_sensors(self, board_name):
+        print('receiving...')
         packet = None
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
@@ -414,8 +462,8 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             self.upper_voltage[x].setValue(self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"])
             self.upper_pressure[x].setValue(self.last_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"])
 
-    # TODO: This needs to be fixed as it is now slope and offset!
     def send_sensor_calibrations(self, board_name):
+        print('sending...')
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
 
