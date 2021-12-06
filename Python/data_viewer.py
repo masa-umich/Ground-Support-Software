@@ -36,7 +36,6 @@ class DataViewerDialog(QtWidgets.QDialog):
         self.layout.addWidget(self.data_viewer)
         self.setLayout(self.layout)
 
-
 class DataViewer(QtWidgets.QTabWidget):
     """
     Custom QtWidget to plot data
@@ -196,6 +195,23 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.showLegend()
 
+        # set up slider
+        self.slider = QtWidgets.QSlider(self)
+        self.slider.setOrientation(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10)       # REMOVE LATER, JUST FOR TESTING
+        self.slider.setValue(0)
+        self.slider.valueChanged.connect(self.range_update)
+
+        # testing with no data coming in
+        # self.slider.valueChanged.connect(self.updateTest())       still need to make updateTest
+
+        # no data coming in, probably why this line doesn't work
+        # self.slider.valueChanged.connect(self.update())
+
+        # add slider
+        self.plot_layout.addWidget(self.slider)
+
 
 
     def load_config(self, config: list):
@@ -319,6 +335,11 @@ class DataViewer(QtWidgets.QTabWidget):
                 self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
 
+    def range_update(self):
+        """Updates plot range when slider is moved"""
+
+        self.plot2.setXRange(self.slider.sliderPosition(), self.slider.sliderPosition() + self.duration)
+
 
 class DataViewerWindow(QtWidgets.QMainWindow):
     """
@@ -403,31 +424,52 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.channels = self.interface.channels
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
+        self.database_full = False
+
+        self.checkbox = QtWidgets.QCheckBox(self)
+        self.checkbox.setText("Lock")
 
         # init viewers
         self.viewers = [DataViewer(
             self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+
         for i in range(rows):
             for j in range(cols):
                 idx = i*cols+j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
+                self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
 
         self.starttime = datetime.now().timestamp()
         self.cycle_time = cycle_time
 
+        self.top_layout.addWidget(self.checkbox)
+
     def addRow(self):
 
         for i in range(self.cols):
+            idx = self.rows * self.cols + i
             self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
+            self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
 
         self.rows = self.rows + 1
 
+        self.top_layout.addWidget(self.checkbox)
+
     def addCol(self):
+        
+        # CONNECTION IS BROKEN, PROBABLY DUE TO INDEXING IN 1D ARRAY
 
         for i in range(self.rows):
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            idx = self.rows * self.cols + i
+
+            dv = DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
+            dv.slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
+
+            # self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.viewers.append(dv)
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
+            # self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
 
         self.cols = self.cols + 1
 
@@ -447,6 +489,42 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(self.database)
+
+        # check if database has reached 15 minute cap
+        if (self.database.size == 15 * 60 * 10):
+            self.database_full = True
+        
+        # when packet is received increase slider size as necessary
+        for i in range(rows):
+            for j in range(cols):
+
+                idx = i * cols + j
+
+                if (not self.database_full):
+                    # size of database extends beyond range viewed, increase slider size
+                    if (self.database.size >= self.viewers[idx].duration * 10):
+                        self.viewers[idx].slider.setMaximum(self.database.size - self.viewers[idx].duration * 10)
+
+                    # lock range viewed to most recent values if slider was already at max position
+                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setPosition(self.slider.maximum())
+                else:
+                    # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
+                    if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setPosition(self.slider.position() - 1)
+
+    def syncSlider(self, num: int):
+        """If sliders are locked together, sync all sliders when one slider is moved"""
+        print("triggered")
+        print(num)
+
+        if(self.checkbox.isChecked()):
+
+            for i in range(self.rows):
+                for j in range(self.cols):
+
+                    idx = i * self.cols + j
+                    self.viewers[idx].slider.setPosition(num)
 
     def exit(self):
         """Exit application"""
