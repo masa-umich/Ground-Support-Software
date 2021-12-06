@@ -67,10 +67,10 @@ class Limit(QtWidgets.QGroupBox):
 
         self.layout.setColumnStretch(0, 2)
         self.layout.setColumnStretch(1, 10)
-        self.layout.setColumnStretch(2, 10)
+        self.layout.setColumnStretch(2, 5)
         self.layout.setColumnStretch(3, 10)
-        self.layout.setColumnStretch(4, 20)
-        self.layout.setColumnStretch(5, 200)
+        self.layout.setColumnStretch(4, 50)
+        self.layout.setColumnStretch(5, 100)
         self.layout.setColumnStretch(6, 1)
 
     def update(self, val: float):
