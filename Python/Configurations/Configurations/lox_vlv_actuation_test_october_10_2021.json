@@ -1,0 +1,326 @@
+{
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 536.4583333333334,
+			"y": 426.25
+		},
+		"fluid": 0,
+		"width": 87.99999999999999,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.625,
+				"y": 207.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 28.125,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 876.0416666666667,
+			"y": 245.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank Press Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -35.41666666666667,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "17",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 851.0416666666667,
+			"y": 320.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "MPV Press Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -34.375,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "16",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 941.6666666666667,
+			"y": 405.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Pneumatic Cavity Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -40.625,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[9]",
+		"board": "GSE Controller"
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 1116.6666666666667,
+			"y": 320.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "MPV Vent Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -33.333333333333336,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "14",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 9": {
+		"id": 9,
+		"pos": {
+			"x": 988.5416666666667,
+			"y": 241.25
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank Pressure Transducer",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -37.5,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[8]",
+		"board": "GSE Controller"
+	},
+	"Tube 10": {
+		"tube id": 10,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 582.2916666666667,
+				"y": 428.75
+			},
+			"1": {
+				"x": 582.2916666666667,
+				"y": 258.75
+			},
+			"2": {
+				"x": 878.125,
+				"y": 258.75
+			},
+			"3": {
+				"x": 878.125,
+				"y": 257.5
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 12": {
+		"tube id": 12,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 853.125,
+				"y": 330.0
+			},
+			"1": {
+				"x": 583.3333333333334,
+				"y": 330.0
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 13": {
+		"tube id": 13,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 892.7083333333334,
+				"y": 330.0
+			},
+			"1": {
+				"x": 1118.75,
+				"y": 330.0
+			},
+			"2": {
+				"x": 1118.75,
+				"y": 330.0
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 14": {
+		"tube id": 14,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 976.0416666666667,
+				"y": 406.25
+			},
+			"1": {
+				"x": 976.0416666666667,
+				"y": 331.25
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 15": {
+		"tube id": 15,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 917.7083333333334,
+				"y": 257.5
+			},
+			"1": {
+				"x": 991.6666666666667,
+				"y": 257.5
+			}
+		},
+		"line width": 1.0
+	}
+}

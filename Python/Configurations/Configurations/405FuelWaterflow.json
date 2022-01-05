@@ -1,0 +1,839 @@
+{
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 600.0,
+			"y": 420.0
+		},
+		"fluid": 1,
+		"width": 87.99999999999999,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "ET Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.625,
+				"y": 207.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 19.791666666666668,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 2": {
+		"id": 2,
+		"pos": {
+			"x": 806.25,
+			"y": 470.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 7.291666666666667,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[18]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 3": {
+		"id": 3,
+		"pos": {
+			"x": 602.0833333333334,
+			"y": 560.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Temp",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.625,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller"
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 630.2083333333334,
+			"y": 685.0
+		},
+		"fluid": 1,
+		"width": 18.000000000000004,
+		"height": 40.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 6.25,
+				"y": 51.25
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 20.833333333333336,
+				"y": 13.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 5": {
+		"id": 5,
+		"pos": {
+			"x": 452.08333333333337,
+			"y": 280.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Board Voltage",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -7.291666666666667,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.e_batt",
+		"board": "GSE Controller"
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 827.0833333333334,
+			"y": 680.0
+		},
+		"fluid": 2,
+		"width": 18.000000000000004,
+		"height": 40.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 6.25,
+				"y": 51.25
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 20.833333333333336,
+				"y": 13.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 8": {
+		"id": 8,
+		"pos": {
+			"x": 604.1666666666667,
+			"y": 470.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 7.291666666666667,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[15]",
+		"board": "GSE Controller"
+	},
+	"Chamber 12": {
+		"id": 12,
+		"pos": {
+			"x": 700.0,
+			"y": 790.0
+		},
+		"fluid": 4,
+		"width": 87.99999999999999,
+		"height": 170.0,
+		"name": "Chamber",
+		"scale": 1,
+		"serial number": "toob",
+		"long name": "not engine",
+		"is vertical": 1,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 31.25,
+				"y": 207.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 12.5,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		}
+	},
+	"Generic Sensor 13": {
+		"id": 13,
+		"pos": {
+			"x": 654.1666666666667,
+			"y": 940.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Temp B",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 9.375,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.tc[1]",
+		"board": "GSE Controller"
+	},
+	"Tank 14": {
+		"id": 14,
+		"pos": {
+			"x": 792.7083333333334,
+			"y": 400.0
+		},
+		"fluid": 2,
+		"width": 87.99999999999999,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "OX Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.625,
+				"y": 207.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 18.75,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 16": {
+		"id": 16,
+		"pos": {
+			"x": 806.25,
+			"y": 550.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Temp",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.625,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 17": {
+		"id": 17,
+		"pos": {
+			"x": 705.2083333333334,
+			"y": 870.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "HEx",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 19.791666666666668,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[10]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 18": {
+		"id": 18,
+		"pos": {
+			"x": 705.2083333333334,
+			"y": 730.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Injector",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 9.375,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[14]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 19": {
+		"id": 19,
+		"pos": {
+			"x": 705.2083333333334,
+			"y": 815.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Temp T",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 2.0833333333333335,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.tc[0]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 20": {
+		"id": 20,
+		"pos": {
+			"x": 841.6666666666667,
+			"y": 970.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Loadcell",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 8.333333333333334,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.load[0]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 21": {
+		"id": 21,
+		"pos": {
+			"x": 756.25,
+			"y": 940.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "HEx Bottom",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -2.0833333333333335,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[17]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 22": {
+		"id": 22,
+		"pos": {
+			"x": 1028.125,
+			"y": 345.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Air bottle",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 5.208333333333334,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[13]",
+		"board": "GSE Controller"
+	},
+	"Solenoid 23": {
+		"id": 23,
+		"pos": {
+			"x": 1037.5,
+			"y": 555.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Igniter",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 0.0,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "3",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 24": {
+		"id": 24,
+		"pos": {
+			"x": 925.0,
+			"y": 350.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "CC",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 9.375,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "2",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 25": {
+		"id": 25,
+		"pos": {
+			"x": 995.8333333333334,
+			"y": 791.25
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 12.5,
+				"y": -18.75
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.tc[3]",
+		"board": "GSE Controller"
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 648.9583333333334,
+				"y": 683.75
+			},
+			"1": {
+				"x": 648.9583333333334,
+				"y": 627.5
+			},
+			"2": {
+				"x": 648.9583333333334,
+				"y": 627.5
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 847.9166666666667,
+				"y": 681.25
+			},
+			"1": {
+				"x": 847.9166666666667,
+				"y": 625.0
+			},
+			"2": {
+				"x": 847.9166666666667,
+				"y": 625.0
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 3": {
+		"tube id": 3,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 845.8333333333334,
+				"y": 680.0
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 4": {
+		"tube id": 4,
+		"fluid": 0,
+		"bend positions": {},
+		"line width": 1.0
+	}
+}
