@@ -267,7 +267,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
                 else:
                     self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
-                    if self.aliases[idx].text() is not "":
+                    if self.aliases[idx].text() != "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
         if not hasRight and self.plot2.right_view_box is not None:
@@ -350,7 +350,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up client
         if not client:
-            self.client_dialog = ClientDialog(False)
+            self.client_dialog = ClientDialog(None)
         else:
             self.client_dialog = client
 

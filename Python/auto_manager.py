@@ -304,11 +304,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
 
 class AutoManager(QtWidgets.QMainWindow):
-    def __init__(self, client=None, *args, **kwargs):
+    def __init__(self, gui = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filename = 'Untitled'
         self.path = None
+        self._gui = gui
 
         self.setWindowTitle("MASAscript Auto Manager")
         widget = QtWidgets.QWidget()
@@ -328,22 +329,23 @@ class AutoManager(QtWidgets.QMainWindow):
 
         # connection menu item
         # set up client
-        if not client:
-            self.client_dialog = ClientDialog(True)
-            self.client = self.client_dialog.client
-            connect = QtGui.QAction("&Connection", options_menu)
-            # self.quit.setShortcut("Ctrl+K")
-            connect.triggered.connect(self.client_dialog.show)
-            options_menu.addAction(connect)
-            # quit application menu item
-            quit = QtGui.QAction("&Quit", options_menu)
-            quit.setShortcut("Ctrl+Q")
-            quit.triggered.connect(self.exit)
-            options_menu.addAction(quit)
-            self.is_master = True
-        else:
-            self.client = client
-            self.is_master = False
+        # if not client:
+        #     self.client_dialog = ClientDialog(True)
+        #     self.client = self.client_dialog.client
+        #     connect = QtGui.QAction("&Connection", options_menu)
+        #     # self.quit.setShortcut("Ctrl+K")
+        #     connect.triggered.connect(self.client_dialog.show)
+        #     options_menu.addAction(connect)
+        #     # quit application menu item
+        #     quit = QtGui.QAction("&Quit", options_menu)
+        #     quit.setShortcut("Ctrl+Q")
+        #     quit.triggered.connect(self.exit)
+        #     options_menu.addAction(quit)
+        #     self.is_master = True
+        # else:
+        #     self.client = client
+        #     self.is_master = False
+        self.is_master = False
 
         # save menu item
         save_action = QtGui.QAction("&Save", options_menu)
@@ -393,7 +395,7 @@ class AutoManager(QtWidgets.QMainWindow):
             (constructed, i) = parse_auto(command_list)
             print(constructed, i)
             if i > 0:
-                self.client.command(7, (constructed,))
+                self._gui.liveDataHandler.sendCommand(7, (constructed,))
     
     def showDialog(self, msg):
         msgBox = QtWidgets.QMessageBox()
@@ -404,7 +406,7 @@ class AutoManager(QtWidgets.QMainWindow):
         return msgBox.exec()
 
     def abort(self):
-        self.client.command(8)
+        self._gui.liveDataHandler(8)
 
     def save(self):
         if self.path:

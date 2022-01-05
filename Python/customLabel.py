@@ -136,8 +136,8 @@ class CustomLabel(QLabel):
     #     painter.rotate(rotation * self.is_vertical)
     #     if self.text:
     #         if self.is_vertical:
-    #             painter.drawText(QPoint(0,0), self.text())
+    #             painter.drawText(QPointF(0,0), self.text())
     #         else:
     #             self.show()
-    #             painter.drawText(QPoint(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
+    #             painter.drawText(QPointF(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
     #     painter.end()

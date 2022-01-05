@@ -176,13 +176,13 @@ class ObjectButton(QPushButton):
 
         # Move the selected group by the move dist amount
         if event.key() == Qt.Key_Left:
-            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(-move_dist, 0))
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPointF(-move_dist, 0))
         elif event.key() == Qt.Key_Right:
-            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(move_dist, 0))
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPointF(move_dist, 0))
         elif event.key() == Qt.Key_Up:
-            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(0, -move_dist))
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPointF(0, -move_dist))
         elif event.key() == Qt.Key_Down:
-            self.object_.central_widget.controlsWidget.moveObjectGroup(QPoint(0, move_dist))
+            self.object_.central_widget.controlsWidget.moveObjectGroup(QPointF(0, move_dist))
 
         # Idk why but calling super causes the button to lose focus, so set that back
         self.object_.button.setFocus()

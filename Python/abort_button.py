@@ -12,15 +12,17 @@ from constants import Constants
 from s2Interface import S2_Interface
 from LedIndicatorWidget import LedIndicator
 
+
 class AbortButton(QtWidgets.QDialog):
-    def __init__(self, client):
+
+    def __init__(self, gui):
         super().__init__()
         self.setWindowTitle("Abort Button Settings")
         self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
 
+        self._gui = gui
         self.interface = S2_Interface()
-        self.client = client
         self.ser = serial.Serial(port=None, baudrate=9600, timeout=1)
         self.port = None
         self.is_armed = False
@@ -104,8 +106,8 @@ class AbortButton(QtWidgets.QDialog):
             "timestamp": int(datetime.now().timestamp()),
             "args": [6]
         }
-        if self.client:
-            self.client.command(3, cmd_dict)
+        # if self.client:
+        self._gui.liveDataHandler.sendCommand(3, cmd_dict)
     
     def soft_arm_toggle(self):
         """Enables the software abort button that appears in the lower right corner of the sidebar

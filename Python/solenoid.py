@@ -21,9 +21,9 @@ class Solenoid(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Solenoid', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
                  normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True):
 
@@ -87,8 +87,6 @@ class Solenoid(BaseObject):
         # self.energized_label.adjustSize()
         # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
 
-        self.client = self.widget_parent.window.client_dialog.client
-
         self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
     # TODO: Use this withe new configuration manager
@@ -151,7 +149,7 @@ class Solenoid(BaseObject):
         # pen = self.widget_parent.painter.pen()
         # self.widget_parent.painter.setPen(Qt.NoPen)
         # self.widget_parent.painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
-        # self.widget_parent.painter.drawEllipse(QPoint(self.position.x() + self.width/2, self.position.y() + self.height/2-8), 3, 3)
+        # self.widget_parent.painter.drawEllipse(QPointF(self.position.x() + self.width/2, self.position.y() + self.height/2-8), 3, 3)
         # self.widget_parent.painter.setPen(pen)
 
         self.widget_parent.painter.setBrush(Qt.NoBrush)
@@ -185,7 +183,7 @@ class Solenoid(BaseObject):
                         "args": [int(self.channel), int(new_state)]
                     }
                     #print(cmd_dict)
-                    self.client.command(3, cmd_dict)
+                    self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
             

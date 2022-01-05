@@ -21,9 +21,9 @@ class ThreeWayValve(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = '3 Way Valve', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined'):
 
         """
@@ -87,7 +87,6 @@ class ThreeWayValve(BaseObject):
         self.setAnchorPoints()
         self.channel = channel
         self.avionics_board = board
-        self.client = self.widget_parent.window.client_dialog.client
 
         self.updateToolTip()
 
@@ -179,15 +178,15 @@ class ThreeWayValve(BaseObject):
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
         if self.is_vertical == False:
-            self.anchor_points[0].updateLocalPosition(QPoint(0,int(self.sec_width/2)))
-            self.anchor_points[1].updateLocalPosition(QPoint(self.width ,int(self.sec_width/2)))
-            self.anchor_points[2].updateLocalPosition(QPoint(self.width/2,0))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width/2, self.height))
+            self.anchor_points[0].updateLocalPosition(QPointF(0,int(self.sec_width/2)))
+            self.anchor_points[1].updateLocalPosition(QPointF(self.width ,int(self.sec_width/2)))
+            self.anchor_points[2].updateLocalPosition(QPointF(self.width/2,0))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width/2, self.height))
         else:
-            self.anchor_points[0].updateLocalPosition(QPoint(int(self.sec_width/2),0))
-            self.anchor_points[1].updateLocalPosition(QPoint(int(self.sec_width/2),self.height))
-            self.anchor_points[2].updateLocalPosition(QPoint(0,int(self.height/2)))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width, int(self.height/2)))
+            self.anchor_points[0].updateLocalPosition(QPointF(int(self.sec_width/2),0))
+            self.anchor_points[1].updateLocalPosition(QPointF(int(self.sec_width/2),self.height))
+            self.anchor_points[2].updateLocalPosition(QPointF(0,int(self.height/2)))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width, int(self.height/2)))
         
     def onClick(self):
         """
@@ -212,7 +211,7 @@ class ThreeWayValve(BaseObject):
                         "args": [int(self.channel), int(new_state)]
                     }
                     #print(cmd_dict)
-                    self.client.command(3, cmd_dict)
+                    self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
             

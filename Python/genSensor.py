@@ -17,9 +17,9 @@ class GenSensor(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Sensor', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined',
                  board: str = 'Undefined', long_name_visible:bool = True, serial_number_visible:bool = True):
 

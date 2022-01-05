@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 
 from controlsWindow import ControlsWindow
 from constants import Constants
+from liveDataHandler import LiveDataHandler
 
 from plotWindow import PlotWindow
 
@@ -99,10 +100,13 @@ class GUI:
         self.controlsWindow = ControlsWindow(self)
 
         self.controlsWindow.statusBar().showMessage("GUI startup")
+
+        # This is a handler for the Client, which receives data and sends commands
+        self.liveDataHandler = LiveDataHandler(self)
         
         # set client path for run class (for server checkpointing)
-        self.campaign.setClient(self.controlsWindow.client_dialog.client)
-        self.campaign.startThread()
+        #self.campaign.setClient(self.controlsWindow.client_dialog) #client)
+        #self.campaign.startThread()
 
     def postInit(self):
         """

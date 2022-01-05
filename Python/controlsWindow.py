@@ -14,7 +14,7 @@ from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
-from flash import FlashDialog
+from flash import FlashController
 from abort_button import AbortButton
 from limits import LimitWindow
 from auto_manager import AutoManager
@@ -39,7 +39,7 @@ class ControlsWindow(QMainWindow):
         self.gui = parent
         self.title = 'MASA Console'
         self.setWindowIcon(QIcon('Images/M_icon.png'))
-        self.client_dialog = ClientDialog(True, self)  # control client
+        #self.client = ClientWidget(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()
         self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
@@ -48,10 +48,10 @@ class ControlsWindow(QMainWindow):
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
-        self.flash_dialog = FlashDialog(self.client_dialog.client, self.gui)
-        self.button_box = AbortButton(self.client_dialog.client)
-        self.limits = LimitWindow(8, gui=self.gui, client = self.client_dialog.client)
-        self.auto_manager = AutoManager(self.client_dialog.client)
+        self.flash_dialog = FlashController(self.gui)
+        self.button_box = AbortButton(self.gui) #.client)
+        self.limits = LimitWindow(10, gui=self.gui) #.client)
+        self.auto_manager = AutoManager(self.gui) #.client)
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
@@ -149,7 +149,7 @@ class ControlsWindow(QMainWindow):
 
         # Run -> Connection Settings
         self.connect = QAction("&Connection", self)
-        self.connect.triggered.connect(lambda: self.show_window(self.client_dialog))
+        self.connect.triggered.connect(lambda: self.show_window(self.gui.liveDataHandler.getClient()))
         self.connect.setShortcut('Alt+C')
 
         # Run -> Connection Settings
@@ -277,7 +277,7 @@ class ControlsWindow(QMainWindow):
 
         # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
         if self.gui.platform == "Windows":
-            self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+            self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPointF(0, self.menuBar().height())
         elif self.gui.platform == "OSX":
             self.central_widget_offset = self.pos()
 
@@ -295,7 +295,7 @@ class ControlsWindow(QMainWindow):
     
     def checkpoint(self):
         if not self.gui.campaign.is_active:
-            self.client_dialog.client.command(6, None)
+            self.gui.liveDataHandler.sendCommand(6, None)
 
     def saveFileDialog(self):
         """
@@ -825,7 +825,7 @@ class ControlsWindow(QMainWindow):
             "args": []
         }
         # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
+        self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def tareLoadCell(self):
         """
@@ -840,7 +840,7 @@ class ControlsWindow(QMainWindow):
             "args": []
         }
         # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
+        self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def zeroSystemClock(self):
         cmd_dict = {
@@ -850,7 +850,7 @@ class ControlsWindow(QMainWindow):
             "args": [0]
         }
         # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
+        self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         cmd_dict = {
             "function_name": "set_system_clock",
             "target_board_addr": 0,
@@ -858,14 +858,17 @@ class ControlsWindow(QMainWindow):
             "args": [0]
         }
         # print(cmd_dict)
-        self.client_dialog.client.command(3, cmd_dict)
+        self.gui.liveDataHandler.sendCommand(3, cmd_dict)
     
     def show_window(self, window: QWidget):
         """Shows a window or brings it to the front if already open.
 
         Args:
-            window (QWidget): window to show
+            window (QWidget): window to show (normally a dialog)
         """
+        if hasattr(window, 'getDialog'):
+            window = window.getDialog()
+
         # open window
         window.show()
 
@@ -880,13 +883,13 @@ class ControlsWindow(QMainWindow):
         # if self.central_widget_offset is None:
         #     # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
         #     if self.gui.platform == "Windows":
-        #         self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPoint(0, self.menuBar().height())
+        #         self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPointF(0, self.menuBar().height())
         #     elif self.gui.platform == "OSX":
         #         self.central_widget_offset = self.pos()
 
-        packet = self.client_dialog.client.cycle()
-        if packet != None: # on exception
-            self.last_packet = packet
+        # packet = self.client_dialog.cycle() #client.cycle()
+        # if packet != None: # on exception
+        #     self.last_packet = packet
         
         self.centralWidget.update()
 

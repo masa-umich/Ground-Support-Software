@@ -26,9 +26,9 @@ class Tank(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Tank', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0 , 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0 , 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True,
                  channel: str = 'Undefined', board: str = 'Undefined'):
         """
@@ -83,8 +83,6 @@ class Tank(BaseObject):
         self.run_context_menu.addAction("Set Pressure Config")
 
         #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
-
-        self.client = self.widget_parent.window.client_dialog.client
 
         self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
@@ -389,7 +387,7 @@ class Tank(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_low_toggle_percent",
@@ -397,7 +395,7 @@ class Tank(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(lowbound/setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_high_toggle_percent",
@@ -405,7 +403,7 @@ class Tank(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(upbound/setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
     
     def setTankStatus(self, status):
@@ -422,7 +420,7 @@ class Tank(BaseObject):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [int(self.channel),int(status)]
             }
-            self.client.command(3, cmd_dict)
+            self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     @overrides
     def generateSaveDict(self):

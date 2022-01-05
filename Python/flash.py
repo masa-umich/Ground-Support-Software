@@ -11,11 +11,10 @@ from constants import Constants
 from s2Interface import S2_Interface
 
 
-
 class FlashDialog(QtWidgets.QDialog):
-    def __init__(self, client, gui=None):
+    def __init__(self, flash_controller):
         super().__init__()
-        self.flash_controller = FlashController(client, gui)
+        self.flash_controller = flash_controller
 
         self.setWindowTitle("Flash Controller")
         self.layout = QtWidgets.QVBoxLayout()
@@ -24,13 +23,14 @@ class FlashDialog(QtWidgets.QDialog):
 
 
 class FlashController(QtWidgets.QWidget):
-    def __init__(self, client, gui = None, *args, **kwargs):
+    def __init__(self, gui=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.interface = S2_Interface()
-        self.client = client
-        self.gui = gui
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.interface = S2_Interface()
+        self._gui = gui
+        self._dialog = FlashDialog(self)
+
+        self._gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
         self.logo = QtGui.QLabel()
@@ -51,7 +51,7 @@ class FlashController(QtWidgets.QWidget):
         rem_mem_font = QtGui.QFont()
         rem_mem_font.setStyleStrategy(QtGui.QFont.PreferAntialias)
         rem_mem_font.setFamily(Constants.monospace_font)
-        rem_mem_font.setPointSizeF(14 * self.gui.font_scale_ratio)
+        rem_mem_font.setPointSizeF(14 * self._gui.font_scale_ratio)
         self.rem_mem.setFont(rem_mem_font)
         self.rem_mem.setText("0000 kb")
         #self.rem_mem.setStyleSheet("color: black")
@@ -76,8 +76,8 @@ class FlashController(QtWidgets.QWidget):
         self.start_button.clicked.connect(self.start_logging)
         self.stop_button.clicked.connect(self.stop_logging)
 
-
-
+    def getDialog(self):
+        return self._dialog
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
@@ -107,7 +107,7 @@ class FlashController(QtWidgets.QWidget):
     def dump(self):
         addr = self.get_addr()
         if addr != -1:
-            self.client.command(5, addr)
+            self._gui.liveDataHandler.sendCommand(5, addr)
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Information)
         msgBox.setText("It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper.")
@@ -125,7 +125,7 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def stop_logging(self):
         addr = self.get_addr()
@@ -136,7 +136,7 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def start_logging(self):
         addr = self.get_addr()
@@ -147,7 +147,7 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     # @overrides
     # def update(self, last_packet):

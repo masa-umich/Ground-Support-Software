@@ -23,9 +23,9 @@ class Motor(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Motor', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Right", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Right", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
                  long_name_visible:bool = True, serial_number_visible:bool = True):
 
@@ -122,8 +122,6 @@ class Motor(BaseObject):
         self.moveLabelsToPosition()
 
         self.updateToolTip()
-
-        self.client = self.widget_parent.window.client_dialog.client
 
         self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
 
@@ -359,7 +357,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel)]
                 }
                 #print(cmd_dict)
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 spinBoxes[0].setValue(0)
     
     def motorDialogZeroPotButtonClicked(self): #TODO: update
@@ -377,7 +375,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel)]
                 }
                 #print(cmd_dict)
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
 
 
@@ -402,7 +400,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kp",
@@ -410,7 +408,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(p)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_ki",
@@ -418,7 +416,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(i)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kd",
@@ -426,7 +424,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(d)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
 
     def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):

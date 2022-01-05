@@ -34,7 +34,7 @@ class MissionWidget(QWidget):
         self.controlsPanelWidget = self.centralWidget.controlsPanelWidget
         self.window = self.centralWidget.window
         self.gui = self.centralWidget.gui
-        self.client = self.window.client_dialog.client
+        #self.client = self.window.client_dialog #.client
 
         # Thread
         self.thread = MissionWidgetBackgroundThread(self)

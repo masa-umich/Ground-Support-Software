@@ -345,7 +345,7 @@ class BaseObject(QObject):
         self.widget_parent.painter.setPen(pen)
         self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
-    def move(self, point: QPoint):
+    def move(self, point: QPointF):
         """
         Move object to a new position. This function does not handle the dragging and dropping of objects directly.
         Instead look in objectButton.py, the button class that object builds on, inside of the mouseMoveEvent function.
@@ -355,10 +355,12 @@ class BaseObject(QObject):
         :param point: point to move to
         """
 
+        intPoint = QPoint(point.x(),point.y())
+
         # Move the object and all the shit connected to it
-        self.button.move(point)
-        self.edit_context_menu.move(point)
-        self.run_context_menu.move(point)
+        self.button.move(intPoint)
+        self.edit_context_menu.move(intPoint)
+        self.run_context_menu.move(intPoint)
         self.position = point
         self.updateAnchorPoints()
         self.long_name_label.moveToPosition()

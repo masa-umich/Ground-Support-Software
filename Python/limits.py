@@ -92,7 +92,7 @@ class Limit(QtWidgets.QGroupBox):
 
 
 class LimitWidget(QtWidgets.QWidget):
-    def __init__(self, num_channels, client, *args, **kwargs):
+    def __init__(self, num_channels, *args, **kwargs):
         super(LimitWidget, self).__init__(*args, **kwargs)
 
         self.layout = QtWidgets.QGridLayout()
@@ -102,7 +102,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.interface = S2_Interface()
         self.channels = self.interface.channels
         self.num_channels = num_channels
-        self.client_dialog = client
+        #self.client_dialog = client
 
         self.limits_box = QtWidgets.QWidget()
         self.limits_layout = QtWidgets.QVBoxLayout()
@@ -173,36 +173,36 @@ class LimitWidget(QtWidgets.QWidget):
                 if channel in self.channels:
                     self.limits[i].update(last_packet[channel])
     
-    def cycle(self):
-        last_packet = self.client_dialog.client.cycle()
-        self.update_limits(last_packet)
+    # def cycle(self):
+    #     last_packet = self.client_dialog.client.cycle()
+    #     self.update_limits(last_packet)
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, gui=None, client=None, *args, **kwargs):
+    def __init__(self, num_channels, gui=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.gui = gui
         # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
 
-        # set up client
-        if not client:
-            self.client_dialog = ClientDialog(False)
-            # connection menu item
-            self.connect = QtGui.QAction("&Connection", self.options_menu)
-            # self.quit.setShortcut("Ctrl+K")
-            self.connect.triggered.connect(self.client_dialog.show)
-            self.options_menu.addAction(self.connect)
-        else:
-            self.client_dialog = client
+        # # set up client
+        # if client is None:
+        #     self.client_dialog = ClientDialog(None)
+        #     # connection menu item
+        #     self.connect = QtGui.QAction("&Connection", self.options_menu)
+        #     # self.quit.setShortcut("Ctrl+K")
+        #     self.connect.triggered.connect(self.client_dialog.show)
+        #     self.options_menu.addAction(self.connect)
+        # else:
+        #     self.client_dialog = client
 
-        self.gui = gui
         if self.gui is not None:
             self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
         
-        self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
+        self.widget = LimitWidget(num_channels, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
 
@@ -240,9 +240,9 @@ class LimitWindow(QtWidgets.QMainWindow):
     
     def exit(self):
         """Exit application"""
-        self.client_dialog.client.disconnect()
-        app.quit()
-        sys.exit()
+        #self.client_dialog.disconnect() #.client
+        #app.quit()
+        #sys.exit()
 
     def closeEvent(self, event):
         """Handler for closeEvent at window close"""

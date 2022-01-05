@@ -14,10 +14,10 @@ from LedIndicatorWidget import LedIndicator
 
 
 class ClientDialog(QtWidgets.QDialog):
-    def __init__(self, commandable, gui_window: QMainWindow = None):
+    def __init__(self, client):
         super().__init__()
-        self.client = ClientWidget(commandable=commandable, gui_window = gui_window)
 
+        self.client = client
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.client)
@@ -25,7 +25,8 @@ class ClientDialog(QtWidgets.QDialog):
 
 
 class ClientWidget(QtWidgets.QWidget):
-    def __init__(self, commandable: bool=True, gui_window: QMainWindow = None, *args, **kwargs):
+    def __init__(self, commandable: bool=True, gui = None, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
         #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,7 +35,10 @@ class ClientWidget(QtWidgets.QWidget):
         self.is_connected = False
         self.last_packet = None
 
-        self.gui_window = gui_window
+        self._dialog = ClientDialog(self)
+
+        self._gui = gui
+        self.gui_window = self._gui.controlsWindow
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
@@ -137,6 +141,9 @@ class ClientWidget(QtWidgets.QWidget):
             self.command(2)
         else:
             self.command(1)
+
+    def getDialog(self):
+        return self._dialog
 
     def cycle(self):
         try:

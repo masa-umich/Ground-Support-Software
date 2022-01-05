@@ -34,6 +34,7 @@ This file contains the class and functions to handle the 'run' or test being con
 #         self.thread = None
 #         self.client = None
 
+from liveDataHandler import LiveDataHandler
 
 class Campaign(QObject):  #
     """

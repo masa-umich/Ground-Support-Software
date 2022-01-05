@@ -28,7 +28,6 @@ class Board(QWidget):
         self.gui = self.controlsSidebarWidget.gui
         self.window = self.controlsSidebarWidget.window
         self.painter = QPainter()
-        self.client = self.controlsSidebarWidget.window.client_dialog.client
 
         # The height value is updated later
         self.setGeometry(0, 0, self.controlsSidebarWidget.width - 30, 200*self.gui.pixel_scale_ratio[1])
@@ -448,14 +447,14 @@ class Board(QWidget):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_system_clock",
                     "target_board_addr": 0,
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             newState = self.stateNum["Armed"]
         # If state is armed, allow for state to be run
         elif identifier == "Run":
@@ -482,7 +481,7 @@ class Board(QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [int(newState)]
             }
-            self.client.command(3, cmd_dict)
+            self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             #self.setBoardState(newState)
         #if self.name == "Pressurization Controller":
          #   self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
@@ -558,25 +557,25 @@ class Board(QWidget):
 
         # Make the connector positions look similar to the real board, not really pretty but wanted to do something
         if self.name == "Flight Computer" or self.name == "Recovery Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .25,self.board_pos.y()+ self.board_height/2),2.5*connector_diam, 2.5*connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .25,self.board_pos.y()+ self.board_height/2),2.5*connector_diam, 2.5*connector_diam)
         elif self.name == "Pressurization Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + self.board_height / 2), 1.5 * connector_diam, 1.5 * connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + self.board_height / 2), 1.5 * connector_diam, 1.5 * connector_diam)
             self.painter.drawEllipse(
-                QPoint(self.board_pos.x() + self.board_width * .45, self.board_pos.y() + self.board_height / 2),
+                QPointF(self.board_pos.x() + self.board_width * .45, self.board_pos.y() + self.board_height / 2),
                 1.5 * connector_diam, 1.5 * connector_diam)
             self.painter.drawEllipse(
-                QPoint(self.board_pos.x() + self.board_width * .80, self.board_pos.y() + self.board_height / 2),
+                QPointF(self.board_pos.x() + self.board_width * .80, self.board_pos.y() + self.board_height / 2),
                 1.5 * connector_diam, 1.5 * connector_diam)
         elif self.name == "Engine Controller" or self.name == "GSE Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
 
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
 
         # Default pen qualities
         pen = QPen()

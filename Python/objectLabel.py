@@ -12,7 +12,7 @@ Provides custom functionality for labels specific to objects
 class ObjectLabel(CustomLabel):
 
     def __init__(self, widget_parent, gui, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
+                 local_pos: QPointF = QPointF(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
                  is_visible: bool = True):
 
         self.widget = widget_parent
@@ -90,7 +90,7 @@ class ObjectLabel(CustomLabel):
         elif self.position_string == "Left":
             self.move(self.object_.position.x() - self.width() - 3, self.getYCenterPosition())
         elif self.position_string == "Custom":
-            self.move(self.object_.position + self.local_pos)
+            self.move(self.object_.position.x() + self.local_pos.x(), self.object_.position.y() + self.local_pos.y())
 
         self.setLocalPosition()
 
@@ -127,10 +127,10 @@ class ObjectLabel(CustomLabel):
     #     painter.rotate(rotation * self.is_vertical)
     #     if self.text:
     #         if self.is_vertical:
-    #             painter.drawText(QPoint(0,0), self.text())
+    #             painter.drawText(QPointF(0,0), self.text())
     #         else:
     #             self.show()
-    #             painter.drawText(QPoint(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
+    #             painter.drawText(QPointF(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
     #     painter.end()
 
     @overrides
@@ -159,18 +159,22 @@ class ObjectLabel(CustomLabel):
         """
 
         # For some unknown reason mouse move events handle buttons differently on OSX and Windows
-        target_button = Qt.LeftButton
-        if self.widget.gui.platform == "Windows":
-            target_button = Qt.NoButton
+        # target_button = Qt.LeftButton
+        # if self.widget.gui.platform == "Windows":
+        target_button = Qt.NoButton
 
         if event.button() == target_button and self.object_.is_being_edited:
-            # I have no idea where the 22 comes from
-            # 22 is for non full screen on my (all?) macs
-            # HMM: Elegant Solution?
-            self.window_pos = self.widget.parent.pos() #+ QPoint(0, 22)
+
+            # If the gui is in full screen on mac don't apply the extra offset
+            if self.gui.platform == "OSX" and self.gui.controlsWindow.isFullScreen():
+                window_pos = self.gui.controlsWindow.window.pos()
+            elif self.gui.platform == "Windows" and self.gui.controlsWindow.isFullScreen():
+                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset - self.gui.controlsWindow.central_widget.pos()
+            else:
+                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset
 
             # Move the button into place on screen
-            pos = event.globalPos() - self.window_pos - self.drag_start_pos
+            pos = event.globalPos() - window_pos - self.drag_start_pos
 
             # Moves the object into its new position
             self.move(pos)

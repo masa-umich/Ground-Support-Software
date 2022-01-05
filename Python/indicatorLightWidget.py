@@ -99,7 +99,7 @@ class IndicatorLightWidget(QWidget):
             self.painter.setBrush(Qt.NoBrush)
 
         # Draw the ellipse with a beige border, buffers on width and height
-        self.painter.drawEllipse(QPoint(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
+        self.painter.drawEllipse(QPointF(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
                                  self.circle_radius, self.circle_radius)
         self.painter.setBrush(Qt.NoBrush)
 
