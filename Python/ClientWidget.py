@@ -148,6 +148,7 @@ class ClientWidget(QtWidgets.QWidget):
     def cycle(self):
         try:
             # send do nothing if no command queued
+            print(self.command_queue)
             if self.command_queue.empty():
                 self.command(0)
 
