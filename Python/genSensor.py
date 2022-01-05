@@ -152,7 +152,7 @@ class GenSensor(BaseObject):
         super().move(point)
 
         if self.position_locked == False and self.locked == False:
-            self.measurement_label.move(point)
+            self.measurement_label.move(point.x(), point.y())
 
     @overrides
     def onClick(self):
