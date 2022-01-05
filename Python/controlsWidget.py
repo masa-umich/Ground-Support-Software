@@ -423,9 +423,6 @@ class ControlsWidget(QWidget):
         for i in data:
             if i.split()[0] == "Solenoid":
                 sol = data[i]
-                print(sol["pos"]["x"])
-                print(sol["pos"]["y"])
-                print(QPointF(sol["pos"]["x"],sol["pos"]["y"]))
                 self.object_list.append(Solenoid(self, _id=sol["id"], position=QPointF(sol["pos"]["x"],sol["pos"]["y"]),
                                                  fluid=sol["fluid"],width=sol["width"], height=sol["height"],
                                                  name=sol["name"],scale=sol["scale"],
@@ -441,7 +438,6 @@ class ControlsWidget(QWidget):
                                                  long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
                                                  normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
                                                  serial_number_visible=sol["serial number label"]["is visible"]))
-                print(self.object_list[-1].position)
 
             if i.split()[0] == "Tank":
                 tnk = data[i]
