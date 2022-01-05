@@ -177,7 +177,7 @@ class ObjectLabel(CustomLabel):
             pos = event.globalPos() - window_pos - self.drag_start_pos
 
             # Moves the object into its new position
-            self.move(pos)
+            self.move(pos.x(), pos.y())
 
             # Updates the new local position
             # HMM: May want to move this call to an overridden move() function
