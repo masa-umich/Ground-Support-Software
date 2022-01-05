@@ -85,7 +85,7 @@ class Campaign(QObject):  #
         :return:
         """
         self.title = title
-
+        print("Here")
         if self.client:
             self.client.command(6, str(title))  # TODO: input validation
 
@@ -94,7 +94,7 @@ class Campaign(QObject):  #
         self.CET = 0
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + \
                                 self.startDateTime.time().toString("hhmm") + "__" + self.title.replace(" ", "_")
-
+        self.thread.start()
         self.campaignStartSignal.emit()
 
     def endRun(self):
@@ -110,7 +110,7 @@ class Campaign(QObject):  #
 
         # Reset, and then restart thread
         self.CET = None
-        self.startThread()
+        #self.startThread()
 
     def updateCET(self):
         """

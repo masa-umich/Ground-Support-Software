@@ -103,6 +103,8 @@ class GUI:
 
         # This is a handler for the Client, which receives data and sends commands
         self.liveDataHandler = LiveDataHandler(self)
+
+        self.campaign.setClient(self.liveDataHandler.getClient())
         
         # set client path for run class (for server checkpointing)
         #self.campaign.setClient(self.controlsWindow.client_dialog) #client)
