@@ -45,6 +45,7 @@ class IndicatorLightWidget(QWidget):
         monospace_light_font.setStyleStrategy(QFont.PreferAntialias)
         monospace_light_font.setFamily(Constants.monospace_font)
         monospace_light_font.setWeight(QFont.Light)
+        monospace_light_font.setHintingPreference(QFont.PreferNoHinting)
 
         # Declare the label and set it parameters
         self.label = QLabel(self)

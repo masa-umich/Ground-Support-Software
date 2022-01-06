@@ -73,6 +73,7 @@ class MissionWidget(QWidget):
         CET_font.setStyleStrategy(QFont.PreferAntialias)
         CET_font.setFamily(Constants.monospace_font)
         CET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
+        CET_font.setHintingPreference(QFont.PreferNoHinting)
         self.CET_label.setFont(CET_font)
         self.CET_label.setText("CET-00:00:00")
         self.CET_label.setStyleSheet("color: white")
@@ -95,13 +96,14 @@ class MissionWidget(QWidget):
         # Date time label to display the current date and time
         self.dateTimeLabel = QLabel(self)
         monospace_light_font.setPointSizeF(16 * self.gui.font_scale_ratio)
+        monospace_light_font.setHintingPreference(QFont.PreferNoHinting)
         self.dateTimeLabel.setFont(monospace_light_font)
         self.dateTimeLabel.setStyleSheet("color: white")
         self.dateTimeLabel.setText("November 25th 2020, 05:52pm")
         self.dateTimeLabel.setFixedHeight(self.underBarHeight)
         self.dateTimeLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         # self.dateTimeLabel.setStyleSheet("background-color: red")
-        self.dateTimeLabel.move(0, self.mainHeight)
+        self.dateTimeLabel.move(0, self.mainHeight-1)
         self.updateDateTimeLabel()
         self.dateTimeLabel.show()
         # The right position of the dateTimeLabel, with a  buffer
@@ -115,7 +117,7 @@ class MissionWidget(QWidget):
         self.titleLabel.setText("")
         self.titleLabel.setFixedHeight(self.underBarHeight)
         self.titleLabel.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
-        self.titleLabel.move(self.dateTimeLabelRPos + self.underBarWBuffer, self.mainHeight)
+        self.titleLabel.move(self.dateTimeLabelRPos + self.underBarWBuffer, self.mainHeight-1)
         self.titleLabel.show()
 
         # Set all the indicators, move into position

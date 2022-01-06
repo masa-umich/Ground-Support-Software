@@ -46,6 +46,7 @@ class ControlsSidebarWidget(QWidget):
         title_font.setStyleStrategy(QFont.PreferAntialias)
         title_font.setFamily(Constants.monospace_font)
         title_font.setPointSizeF(48 * self.gui.font_scale_ratio)
+        title_font.setHintingPreference(QFont.PreferNoHinting)
         self.title_label = QLabel(self)
         self.title_label.setFont(title_font)
         self.title_label.setStyleSheet("color: white")
