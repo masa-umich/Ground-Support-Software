@@ -1,7 +1,5 @@
 from PyQt5.QtCore import *
 
-import time
-
 """
 This file contains the class and functions to handle the 'run' or test being conducted
 """
@@ -36,7 +34,8 @@ This file contains the class and functions to handle the 'run' or test being con
 
 from liveDataHandler import LiveDataHandler
 
-class Campaign(QObject):  #
+
+class Campaign(QObject):
     """
     Class that holds all the functions for a new campaign
     """
@@ -67,15 +66,10 @@ class Campaign(QObject):  #
 
         # All of these are set to none to make sure if someone access before it is created it fails
         self.title = None
-        self.is_active = False  # Use this to check if the run is running
         self.startDateTime = None
         self.CET = None
         self.saveName = None
-        self.thread = CampaignBackgroundThread(self)
-        self.dataPacketSignal = self.thread.lastPacketDataSignal
-        self.updateScreenSignal = self.thread.updateScreenSignal
-        self.connectionStatusSignal = self.thread.connectionStatusSignal
-
+        self.is_active = False
         self.client = None
 
     def startRun(self, title: str):
@@ -88,13 +82,11 @@ class Campaign(QObject):  #
         print("Here")
         if self.client:
             self.client.command(6, str(title))  # TODO: input validation
-
         self.is_active = True
         self.startDateTime = QDateTime.currentDateTime()
         self.CET = 0
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + \
                                 self.startDateTime.time().toString("hhmm") + "__" + self.title.replace(" ", "_")
-        self.thread.start()
         self.campaignStartSignal.emit()
 
     def endRun(self):
@@ -103,11 +95,10 @@ class Campaign(QObject):  #
         """
         # Want to update CET one last time to get final CET before run ends
         self.updateCET()
-        self.is_active = False
         self.campaignEndSignal.emit()
         if self.client:
             self.client.command(6, None)
-
+        self.is_active = False
         # Reset, and then restart thread
         self.CET = None
         #self.startThread()
@@ -126,67 +117,6 @@ class Campaign(QObject):  #
     def setClient(self, client):
         self.client = client
 
-    def startThread(self):
-        self.thread.start()
 
 
-# TODO: Still don't like orginization of this ahhh, feels like this is just a background server handler basically
-class CampaignBackgroundThread(QThread):
-    """
-    Class that handles background threading for the run class, this is to prevent the GUI from hanging
-    """
-
-    lastPacketDataSignal = pyqtSignal(object)
-    updateScreenSignal = pyqtSignal()
-    connectionStatusSignal = pyqtSignal(int, str, bool)
-
-    def __init__(self, campaign):
-        """
-        Initializer
-        :param run: The run instance that is currently active
-        """
-        super().__init__()
-        self.campaign = campaign
-
-    def run(self):
-        """
-        This is the function that is constantly running in the background
-        """
-
-        # While the run is active keep the thread alive, will cleanly exit when run stops
-        while True:
-            # Update the CET every second, this can be increased but seems unnecessary
-            time.sleep(0.2)
-            packet = self.campaign.client.cycle()
-
-            # TODO: This is only active if someone starts the run, server feedback should not depend on that
-            if packet is not None:
-                # All is well
-                if self.campaign.client.is_connected and packet["actively_rx"]:
-                    self.connectionStatusSignal.emit(0,packet["error_msg"], self.campaign.client.is_commander)
-                # Server to GUI connection is good, but data should be coming from board, but it is bad or is delayed
-                elif self.campaign.client.is_connected and packet["ser_open"]:
-                    self.connectionStatusSignal.emit(1, packet["error_msg"], self.campaign.client.is_commander)
-                # Server to GUI connection is good, but there is no open serial (no way for pacets to be recieved)
-                elif self.campaign.client.is_connected and not packet["ser_open"]:
-                    self.connectionStatusSignal.emit(2, packet["error_msg"], self.campaign.client.is_commander)
-
-                if self.campaign.is_active:
-                    # TODO: Not sure if this goes here, or under actively_rx, seem weird to try to push bad data
-                    # {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
-                    #                          "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,
-                    #                          "gse.telem_rate": 10, "gse.flash_mem": 1053, "time": 353}
-                    self.lastPacketDataSignal.emit(packet)  # change to packet when ready
-
-            else:
-                # Server to GUI connection bad, no info to display at the time
-                self.connectionStatusSignal.emit(3, "", self.campaign.client.is_commander)
-
-            if self.campaign.is_active:
-                self.campaign.updateCET()
-            elif not self.campaign.is_active and self.campaign.CET is not None:
-                self.updateScreenSignal.emit()
-                break
-
-            self.updateScreenSignal.emit()
 

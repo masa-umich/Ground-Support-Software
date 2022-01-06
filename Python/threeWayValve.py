@@ -90,7 +90,7 @@ class ThreeWayValve(BaseObject):
 
         self.updateToolTip()
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
     @overrides
     def draw(self):

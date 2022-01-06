@@ -287,7 +287,7 @@ class Board(QWidget):
         self.board_background_button.clicked.connect(self.onClick)
         self.board_background_button.show()
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
     def onClick(self):
         print(self.name + " clicked! But doing nothing about it")

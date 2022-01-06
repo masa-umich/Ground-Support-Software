@@ -87,7 +87,7 @@ class Solenoid(BaseObject):
         # self.energized_label.adjustSize()
         # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
     # TODO: Use this withe new configuration manager
     # @classmethod

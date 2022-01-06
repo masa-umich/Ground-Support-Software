@@ -197,7 +197,7 @@ class TankLevelDialog(QtWidgets.QDialog):
         self.gui = gui
 
         if self.gui is not None:
-            self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+            self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         self.setWindowTitle("Tank Level Calculator")
         layout = QtWidgets.QVBoxLayout()

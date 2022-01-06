@@ -123,7 +123,7 @@ class Motor(BaseObject):
 
         self.updateToolTip()
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
     # TODO: Use this withe new configuration manager
     # @classmethod

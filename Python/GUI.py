@@ -93,6 +93,9 @@ class GUI:
         self.campaign = Campaign()
         #self.configuration = ConfigurationManager(self)
 
+        # This is a handler for the Client, which receives data and sends commands
+        self.liveDataHandler = LiveDataHandler(self)
+
         # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
         self.debug_mode = False
 
@@ -101,8 +104,7 @@ class GUI:
 
         self.controlsWindow.statusBar().showMessage("GUI startup")
 
-        # This is a handler for the Client, which receives data and sends commands
-        self.liveDataHandler = LiveDataHandler(self)
+        self.liveDataHandler.postInit()
 
         self.campaign.setClient(self.liveDataHandler.getClient())
         

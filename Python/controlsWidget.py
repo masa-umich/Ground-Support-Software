@@ -97,7 +97,7 @@ class ControlsWidget(QWidget):
         p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
         self.setPalette(p)
 
-        self.gui.campaign.updateScreenSignal.connect(self.update)
+        self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
 
         # TODO: move these somewhere when file system is initiated
         #self.loadData()

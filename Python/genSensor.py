@@ -76,7 +76,7 @@ class GenSensor(BaseObject):
 
         self.updateToolTip()
 
-        self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 

@@ -52,9 +52,9 @@ class MissionWidget(QWidget):
         self.underBarWBuffer = 3 * self.gui.pixel_scale_ratio[0]
         self.mainBarWBuffer = 10 * self.gui.pixel_scale_ratio[0]
 
-        self.gui.campaign.connectionStatusSignal.connect(self.updateConnectionStatus)
+        self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateConnectionStatus)
         # TODO: Currently one of these in the controlsWidget class so maybe combine
-        self.gui.campaign.updateScreenSignal.connect(self.update)
+        self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
 
         self.show()
 

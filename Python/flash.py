@@ -30,7 +30,7 @@ class FlashController(QtWidgets.QWidget):
         self._gui = gui
         self._dialog = FlashDialog(self)
 
-        self._gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+        self._gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
         self.logo = QtGui.QLabel()

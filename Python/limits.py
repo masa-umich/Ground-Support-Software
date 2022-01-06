@@ -200,7 +200,7 @@ class LimitWindow(QtWidgets.QMainWindow):
         #     self.client_dialog = client
 
         if self.gui is not None:
-            self.gui.campaign.dataPacketSignal.connect(self.updateFromDataPacket)
+            self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
         self.widget = LimitWidget(num_channels, *args, **kwargs)
         self.setWindowTitle("Limits")
