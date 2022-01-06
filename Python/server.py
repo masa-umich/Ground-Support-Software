@@ -13,7 +13,7 @@ import hashlib
 
 from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDateTime
 from PyQt5.QtWidgets import *
 
 from party import PartyParrot
@@ -516,17 +516,17 @@ class Server(QtWidgets.QMainWindow):
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
         
-    def checkpoint_logs(self, new_runname):
-        if new_runname in (None, (), []):
-            runname = datetime.now().strftime("%Y%m%d%H%M%S")
-        elif isinstance(new_runname, str):
-            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
+    def checkpoint_logs(self, filename):
+        if filename in (None, (), []):
+            runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
+        elif isinstance(filename, str):
+            runname = filename
         else:
             print("Error: Unhandled Runname")
 
         self.close_log()
         self.open_log(runname)
-        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
+        self.send_to_log(self.log_box, "Campaign '%s' started" % runname)
 
 
     def getHelp(self, selected_command):

@@ -222,7 +222,7 @@ class TubeAnchorPoint(QPushButton):
         self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2),
                     2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
 
-        self.move(QPointF(point.x() - self.size().width()/2, point.y() - self.size().height()/2))
+        self.move(QPoint(point.x() - self.size().width()/2, point.y() - self.size().height()/2))
 
         self.show()
 

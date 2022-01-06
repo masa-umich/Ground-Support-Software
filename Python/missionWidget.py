@@ -295,7 +295,7 @@ class MissionWidget(QWidget):
         if status == 0:
             self.connectionIndicator.setIndicatorColor("Green")
             self.connectionIndicator.setToolTip(
-                "Server Connected\sSerial Open\nGood Data\nServer Error Message: " + error_string)
+                "Server Connected\nSerial Open\nGood Data\nServer Error Message: " + error_string)
         # Server to GUI connection is good, but data should be coming from board, but it is bad or is delayed
         elif status == 1:
             self.connectionIndicator.setIndicatorColor("Yellow")

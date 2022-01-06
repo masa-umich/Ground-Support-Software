@@ -79,14 +79,13 @@ class Campaign(QObject):
         :return:
         """
         self.title = title
-        print("Here")
         if self.client:
-            self.client.command(6, str(title))  # TODO: input validation
+            self.client.command(6, str(title))
         self.is_active = True
         self.startDateTime = QDateTime.currentDateTime()
         self.CET = 0
-        self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + \
-                                self.startDateTime.time().toString("hhmm") + "__" + self.title.replace(" ", "_")
+        # ISO 8601 format
+        self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
         self.campaignStartSignal.emit()
 
     def endRun(self):
