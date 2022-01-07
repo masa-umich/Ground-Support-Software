@@ -340,10 +340,13 @@ class Server(QtWidgets.QMainWindow):
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"][0]
+                        print("Here")
                         dictData = None
                         if(len(command["args"]) > 1):
                             dictData = command["args"][1]
+                        print("nahhh")
                         self.checkpoint_logs(new_runname, dictData)
+                        print("yoooo")
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -533,6 +536,7 @@ class Server(QtWidgets.QMainWindow):
             runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         elif isinstance(filename, str):
             self.startCampaignLogging(filename, dataDict)
+            return
         else:
             print("Error: Unhandled Runname")
 
