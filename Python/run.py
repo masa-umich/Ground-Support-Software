@@ -79,13 +79,13 @@ class Campaign(QObject):
         :return:
         """
         self.title = title
-        if self.client:
-            self.client.command(6, str(title))
-        self.is_active = True
         self.startDateTime = QDateTime.currentDateTime()
         self.CET = 0
         # ISO 8601 format
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
+        if self.client:
+            self.client.command(6, str(self.saveName))
+        self.is_active = True
         self.campaignStartSignal.emit()
 
     def endRun(self):
@@ -97,6 +97,7 @@ class Campaign(QObject):
         self.campaignEndSignal.emit()
         if self.client:
             self.client.command(6, None)
+            self.client
         self.is_active = False
         # Reset, and then restart thread
         self.CET = None

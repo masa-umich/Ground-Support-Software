@@ -9,6 +9,7 @@ from datetime import datetime
 import traceback
 import time
 import hashlib
+import json
 
 
 from overrides import overrides
@@ -37,7 +38,7 @@ class Server(QtWidgets.QMainWindow):
         self.packet_size = 0
         self.commander = None
         self.dataframe = {}
-        self.starttime = datetime.now().strftime("%Y%m%d%H%M%S")
+        self.starttime = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         self.threads = []
         self.command_queue = queue.Queue()
         self.log_queue = queue.Queue()
@@ -70,9 +71,13 @@ class Server(QtWidgets.QMainWindow):
             self.dataframe[channel] = 0
         self.dataframe["press.vlv3.en"] = 1
 
+        self.log_box = QTextEdit()
+        self.log_box.setReadOnly(True)
+
         # init csv header
         self.header = "Time," + self.interface.get_header()
-        self.open_log(self.starttime)  # start initial run
+        self.open_log(self.starttime, "data/")  # start initial run
+        #self.send_to_log(self.log_box, "Raw server logging started under '%s'" % self.starttime)
 
         # window layout
         self.setWindowTitle("Server")
@@ -87,9 +92,6 @@ class Server(QtWidgets.QMainWindow):
 
         # server log
         tab = QTabWidget()
-
-        self.log_box = QTextEdit()
-        self.log_box.setReadOnly(True)
 
         packet_widget = QWidget()
         packet_layout = QHBoxLayout()
@@ -337,8 +339,11 @@ class Server(QtWidgets.QMainWindow):
                     # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
-                        new_runname = command["args"]
-                        self.checkpoint_logs(new_runname)
+                        new_runname = command["args"][0]
+                        dictData = None
+                        if(len(command["args"]) > 1):
+                            dictData = command["args"][1]
+                        self.checkpoint_logs(new_runname, dictData)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -352,7 +357,6 @@ class Server(QtWidgets.QMainWindow):
                         with self.command_queue.mutex:
                             self.command_queue.queue.clear()
                         self.abort_auto = True
-
                     else:
                         print("WARNING: Unhandled command")
 
@@ -509,24 +513,32 @@ class Server(QtWidgets.QMainWindow):
                     
                     if len(args) > 0:
                         print("new_log %s" % args[0])
-                        self.checkpoint_logs(args[0])
+                        self.checkpoint_logs(args[0], None)
                     else:
                         print("new_log")
-                        self.checkpoint_logs(None)
+                        self.checkpoint_logs(None, None)
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
+
+    def startCampaignLogging(self, campaign_save_name, dataDict):
+        self.close_log()
+        self.open_log(campaign_save_name, "data/campaigns/")
+        self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
+
+        with open("data/campaigns/"+campaign_save_name+"/configuration.json", "w") as write_file:
+            json.dump(dataDict, write_file, indent="\t")
         
-    def checkpoint_logs(self, filename):
+    def checkpoint_logs(self, filename, dataDict):
         if filename in (None, (), []):
             runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         elif isinstance(filename, str):
-            runname = filename
+            self.startCampaignLogging(filename, dataDict)
         else:
             print("Error: Unhandled Runname")
 
         self.close_log()
-        self.open_log(runname)
-        self.send_to_log(self.log_box, "Campaign '%s' started" % runname)
+        self.open_log(runname, "data/")
+        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % runname)
 
 
     def getHelp(self, selected_command):
@@ -594,9 +606,9 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "new_log":
             #print("new_log %s" % args[0])
             if len(args) > 0:
-                self.checkpoint_logs(args[0])
+                self.checkpoint_logs(args[0], None)
             else:
-                self.checkpoint_logs(None)
+                self.checkpoint_logs(None, None)
 
         self.command_line.clear()
 
@@ -613,25 +625,26 @@ class Server(QtWidgets.QMainWindow):
             logstring += "%s," % (self.dataframe[channel])
         return logstring
 
-    def open_log(self, runname: str):
+    def open_log(self, runname: str, save_location: str):
         """Opens a new set of log files.
 
         Args:
             runname (str): Run-name label
+            save_location (str): location where to save logs, must have ending /
         """
 
         # make data folder if it does not exist
-        if not os.path.exists("data/" + runname + "/"):
-            os.makedirs("data/" + runname + "/")
+        if not os.path.exists(save_location + runname + "/"):
+            os.makedirs(save_location + runname + "/")
 
         # log file init and headers
-        self.server_log = open('data/' + runname + "/" +
+        self.server_log = open(save_location + runname + "/" +
                                runname + "_server_log.txt", "w+")
-        self.serial_log = open('data/' + runname + "/" +
+        self.serial_log = open(save_location + runname + "/" +
                                runname + "_serial_log.csv", "w+")
-        self.data_log = open('data/' + runname + "/" +
+        self.data_log = open(save_location + runname + "/" +
                              runname + "_data_log.csv", "w+")
-        self.command_log = open('data/' + runname + "/" +
+        self.command_log = open(save_location + runname + "/" +
                                 runname + "_command_log.csv", "w+")
         self.command_log.write("Time, Command/info\n")
         self.serial_log.write("Time, Packet\n")

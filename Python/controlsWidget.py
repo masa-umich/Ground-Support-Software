@@ -379,13 +379,12 @@ class ControlsWidget(QWidget):
 
             self.update()
 
-    # HMM: Most likely in the future more than just object data will be saved so this function will need to be adjusted
-    #  so it can pass along the saveDict. Similar to the TO-DO for load data
-    def saveData(self, filename):
+    def generateConfigurationSaveData(self):
         """
         When the user requests data to be saved this function is called and handles saving all the data for objects that
         are currently drawn on screen. It simply requests save data from each individual object and compiles it into one
-        dictionary and then saves it to a json
+        dictionary
+        :return: dictionary of data
         """
         data = {}
         # For every object, get it save dictionary and compile it into one dictionary
@@ -397,6 +396,16 @@ class ControlsWidget(QWidget):
             data = {**data, **(tube.generateSaveDict())}
 
         data = {**data, **(self.centralWidget.controlsSidebarWidget.generateSaveDict())}
+
+        return data
+
+    # HMM: Most likely in the future more than just object data will be saved so this function will need to be adjusted
+    #  so it can pass along the saveDict. Similar to the TO-DO for load data
+    def saveData(self, filename):
+        """
+        Saves generated dictionary data to json
+        """
+        data = self.generateConfigurationSaveData()
 
         # With the open file, write to json with a tab as an indent
         with open(filename, "w") as write_file:
