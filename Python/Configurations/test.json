@@ -2,8 +2,8 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 481.90476190476187,
-			"y": 292.57142857142856
+			"x": 426.66666666666663,
+			"y": 265.14285714285717
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -11,7 +11,7 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Solenoid",
+		"long name": "Drain Valve",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
@@ -19,7 +19,7 @@
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 17.142857142857142,
-				"y": 24.0
+				"y": 23.999999999999968
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,7 +28,86 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6.666666666666666,
+				"x": -14.285714285714285,
+				"y": -20.571428571428605
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "4",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tank 2": {
+		"id": 2,
+		"pos": {
+			"x": 793.3333333333333,
+			"y": 267.42857142857144
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238095,
+				"y": 206.85714285714286
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.619047619047617,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Motor 3": {
+		"id": 3,
+		"pos": {
+			"x": 320.95238095238096,
+			"y": 604.5714285714286
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "LOX Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.38095238095238,
+				"y": 67.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 1.9047619047619047,
 				"y": -20.571428571428573
 			},
 			"rows": 1,
@@ -36,8 +115,165 @@
 			"is visible": true
 		},
 		"channel": "0",
-		"board": "GSE Controller",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 928.5714285714286,
+			"y": 685.7142857142857
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox pressure",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -5.714285714285714,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[12]",
+		"board": "GSE Controller"
+	},
+	"Generic Sensor 5": {
+		"id": 5,
+		"pos": {
+			"x": 728.5714285714286,
+			"y": 747.4285714285714
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Press target addy",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -2.857142857142857,
+				"y": -37.714285714285715
+			},
+			"rows": 2.0,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "press.target_addr",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 6": {
+		"id": 6,
+		"pos": {
+			"x": 1125.7142857142858,
+			"y": 772.5714285714286
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190258,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571212,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 279.04761904761904,
+			"y": 265.14285714285717
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Press Valve",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 23.999999999999968
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -14.285714285714285,
+				"y": -20.571428571428605
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "2",
+		"board": "Pressurization Controller",
 		"normally open": false
 	},
-	"Board 0": "GSE Controller"
+	"Board 0": "GSE Controller",
+	"Board 1": "Pressurization Controller"
 }

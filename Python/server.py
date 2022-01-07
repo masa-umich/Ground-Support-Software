@@ -341,8 +341,10 @@ class Server(QtWidgets.QMainWindow):
                         print(command)
                         new_runname = command["args"][0]
                         dictData = None
-                        if(len(command["args"]) > 1):
+                        mappings = None
+                        if len(command["args"]) > 1:
                             dictData = command["args"][1]
+                            mappings = command["args"][2]
                         self.checkpoint_logs(new_runname, dictData)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:

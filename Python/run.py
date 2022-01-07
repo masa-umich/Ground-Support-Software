@@ -85,7 +85,7 @@ class Campaign(QObject):
         # ISO 8601 format
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
         if self.client:
-            self.client.command(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData()])
+            self.client.command(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData(), self.gui.controlsWindow.centralWidget.controlsWidget.generateSensorMappingsToSend()])
         self.is_active = True
         self.campaignStartSignal.emit()
 

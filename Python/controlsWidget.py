@@ -18,6 +18,7 @@ from overrides import overrides
 #from datetime import datetime
 
 from termcolor import colored
+import os
 
 import json
 import traceback
@@ -379,6 +380,48 @@ class ControlsWidget(QWidget):
 
             self.update()
 
+    def generateSensorMappingsToSend(self):
+        """
+        Similar to showSensorMappings, but instead makes a dictionary to send the data to the server
+        :return: mapDict: a dictionary of sensor mappings for the server to save with the campaign
+        """
+        boardNames = []
+        for board in self.centralWidget.controlsSidebarWidget.board_objects:
+            boardNames.append(board.name)
+
+        mapDict = {"Boards": boardNames}
+
+        counter = 0
+        for object_ in self.object_list:
+            if hasattr(object_, "channel") and object_.channel != "Undefined":
+                mapDict[counter] = [object_.long_name, object_.channel]
+                counter += 1
+
+        return mapDict
+
+    def showSensorMappings(self):
+        """
+        Compiles a list of sensor mappings, ie what channel things are plugged into. Puts it into a temporary file and
+        opens that
+        """
+
+        with open("data/.tempMappings.txt", "w") as write_file:
+            write_file.write("CONNECTED BOARDS:\n--------------------------------------\n")
+            for board in self.centralWidget.controlsSidebarWidget.board_objects:
+                write_file.write(board.name + "\n")
+
+            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n--------------------------------------\n")
+            for object_ in self.object_list:
+                if hasattr(object_, 'channel') and object_.channel != "Undefined":
+                    write_file.write(f'{object_.long_name + ",":<25}{object_.channel:<12}' + "\n")
+
+        if self.gui.platform == "Windows":
+            os.system('notepad data/.tempMappings.txt')
+        elif self.gui.platform == "OSX":
+            os.system('open -e data/.tempMappings.txt')
+        else:
+            print(colored("WARNING: System not supported. Manually open sensor mappings under data/.tempMappings", 'red'))
+
     def generateConfigurationSaveData(self):
         """
         When the user requests data to be saved this function is called and handles saving all the data for objects that
@@ -412,6 +455,7 @@ class ControlsWidget(QWidget):
             json.dump(data, write_file, indent="\t")
 
         self.window.statusBar().showMessage("Configuration saved to " + filename)
+        self.showSensorMappings()
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
