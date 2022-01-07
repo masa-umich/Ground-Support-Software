@@ -90,7 +90,7 @@ class GUI:
         QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         # This variable holds the current Run class that is being used to conduct the test
-        self.campaign = Campaign()
+        self.campaign = Campaign(self)
         #self.configuration = ConfigurationManager(self)
 
         # This is a handler for the Client, which receives data and sends commands

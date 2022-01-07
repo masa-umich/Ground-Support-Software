@@ -48,7 +48,7 @@ class Campaign(QObject):
     campaignEndSignal = pyqtSignal()
     updateCETSignal = pyqtSignal(int)
 
-    def __init__(self):
+    def __init__(self, gui):
         """
         Initializes the run, this is called at program start so it holds no data until the run is actually started. It
         has to be done at the GUI launch instead of when the user starts to run to ensure that slots signals and events
@@ -65,6 +65,7 @@ class Campaign(QObject):
         super().__init__()
 
         # All of these are set to none to make sure if someone access before it is created it fails
+        self.gui = gui
         self.title = None
         self.startDateTime = None
         self.CET = None
@@ -84,7 +85,7 @@ class Campaign(QObject):
         # ISO 8601 format
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
         if self.client:
-            self.client.command(6, str(self.saveName))
+            self.client.command(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData()])
         self.is_active = True
         self.campaignStartSignal.emit()
 
@@ -97,7 +98,6 @@ class Campaign(QObject):
         self.campaignEndSignal.emit()
         if self.client:
             self.client.command(6, None)
-            self.client
         self.is_active = False
         # Reset, and then restart thread
         self.CET = None
