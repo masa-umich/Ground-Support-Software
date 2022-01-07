@@ -340,6 +340,7 @@ class Server(QtWidgets.QMainWindow):
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"][0]
+                        print("Here")
                         dictData = None
                         mappings = None
                         if len(command["args"]) > 1:
@@ -535,6 +536,7 @@ class Server(QtWidgets.QMainWindow):
             runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         elif isinstance(filename, str):
             self.startCampaignLogging(filename, dataDict)
+            return
         else:
             print("Error: Unhandled Runname")
 
