@@ -46,7 +46,7 @@ class Campaign(QObject):
     # Signals for this class
     campaignStartSignal = pyqtSignal()
     campaignEndSignal = pyqtSignal()
-    updateCETSignal = pyqtSignal(int)
+    updateCETSignal = pyqtSignal(int, object)
     testStartSignal = pyqtSignal(str)
     testEndSignal = pyqtSignal()
 
@@ -112,11 +112,11 @@ class Campaign(QObject):
         self.CET = None
 
     def startTest(self, name: str):
-        self.isTestActive = True
         self.currentTestName = name
         self.updateCET()
         self.numTests += 1
         self.testDict[name] = {"CET": self.CET, "Test Num": self.numTests}
+        self.isTestActive = True
         self.testStartSignal.emit(name)
 
     def endTest(self):
@@ -140,7 +140,10 @@ class Campaign(QObject):
             # Set the CET, note the msecTo function returns negative for times in the past
             self.CET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
             # Emit the signal that will allow other parts of the GUI to update with this data
-            self.updateCETSignal.emit(self.CET)
+            if self.isTestActive:
+                self.updateCETSignal.emit(self.CET, self.testDict[self.currentTestName]["CET"])
+            else:
+                self.updateCETSignal.emit(self.CET, None)
 
     def setClient(self, client):
         self.client = client

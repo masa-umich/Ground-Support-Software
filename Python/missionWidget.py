@@ -169,26 +169,32 @@ class MissionWidget(QWidget):
         self.show()
 
     @staticmethod
-    def generateCETAsText(CET_time):
+    def generateCETAsText(CET_time, test_start_time: int = None):
         """
         This function generates a string from the CET time
         :param CET_time: CET in milliseconds
+        :param test_start_time: option time that test started, will then return TET instead of CET. See below
+        updateCETLabel for more
         :return: string as time
         """
         # Convert to Qtime to allow for easier string creation
         qtime = QTime(0, 0, 0)  # Can't pass in directly because the initializer does not like secs above 59
-        qtime = qtime.addSecs(math.floor(CET_time / 1000.0))
+        if test_start_time is not None:
+            qtime = qtime.addSecs(math.floor((CET_time-test_start_time) / 1000.0))
+            return "TET-" + qtime.toString("hh:mm:ss")
+        else:
+            qtime = qtime.addSecs(math.floor(CET_time / 1000.0))
+            return "CET-" + qtime.toString("hh:mm:ss")
 
-        return "CET-" + qtime.toString("hh:mm:ss")
-
-    def updateCETLabel(self, CET_time):
+    def updateCETLabel(self, CET_time, test_start_time: int):
         """
-        This function is called to update the CET label, this function is connected to signal in run class
+        This function is called to update the CET label, this function is connected to signal in run class. In the case
+        that a test is currently active, we want this to show the test time, not the CET
         :param CET_time: The CET time in milliseconds
+        :param test_start_time: option time that test started
         """
-
         # Updating Label text
-        self.CET_label.setText(self.generateCETAsText(CET_time))
+        self.CET_label.setText(self.generateCETAsText(CET_time, test_start_time))
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
