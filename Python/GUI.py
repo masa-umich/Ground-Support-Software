@@ -174,6 +174,8 @@ if __name__ == '__main__':
         os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
         QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
         app = QApplication(sys.argv)
+        app.setApplicationName("MASA GUI")
+        app.setApplicationDisplayName("MASA GUI")
         print("Python Version:" + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)
 

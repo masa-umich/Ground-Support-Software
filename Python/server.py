@@ -304,7 +304,7 @@ class Server(QtWidgets.QMainWindow):
         last_uuid = None
         while True:
             try:
-                msg = clientsocket.recv(2048)
+                msg = clientsocket.recv(4096*8)  # if the data is ever bigger then this so help me
                 if msg == b'':
                     # remote connection closed
                     if self.commander == last_uuid:
@@ -339,14 +339,14 @@ class Server(QtWidgets.QMainWindow):
                     # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
-                        new_runname = command["args"][0]
-                        print("Here")
+                        new_runname = command["args"]
                         dictData = None
                         mappings = None
-                        if len(command["args"]) > 1:
+                        if command["args"] is not None and len(command["args"]) > 1:
+                            new_runname = command["args"][0]
                             dictData = command["args"][1]
                             mappings = command["args"][2]
-                        self.checkpoint_logs(new_runname, dictData)
+                        self.checkpoint_logs(new_runname, dictData, mappings)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -384,7 +384,8 @@ class Server(QtWidgets.QMainWindow):
 
                     clientsocket.sendall(data)
                 counter = 0
-            except:  # detect dropped connection
+            except Exception as e:  # detect dropped connection
+                print(traceback.format_exc())
                 if counter > 3:  # close connection after 3 consecutive failed packets
                     if self.commander == command["clientid"]:
                         self.override_commander()
@@ -516,26 +517,32 @@ class Server(QtWidgets.QMainWindow):
                     
                     if len(args) > 0:
                         print("new_log %s" % args[0])
-                        self.checkpoint_logs(args[0], None)
+                        self.checkpoint_logs(args[0], None, None)
                     else:
                         print("new_log")
-                        self.checkpoint_logs(None, None)
+                        self.checkpoint_logs(None, None, None)
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
 
-    def startCampaignLogging(self, campaign_save_name, dataDict):
+    def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
         self.close_log()
         self.open_log(campaign_save_name, "data/campaigns/")
         self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
 
         with open("data/campaigns/"+campaign_save_name+"/configuration.json", "w") as write_file:
             json.dump(dataDict, write_file, indent="\t")
-        
-    def checkpoint_logs(self, filename, dataDict):
+
+        with open("data/campaigns/"+campaign_save_name+"/avionicsMappings.csv", "w") as write_file:
+            write_file.write("Channel,Name\n")
+            for key in avionicsMappings:
+                if key != "Boards": #currently don't list the boards the user has added
+                    write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][0]+"\n") # key is not useful, first index is name, second is channel
+
+    def checkpoint_logs(self, filename, dataDict, avionicsMappings):
         if filename in (None, (), []):
             runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         elif isinstance(filename, str):
-            self.startCampaignLogging(filename, dataDict)
+            self.startCampaignLogging(filename, dataDict, avionicsMappings)
             return
         else:
             print("Error: Unhandled Runname")
@@ -543,7 +550,6 @@ class Server(QtWidgets.QMainWindow):
         self.close_log()
         self.open_log(runname, "data/")
         self.send_to_log(self.log_box, "Raw server logging started under '%s'" % runname)
-
 
     def getHelp(self, selected_command):
         commands = list(self.interface.get_cmd_names_dict().keys())
@@ -610,9 +616,9 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "new_log":
             #print("new_log %s" % args[0])
             if len(args) > 0:
-                self.checkpoint_logs(args[0], None)
+                self.checkpoint_logs(args[0], None, None)
             else:
-                self.checkpoint_logs(None, None)
+                self.checkpoint_logs(None, None, None)
 
         self.command_line.clear()
 

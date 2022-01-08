@@ -2,8 +2,8 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 426.66666666666663,
-			"y": 265.14285714285717
+			"x": 420.9523809523809,
+			"y": 306.2857142857143
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 17.142857142857142,
-				"y": 23.999999999999968
+				"x": 17.142857142857196,
+				"y": 24.0
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,8 +28,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -14.285714285714285,
-				"y": -20.571428571428605
+				"x": -15.238095238095184,
+				"y": -20.571428571428573
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -198,8 +198,8 @@
 	"Generic Sensor 6": {
 		"id": 6,
 		"pos": {
-			"x": 1125.7142857142858,
-			"y": 772.5714285714286
+			"x": 1177.142857142857,
+			"y": 629.7142857142857
 		},
 		"fluid": 0,
 		"width": 66.0,
@@ -214,7 +214,7 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30.476190476190258,
+				"x": 30.476190476190474,
 				"y": 32.0
 			},
 			"rows": 1,
@@ -224,7 +224,7 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 11.428571428571212,
+				"x": 11.428571428571429,
 				"y": -20.571428571428573
 			},
 			"rows": 1,
@@ -234,11 +234,11 @@
 		"channel": "Undefined",
 		"board": "Undefined"
 	},
-	"Solenoid 7": {
-		"id": 7,
+	"Solenoid 8": {
+		"id": 8,
 		"pos": {
-			"x": 279.04761904761904,
-			"y": 265.14285714285717
+			"x": 32.38095238095238,
+			"y": 245.7142857142857
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -246,7 +246,7 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Press Valve",
+		"long name": "Solenoid",
 		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
@@ -254,7 +254,7 @@
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 17.142857142857142,
-				"y": 23.999999999999968
+				"y": 24.000000000000032
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -263,15 +263,1604 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -14.285714285714285,
-				"y": -20.571428571428605
+				"x": -6.666666666666666,
+				"y": -21.714285714285683
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "2",
-		"board": "Pressurization Controller",
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 9": {
+		"id": 9,
+		"pos": {
+			"x": 67.61904761904762,
+			"y": 302.8571428571428
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000064
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285648
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 10": {
+		"id": 10,
+		"pos": {
+			"x": 99.04761904761904,
+			"y": 367.99999999999994
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000064
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285648
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tank 12": {
+		"id": 12,
+		"pos": {
+			"x": 319.04761904761904,
+			"y": 368.0
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238095,
+				"y": 206.85714285714286
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.619047619047617,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 13": {
+		"id": 13,
+		"pos": {
+			"x": 477.1428571428571,
+			"y": 401.14285714285717
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Motor 16": {
+		"id": 16,
+		"pos": {
+			"x": 614.2857142857142,
+			"y": 358.85714285714283
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.38095238095238,
+				"y": 67.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.238095238095237,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 17": {
+		"id": 17,
+		"pos": {
+			"x": 561.9047619047619,
+			"y": 597.7142857142857
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 18": {
+		"id": 18,
+		"pos": {
+			"x": 807.6190476190476,
+			"y": 605.7142857142857
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 19": {
+		"id": 19,
+		"pos": {
+			"x": 968.5714285714286,
+			"y": 549.7142857142857
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.000000000000064
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -21.714285714285648
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"3 Way Valve 20": {
+		"id": 20,
+		"pos": {
+			"x": 1002.8571428571428,
+			"y": 333.7142857142857
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "3 Way Valve",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 35.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -16.19047619047619,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 21": {
+		"id": 21,
+		"pos": {
+			"x": 999.047619047619,
+			"y": 243.42857142857142
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 22": {
+		"id": 22,
+		"pos": {
+			"x": 970.4761904761905,
+			"y": 254.85714285714286
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 23": {
+		"id": 23,
+		"pos": {
+			"x": 791.4285714285714,
+			"y": 227.42857142857142
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 25": {
+		"id": 25,
+		"pos": {
+			"x": 542.8571428571429,
+			"y": 566.8571428571429
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857032,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666774,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "8",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 27": {
+		"id": 27,
+		"pos": {
+			"x": 69.52380952380952,
+			"y": 660.5714285714286
+		},
+		"fluid": 4,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 31": {
+		"id": 31,
+		"pos": {
+			"x": 456.19047619047615,
+			"y": 747.4285714285714
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 32": {
+		"id": 32,
+		"pos": {
+			"x": 561.9047619047619,
+			"y": 824.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 33": {
+		"id": 33,
+		"pos": {
+			"x": 424.76190476190476,
+			"y": 978.2857142857143
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 34": {
+		"id": 34,
+		"pos": {
+			"x": 742.8571428571428,
+			"y": 857.1428571428571
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tank 35": {
+		"id": 35,
+		"pos": {
+			"x": 916.1904761904761,
+			"y": 817.1428571428571
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238095,
+				"y": 206.85714285714286
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.619047619047617,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Motor 36": {
+		"id": 36,
+		"pos": {
+			"x": 1080.952380952381,
+			"y": 480.0
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.38095238095238,
+				"y": 67.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.238095238095237,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Motor 37": {
+		"id": 37,
+		"pos": {
+			"x": 1161.904761904762,
+			"y": 306.2857142857143
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.38095238095238,
+				"y": 67.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 15.238095238095237,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 38": {
+		"id": 38,
+		"pos": {
+			"x": 876.1904761904761,
+			"y": 170.28571428571428
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 40": {
+		"id": 40,
+		"pos": {
+			"x": 427.6190476190476,
+			"y": 228.57142857142853
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000032
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285683
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 41": {
+		"id": 41,
+		"pos": {
+			"x": 303.8095238095238,
+			"y": 230.85714285714283
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000032
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285683
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 42": {
+		"id": 42,
+		"pos": {
+			"x": 189.52380952380952,
+			"y": 255.99999999999994
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000064
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285648
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 43": {
+		"id": 43,
+		"pos": {
+			"x": 138.0952380952381,
+			"y": 213.7142857142857
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.000000000000032
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -21.714285714285683
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 44": {
+		"id": 44,
+		"pos": {
+			"x": 456.19047619047615,
+			"y": 497.14285714285717
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 45": {
+		"id": 45,
+		"pos": {
+			"x": 676.1904761904761,
+			"y": 580.5714285714286
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 46": {
+		"id": 46,
+		"pos": {
+			"x": 788.5714285714286,
+			"y": 555.4285714285714
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 47": {
+		"id": 47,
+		"pos": {
+			"x": 836.1904761904761,
+			"y": 740.5714285714286
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 48": {
+		"id": 48,
+		"pos": {
+			"x": 591.4285714285714,
+			"y": 729.1428571428571
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 49": {
+		"id": 49,
+		"pos": {
+			"x": 483.8095238095238,
+			"y": 910.8571428571429
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 50": {
+		"id": 50,
+		"pos": {
+			"x": 398.0952380952381,
+			"y": 838.8571428571429
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 51": {
+		"id": 51,
+		"pos": {
+			"x": 612.3809523809524,
+			"y": 924.5714285714286
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 52": {
+		"id": 52,
+		"pos": {
+			"x": 738.0952380952381,
+			"y": 955.4285714285714
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 53": {
+		"id": 53,
+		"pos": {
+			"x": 847.6190476190476,
+			"y": 846.8571428571429
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tank 54": {
+		"id": 54,
+		"pos": {
+			"x": 1180.0,
+			"y": 764.5714285714286
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238095,
+				"y": 206.85714285714286
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.619047619047617,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 55": {
+		"id": 55,
+		"pos": {
+			"x": 1069.5238095238094,
+			"y": 745.1428571428571
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 56": {
+		"id": 56,
+		"pos": {
+			"x": 1075.2380952380952,
+			"y": 848.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Solenoid 57": {
+		"id": 57,
+		"pos": {
+			"x": 1055.2380952380952,
+			"y": 977.1428571428571
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Board 0": "GSE Controller",
