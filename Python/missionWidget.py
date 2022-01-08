@@ -75,6 +75,14 @@ class MissionWidget(QWidget):
         CET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
         CET_font.setHintingPreference(QFont.PreferNoHinting)
         self.CET_label.setFont(CET_font)
+
+        CET_tooltip_font = QFont()
+        CET_tooltip_font.setStyleStrategy(QFont.PreferAntialias)
+        CET_tooltip_font.setFamily(Constants.monospace_font)
+        CET_tooltip_font.setPointSizeF(12 * self.gui.font_scale_ratio)
+        CET_tooltip_font.setHintingPreference(QFont.PreferNoHinting)
+        QToolTip.setFont(CET_tooltip_font)
+
         self.CET_label.setText("CET-00:00:00")
         self.CET_label.setStyleSheet("color: white")
         self.CET_label.setFixedHeight(self.mainHeight)
@@ -156,20 +164,31 @@ class MissionWidget(QWidget):
         self.gui.campaign.campaignStartSignal.connect(self.updateWidgetOnCampaignStart)
         self.gui.campaign.campaignEndSignal.connect(self.updateWidgetOnCampaignEnd)
         self.gui.campaign.testStartSignal.connect(self.updateWidgetOnTestStart)
+        self.gui.campaign.testEndSignal.connect(self.updateWidgetOnTestEnd)
 
         self.show()
+
+    @staticmethod
+    def generateCETAsText(CET_time):
+        """
+        This function generates a string from the CET time
+        :param CET_time: CET in milliseconds
+        :return: string as time
+        """
+        # Convert to Qtime to allow for easier string creation
+        qtime = QTime(0, 0, 0)  # Can't pass in directly because the initializer does not like secs above 59
+        qtime = qtime.addSecs(math.floor(CET_time / 1000.0))
+
+        return "CET-" + qtime.toString("hh:mm:ss")
 
     def updateCETLabel(self, CET_time):
         """
         This function is called to update the CET label, this function is connected to signal in run class
         :param CET_time: The CET time in milliseconds
         """
-        # Convert to Qtime to allow for easier string creation
-        qtime = QTime(0, 0, 0)  # Can't pass in directly because the initializer does not like secs above 59
-        qtime = qtime.addSecs(math.floor(CET_time/1000.0))
 
         # Updating Label text
-        self.CET_label.setText("CET-" + qtime.toString("hh:mm:ss"))
+        self.CET_label.setText(self.generateCETAsText(CET_time))
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
@@ -211,9 +230,23 @@ class MissionWidget(QWidget):
         self.dateTimeLabel.setText(dateTimeString)
 
     @pyqtSlot(str)
-    def updateWidgetOnTestStart(self, test_name:str):
+    def updateWidgetOnTestStart(self, test_name: str):
         self.titleLabel.setText(self.gui.campaign.title + ': ' + test_name)
         self.titleLabel.adjustSize()
+        self.campaignIndicator.setToolTip("Campaign is Active\nTest is Active")
+
+        self.CET_label.setToolTip(self.CET_label.toolTip() + "\n" + f'{"Test: " + test_name:<31} {"start: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}')
+
+        self.update()
+
+    @pyqtSlot()
+    def updateWidgetOnTestEnd(self):
+        self.titleLabel.setText(self.gui.campaign.title)
+        self.titleLabel.adjustSize()
+        self.campaignIndicator.setToolTip("Campaign is Active")
+
+        self.CET_label.setToolTip(self.CET_label.toolTip() + f'{"   |   end: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}')
+
         self.update()
 
     def updateWidgetOnCampaignStart(self):
@@ -221,7 +254,7 @@ class MissionWidget(QWidget):
         Function that is called when a run is started to populate the widget with updated values
         """
         # Update start time tooltip
-        self.CET_label.setToolTip("Campaign start time: " + self.gui.campaign.startDateTime.time().toString("h:mmap"))
+        self.CET_label.setToolTip("Campaign start: " + self.gui.campaign.startDateTime.time().toString("h:mmap") + " (CET-00:00:00)\n")
         # Add in title label
         self.titleLabel.setText(self.gui.campaign.title)
         self.titleLabel.adjustSize()

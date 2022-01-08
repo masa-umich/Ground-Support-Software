@@ -134,13 +134,25 @@ class ControlsWindow(QMainWindow):
         # Run -> Start Campaign
         self.startRunAct = QAction('&Start Campaign', self)
         self.startRunAct.setShortcut('Ctrl+R')
-        self.startRunAct.triggered.connect(self.showRunDialog)
+        self.startRunAct.triggered.connect(lambda: self.showRunDialog(False))
 
         # Run -> End Campaign
         self.endRunAct = QAction('&End Campaign', self)
         self.endRunAct.setShortcut('Ctrl+Shift+R')
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
+
+        # Run -> Start Test
+        self.startTestAct = QAction('&Start Test', self)
+        self.startTestAct.setShortcut('Ctrl+T')
+        self.startTestAct.triggered.connect(lambda: self.showRunDialog(True))
+        self.startTestAct.setDisabled(True)
+
+        # Run -> End Test
+        self.endTestAct = QAction('&End Test', self)
+        self.endTestAct.setShortcut('Ctrl+Shift+T')
+        self.endTestAct.triggered.connect(self.endTest)
+        self.endTestAct.setDisabled(True)  # Start with it disabled
 
         # Run -> Add Boards
         self.addAvionicsAct = QAction('&Add Avionics', self)
@@ -235,6 +247,8 @@ class ControlsWindow(QMainWindow):
         # Adds any related run buttons to the run tab
         run_menu.addAction(self.startRunAct)
         run_menu.addAction(self.endRunAct)
+        run_menu.addAction(self.startTestAct)
+        run_menu.addAction(self.endTestAct)
         run_menu.addAction(self.addAvionicsAct)
         run_menu.addAction(self.checkpointAct)
         run_menu.addAction(data_view_dialog)
@@ -435,14 +449,19 @@ class ControlsWindow(QMainWindow):
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
         self.statusBar().showMessage("Exit Debug Mode")
 
-    def showRunDialog(self):
+    def showRunDialog(self, is_test: bool):
         """
         Tell GUI to start a new run or test, and begin that process
+        :param is_test: bool specifying if the dialog is for starting a test. If not for starting campaign
         """
 
         # Create the dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle("Start Campaign")
+        if is_test:
+            dialog.setWindowTitle("Start Test")
+        else:
+            dialog.setWindowTitle("Start Campaign")
+
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
@@ -469,10 +488,17 @@ class ControlsWindow(QMainWindow):
 
         # Add in the textbox to give run a title
         textbox = QLineEdit(dialog)
-        textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
+        if is_test:
+            textbox.setPlaceholderText("Only number, letters, and spaces")
+        else:
+            textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
+
         textbox.setValidator(reg_exp_validator)
         textbox.setFont(font)
-        label = QLabel("Campaign Title:")
+        if is_test:
+            label = QLabel("Test Name:")
+        else:
+            label = QLabel("Campaign Title:")
         label.setFont(font)
         formLayout.addRow(label, textbox)
 
@@ -487,10 +513,15 @@ class ControlsWindow(QMainWindow):
         cancel_button.setFont(font)
         cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        start_button = QPushButton("Start Campaign")
-        start_button.setDefault(False)
+        if is_test:
+            start_button = QPushButton("Start Test")
+            start_button.clicked.connect(lambda: self.startTest(dialog, textbox.text()))
+        else:
+            start_button = QPushButton("Start Campaign")
+            start_button.clicked.connect(lambda: self.startRun(dialog, textbox.text()))
+
+        start_button.setDefault(True)
         start_button.setAutoDefault(False)
-        start_button.clicked.connect(lambda: self.startRun(dialog, textbox.text()))
         start_button.setFont(font)
         start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
@@ -512,10 +543,11 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setDisabled(True)
         self.endRunAct.setEnabled(True)
         self.screenSettingsAct.setDisabled(True)
+        self.startTestAct.setEnabled(True)
 
         self.gui.campaign.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
-        self.statusBar().showMessage("Run: " + run_name + " started")
+        self.statusBar().showMessage("Campaign '" + run_name + "' started")
 
     def endRun(self):
         """
@@ -531,7 +563,34 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
         self.screenSettingsAct.setEnabled(True)
-        self.statusBar().showMessage("Run: " + self.gui.campaign.title + " ended")
+        self.startTestAct.setDisabled(True)
+        self.endTestAct.setDisabled(True)
+        self.statusBar().showMessage("Campaign '" + self.gui.campaign.title + "' ended")
+
+    def startTest(self, dialog: QDialog, test_name: str):
+        """
+        Starts a new test from the menu bar and passes in the user input name. Calls campaign class for the rest of
+        the work
+        :param dialog: dialog that was created to input name. Needs to be closed properly
+        :param test_name: user given name of the test
+        """
+
+        self.endTestAct.setEnabled(True)
+        self.startTestAct.setDisabled(True)
+        self.gui.campaign.startTest(test_name)  # This 2 is arbitrary expect it differs from the the canceled
+        dialog.done(2)
+        self.statusBar().showMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
+
+    def endTest(self):
+        """
+        Ends the test from the menu bar
+        """
+
+        self.endTestAct.setDisabled(True)
+        self.startTestAct.setEnabled(True)
+        self.gui.campaign.endTest()
+        self.statusBar().showMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
+
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):

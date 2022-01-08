@@ -48,6 +48,7 @@ class Campaign(QObject):
     campaignEndSignal = pyqtSignal()
     updateCETSignal = pyqtSignal(int)
     testStartSignal = pyqtSignal(str)
+    testEndSignal = pyqtSignal()
 
     def __init__(self, gui):
         """
@@ -73,6 +74,10 @@ class Campaign(QObject):
         self.saveName = None
         self.is_active = False
         self.client = None
+        self.numTests = 0
+        self.isTestActive = False
+        self.currentTestName = None  # not reset back to none after test, holds previous test name till new test created
+        self.testDict = {}
 
     def startRun(self, title: str):
         """
@@ -96,17 +101,35 @@ class Campaign(QObject):
         """
         # Want to update CET one last time to get final CET before run ends
         self.updateCET()
+
+        if self.isTestActive:
+            self.endTest()  # end any tests that need to be
+
         self.campaignEndSignal.emit()
         if self.client:
             self.client.command(6, None)
         self.is_active = False
-        # Reset, and then restart thread
         self.CET = None
-        #self.startThread()
 
     def startTest(self, name: str):
-        #self.test_name = name
+        self.isTestActive = True
+        self.currentTestName = name
+        self.updateCET()
+        self.numTests += 1
+        self.testDict[name] = {"CET": self.CET, "Test Num": self.numTests}
         self.testStartSignal.emit(name)
+
+    def endTest(self):
+        """
+        End the current test. All the button updating is handeled by the main window. This function is also called
+        by the main window
+        """
+        self.isTestActive = False
+        self.updateCET()
+        self.testDict[self.currentTestName]["Duration"] = self.CET - self.testDict[self.currentTestName]["CET"]
+        self.testEndSignal.emit()
+
+        print(self.testDict)
 
     def updateCET(self):
         """
@@ -119,10 +142,6 @@ class Campaign(QObject):
             # Emit the signal that will allow other parts of the GUI to update with this data
             self.updateCETSignal.emit(self.CET)
 
-            if self.CET > 10000:
-                self.startTest("Valve Timings")
-
-    
     def setClient(self, client):
         self.client = client
 
