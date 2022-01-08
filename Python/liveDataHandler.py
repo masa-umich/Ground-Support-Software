@@ -71,7 +71,7 @@ class LiveDataHandlerBackgroundThread(QThread):
             if packet is not None:
                 # All is well
                 if self.dataHandler.getClient().is_connected and packet["actively_rx"]:
-                    self.connectionStatusSignal.emit(0,packet["error_msg"], self.dataHandler.getClient().is_commander)
+                    self.connectionStatusSignal.emit(0, packet["error_msg"], self.dataHandler.getClient().is_commander)
                 # Server to GUI connection is good, but data should be coming from board, but it is bad or is delayed
                 elif self.dataHandler.getClient().is_connected and packet["ser_open"]:
                     self.connectionStatusSignal.emit(1, packet["error_msg"], self.dataHandler.getClient().is_commander)
@@ -89,9 +89,6 @@ class LiveDataHandlerBackgroundThread(QThread):
             else:
                 # Server to GUI connection bad, no info to display at the time
                 self.connectionStatusSignal.emit(3, "", self.dataHandler.getClient().is_commander)
-
-            if self.dataHandler.campaign.is_active:
-                self.dataHandler.campaign.updateCET()
 
             self.updateScreenSignal.emit()
 

@@ -47,6 +47,7 @@ class Campaign(QObject):
     campaignStartSignal = pyqtSignal()
     campaignEndSignal = pyqtSignal()
     updateCETSignal = pyqtSignal(int)
+    testStartSignal = pyqtSignal(str)
 
     def __init__(self, gui):
         """
@@ -103,6 +104,10 @@ class Campaign(QObject):
         self.CET = None
         #self.startThread()
 
+    def startTest(self, name: str):
+        #self.test_name = name
+        self.testStartSignal.emit(name)
+
     def updateCET(self):
         """
         This function updates the CET time for the run. Should be called whenever the CET being accurate is critical
@@ -113,6 +118,10 @@ class Campaign(QObject):
             self.CET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
             # Emit the signal that will allow other parts of the GUI to update with this data
             self.updateCETSignal.emit(self.CET)
+
+            if self.CET > 10000:
+                self.startTest("Valve Timings")
+
     
     def setClient(self, client):
         self.client = client

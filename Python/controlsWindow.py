@@ -131,13 +131,13 @@ class ControlsWindow(QMainWindow):
         self.exitEditAct.triggered.connect(self.exitEdit)
         self.exitEditAct.setDisabled(True) # Start with it disabled
 
-        # Run -> Start Run
-        self.startRunAct = QAction('&Start Run', self)
+        # Run -> Start Campaign
+        self.startRunAct = QAction('&Start Campaign', self)
         self.startRunAct.setShortcut('Ctrl+R')
         self.startRunAct.triggered.connect(self.showRunDialog)
 
-        # Run -> End Run
-        self.endRunAct = QAction('&End Run', self)
+        # Run -> End Campaign
+        self.endRunAct = QAction('&End Campaign', self)
         self.endRunAct.setShortcut('Ctrl+Shift+R')
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
@@ -442,7 +442,7 @@ class ControlsWindow(QMainWindow):
 
         # Create the dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle("Start Run")
+        dialog.setWindowTitle("Start Campaign")
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
@@ -472,7 +472,7 @@ class ControlsWindow(QMainWindow):
         textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
         textbox.setValidator(reg_exp_validator)
         textbox.setFont(font)
-        label = QLabel("Run Title:")
+        label = QLabel("Campaign Title:")
         label.setFont(font)
         formLayout.addRow(label, textbox)
 
@@ -487,7 +487,7 @@ class ControlsWindow(QMainWindow):
         cancel_button.setFont(font)
         cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
 
-        start_button = QPushButton("Start Run")
+        start_button = QPushButton("Start Campaign")
         start_button.setDefault(False)
         start_button.setAutoDefault(False)
         start_button.clicked.connect(lambda: self.startRun(dialog, textbox.text()))

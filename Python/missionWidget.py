@@ -155,6 +155,7 @@ class MissionWidget(QWidget):
         # Connect the start of the run to function to allow updating
         self.gui.campaign.campaignStartSignal.connect(self.updateWidgetOnCampaignStart)
         self.gui.campaign.campaignEndSignal.connect(self.updateWidgetOnCampaignEnd)
+        self.gui.campaign.testStartSignal.connect(self.updateWidgetOnTestStart)
 
         self.show()
 
@@ -209,12 +210,18 @@ class MissionWidget(QWidget):
         dateTimeString = currentDateTime.toString("MMMM dd") + dayString + currentDateTime.toString("yyyy, hh:mmap")
         self.dateTimeLabel.setText(dateTimeString)
 
+    @pyqtSlot(str)
+    def updateWidgetOnTestStart(self, test_name:str):
+        self.titleLabel.setText(self.gui.campaign.title + ': ' + test_name)
+        self.titleLabel.adjustSize()
+        self.update()
+
     def updateWidgetOnCampaignStart(self):
         """
         Function that is called when a run is started to populate the widget with updated values
         """
         # Update start time tooltip
-        self.CET_label.setToolTip("Start time: " + self.gui.campaign.startDateTime.time().toString("h:mmap"))
+        self.CET_label.setToolTip("Campaign start time: " + self.gui.campaign.startDateTime.time().toString("h:mmap"))
         # Add in title label
         self.titleLabel.setText(self.gui.campaign.title)
         self.titleLabel.adjustSize()
@@ -361,5 +368,8 @@ class MissionWidgetBackgroundThread(QThread):
             # Update the datetime every second, this can be increased but seems unnecessary
             time.sleep(1)
             self.missionWidget.updateDateTimeLabel()
+
+            if self.missionWidget.gui.campaign.is_active:
+                self.missionWidget.gui.campaign.updateCET()
 
 
