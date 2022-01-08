@@ -591,7 +591,6 @@ class ControlsWindow(QMainWindow):
         self.gui.campaign.endTest()
         self.statusBar().showMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
 
-
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
         """

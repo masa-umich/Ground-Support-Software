@@ -360,6 +360,9 @@ class Server(QtWidgets.QMainWindow):
                         with self.command_queue.mutex:
                             self.command_queue.queue.clear()
                         self.abort_auto = True
+                    elif command["command"] == 9:
+                        print("Got command 9")
+                        pass
                     else:
                         print("WARNING: Unhandled command")
 

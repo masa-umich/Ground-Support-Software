@@ -68,13 +68,15 @@ class MissionWidget(QWidget):
         self.setPalette(p)
 
         # Create the label that will hold the CET counter
-        self.CET_label = QLabel(self)
+        self.CET_label = CustomCETLabel(self)
         CET_font = QFont()
         CET_font.setStyleStrategy(QFont.PreferAntialias)
         CET_font.setFamily(Constants.monospace_font)
         CET_font.setPointSizeF(48 * self.gui.font_scale_ratio)
         CET_font.setHintingPreference(QFont.PreferNoHinting)
         self.CET_label.setFont(CET_font)
+
+        self.CET_static_tooltip = ""  # Random var to track ending portion of tooltip. More below
 
         CET_tooltip_font = QFont()
         CET_tooltip_font.setStyleStrategy(QFont.PreferAntialias)
@@ -196,6 +198,12 @@ class MissionWidget(QWidget):
         # Updating Label text
         self.CET_label.setText(self.generateCETAsText(CET_time, test_start_time))
 
+        if self.gui.campaign.isTestActive:
+            self.CET_label.setToolTip("Current " + self.generateCETAsText(self.gui.campaign.CET) + "\n" + self.CET_static_tooltip)
+            self.CET_label.liveUpdateText()
+        else:
+            self.CET_label.setToolTip(self.CET_static_tooltip)
+
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
         Update the status label
@@ -240,9 +248,8 @@ class MissionWidget(QWidget):
         self.titleLabel.setText(self.gui.campaign.title + ': ' + test_name)
         self.titleLabel.adjustSize()
         self.campaignIndicator.setToolTip("Campaign is Active\nTest is Active")
-
-        self.CET_label.setToolTip(self.CET_label.toolTip() + "\n" + f'{"Test: " + test_name:<31} {"start: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}')
-
+        self.CET_static_tooltip = self.CET_label.toolTip() + "\n" + f'{"Test: " + test_name:<31} {"start: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}'
+        self.CET_label.setToolTip("Current " + self.generateCETAsText(self.gui.campaign.CET) + "\n" + self.CET_static_tooltip)
         self.update()
 
     @pyqtSlot()
@@ -250,8 +257,8 @@ class MissionWidget(QWidget):
         self.titleLabel.setText(self.gui.campaign.title)
         self.titleLabel.adjustSize()
         self.campaignIndicator.setToolTip("Campaign is Active")
-
-        self.CET_label.setToolTip(self.CET_label.toolTip() + f'{"   |   end: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}')
+        self.CET_static_tooltip = self.CET_label.toolTip() + f'{"   |   end: "+ QDateTime.currentDateTime().time().toString("h:mmap") + " ("+self.generateCETAsText(self.gui.campaign.CET) + ")":<26}'
+        self.CET_label.setToolTip("Current " + self.generateCETAsText(self.gui.campaign.CET) + "\n" + self.CET_static_tooltip)
 
         self.update()
 
@@ -261,6 +268,7 @@ class MissionWidget(QWidget):
         """
         # Update start time tooltip
         self.CET_label.setToolTip("Campaign start: " + self.gui.campaign.startDateTime.time().toString("h:mmap") + " (CET-00:00:00)\n")
+        self.CET_static_tooltip = "Campaign start: " + self.gui.campaign.startDateTime.time().toString("h:mmap") + " (CET-00:00:00)\n"
         # Add in title label
         self.titleLabel.setText(self.gui.campaign.title)
         self.titleLabel.adjustSize()
@@ -383,7 +391,6 @@ class MissionWidget(QWidget):
     #         self.connectionIndicator.setToolTip("No Server Connection")
 
 
-
 class MissionWidgetBackgroundThread(QThread):
     """
     Class that handles background threading for the mission widget class, this is to prevent the GUI from hanging
@@ -410,5 +417,37 @@ class MissionWidgetBackgroundThread(QThread):
 
             if self.missionWidget.gui.campaign.is_active:
                 self.missionWidget.gui.campaign.updateCET()
+
+
+class CustomCETLabel(QLabel):
+
+    def __init__(self, widget_parent):
+        super().__init__(widget_parent)
+        self._last_event_pos = None
+
+    @overrides
+    def event(self, e: QEvent):
+        """
+        Grabs the tooltip event and saves the position down.
+        :param e: event
+        :return: whatever the super specifies, need to do this so all events are still handled
+        """
+        if e.type() == QEvent.ToolTip:
+            self._last_event_pos = e.globalPos()
+        elif e.type() == QEvent.Leave:
+            self._last_event_pos = None
+
+        return super().event(e)
+
+    def liveUpdateText(self):
+        """
+        Simply hides tooltip text and then re-shows it to allow the tooltip to update as you hover
+        """
+        if self._last_event_pos is not None:
+            QToolTip.hideText()
+            QToolTip.showText(self._last_event_pos, self.toolTip())
+
+
+
 
 

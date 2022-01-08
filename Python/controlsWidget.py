@@ -394,7 +394,10 @@ class ControlsWidget(QWidget):
         counter = 0
         for object_ in self.object_list:
             if hasattr(object_, "channel") and object_.channel != "Undefined":
-                mapDict[counter] = [object_.long_name, object_.channel]
+                if object_.object_name != "Generic Sensor":
+                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + object_.channel]
+                else:
+                    mapDict[counter] = [object_.long_name, object_.channel]
                 counter += 1
 
         return mapDict
@@ -413,7 +416,10 @@ class ControlsWidget(QWidget):
             write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n--------------------------------------\n")
             for object_ in self.object_list:
                 if hasattr(object_, 'channel') and object_.channel != "Undefined":
-                    write_file.write(f'{object_.long_name + ",":<25}{object_.channel:<12}' + "\n")
+                    if object_.object_name != "Generic Sensor":
+                        write_file.write(f'{object_.long_name + ",":<25}{self.window.interface.getPrefix(object_.avionics_board) + object_.channel:<12}' + "\n")
+                    else:
+                        write_file.write(f'{object_.long_name + ",":<25}{object_.channel:<12}' + "\n")
 
         if self.gui.platform == "Windows":
             os.system('notepad data/.tempMappings.txt')

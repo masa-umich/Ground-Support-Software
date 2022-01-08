@@ -2,7 +2,7 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 660.0,
+			"x": 659.047619047619,
 			"y": 273.14285714285717
 		},
 		"fluid": 0,
@@ -35,8 +35,8 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "Undefined",
-		"board": "Undefined",
+		"channel": "5",
+		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Tank 2": {
@@ -82,7 +82,7 @@
 		"id": 3,
 		"pos": {
 			"x": 250.47619047619045,
-			"y": 128.0
+			"y": 132.57142857142858
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -114,15 +114,15 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "Undefined",
-		"board": "Undefined",
+		"channel": "5",
+		"board": "Pressurization Controller",
 		"normally open": false
 	},
 	"Solenoid 4": {
 		"id": 4,
 		"pos": {
 			"x": 543.8095238095237,
-			"y": 456.0
+			"y": 459.42857142857144
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -154,9 +154,87 @@
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "Undefined",
-		"board": "Undefined",
+		"channel": "7",
+		"board": "GSE Controller",
 		"normally open": false
+	},
+	"3 Way Valve 5": {
+		"id": 5,
+		"pos": {
+			"x": 933.3333333333333,
+			"y": 333.7142857142857
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "3 Way Valve",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 35.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -16.19047619047619,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 6": {
+		"id": 6,
+		"pos": {
+			"x": 1003.8095238095237,
+			"y": 494.85714285714283
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.load[3]",
+		"board": "GSE Controller"
 	},
 	"Tube 1": {
 		"tube id": 1,
