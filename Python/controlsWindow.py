@@ -544,6 +544,7 @@ class ControlsWindow(QMainWindow):
         self.endRunAct.setEnabled(True)
         self.screenSettingsAct.setDisabled(True)
         self.startTestAct.setEnabled(True)
+        self.addAvionicsAct.setDisabled(True)
 
         self.gui.campaign.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
@@ -565,6 +566,7 @@ class ControlsWindow(QMainWindow):
         self.screenSettingsAct.setEnabled(True)
         self.startTestAct.setDisabled(True)
         self.endTestAct.setDisabled(True)
+        self.addAvionicsAct.setEnabled(True)
         self.statusBar().showMessage("Campaign '" + self.gui.campaign.title + "' ended")
 
     def startTest(self, dialog: QDialog, test_name: str):

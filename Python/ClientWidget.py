@@ -155,7 +155,6 @@ class ClientWidget(QtWidgets.QWidget):
                 # send next command
                 data = self.command_queue.get()
                 self.s.sendall(data)
-                print("datasize?", sys.getsizeof(data))
 
                 # get data
                 data = self.s.recv(4096*4)

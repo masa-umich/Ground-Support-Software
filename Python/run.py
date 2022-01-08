@@ -1,4 +1,5 @@
 from PyQt5.QtCore import *
+import math
 
 """
 This file contains the class and functions to handle the 'run' or test being conducted
@@ -119,6 +120,12 @@ class Campaign(QObject):
         self.isTestActive = True
         self.testStartSignal.emit(name)
 
+        qTime = QTime(0,0,0)
+        qtime = qTime.addSecs(math.floor(self.CET / 1000.0))
+
+        if self.client:
+            self.client.command(9, ["CET-" + qtime.toString("hh:mm:ss"),"Test '" + name + "' started"])
+
     def endTest(self):
         """
         End the current test. All the button updating is handeled by the main window. This function is also called
@@ -129,7 +136,11 @@ class Campaign(QObject):
         self.testDict[self.currentTestName]["Duration"] = self.CET - self.testDict[self.currentTestName]["CET"]
         self.testEndSignal.emit()
 
-        print(self.testDict)
+        qTime = QTime(0, 0, 0)
+        qtime = qTime.addSecs(math.floor(self.CET / 1000.0))
+
+        if self.client:
+            self.client.command(9, ["CET-" + qtime.toString("hh:mm:ss"), "Test '" + self.currentTestName + "' ended"])
 
     def updateCET(self):
         """

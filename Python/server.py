@@ -55,6 +55,7 @@ class Server(QtWidgets.QMainWindow):
         self.serial_log = None
         self.data_log = None
         self.command_log = None
+        self.campaign_log = None
 
         # initialize parser
         self.interface = S2_Interface()
@@ -361,8 +362,11 @@ class Server(QtWidgets.QMainWindow):
                             self.command_queue.queue.clear()
                         self.abort_auto = True
                     elif command["command"] == 9:
-                        print("Got command 9")
-                        pass
+                        CET = command["args"][0]
+                        text = command["args"][1]
+
+                        self.campaign_log.write(CET + " | " + text + "\n")
+
                     else:
                         print("WARNING: Unhandled command")
 
@@ -530,6 +534,9 @@ class Server(QtWidgets.QMainWindow):
     def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
         self.close_log()
         self.open_log(campaign_save_name, "data/campaigns/")
+        self.campaign_log = open("data/campaigns/"+campaign_save_name+"/campaign_log.txt", "w+")
+        self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
+
         self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
 
         with open("data/campaigns/"+campaign_save_name+"/configuration.json", "w") as write_file:
@@ -670,6 +677,9 @@ class Server(QtWidgets.QMainWindow):
         self.serial_log.close()
         self.command_log.close()
         self.data_log.close()
+
+        if self.campaign_log is not None and not self.campaign_log.closed:
+            self.campaign_log.close()
 
     @overrides
     def update(self):
