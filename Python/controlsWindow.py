@@ -390,6 +390,7 @@ class ControlsWindow(QMainWindow):
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
+            self.statusBar().showMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
@@ -398,7 +399,6 @@ class ControlsWindow(QMainWindow):
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
             self.startRunAct.setEnabled(True)
-            self.statusBar().showMessage("Exit Edit Mode")
 
     def saveNotes(self, fileName=''):
         """
@@ -418,7 +418,8 @@ class ControlsWindow(QMainWindow):
             with open(fileName, "w") as write_file:
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
-    def reportIssue(self):
+    @staticmethod
+    def reportIssue():
         """
             Opens a link to the gitlab issue ticket form so people can quickly fill out
         """
@@ -744,7 +745,6 @@ class ControlsWindow(QMainWindow):
         if not boards:
             return  # Do nothing if the user selected nothing
 
-
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         dialog.done(2)
 
@@ -849,10 +849,26 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
+    def showStandardMessageDialog(self, title: str, text: str):
+        """
+        Shows a standard dialog with just an OK button. Used rarely when something happens in the background the user
+        would not know unless paying very close attention
+        :param title: dialog window title
+        :param text: text of the dialog
+        """
+
+        msgBox = QMessageBox(self)
+        msgBox.setIcon(QMessageBox.Warning)  # NoIcon, Question, Information, Warning, Critical
+        msgBox.setText(text)
+        msgBox.setWindowTitle(title)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.show()
+
     def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
         """
         This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
         file and then calls for a reboot
+        :param dialog: dialog that is open, used so it can be properly closed
         :param new_pixel_scale: new scale for pixels on screen
         :param new_font_scale: new font scale
         :param new_line_scale: new line width value

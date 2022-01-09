@@ -267,7 +267,6 @@ class ControlsWidget(QWidget):
                 self.controlsPanel.object_editing.rotate()
                 self.update()
 
-
     @overrides
     def mousePressEvent(self, e:QMouseEvent):
         """"
@@ -280,8 +279,6 @@ class ControlsWidget(QWidget):
                 if tube.is_being_drawn:
                     tube.setCurrentPos(e.pos())
                     self.update()
-
-
 
     @overrides
     def mouseMoveEvent(self, e:QMouseEvent):
@@ -298,7 +295,6 @@ class ControlsWidget(QWidget):
                 if tube.is_being_drawn:
                     tube.updateCurrentPos(e.pos())
                     self.update()
-
 
     @overrides
     def mouseReleaseEvent(self, e:QMouseEvent):
@@ -456,12 +452,17 @@ class ControlsWidget(QWidget):
         """
         data = self.generateConfigurationSaveData()
 
-        # With the open file, write to json with a tab as an indent
-        with open(filename, "w") as write_file:
-            json.dump(data, write_file, indent="\t")
+        try:
+            # With the open file, write to json with a tab as an indent
+            with open(filename, "w") as write_file:
+                json.dump(data, write_file, indent="\t")
 
-        self.window.statusBar().showMessage("Configuration saved to " + filename)
-        self.showSensorMappings()
+            self.window.statusBar().showMessage("Configuration saved to " + filename)
+            self.showSensorMappings()
+        except PermissionError:
+            self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify")
+            self.window.statusBar().showMessage("Edit permission denied for file: " + filename)
+
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go

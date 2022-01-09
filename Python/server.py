@@ -1,5 +1,6 @@
 import ctypes
 import os
+from stat import S_IREAD, S_IRGRP, S_IROTH
 import pickle
 import queue
 import socket
@@ -541,12 +542,14 @@ class Server(QtWidgets.QMainWindow):
 
         with open("data/campaigns/"+campaign_save_name+"/configuration.json", "w") as write_file:
             json.dump(dataDict, write_file, indent="\t")
+            os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
 
         with open("data/campaigns/"+campaign_save_name+"/avionicsMappings.csv", "w") as write_file:
             write_file.write("Channel,Name\n")
             for key in avionicsMappings:
                 if key != "Boards": #currently don't list the boards the user has added
                     write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][0]+"\n") # key is not useful, first index is name, second is channel
+            os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
 
     def checkpoint_logs(self, filename, dataDict, avionicsMappings):
         if filename in (None, (), []):
@@ -674,12 +677,17 @@ class Server(QtWidgets.QMainWindow):
         """Safely closes all logfiles"""
 
         self.server_log.close()
+        os.chmod(self.server_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.serial_log.close()
+        os.chmod(self.serial_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.command_log.close()
+        os.chmod(self.command_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.data_log.close()
+        os.chmod(self.data_log.name, S_IREAD | S_IRGRP | S_IROTH)
 
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
+            os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
 
     @overrides
     def update(self):
