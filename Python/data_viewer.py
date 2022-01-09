@@ -495,10 +495,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.database_full = True
         
         # when packet is received increase slider size as necessary
-        for i in range(rows):
-            for j in range(cols):
+        for i in range(self.rows):
+            for j in range(self.cols):
 
-                idx = i * cols + j
+                idx = i * self.cols + j
 
                 if (not self.database_full):
                     # size of database extends beyond range viewed, increase slider size
