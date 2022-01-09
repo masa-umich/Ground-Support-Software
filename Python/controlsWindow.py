@@ -152,6 +152,10 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.triggered.connect(self.endTest)
         self.endTestAct.setDisabled(True)  # Start with it disabled
 
+        # Run -> Show Avionics Mappings
+        self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
+        self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
+
         # Run -> Add Boards
         self.addAvionicsAct = QAction('&Add Avionics', self)
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
@@ -170,11 +174,6 @@ class ControlsWindow(QMainWindow):
         self.flashsettings = QAction("&Flash", self)
         self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
         self.flashsettings.setShortcut('Alt+F')
-
-        # Run -> Checkpoint Log
-        self.checkpointAct = QAction('Checkpoint &Log', self)
-        self.checkpointAct.setShortcut('Ctrl+L')
-        self.checkpointAct.triggered.connect(self.checkpoint)
 
         #Run -> Tare Load Cells
         self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
@@ -255,8 +254,8 @@ class ControlsWindow(QMainWindow):
         run_menu.addAction(self.endRunAct)
         run_menu.addAction(self.startTestAct)
         run_menu.addAction(self.endTestAct)
+        run_menu.addAction(self.showAvionicsMapAct)
         run_menu.addAction(self.addAvionicsAct)
-        run_menu.addAction(self.checkpointAct)
         run_menu.addAction(data_view_dialog)
         run_menu.addMenu(self.ambientizeMenu)
         run_menu.addAction(self.tareLoadCellAct)
@@ -316,10 +315,6 @@ class ControlsWindow(QMainWindow):
         else:
             self.saveFileDialog()
             #self.saveNotes()
-    
-    def checkpoint(self):
-        if not self.gui.campaign.is_active:
-            self.gui.liveDataHandler.sendCommand(6, None)
 
     def saveFileDialog(self):
         """
