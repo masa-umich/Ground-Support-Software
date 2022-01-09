@@ -116,6 +116,7 @@ class ControlsSidebarWidget(QWidget):
         self.scroll = QScrollArea(self)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scrollAreaLayout = QVBoxLayout()
+        self.scrollAreaLayout.setAlignment(Qt.AlignTop)
         self.scrollAreaLayoutBox = QWidget()
         self.scrollAreaLayoutBox.setLayout(self.scrollAreaLayout)
         self.scroll.setWidget(self.scrollAreaLayoutBox)
