@@ -56,6 +56,8 @@ class ControlsWindow(QMainWindow):
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
 
+        self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateFromConnectionStatus)
+
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
@@ -111,10 +113,6 @@ class ControlsWindow(QMainWindow):
         # FILE -> Save Notes
         self.saveNotesAct = QAction('&Save notes', self)
         self.saveNotesAct.triggered.connect(self.saveNotes)
-
-        # FILE -> Report Issue
-        reportIssueAct = QAction('&Report Issue', self)
-        reportIssueAct.triggered.connect(self.reportIssue)
 
         # Run -> Add Boards
         self.screenSettingsAct = QAction('&Screen Draw Settings', self)
@@ -217,6 +215,14 @@ class ControlsWindow(QMainWindow):
         for board in Constants.boards:
             self.sensor_calibration.addAction(board)
 
+        # Help -> Help Info
+        helpAct = QAction("&General Info", self)
+        helpAct.triggered.connect(lambda: self.showStandardMessageDialog("Help Info", "Connect with server under 'Connection'\nCampaigns and tests organize data\nCampaigns cannot be started till connected with server (do not need boards connected)\nAdjust how the gui looks with screen draw settings\nObjects can be multi selected", "Information"))
+
+        # Help -> Report Issue
+        reportIssueAct = QAction('&Report Issue', self)
+        reportIssueAct.triggered.connect(self.reportIssue)
+
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -225,6 +231,7 @@ class ControlsWindow(QMainWindow):
         edit_menu = menuBar.addMenu('Edit')
         #view_menu = menuBar.addMenu('View')
         run_menu = menuBar.addMenu('Run')
+        help_menu = menuBar.addMenu('Help')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -237,7 +244,6 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(self.exitDebugAct)
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
-        file_menu.addAction(reportIssueAct)
         #file_menu.addAction(self.saveNotesAct)
 
         # Adds all the edit button to the edit tab
@@ -255,6 +261,9 @@ class ControlsWindow(QMainWindow):
         run_menu.addMenu(self.ambientizeMenu)
         run_menu.addAction(self.tareLoadCellAct)
         run_menu.addAction(self.zeroTimeAct)
+
+        help_menu.addAction(helpAct)
+        help_menu.addAction(reportIssueAct)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows":
@@ -278,7 +287,8 @@ class ControlsWindow(QMainWindow):
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       #"View": view_menu,
-                      "Run":  run_menu}
+                      "Run":  run_menu,
+                      "Help": help_menu}
         
         self.showMaximized()
 
@@ -532,6 +542,17 @@ class ControlsWindow(QMainWindow):
         verticalLayout.addLayout(buttonLayout)
 
         dialog.show()
+
+    @pyqtSlot(int, str, bool)
+    def updateFromConnectionStatus(self, status: int, error_string: str, is_commander: bool):
+        """
+        Just disables the campaign if the server connection is dropped
+        :param status: connection status, 3 is server dropped
+        :param error_string: not used
+        :param is_commander: not used
+        """
+        if status == 3:
+            self.startRunAct.setDisabled(True)
 
     def startRun(self, dialog, run_name):
         """
@@ -849,16 +870,28 @@ class ControlsWindow(QMainWindow):
 
         dialog.show()
 
-    def showStandardMessageDialog(self, title: str, text: str):
+    def showStandardMessageDialog(self, title: str, text: str, icon: str = None):
         """
         Shows a standard dialog with just an OK button. Used rarely when something happens in the background the user
         would not know unless paying very close attention
         :param title: dialog window title
         :param text: text of the dialog
+        :param icon: optional string to specify what the icon should be. Can be NoIcon, Question, Information, Warning,
+        Critical
         """
 
         msgBox = QMessageBox(self)
-        msgBox.setIcon(QMessageBox.Warning)  # NoIcon, Question, Information, Warning, Critical
+        if icon is None or icon == "NoIcon":
+            msgBox.setIcon(QMessageBox.NoIcon)
+        elif icon == "Warning":
+            msgBox.setIcon(QMessageBox.Warning)
+        elif icon == "Information":
+            msgBox.setIcon(QMessageBox.Information)
+        elif icon == "Critical":
+            msgBox.setIcon(QMessageBox.Critical)
+        elif icon == "Question":
+            msgBox.setIcon(QMessageBox.Question)
+
         msgBox.setText(text)
         msgBox.setWindowTitle(title)
         msgBox.setStandardButtons(QMessageBox.Ok)

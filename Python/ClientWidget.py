@@ -140,7 +140,6 @@ class ClientWidget(QtWidgets.QWidget):
             self.gui_window.statusBar().showMessage("Disconnected from server")
             self.gui_window.startRunAct.setDisabled(True)
 
-
     def command_toggle(self):
         # toggle to take/give up command
         if self.is_commander:
@@ -181,7 +180,6 @@ class ClientWidget(QtWidgets.QWidget):
         except:
             #traceback.print_exc()
             self.is_connected = False
-            self.gui_window.startRunAct.setDisabled(True)
             return None
 
 

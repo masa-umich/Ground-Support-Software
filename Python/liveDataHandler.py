@@ -89,8 +89,6 @@ class LiveDataHandlerBackgroundThread(QThread):
             else:
                 # Server to GUI connection bad, no info to display at the time
                 self.connectionStatusSignal.emit(3, "", self.dataHandler.getClient().is_commander)
-                self.dataHandler.getClient().is_connected = False
-                self.dataHandler.campaign.gui.controlsWindow.startRunAct.setDisabled(True)
 
             self.updateScreenSignal.emit()
 

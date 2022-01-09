@@ -460,7 +460,7 @@ class ControlsWidget(QWidget):
             self.window.statusBar().showMessage("Configuration saved to " + filename)
             self.showSensorMappings()
         except PermissionError:
-            self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify")
+            self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify", "Warning")
             self.window.statusBar().showMessage("Edit permission denied for file: " + filename)
 
 
