@@ -89,8 +89,9 @@ class Server(QtWidgets.QMainWindow):
         w.setLayout(top_layout)
         base_size = 500
         AR = 1.5  # H/W
-        self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
+        self.setMinimumWidth(int(AR * base_size))
+        self.setMinimumHeight(int(base_size))
+
 
         # server log
         tab = QTabWidget()
@@ -777,6 +778,7 @@ class Server(QtWidgets.QMainWindow):
                         finally:
                             self.database_lock.release()
                     else:
+                        self.packet_size_label.setText("Last Packet Size: %s" % 0)
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
                         self.is_actively_receiving = False
                         if packet_addr == -1:

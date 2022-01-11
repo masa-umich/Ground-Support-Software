@@ -290,7 +290,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
         self.commentFormat = QtGui.QTextCharFormat()
         self.commentFormat.setForeground(QtGui.QColor(34, 139, 34))
         self.cmdFormat = QtGui.QTextCharFormat()
-        self.cmdFormat.setForeground(QtCore.Qt.blue)
+        self.cmdFormat.setForeground(QtCore.Qt.white)
 
     def highlightBlock(self, text):
         stripped = text.lstrip()
@@ -317,9 +317,8 @@ class AutoManager(QtWidgets.QMainWindow):
         top_layout = QtWidgets.QVBoxLayout()
         widget.setLayout(top_layout)
         base_size = 850
-        AR = 0.7  # H/W
-        self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
+        AR = 0.5  # H/W
+        self.resize(int(base_size), int(AR * base_size))
         self.setMouseTracking(True)
 
         # menu bar
@@ -368,6 +367,9 @@ class AutoManager(QtWidgets.QMainWindow):
         self.code_area = LineTextWidget()
         top_layout.addWidget(self.code_area)
         self.code_area.setMouseTracking(True)
+
+        self.code_area.setText("#Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70")
+
 
         butt_layout = QtWidgets.QHBoxLayout()
         self.run_button = QtWidgets.QPushButton("Execute")
