@@ -778,19 +778,22 @@ class Server(QtWidgets.QMainWindow):
                         finally:
                             self.database_lock.release()
                     else:
-                        self.packet_size_label.setText("Last Packet Size: %s" % 0)
+
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
                         self.is_actively_receiving = False
                         if packet_addr == -1:
                             self.dataframe["error_msg"] = "Serial Parse Failed"
                         elif packet_addr == -2:
                             self.dataframe["error_msg"] = "Packet Parse Failed"
+
+                        self.packet_size_label.setText("Last Packet Size: %s" % self.dataframe["error_msg"])
                         pass
             self.party_parrot.step()
 
         except Exception as e:
             #traceback.print_exc()
             print("Parser failed with error ", e)
+            self.packet_size_label.setText("Last Packet Size: %s" % "Exception, check terminal")
 
         # update server state
         self.packet_num += 1
