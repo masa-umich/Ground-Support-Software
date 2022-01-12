@@ -434,6 +434,7 @@ class CustomCETLabel(QLabel):
         """
         if e.type() == QEvent.ToolTip:
             self._last_event_pos = e.globalPos()
+            QToolTip.showText(self._last_event_pos, self.toolTip())
         elif e.type() == QEvent.Leave:
             self._last_event_pos = None
 
@@ -446,7 +447,6 @@ class CustomCETLabel(QLabel):
         if self._last_event_pos is not None:
             QToolTip.hideText()
             QToolTip.showText(self._last_event_pos, self.toolTip())
-
 
 
 
