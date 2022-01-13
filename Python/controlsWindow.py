@@ -553,6 +553,9 @@ class ControlsWindow(QMainWindow):
         """
         Start a new run from menu bar and pass in the user inputted name from dialog
         """
+        if len(run_name) == 0:
+            return
+
         # When a test is being run we don't want use to be able to edit anything or enter another run
         # Also once a run starts then we want them to have the option to end it
         self.enterEditAct.setDisabled(True)
@@ -593,6 +596,8 @@ class ControlsWindow(QMainWindow):
         :param dialog: dialog that was created to input name. Needs to be closed properly
         :param test_name: user given name of the test
         """
+        if len(test_name) == 0:
+            return
 
         self.endTestAct.setEnabled(True)
         self.startTestAct.setDisabled(True)

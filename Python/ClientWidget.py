@@ -121,13 +121,18 @@ class ClientWidget(QtWidgets.QWidget):
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.connect((self.host.currentText(), int(
                 self.port.text())))  # connect to socket
+
+            self.is_connected = True  # update status
             if self.gui_window is not None:
-                self.gui_window.statusBar().showMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
                 if not self.gui_window.gui.campaign.is_active:
                     self.gui_window.startRunAct.setEnabled(True)
-            self.is_connected = True  # update status
+                else:
+                    self.command(6, [str(self.gui_window.gui.campaign.saveName)])
+                self.gui_window.statusBar().showMessage(
+                        "Connected to server on " + self.host.currentText() + ":" + self.port.text())
 
-        except:
+        except Exception as e:
+            print(traceback.format_exc())
             self.is_connected = False  # update status
             self.gui_window.startRunAct.setDisabled(True)
         #print(self.is_connected)

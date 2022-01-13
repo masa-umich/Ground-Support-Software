@@ -1,6 +1,6 @@
 import ctypes
 import os
-from stat import S_IREAD, S_IRGRP, S_IROTH
+from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 import pickle
 import queue
 import socket
@@ -79,7 +79,6 @@ class Server(QtWidgets.QMainWindow):
         # init csv header
         self.header = "Time," + self.interface.get_header()
         self.open_log(self.starttime, "data/")  # start initial run
-        #self.send_to_log(self.log_box, "Raw server logging started under '%s'" % self.starttime)
 
         # window layout
         self.setWindowTitle("Server")
@@ -202,6 +201,8 @@ class Server(QtWidgets.QMainWindow):
         # waits for clients and then creates a thread for each connection
         self.t = threading.Thread(target=self.server_handler, daemon=True)
         self.t.start()
+
+        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % self.starttime)
 
         # menu bar
         main_menu = self.menuBar()
@@ -349,6 +350,8 @@ class Server(QtWidgets.QMainWindow):
                             new_runname = command["args"][0]
                             dictData = command["args"][1]
                             mappings = command["args"][2]
+                        elif new_runname is not None:
+                            new_runname = command["args"][0]
                         self.checkpoint_logs(new_runname, dictData, mappings)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
@@ -535,22 +538,31 @@ class Server(QtWidgets.QMainWindow):
 
     def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
         self.close_log()
-        self.open_log(campaign_save_name, "data/campaigns/")
-        self.campaign_log = open("data/campaigns/"+campaign_save_name+"/campaign_log.txt", "w+")
-        self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
 
-        self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
+        recovered_state = os.path.isdir("data/campaigns/"+campaign_save_name+"/")
+        self.open_log(campaign_save_name, "data/campaigns/", recovered_state)
 
-        with open("data/campaigns/"+campaign_save_name+"/configuration.json", "w") as write_file:
-            json.dump(dataDict, write_file, indent="\t")
-            os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+        if not recovered_state:
+            self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "w")
+            self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
+            self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
 
-        with open("data/campaigns/"+campaign_save_name+"/avionicsMappings.csv", "w") as write_file:
-            write_file.write("Channel,Name\n")
-            for key in avionicsMappings:
-                if key != "Boards": #currently don't list the boards the user has added
-                    write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][0]+"\n") # key is not useful, first index is name, second is channel
-            os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+            with open("data/campaigns/" + campaign_save_name + "/configuration.json", "w") as write_file:
+                json.dump(dataDict, write_file, indent="\t")
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+
+            with open("data/campaigns/" + campaign_save_name + "/avionicsMappings.csv", "w") as write_file:
+                write_file.write("Channel,Name\n")
+                for key in avionicsMappings:
+                    if key != "Boards":  # currently don't list the boards the user has added
+                        write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][
+                            0] + "\n")  # key is not useful, first index is name, second is channel
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+        else:
+            os.chmod("data/campaigns/" + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
+            self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "a+")
+            self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
+            self.campaign_log.write("Campaign %s recovered during new server connenction" % campaign_save_name)
 
     def checkpoint_logs(self, filename, dataDict, avionicsMappings):
         if filename in (None, (), []):
@@ -649,30 +661,49 @@ class Server(QtWidgets.QMainWindow):
             logstring += "%s," % (self.dataframe[channel])
         return logstring
 
-    def open_log(self, runname: str, save_location: str):
+    def open_log(self, runname: str, save_location: str, is_recovered: bool = False):
         """Opens a new set of log files.
 
         Args:
             runname (str): Run-name label
             save_location (str): location where to save logs, must have ending /
+            is_recovered (bool): pass in true if you are opening logs that were previously open. Does not write new
+            headers
         """
 
         # make data folder if it does not exist
         if not os.path.exists(save_location + runname + "/"):
             os.makedirs(save_location + runname + "/")
 
-        # log file init and headers
-        self.server_log = open(save_location + runname + "/" +
-                               runname + "_server_log.txt", "w+")
-        self.serial_log = open(save_location + runname + "/" +
-                               runname + "_serial_log.csv", "w+")
-        self.data_log = open(save_location + runname + "/" +
-                             runname + "_data_log.csv", "w+")
-        self.command_log = open(save_location + runname + "/" +
-                                runname + "_command_log.csv", "w+")
-        self.command_log.write("Time, Command/info\n")
-        self.serial_log.write("Time, Packet\n")
-        self.data_log.write(self.header + "\n")
+        # Un lock these files
+        if is_recovered:
+            os.chmod(save_location + runname + "/" + runname + "_server_log.txt", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_data_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_command_log.csv", S_IWUSR | S_IREAD)
+            # log file init and headers
+            self.server_log = open(save_location + runname + "/" +
+                                   runname + "_server_log.txt", "a+")
+            self.serial_log = open(save_location + runname + "/" +
+                                   runname + "_serial_log.csv", "a+")
+            self.data_log = open(save_location + runname + "/" +
+                                 runname + "_data_log.csv", "a+")
+            self.command_log = open(save_location + runname + "/" +
+                                    runname + "_command_log.csv", "a+")
+        else:
+
+            # log file init and headers
+            self.server_log = open(save_location + runname + "/" +
+                                   runname + "_server_log.txt", "w")
+            self.serial_log = open(save_location + runname + "/" +
+                                   runname + "_serial_log.csv", "w")
+            self.data_log = open(save_location + runname + "/" +
+                                 runname + "_data_log.csv", "w")
+            self.command_log = open(save_location + runname + "/" +
+                                    runname + "_command_log.csv", "w")
+            self.command_log.write("Time, Command/info\n")
+            self.serial_log.write("Time, Packet\n")
+            self.data_log.write(self.header + "\n")
 
     def close_log(self):
         """Safely closes all logfiles"""
