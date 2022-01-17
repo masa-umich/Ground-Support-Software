@@ -128,22 +128,32 @@ class ClientWidget(QtWidgets.QWidget):
                     self.gui_window.startRunAct.setEnabled(True)
                 else:
                     self.command(6, [str(self.gui_window.gui.campaign.saveName)])
+                    self.gui_window.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
                 self.gui_window.statusBar().showMessage(
                         "Connected to server on " + self.host.currentText() + ":" + self.port.text())
 
         except Exception as e:
             print(traceback.format_exc())
-            self.is_connected = False  # update status
-            self.gui_window.startRunAct.setDisabled(True)
+            self.soft_disconnect()
         #print(self.is_connected)
 
     def disconnect(self):
         # send disconnect message
         self.command(4)
-        self.is_connected = False
+        self.soft_disconnect()
         if self.gui_window is not None:
             self.gui_window.statusBar().showMessage("Disconnected from server")
+
+    def soft_disconnect(self):
+        """
+        Performs all the required steps when client and server are disconnected, however it does not send any commands
+        to the server that indicate the client is attempting to disconnect
+        :return:
+        """
+        self.is_connected = False
+        if self.gui_window is not None:
             self.gui_window.startRunAct.setDisabled(True)
+            self.gui_window.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.disableNoteCreation(True)
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -169,9 +179,13 @@ class ClientWidget(QtWidgets.QWidget):
                 # get data
                 data = self.s.recv(4096*4)
                 packet = pickle.loads(data)
+            else:
+                packet = None
 
             # update command status
-            if packet["commander"] == None:
+            if packet is None:
+                self.is_commander = False
+            elif packet["commander"] is None:
                 self.is_commander = False
             elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
                 self.is_commander = True
@@ -182,9 +196,10 @@ class ClientWidget(QtWidgets.QWidget):
             self.last_packet = packet
             return self.last_packet
 
-        except:
-            #traceback.print_exc()
-            self.is_connected = False
+        except Exception as e:
+            if not isinstance(e, EOFError):
+                traceback.print_exc()
+            self.soft_disconnect()
             return None
 
 

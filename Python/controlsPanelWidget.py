@@ -43,7 +43,7 @@ class ControlsPanelWidget(QWidget):
         # Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.darkGray)
+        p.setColor(self.backgroundRole(), QColor(66, 66, 66))
         self.setPalette(p)
         
         # Inits widgets for edit frame

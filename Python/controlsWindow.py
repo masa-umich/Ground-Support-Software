@@ -983,6 +983,7 @@ class ControlsWindow(QMainWindow):
 
         # bring to front
         window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
+        window.raise_()
         window.activateWindow()
 
     @overrides

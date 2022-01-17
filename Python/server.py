@@ -226,7 +226,6 @@ class Server(QtWidgets.QMainWindow):
             timestamp (bool): add timestamp
         """
         self.log_queue.put([textedit, text, timestamp])
-        
 
     def eventFilter(self, source, event):
         # up and down arrows in command line to see previous commands

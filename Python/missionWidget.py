@@ -170,6 +170,7 @@ class MissionWidget(QWidget):
 
         self.show()
 
+    # TODO: Move this to campaign class
     @staticmethod
     def generateCETAsText(CET_time, test_start_time: int = None):
         """

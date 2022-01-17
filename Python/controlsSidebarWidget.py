@@ -5,6 +5,8 @@ from PyQt5.QtCore import *
 from constants import Constants
 from board import Board
 
+import math
+
 from overrides import overrides
 
 
@@ -39,7 +41,7 @@ class ControlsSidebarWidget(QWidget):
         self.painter = QPainter()
 
         self.show()
-        self.noteBoxText = "Write notes here"
+        self.noteBoxText = "CET - 00:00:00"
 
         # Create the label that will hold the status label, displays what task is being performed
         title_font = QFont()
@@ -78,15 +80,19 @@ class ControlsSidebarWidget(QWidget):
         font.setFamily(Constants.default_font)
         font.setPointSize(12 * self.gui.font_scale_ratio)
 
-        self.noteBox = QTextEdit(self)
-        self.noteBox.setFont(font)
-        self.noteBox.setFixedWidth(self.width - 15)
-        self.noteBox_height = int(self.width/3)
-        self.noteBox.setFixedHeight(self.noteBox_height)
-        self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.noteBox.move(10, 160 * self.gui.pixel_scale_ratio[1])
-        self.noteBox.setText(self.noteBoxText)
-        self.noteBox.show()
+        # self.noteBox = QTextEdit(self)
+        # self.noteBox.setReadOnly(True)
+        # self.noteBox.setFont(font)
+        # self.noteBox.setFixedWidth(self.width - 15)
+        # self.noteBox_height = int(self.width/3)
+        # self.noteBox.setFixedHeight(self.noteBox_height)
+        # self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # self.noteBox.move(10, 160 * self.gui.pixel_scale_ratio[1])
+        # self.noteBox.setText(self.noteBoxText)
+        # self.noteBox.show()
+
+        self.tabWidget = SidebarTabWidget(self)
+        self.tabWidget.move(3, 160 * self.gui.pixel_scale_ratio[1])
 
         self.state_frame = QFrame(self)
         self.state_frame.setGeometry(self.left, 0, self.width*3, 80 * self.gui.pixel_scale_ratio[1])
@@ -121,8 +127,9 @@ class ControlsSidebarWidget(QWidget):
         self.scrollAreaLayoutBox.setLayout(self.scrollAreaLayout)
         self.scroll.setWidget(self.scrollAreaLayoutBox)
         self.scroll.setWidgetResizable(True)
+        self.scroll.setFrameShape(QFrame.NoFrame)
         self.scroll.setFixedWidth(self.parent.panel_width - 2)
-        self.scroll.move(2, (150 * self.gui.pixel_scale_ratio[1]) + self.noteBox_height + 10)
+        self.scroll.move(2, (150 * self.gui.pixel_scale_ratio[1]) + self.tabWidget.height() + 10)
         self.scroll.setFixedHeight(700 * self.gui.pixel_scale_ratio[1])
         self.scroll.show()
 
@@ -284,3 +291,164 @@ class ControlsSidebarWidget(QWidget):
             self.abort_button.setText("Disabled")
             self.abort_button.setStyleSheet("color : gray")
             self.abort_button.setDisabled(True)
+
+
+class SidebarTabWidget(QWidget):
+
+    def __init__(self, parent):
+
+        super().__init__(parent)
+
+        self.controlsSidebarWidget = parent
+        self.gui = self.controlsSidebarWidget.gui
+
+        self.setFixedHeight(int(300 * self.gui.pixel_scale_ratio[1]))
+        self.setFixedWidth(self.controlsSidebarWidget.width)
+
+        self.tabWidget = QTabWidget(self)
+        self.tabWidget.setFixedWidth(self.width())
+        self.tabWidget.setFixedHeight(self.height())
+
+        self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
+
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+
+        self.tab2.setStyleSheet("background-color:red;")
+
+        self.tabWidget.addTab(self.noteWidget, "Notes")
+        self.tabWidget.addTab(self.tab2, "Test2")
+
+        self.setStyleSheet("background-color:blue;")
+
+        self.show()
+
+
+class SidebarNoteWidget(QWidget):
+
+    # TODO: Cleanup this sections, kinda confusing on what all the parent and sidebar shit is
+    def __init__(self, parent,  sideBar = None):
+
+        super().__init__()
+
+        self.parent = parent
+        if sideBar is None:
+            self.controlsSidebarWidget = parent
+        else:
+            self.controlsSidebarWidget = sideBar
+
+        self.gui = self.controlsSidebarWidget.gui
+
+        self.gui.campaign.campaignStartSignal.connect(self.enableNoteCreation)
+        self.gui.campaign.campaignEndSignal.connect(self.disableNoteCreation)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+
+        self.vlayout = QVBoxLayout()
+
+        self.noteBox = QTableWidget(self)
+        font.setPointSize(12 * self.gui.font_scale_ratio)
+
+        self.vlayout.addWidget(self.noteBox)
+
+        self.noteBox.setColumnCount(2)
+        self.noteBox.setRowCount(2)
+        self.noteBox.setColumnWidth(0, math.floor(self.parent.width() * .35))
+        self.noteBox.setColumnWidth(1, math.floor(self.parent.width() * .65)-35)
+        self.noteBox.horizontalHeader().hide()
+        self.noteBox.verticalHeader().hide()
+
+        self.noteBox.setStyleSheet("QTableView::item { border:0px; padding: 2px;}")
+        item = QTableWidgetItem("CET-00:00:00")
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        self.noteBox.setItem(0, 0, item)
+
+        item = QTableWidgetItem("Test Note that is short")
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        item.setBackground(Constants.MASA_Blue_color)
+        self.noteBox.setItem(0, 1, item)
+
+        item = QTableWidgetItem("CET-00:00:00")
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        item.setBackground(Constants.MASA_Blue_color)
+        self.noteBox.setItem(1, 0, item)
+
+        item = QTableWidgetItem("Test Note that is reallllllllly long and that hahaha omg tube bends")
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        item.setBackground(Constants.MASA_Blue_color)
+        self.noteBox.setItem(1, 1, item)
+        self.noteBox.setShowGrid(False)
+
+        self.noteBox.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.noteBox.setFocusPolicy(Qt.NoFocus)
+        self.noteBox.setSelectionMode(QAbstractItemView.NoSelection)
+        self.noteBox.resizeRowsToContents()
+
+        self.noteBox.setAutoFillBackground(True)
+        p = self.noteBox.palette()
+        p.setColor(self.noteBox.backgroundRole(), Constants.MASA_Blue_color)
+        self.noteBox.setPalette(p)
+
+        self.noteBox.setFrameShape(QFrame.NoFrame)
+
+        self.noteBox.show()
+
+        self.lineEdit = QLineEdit(self)
+        self.lineEdit.returnPressed.connect(self.enterNewNote)
+        self.lineEdit.setPlaceholderText("Start campaign for notes")
+        self.lineEdit.setDisabled(True)
+        self.lineEdit.show()
+        self.lineEdit.clearFocus()
+
+        self.vlayout.addWidget(self.lineEdit)
+
+        self.setStyleSheet("background-color:red;")
+
+        self.setLayout(self.vlayout)
+
+    def enterNewNote(self):
+
+        if self.lineEdit.text() == "":
+            return
+
+        self.noteBox.setRowCount(self.noteBox.rowCount()+1)
+
+        cetString = self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(self.gui.campaign.CET)
+
+        item = QTableWidgetItem(cetString)
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        self.noteBox.setItem(self.noteBox.rowCount()-1, 0, item)
+
+        item = QTableWidgetItem(self.lineEdit.text())
+        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignTop)
+        item.setBackground(Constants.MASA_Blue_color)
+        self.noteBox.setItem(self.noteBox.rowCount()-1, 1, item)
+
+        self.noteBox.resizeRowsToContents()
+
+        self.noteBox.scrollToBottom()
+
+        self.clearFocus()
+
+        self.lineEdit.clear()
+
+    def enableNoteCreation(self):
+
+        self.lineEdit.setEnabled(True)
+        self.lineEdit.setPlaceholderText("Enter note here")
+
+    def disableNoteCreation(self, noServer:bool = False):
+
+        self.lineEdit.setDisabled(True)
+        if noServer and self.gui.campaign.is_active:
+            self.lineEdit.setPlaceholderText("Reconnect to server for notes")
+        else:
+            self.lineEdit.setPlaceholderText("Start campaign for notes")
