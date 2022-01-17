@@ -118,9 +118,6 @@ class GUI:
         """
         self.controlsWindow.postInit()
 
-    def update(self):
-        self.controlsWindow.update()
-
     def savePreferences(self):
 
         # Generate dict of preferences to save
@@ -208,13 +205,7 @@ if __name__ == '__main__':
         app.setWindowIcon(QIcon('Images/M_icon.png'))
         gui = GUI()
 
-        #timer and tick updates
-        cycle_time = 200 # in ms
-        timer = QTimer()
-        timer.timeout.connect(gui.update)
-        timer.start(cycle_time)
         QTimer.singleShot(100, gui.postInit) # Need to call this after exec_ for proper screen placement
         currentExitCode = app.exec_()
-        #print(currentExitCode)
         gui.savePreferences()
         app = None

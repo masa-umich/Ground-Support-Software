@@ -986,36 +986,6 @@ class ControlsWindow(QMainWindow):
         window.raise_()
         window.activateWindow()
 
-    @overrides
-    def update(self):
-        super().update()
-
-        # if self.central_widget_offset is None:
-        #     # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
-        #     if self.gui.platform == "Windows":
-        #         self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPointF(0, self.menuBar().height())
-        #     elif self.gui.platform == "OSX":
-        #         self.central_widget_offset = self.pos()
-
-        # packet = self.client_dialog.cycle() #client.cycle()
-        # if packet != None: # on exception
-        #     self.last_packet = packet
-        
-        self.centralWidget.update()
-
-        # TODO: This does not need data so new signal? Once again campaign class poorly organized
-        #self.button_box.cycle()
-
-        # self.limits.update_limits(self.last_packet)
-        #self.tank_levels.update_values(self.last_packet)
-        #self.flash_dialog.flash_controller.update(self.last_packet)
-
-        # checks whether the button is enabled relative to the abort button settings menu
-        if self.button_box.is_soft_armed:
-            self.centralWidget.controlsSidebarWidget.abort_button_enabled = True
-        else:
-            self.centralWidget.controlsSidebarWidget.abort_button_enabled = False
-
 
 class ControlsCentralWidget(QWidget):
     """
@@ -1052,13 +1022,6 @@ class ControlsCentralWidget(QWidget):
 
         # Some variables depend on the init of ControlsPanelWidget so has to happen after it inits
         self.controlsWidget.finalizeInit()
-
-    @overrides
-    def update(self):
-        super().update()
-        # self.controlsWidget.update()
-        self.controlsSidebarWidget.update()
-        # self.missionWidget.update()
 
     @overrides
     def resizeEvent(self, e: QResizeEvent):
