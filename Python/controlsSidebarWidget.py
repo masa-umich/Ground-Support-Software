@@ -216,7 +216,7 @@ class SidebarTabWidget(QWidget):
         self.tab2 = QWidget()
         self.tab3 = QWidget()
         self.tab4 = QWidget()
-        self.tab5 = QWidget()git 
+        self.tab5 = QWidget()
         self.tab6 = QWidget()
 
         self.tabWidget.addTab(self.noteWidget, "Notes")

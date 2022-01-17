@@ -449,6 +449,7 @@ class ControlsWindow(QMainWindow):
         self.gui.debug_mode = True
         self.debugAct.setDisabled(True)
         self.exitDebugAct.setEnabled(True)
+        self.enterEditAct.setDisabled(True)
         self.startRunAct.setDisabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
@@ -461,6 +462,7 @@ class ControlsWindow(QMainWindow):
         self.gui.debug_mode = False
         self.debugAct.setEnabled(True)
         self.exitDebugAct.setDisabled(True)
+        self.enterEditAct.setEnabled(True)
         self.startRunAct.setEnabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
@@ -573,6 +575,7 @@ class ControlsWindow(QMainWindow):
         self.exitEditAct.setDisabled(True)
         self.startRunAct.setDisabled(True)
         self.endRunAct.setEnabled(True)
+        self.debugAct.setDisabled(True)
         self.screenSettingsAct.setDisabled(True)
         self.startTestAct.setEnabled(True)
         self.addAvionicsAct.setDisabled(True)
@@ -598,6 +601,7 @@ class ControlsWindow(QMainWindow):
         self.startTestAct.setDisabled(True)
         self.endTestAct.setDisabled(True)
         self.addAvionicsAct.setEnabled(True)
+        self.debugAct.setEnabled(True)
         self.statusBar().showMessage("Campaign '" + self.gui.campaign.title + "' ended")
 
     def startTest(self, dialog: QDialog, test_name: str):
