@@ -140,6 +140,7 @@ class ClientWidget(QtWidgets.QWidget):
     def disconnect(self):
         # send disconnect message
         self.command(4)
+        self.cycle() # need to get the last command out before saying we are disconnected
         self.soft_disconnect()
         if self.gui_window is not None:
             self.gui_window.statusBar().showMessage("Disconnected from server")
