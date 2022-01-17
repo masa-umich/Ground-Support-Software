@@ -45,13 +45,9 @@ class ControlsWidget(QWidget):
         self.centralWidget = parent
         self.window = parent.window
         self.gui = parent.gui
-        
-        #self.client = self.window.client_dialog #.client
+
         self.interface = self.window.interface
         self.channels = self.interface.channels
-        #self.starttime = datetime.now().timestamp()
-        #self.client = gui.client
-        #print(self.parent)
 
         self.left = 0
         self.top = 0
@@ -98,7 +94,26 @@ class ControlsWidget(QWidget):
         p.setColor(self.backgroundRole(), Constants.MASA_Blue_color)
         self.setPalette(p)
 
+        # Sidebar Abort Button Config
+        self.main_abort_button = QPushButton(self)
+        self.main_abort_button.setText("Abort")
+        self.main_abort_button.setDefault(False)
+        self.main_abort_button.setAutoDefault(False)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.monospace_font)
+        font.setPointSize(50 * self.gui.font_scale_ratio)
+
+        self.main_abort_button.setFont(font)
+        self.main_abort_button.setFixedWidth(200 * self.gui.pixel_scale_ratio[0])
+        self.main_abort_button.setDisabled(True)
+        self.main_abort_button.setFixedHeight(90 * self.gui.pixel_scale_ratio[1])
+        self.main_abort_button.move(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0], self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1])
+        self.main_abort_button.show()
+
         self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
+        self.window.button_box.softwareAbortSoftArmedSignal.connect(self.setAbortButtonState)
 
         # TODO: move these somewhere when file system is initiated
         #self.loadData()
@@ -127,6 +142,7 @@ class ControlsWidget(QWidget):
         There simply must be an elegant solution to this
         """
         self.controlsPanel = self.parent.controlsPanelWidget
+        self.main_abort_button.clicked.connect(self.centralWidget.controlsSidebarWidget.abort_init)
 
     def initContextMenu(self):
         """
@@ -213,6 +229,22 @@ class ControlsWidget(QWidget):
             for obj_ap in obj.anchor_points:
                 obj_ap.x_aligned = False
                 obj_ap.y_aligned = False
+
+    # TODO: Double check what is said below is actually done
+    @pyqtSlot(bool)
+    def setAbortButtonState(self, softArmed: bool):
+        """
+        Sets the abort button in the bottom right corner as soft armed. Allows the user to click it when soft armed,
+        but it may not cause an abort unless the gui is in an autosequence
+        :param softArmed: bool, true if the button is soft armed
+        """
+        if softArmed:
+            # if the button is enabled from the "Abort Button" settings menu
+            self.main_abort_button.setStyleSheet("background-color : darkred")
+            self.main_abort_button.setDisabled(False)
+        else:  # button is disabled
+            self.main_abort_button.setStyleSheet("color : gray")
+            self.main_abort_button.setDisabled(True)
 
     @overrides
     def paintEvent(self, e):

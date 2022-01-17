@@ -15,6 +15,8 @@ from LedIndicatorWidget import LedIndicator
 
 class AbortButton(QtWidgets.QDialog):
 
+    softwareAbortSoftArmedSignal = pyqtSignal(bool)
+
     def __init__(self, gui):
         super().__init__()
         self.setWindowTitle("Abort Button Settings")
@@ -112,10 +114,12 @@ class AbortButton(QtWidgets.QDialog):
     def soft_arm_toggle(self):
         """Enables the software abort button that appears in the lower right corner of the sidebar
         """
-        if self.is_soft_armed == False:
+        if not self.is_soft_armed:
             self.is_soft_armed = True
+            self.softwareAbortSoftArmedSignal.emit(True)
             self.soft_arming_button.setText("Disable Software Button")
         else:
+            self.softwareAbortSoftArmedSignal.emit(False)
             self.is_soft_armed = False
             self.soft_arming_button.setText("Enable Software Button")
 

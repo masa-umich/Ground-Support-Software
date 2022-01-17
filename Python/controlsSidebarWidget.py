@@ -75,48 +75,10 @@ class ControlsSidebarWidget(QWidget):
         self.state_time_label.move(10 * self.gui.pixel_scale_ratio[0], 85 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
         self.state_time_label.show()
 
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(12 * self.gui.font_scale_ratio)
-
-        # self.noteBox = QTextEdit(self)
-        # self.noteBox.setReadOnly(True)
-        # self.noteBox.setFont(font)
-        # self.noteBox.setFixedWidth(self.width - 15)
-        # self.noteBox_height = int(self.width/3)
-        # self.noteBox.setFixedHeight(self.noteBox_height)
-        # self.noteBox.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        # self.noteBox.move(10, 160 * self.gui.pixel_scale_ratio[1])
-        # self.noteBox.setText(self.noteBoxText)
-        # self.noteBox.show()
-
         self.tabWidget = SidebarTabWidget(self)
         self.tabWidget.move(3, 160 * self.gui.pixel_scale_ratio[1])
 
-        self.state_frame = QFrame(self)
-        self.state_frame.setGeometry(self.left, 0, self.width*3, 80 * self.gui.pixel_scale_ratio[1])
-
-        # Vertical button layout
-        self.buttonLayout = QVBoxLayout(self.state_frame)
-        self.setLayout(self.buttonLayout)
-
-        font = QFont()
-        font.setStyleStrategy(QFont.PreferAntialias)
-        font.setFamily(Constants.default_font)
-        font.setPointSize(50 * self.gui.font_scale_ratio)
-
         self.board_objects = []  # An empty array to start
-        self.abort_button_enabled = False
-        
-        # Sidebar Abort Button Config
-        self.abort_button = QPushButton()
-        self.abort_button.setDefault(False)
-        self.abort_button.setAutoDefault(False)
-        self.abort_button.setFont(font)
-        self.abort_button.setFixedWidth(self.width - 15)
-        self.abort_button.clicked.connect(self.abort_init)
-        self.abort_button.setDisabled(True)
 
         # Scroll Bar Layout
         self.scroll = QScrollArea(self)
@@ -132,29 +94,6 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.move(2, (150 * self.gui.pixel_scale_ratio[1]) + self.tabWidget.height() + 10)
         self.scroll.setFixedHeight(700 * self.gui.pixel_scale_ratio[1])
         self.scroll.show()
-
-        self.buttonLayout.addWidget(self.abort_button)
-        self.buttonLayout.setAlignment(self.abort_button, Qt.AlignBottom | Qt.AlignCenter)
-
-        self.buffer_label = QLabel(self)
-        self.buffer_label.setFont(title_font)
-        self.buffer_label.setStyleSheet("color: white")
-        self.buffer_label.setText("  ")
-        self.buffer_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
-        self.buffer_label.setFixedWidth(5*self.width)
-        self.buffer_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.buffer_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
-        self.buttonLayout.addWidget(self.buffer_label)
-
-        self.buffer_label2 = QLabel(self)
-        self.buffer_label2.setFont(title_font)
-        self.buffer_label2.setStyleSheet("color: white")
-        self.buffer_label2.setText("  ")
-        self.buffer_label2.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
-        self.buffer_label2.setFixedWidth(5*self.width)
-        self.buffer_label2.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.buffer_label2.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
-        #self.buttonLayout.addWidget(self.buffer_label2)
 
     def addBoardsToScrollWidget(self, boardNames: []):
         """
@@ -207,6 +146,7 @@ class ControlsSidebarWidget(QWidget):
     def abort_init(self):
         """Changes the state of each board. 
         """
+        self.window.statusBar().showMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
                 board.sendBoardState("Abort")
@@ -282,15 +222,15 @@ class ControlsSidebarWidget(QWidget):
 
         # TODO: see https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/41
         # checks whether the Software Abort Button is enabled or not
-        if self.abort_button_enabled:
-            # if the button is enabled from the "Abort Button" settings menu
-            self.abort_button.setText("Abort")
-            self.abort_button.setStyleSheet("background-color : darkred")
-            self.abort_button.setDisabled(False)
-        else: # button is disabled (well, it just doesn't do anything)
-            self.abort_button.setText("Disabled")
-            self.abort_button.setStyleSheet("color : gray")
-            self.abort_button.setDisabled(True)
+        # if self.abort_button_enabled:
+        #     # if the button is enabled from the "Abort Button" settings menu
+        #     self.abort_button.setText("Abort")
+        #     self.abort_button.setStyleSheet("background-color : darkred")
+        #     self.abort_button.setDisabled(False)
+        # else: # button is disabled (well, it just doesn't do anything)
+        #     self.abort_button.setText("Disabled")
+        #     self.abort_button.setStyleSheet("color : gray")
+        #     self.abort_button.setDisabled(True)
 
 
 class SidebarTabWidget(QWidget):
@@ -311,15 +251,10 @@ class SidebarTabWidget(QWidget):
 
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
 
-        self.tab1 = QWidget()
         self.tab2 = QWidget()
-
-        self.tab2.setStyleSheet("background-color:red;")
 
         self.tabWidget.addTab(self.noteWidget, "Notes")
         self.tabWidget.addTab(self.tab2, "Test2")
-
-        self.setStyleSheet("background-color:blue;")
 
         self.show()
 
@@ -395,8 +330,6 @@ class SidebarNoteWidget(QWidget):
         p.setColor(self.noteBox.backgroundRole(), Constants.MASA_Blue_color)
         self.noteBox.setPalette(p)
 
-        self.noteBox.setFrameShape(QFrame.NoFrame)
-
         self.noteBox.show()
 
         self.lineEdit = QLineEdit(self)
@@ -407,8 +340,6 @@ class SidebarNoteWidget(QWidget):
         self.lineEdit.clearFocus()
 
         self.vlayout.addWidget(self.lineEdit)
-
-        self.setStyleSheet("background-color:red;")
 
         self.setLayout(self.vlayout)
 

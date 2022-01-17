@@ -43,13 +43,13 @@ class ControlsWindow(QMainWindow):
         self.last_packet = {}
         self.interface = S2_Interface()
         self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
+        self.button_box = AbortButton(self.gui)  # .client)
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
         self.flash_dialog = FlashController(self.gui)
-        self.button_box = AbortButton(self.gui) #.client)
         self.limits = LimitWindow(10, gui=self.gui) #.client)
         self.auto_manager = AutoManager(self.gui) #.client)
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
@@ -1004,7 +1004,7 @@ class ControlsWindow(QMainWindow):
         self.centralWidget.update()
 
         # TODO: This does not need data so new signal? Once again campaign class poorly organized
-        self.button_box.cycle()
+        #self.button_box.cycle()
 
         # self.limits.update_limits(self.last_packet)
         #self.tank_levels.update_values(self.last_packet)

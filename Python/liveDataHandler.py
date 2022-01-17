@@ -34,6 +34,9 @@ class LiveDataHandler:
     def getClient(self):
         return self._client
 
+    def getGui(self):
+        return self._gui
+
     def startThread(self):
         self.is_active = True
         self.thread.start()
@@ -67,6 +70,9 @@ class LiveDataHandlerBackgroundThread(QThread):
             # Check for data ever 200ms
             time.sleep(0.2)
             packet = self.dataHandler.getClient().cycle()
+
+            # Not really data updating but oh well
+            self.dataHandler.getGui().controlsWindow.button_box.cycle()
 
             if packet is not None:
                 # All is well
