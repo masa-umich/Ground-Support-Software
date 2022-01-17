@@ -166,12 +166,12 @@ class ControlsWidget(QWidget):
 
         # Leaving edit mode, nothing to do when entering
         if not self.centralWidget.is_editing:
-            self.controlsPanel.edit_frame.hide()
-            self.controlsPanel.removeAllEditingObjects()
             if self.window.fileName != "":
                 self.saveData(self.parent.window.fileName)
             else:
                 self.window.saveFileDialog()
+
+            self.controlsPanel.removeAllEditingObjects()
 
             # Prevents tube from drawing in run mode
             if self.is_drawing:

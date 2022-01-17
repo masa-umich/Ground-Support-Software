@@ -3,8 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
-
-import inspect
+import traceback
+from overrides import overrides
 
 
 class ControlsPanelWidget(QWidget):
@@ -21,6 +21,8 @@ class ControlsPanelWidget(QWidget):
 
         self.gui = self.parent.gui
         self.interface = self.window.interface
+
+        self.painter = QPainter()
 
         # Keeps track of the differnt channels in boxes
         self.sensor_channels = self.interface.channels
@@ -98,13 +100,15 @@ class ControlsPanelWidget(QWidget):
         self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
         self.createComboBox(self.board_combobox, "Board", "Board:",
-                            ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
+                            ["Undefined"] + Constants.boards)
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
         self.channel_combobox.setEditable(True)
         completer = QCompleter(self.sensor_channels)
         completer.setCaseSensitivity(False)
         self.channel_combobox.setCompleter(completer)
+        self.channel_combobox.setStyleSheet("QComboBox { combobox-popup: 0; }");
+        self.channel_combobox.setMaxVisibleItems(8)
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -338,19 +342,24 @@ class ControlsPanelWidget(QWidget):
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
                 self.channel_combobox.setEditable(False)
             elif object_.object_name == "Generic Sensor":
-                prefix = self.interface.getPrefix(board_name)
-                specific_channels = [i for i in self.sensor_channels if i.startswith(prefix)]
+                if board_name in Constants.boards:
+                    prefix = self.interface.getPrefix(board_name)
+                    specific_channels = [i for i in self.sensor_channels if i.startswith(prefix)]
+                else:
+                    specific_channels = []
+
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + specific_channels)
                 self.channel_combobox.setEditable(True)
-                completer = QCompleter(self.sensor_channels)
+                completer = QCompleter(specific_channels)
                 completer.setCaseSensitivity(False)
                 self.channel_combobox.setCompleter(completer)
             else:
                 self.channel_combobox.setEditable(False)
         except Exception as e:
-            pass
+            print(traceback.format_exc())
             # print("UpdateEditPanelFields Threw Exception")
             # print(e)
+            pass
 
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
@@ -517,3 +526,32 @@ class ControlsPanelWidget(QWidget):
                 self.removeEditingObject(obj)
 
         self.setEditingObjectFocus(object_)
+
+    @overrides
+    def paintEvent(self, e):
+        """
+        This event is called automatically in the background by pyQt. It is used to update the drawing on screen
+        This function calls the objects own drawing methods to perform the actual drawing calculations
+        """
+        self.painter.begin(self)
+
+        # This makes the objects onscreen more crisp
+        self.painter.setRenderHint(QPainter.HighQualityAntialiasing)
+
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+        pen.setColor(Constants.MASA_Beige_color)
+        self.painter.setPen(pen)
+
+        # Draw the bottom border on the widget
+        path = QPainterPath()
+        # path.moveTo(0, 75 * self.gui.pixel_scale_ratio[1]-1)  # Bottom left corner
+        # path.lineTo(self.width, 75 * self.gui.pixel_scale_ratio[1]-1)  # Straight across
+
+        path.moveTo(1, 0)
+        path.lineTo(1, self.height)
+
+        self.painter.drawPath(path)
+
+        self.painter.end()

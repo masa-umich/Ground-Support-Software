@@ -395,10 +395,21 @@ class ControlsWindow(QMainWindow):
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
-            self.statusBar().showMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
+            self.statusBar().showMessage("Exit Edit Mode") # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
+
+            # I tried for about two hours to avoid this, but cant seem to get around that fact that if you add
+            # boards while in edit more, they don't show up properly after leaving
+            # TODO: Make this not terrible
+            board_names = []
+            for board in self.centralWidget.controlsSidebarWidget.board_objects:
+                board_names.append(board.name)
+
+            self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(
+                board_names)
+
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)

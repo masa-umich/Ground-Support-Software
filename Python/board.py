@@ -270,7 +270,6 @@ class Board(QWidget):
         # Set the board height to be the same size as the text because it looks good
         self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
 
-
         # Update the frame geometry
         self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 60*self.gui.pixel_scale_ratio[1])
         # Make sure the buttons don't clip
@@ -606,7 +605,10 @@ class Board(QWidget):
         :param telem_rate: telem packet rate
         :return: None
         """
+
+        print(self.size())
         super().update()
+        print(self.size())
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
         self.setBoardState(int(state))
@@ -723,6 +725,8 @@ class Board(QWidget):
                 self.fire_button.setEnabled(False)
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+
+        print(self.size())
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
