@@ -76,7 +76,8 @@ class ControlsSidebarWidget(QWidget):
         self.state_time_label.show()
 
         self.tabWidget = SidebarTabWidget(self)
-        self.tabWidget.move(3, 160 * self.gui.pixel_scale_ratio[1])
+        self.tabWidget.move(3, self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1])
+        self.tabWidget.show()
 
         self.board_objects = []  # An empty array to start
 
@@ -91,8 +92,8 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.NoFrame)
         self.scroll.setFixedWidth(self.parent.panel_width - 2)
-        self.scroll.move(2, (150 * self.gui.pixel_scale_ratio[1]) + self.tabWidget.height() + 10)
-        self.scroll.setFixedHeight(700 * self.gui.pixel_scale_ratio[1])
+        self.scroll.move(2, self.state_time_label.pos().y() + self.state_time_label.height())
+        self.scroll.setFixedHeight(self.tabWidget.y() - (self.state_time_label.y() + self.state_time_label.height()))
         self.scroll.show()
 
     def addBoardsToScrollWidget(self, boardNames: []):
@@ -203,7 +204,7 @@ class SidebarTabWidget(QWidget):
         self.controlsSidebarWidget = parent
         self.gui = self.controlsSidebarWidget.gui
 
-        self.setFixedHeight(int(300 * self.gui.pixel_scale_ratio[1]))
+        self.setFixedHeight(int(450 * self.gui.pixel_scale_ratio[1]))
         self.setFixedWidth(self.controlsSidebarWidget.width)
 
         self.tabWidget = QTabWidget(self)
@@ -213,9 +214,17 @@ class SidebarTabWidget(QWidget):
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
 
         self.tab2 = QWidget()
+        self.tab3 = QWidget()
+        self.tab4 = QWidget()
+        self.tab5 = QWidget()git 
+        self.tab6 = QWidget()
 
         self.tabWidget.addTab(self.noteWidget, "Notes")
-        self.tabWidget.addTab(self.tab2, "Test2")
+        self.tabWidget.addTab(self.tab2, "Packet Log")
+        self.tabWidget.addTab(self.tab3, "Packet Log2")
+        self.tabWidget.addTab(self.tab4, "Packet Log3")
+        self.tabWidget.addTab(self.tab5, "Packet Log4")
+        self.tabWidget.addTab(self.tab6, "Packet Log5")
 
         self.show()
 
@@ -252,7 +261,7 @@ class SidebarNoteWidget(QWidget):
         self.noteBox.setColumnCount(2)
         self.noteBox.setRowCount(2)
         self.noteBox.setColumnWidth(0, math.floor(self.parent.width() * .35))
-        self.noteBox.setColumnWidth(1, math.floor(self.parent.width() * .65)-35)
+        self.noteBox.setColumnWidth(1, math.floor(self.parent.width() * .65)-40*self.gui.pixel_scale_ratio[0])
         self.noteBox.horizontalHeader().hide()
         self.noteBox.verticalHeader().hide()
 
@@ -286,11 +295,6 @@ class SidebarNoteWidget(QWidget):
         self.noteBox.setSelectionMode(QAbstractItemView.NoSelection)
         self.noteBox.resizeRowsToContents()
 
-        self.noteBox.setAutoFillBackground(True)
-        p = self.noteBox.palette()
-        p.setColor(self.noteBox.backgroundRole(), Constants.MASA_Blue_color)
-        self.noteBox.setPalette(p)
-
         self.noteBox.show()
 
         self.lineEdit = QLineEdit(self)
@@ -321,7 +325,6 @@ class SidebarNoteWidget(QWidget):
         item = QTableWidgetItem(self.lineEdit.text())
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
-        item.setBackground(Constants.MASA_Blue_color)
         self.noteBox.setItem(self.noteBox.rowCount()-1, 1, item)
 
         self.noteBox.resizeRowsToContents()
