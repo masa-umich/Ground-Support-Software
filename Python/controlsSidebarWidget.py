@@ -6,6 +6,7 @@ from constants import Constants
 from board import Board
 
 import math
+import random
 
 from overrides import overrides
 
@@ -203,6 +204,8 @@ class SidebarTabWidget(QWidget):
 
         self.controlsSidebarWidget = parent
         self.gui = self.controlsSidebarWidget.gui
+        self.interface = self.controlsSidebarWidget.window.interface
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         self.setFixedHeight(int(450 * self.gui.pixel_scale_ratio[1]))
         self.setFixedWidth(self.controlsSidebarWidget.width)
@@ -213,20 +216,60 @@ class SidebarTabWidget(QWidget):
 
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
 
-        self.tab2 = QWidget()
+        self.packet_log = QTableWidget()
+        self.packet_log.setColumnCount(3)
+        self.packet_log.setRowCount(len(self.interface.channels))
+        self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
+
+        self.packet_log.verticalHeader().hide()
+        # self.packet_log.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        # self.packet_log.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        # self.packet_log.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+
+        self.packet_log.setColumnWidth(0, self.controlsSidebarWidget.width * .57 - 18 * self.gui.pixel_scale_ratio[0])
+        self.packet_log.setColumnWidth(1, self.controlsSidebarWidget.width * .25)
+        self.packet_log.setColumnWidth(2, self.controlsSidebarWidget.width * .18)
+
+        for n in range(len(self.interface.channels)):
+            item = QTableWidgetItem(self.interface.channels[n])
+            self.packet_log.setItem(
+                n, 0, item)
+            item = QTableWidgetItem(str(round(random.random()*6000, 1)))
+            item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
+            self.packet_log.setItem(n, 1, item)
+            self.packet_log.setItem(n, 2, QTableWidgetItem(
+                self.interface.units[self.interface.channels[n]]))
+
+
+
         self.tab3 = QWidget()
         self.tab4 = QWidget()
         self.tab5 = QWidget()
         self.tab6 = QWidget()
 
         self.tabWidget.addTab(self.noteWidget, "Notes")
-        self.tabWidget.addTab(self.tab2, "Packet Log")
-        self.tabWidget.addTab(self.tab3, "Packet Log2")
-        self.tabWidget.addTab(self.tab4, "Packet Log3")
-        self.tabWidget.addTab(self.tab5, "Packet Log4")
-        self.tabWidget.addTab(self.tab6, "Packet Log5")
+        self.tabWidget.addTab(self.packet_log, "Packet Log")
+        # self.tabWidget.addTab(self.tab3, "Packet Log2")
+        # self.tabWidget.addTab(self.tab4, "Packet Log3")
+        # self.tabWidget.addTab(self.tab5, "Packet Log4")
+        # self.tabWidget.addTab(self.tab6, "Packet Log5")
 
         self.show()
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        """
+        Update the data in the packet log
+        :param data_packet: data packet from the livedatahandler
+        """
+
+        # We only want to update this if we are looking at the tab
+        if self.tabWidget.tabText(self.tabWidget.currentIndex()) == "Packet Log":
+            for n in range(len(self.interface.channels)):
+                key = self.interface.channels[n]
+                item = QTableWidgetItem(str(round(data_packet[key], 1)))
+                item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
+                self.packet_log.setItem(n, 1, item)
 
 
 class SidebarNoteWidget(QWidget):

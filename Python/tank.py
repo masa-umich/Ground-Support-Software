@@ -236,6 +236,11 @@ class Tank(BaseObject):
 
         text = ""
 
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
+        else:
+            text += "Channel:\n"
+
         text += "Fill Level: " + str(int(self.fillPercent * 100)) + "%"
 
         if self.pressureSetPoint is not None:

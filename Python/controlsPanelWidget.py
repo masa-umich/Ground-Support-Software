@@ -459,6 +459,8 @@ class ControlsPanelWidget(QWidget):
                     self.window.statusBar().showMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
 
+            object_.updateToolTip()
+
     # def doesFormLayoutHaveFocus(self):
     #     numRow = self.edit_form_layout.count()
     #     for i in range(numRow):

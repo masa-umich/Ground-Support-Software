@@ -514,6 +514,11 @@ class Motor(BaseObject):
 
         text = ""
 
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
+        else:
+            text += "Channel:\n"
+
         text += "Currenta: " + str(self.currenta) + "A\n"
         text += "Currentb: " + str(self.currentb) + "A\n"
         text += "P constant: " + str(self.Pconstant) +"\n"

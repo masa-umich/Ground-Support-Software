@@ -250,7 +250,12 @@ class GenSensor(BaseObject):
         """
 
         text = ""
-        text += self.channel
+
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            text += "Channel: %s\n" % self.channel
+        else:
+            text += "Channel:"
+
         self.setToolTip_(text)
 
     @pyqtSlot(object)

@@ -242,6 +242,11 @@ class Solenoid(BaseObject):
 
         text = ""
 
+        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
+        else:
+            text += "Channel:\n"
+
         if self.state == 1:
             text += "State: Energized\n"
         else:

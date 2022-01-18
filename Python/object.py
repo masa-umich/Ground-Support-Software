@@ -151,7 +151,11 @@ class BaseObject(QObject):
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
+
+        if self.serial_number == "":
+            self.button.setToolTip(text)
+        else:
+            self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
