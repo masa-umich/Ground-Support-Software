@@ -65,16 +65,16 @@ class ControlsSidebarWidget(QWidget):
         time_font.setFamily(Constants.default_font)
         time_font.setPointSize(30 * self.gui.font_scale_ratio)
 
-        self.state_time_label = QLabel(self)
-        self.state_time_label = QLabel(self)
-        self.state_time_label.setFont(time_font)
-        self.state_time_label.setStyleSheet("color: white")
-        self.state_time_label.setText("Rem Time: 00 s")
-        self.state_time_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
-        self.state_time_label.setFixedWidth(self.width)
-        self.state_time_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.state_time_label.move(10 * self.gui.pixel_scale_ratio[0], 85 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
-        self.state_time_label.show()
+        # self.state_time_label = QLabel(self)
+        # self.state_time_label = QLabel(self)
+        # self.state_time_label.setFont(time_font)
+        # self.state_time_label.setStyleSheet("color: white")
+        # self.state_time_label.setText("Rem Time: 00 s")
+        # self.state_time_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
+        # self.state_time_label.setFixedWidth(self.width)
+        # self.state_time_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        # self.state_time_label.move(10 * self.gui.pixel_scale_ratio[0], 85 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
+        # self.state_time_label.show()
 
         self.tabWidget = SidebarTabWidget(self)
         self.tabWidget.move(3, self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1])
@@ -93,8 +93,8 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.NoFrame)
         self.scroll.setFixedWidth(self.parent.panel_width - 2)
-        self.scroll.move(2, self.state_time_label.pos().y() + self.state_time_label.height())
-        self.scroll.setFixedHeight(self.tabWidget.y() - (self.state_time_label.y() + self.state_time_label.height()))
+        self.scroll.move(2, self.title_label.pos().y() + self.title_label.height() + 15 * self.gui.pixel_scale_ratio[1])
+        self.scroll.setFixedHeight(self.tabWidget.y() - self.scroll.pos().y())
         self.scroll.show()
 
     def addBoardsToScrollWidget(self, boardNames: []):
@@ -207,7 +207,7 @@ class SidebarTabWidget(QWidget):
         self.interface = self.controlsSidebarWidget.window.interface
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
-        self.setFixedHeight(int(450 * self.gui.pixel_scale_ratio[1]))
+        self.setFixedHeight(int(415 * self.gui.pixel_scale_ratio[1]))
         self.setFixedWidth(self.controlsSidebarWidget.width)
 
         self.tabWidget = QTabWidget(self)
@@ -239,8 +239,6 @@ class SidebarTabWidget(QWidget):
             self.packet_log.setItem(n, 1, item)
             self.packet_log.setItem(n, 2, QTableWidgetItem(
                 self.interface.units[self.interface.channels[n]]))
-
-
 
         self.tab3 = QWidget()
         self.tab4 = QWidget()

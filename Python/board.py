@@ -619,7 +619,7 @@ class Board(QWidget):
         self.rem_timer.setText(str(state_rem_time/1000) + " s")
         if self.name == "Pressurization Controller":
             self.controlsSidebarWidget.title_label.setText(self.stateMap[state])
-            self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
+            #self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
 
         self.LPT = LPT
 
