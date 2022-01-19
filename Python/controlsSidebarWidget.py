@@ -204,8 +204,6 @@ class SidebarTabWidget(QWidget):
 
         self.controlsSidebarWidget = parent
         self.gui = self.controlsSidebarWidget.gui
-        self.interface = self.controlsSidebarWidget.window.interface
-        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         self.setFixedHeight(int(415 * self.gui.pixel_scale_ratio[1]))
         self.setFixedWidth(self.controlsSidebarWidget.width)
@@ -215,30 +213,7 @@ class SidebarTabWidget(QWidget):
         self.tabWidget.setFixedHeight(self.height())
 
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
-
-        self.packet_log = QTableWidget()
-        self.packet_log.setColumnCount(3)
-        self.packet_log.setRowCount(len(self.interface.channels))
-        self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
-
-        self.packet_log.verticalHeader().hide()
-        # self.packet_log.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        # self.packet_log.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        # self.packet_log.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-
-        self.packet_log.setColumnWidth(0, self.controlsSidebarWidget.width * .57 - 18 * self.gui.pixel_scale_ratio[0])
-        self.packet_log.setColumnWidth(1, self.controlsSidebarWidget.width * .25)
-        self.packet_log.setColumnWidth(2, self.controlsSidebarWidget.width * .18)
-
-        for n in range(len(self.interface.channels)):
-            item = QTableWidgetItem(self.interface.channels[n])
-            self.packet_log.setItem(
-                n, 0, item)
-            item = QTableWidgetItem(str(round(random.random()*6000, 1)))
-            item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
-            self.packet_log.setItem(n, 1, item)
-            self.packet_log.setItem(n, 2, QTableWidgetItem(
-                self.interface.units[self.interface.channels[n]]))
+        self.packetLogWidget = SidebarPacketLogWidget(self.tabWidget, self.controlsSidebarWidget)
 
         self.tab3 = QWidget()
         self.tab4 = QWidget()
@@ -246,13 +221,138 @@ class SidebarTabWidget(QWidget):
         self.tab6 = QWidget()
 
         self.tabWidget.addTab(self.noteWidget, "Notes")
-        self.tabWidget.addTab(self.packet_log, "Packet Log")
+        self.tabWidget.addTab(self.packetLogWidget, "Packet Log")
         # self.tabWidget.addTab(self.tab3, "Packet Log2")
         # self.tabWidget.addTab(self.tab4, "Packet Log3")
         # self.tabWidget.addTab(self.tab5, "Packet Log4")
         # self.tabWidget.addTab(self.tab6, "Packet Log5")
 
         self.show()
+
+
+class SidebarPacketLogWidget(QWidget):
+
+    def __init__(self, tabWidget, sideBar=None):
+
+        super().__init__()
+
+        self.gui = sideBar.gui
+        self.tabWidget = tabWidget
+        self.controlsSidebarWidget = sideBar
+        self.interface = self.controlsSidebarWidget.window.interface
+
+        self.vertLayout = QVBoxLayout()
+
+        self.filterHLayout = QHBoxLayout()
+
+        self.packet_log = QTableWidget(self)
+        self.packet_log.setColumnCount(3)
+        self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
+        self.packet_log.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.packet_log.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.packet_log.setColumnWidth(0, self.controlsSidebarWidget.width * .57 - 34 * self.gui.pixel_scale_ratio[0])
+        self.packet_log.setColumnWidth(1, self.controlsSidebarWidget.width * .25)
+        self.packet_log.setColumnWidth(2, self.controlsSidebarWidget.width * .18)
+        self.packet_log.verticalHeader().hide()
+
+        self.boardFilterButton = QToolButton(self)
+        self.boardFilterButton.setText("Board Filter")
+        self.boardtoolmenu = QMenu(self)
+        self.boardFilterList = []  # Holds board names that we want to filter by. Defualt all
+
+        self.typeFilterButton = QToolButton(self)
+        self.typeFilterButton.setText("Type Filter")
+        self.typetoolmenu = QMenu(self)
+        self.typeFilterList = ["other", "pressure", "vlv", "mtr", "STATE", "load", "tc", "rtd", "tnk", "ctrl_press",
+                               "cal"]  # Holds type names that we want to filter by. Defualt all
+
+        self.filteredChannels = []  # populated later
+
+        # board filter setup
+        for boardName in Constants.boards:
+            checkBox = QCheckBox(boardName, self.boardtoolmenu)
+            checkBox.stateChanged.connect(self.boardFilterButtonUpdated)
+            checkBox.setChecked(True)
+            checkableAction = QWidgetAction(self.boardtoolmenu)
+            checkableAction.setDefaultWidget(checkBox)
+            self.boardtoolmenu.addAction(checkableAction)
+
+        self.boardFilterButton.setMenu(self.boardtoolmenu)
+        self.boardFilterButton.setPopupMode(QToolButton.InstantPopup)
+
+        # type filter setup
+        for typeName in self.typeFilterList:
+            checkBox = QCheckBox(typeName, self.typetoolmenu)
+            checkBox.setChecked(True)
+            checkBox.stateChanged.connect(self.typeFilterButtonUpdated)
+            checkableAction = QWidgetAction(self.typetoolmenu)
+            checkableAction.setDefaultWidget(checkBox)
+            self.typetoolmenu.addAction(checkableAction)
+
+        self.typeFilterButton.setMenu(self.typetoolmenu)
+        self.typeFilterButton.setPopupMode(QToolButton.InstantPopup)
+
+        self.filterHLayout.addWidget(self.boardFilterButton)
+        self.filterHLayout.addWidget(self.typeFilterButton)
+
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
+        self.vertLayout.addLayout(self.filterHLayout)
+        self.vertLayout.addWidget(self.packet_log)
+        self.setLayout(self.vertLayout)
+        # self.packet_log.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        # self.packet_log.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        # self.packet_log.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+
+    def boardFilterButtonUpdated(self, state):
+        board = self.sender().text()
+        if state == 2:
+            self.boardFilterList.append(self.controlsSidebarWidget.interface.getPrefix(board))
+        else:
+            self.boardFilterList.remove(self.controlsSidebarWidget.interface.getPrefix(board))
+
+        self.populatePacketLogFromFilter()
+
+    def typeFilterButtonUpdated(self, state):
+        type = self.sender().text()
+        if state == 2:
+            self.typeFilterList.append(type)
+        else:
+            self.typeFilterList.remove(type)
+
+        self.populatePacketLogFromFilter()
+
+    # TODO: Gets once for every board on startup which is probably not great
+    def populatePacketLogFromFilter(self):
+        allChannels = self.controlsSidebarWidget.interface.channels
+        boardfilteredChannels = [x for x in allChannels if any(y in x for y in self.boardFilterList)]
+
+        if "other" in self.typeFilterList:
+            otherChannels = [x for x in boardfilteredChannels if all(y not in x for y in self.typeFilterList)]
+        else:
+            otherChannels = []
+
+        filteredChannels = [x for x in boardfilteredChannels if any(y in x for y in self.typeFilterList)]
+
+        # TODO: Try to preserve the given order, not just thrown at the end
+        self.filteredChannels = filteredChannels + otherChannels
+
+        self.clearTable()
+        self.packet_log.setRowCount(len(filteredChannels))
+        for n in range(len(filteredChannels)):
+            item = QTableWidgetItem(filteredChannels[n])
+            self.packet_log.setItem(
+                n, 0, item)
+            item = QTableWidgetItem(str(round(random.random() * 6000, 1)))
+            item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
+            self.packet_log.setItem(n, 1, item)
+            self.packet_log.setItem(n, 2, QTableWidgetItem(
+                self.interface.units[filteredChannels[n]]))
+
+    def clearTable(self):
+
+        self.packet_log.clear()
+        self.packet_log.setRowCount(0)
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
@@ -263,8 +363,8 @@ class SidebarTabWidget(QWidget):
 
         # We only want to update this if we are looking at the tab
         if self.tabWidget.tabText(self.tabWidget.currentIndex()) == "Packet Log":
-            for n in range(len(self.interface.channels)):
-                key = self.interface.channels[n]
+            for n in range(len(self.filteredChannels)):
+                key = self.filteredChannels[n]
                 item = QTableWidgetItem(str(round(data_packet[key], 1)))
                 item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
                 self.packet_log.setItem(n, 1, item)
