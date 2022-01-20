@@ -167,7 +167,7 @@ class ObjectLabel(CustomLabel):
 
             # If the gui is in full screen on mac don't apply the extra offset
             if self.gui.platform == "OSX" and self.gui.controlsWindow.isFullScreen():
-                window_pos = self.gui.controlsWindow.window.pos()
+                window_pos = self.gui.controlsWindow.pos()
             elif self.gui.platform == "Windows" and self.gui.controlsWindow.isFullScreen():
                 window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset - self.gui.controlsWindow.central_widget.pos()
             else:

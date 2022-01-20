@@ -17,7 +17,10 @@ class ClientDialog(QtWidgets.QDialog):
     def __init__(self, client):
         super().__init__()
 
-        self.client = client
+        if client is not None:
+            self.client = client
+        else:
+            self.client = ClientWidget(commandable=False)
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.client)
@@ -37,8 +40,11 @@ class ClientWidget(QtWidgets.QWidget):
 
         self._dialog = ClientDialog(self)
 
-        self._gui = gui
-        self.gui_window = self._gui.controlsWindow
+        if gui is not None:
+            self._gui = gui
+            self.gui_window = self._gui.controlsWindow
+        else:
+            self.gui_window = None
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")

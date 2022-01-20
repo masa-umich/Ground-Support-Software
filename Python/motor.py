@@ -169,9 +169,9 @@ class Motor(BaseObject):
 
         path.addRect(0, 0, self.width, self.height)
 
-        path.moveTo(self.width/2,self.height)
+        path.moveTo(self.width/2 - 1,self.height)
 
-        path.lineTo(self.width/2,self.height+20*self.gui.pixel_scale_ratio[1])
+        path.lineTo(self.width/2 - 1,self.height+20*self.gui.pixel_scale_ratio[1])
 
         x1 = (self.width - self.boxWidth)/2
         x2 = x1 + self.boxWidth

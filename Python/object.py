@@ -105,7 +105,6 @@ class BaseObject(QObject):
         self._initContextMenu()
         self._initToolTip()
 
-
     def _initAnchorPoints(self):
         """
         Inits the anchor points for the object

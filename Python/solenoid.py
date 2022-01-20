@@ -7,6 +7,7 @@ from overrides import overrides
 
 from constants import Constants
 from object import BaseObject
+from anchorPoint import AnchorPoint
 
 
 class Solenoid(BaseObject):
@@ -94,6 +95,20 @@ class Solenoid(BaseObject):
     # def initFromObject(cls, object):
 
     @overrides
+    def _initAnchorPoints(self):
+        """
+        Inits the anchor points for the object
+        Should only be called from __init__
+        Overridden because we don't want all four sides to have anchor points
+        """
+        # Default points are the midpoints of the four sides.
+        anchor_points = [AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
+                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, 3, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width/2), int(self.height / 2)), self, 3, parent=self.widget_parent)
+                         ]
+        self.anchor_points = anchor_points
+
+    @overrides
     def draw(self):
         """
         Draws the solenoid icon on screen
@@ -118,6 +133,10 @@ class Solenoid(BaseObject):
             path.lineTo(self.width, self.height)  # Straight Up
             path.lineTo(0, 0)
 
+            # path.moveTo(self.width/2, self.height/2)
+            # path.lineTo(self.width/2, self.height/2 - 10)
+            # path.addRect(self.width/3, self.height/2 - 10, self.width/3, self.height/2 - 20)
+
         else:  # Draw vertically
             path.lineTo(self.width, 0)
             path.lineTo(0, self.height)
@@ -127,30 +146,6 @@ class Solenoid(BaseObject):
         path.translate(self.position.x(), self.position.y())
 
         self.widget_parent.painter.drawPath(path)
-
-        # path = QPainterPath()
-        # if self.is_vertical == 0:
-        #     path = QPainterPath()
-        #     path.moveTo(2*self.width/7, 0)  # Top left corner
-        #     #path.lineTo(0,self.height)  # Straight Down
-        #     #path.lineTo(self.width, 0)  # Diag to upper right
-        #     path.lineTo(5*self.width/7, self.height)  # Straight Up
-        #     #path.lineTo(0, 0)
-        #     path.moveTo(5 * self.width / 7, 0)
-        #     path.lineTo(2*self.width / 7, self.height)  # Straight Up
-        #     pen = self.widget_parent.painter.pen()
-        #     pen.setWidth(Constants.line_width+2)
-        #     pen.setColor(Constants.MASA_Maize_color)
-        #     self.widget_parent.painter.setPen(pen)
-        #     path.translate(self.position.x(), self.position.y())
-        #
-        #     self.widget_parent.painter.drawPath(path)
-        #
-        # pen = self.widget_parent.painter.pen()
-        # self.widget_parent.painter.setPen(Qt.NoPen)
-        # self.widget_parent.painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
-        # self.widget_parent.painter.drawEllipse(QPointF(self.position.x() + self.width/2, self.position.y() + self.height/2-8), 3, 3)
-        # self.widget_parent.painter.setPen(pen)
 
         self.widget_parent.painter.setBrush(Qt.NoBrush)
 
@@ -190,6 +185,16 @@ class Solenoid(BaseObject):
 
         # Tells widget painter to update screen
         self.widget_parent.update()
+
+    @overrides
+    def setAnchorPoints(self):
+        """
+        Sets the anchor points for the object. Called when object is created, and when scale changes
+        Overridden to only have two anchor points
+        """
+        self.anchor_points[0].updateLocalPosition(QPoint(0                 , int(self.height/2) ))
+        self.anchor_points[1].updateLocalPosition(QPoint(self.width        , int(self.height/2) ))
+        self.anchor_points[2].updateLocalPosition(QPoint(int(self.width/2) , int(self.height / 2)))
 
     def setAvionicsBoard(self, board: str):
         """
