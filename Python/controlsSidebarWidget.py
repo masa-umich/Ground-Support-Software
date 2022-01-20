@@ -222,6 +222,7 @@ class SidebarTabWidget(QWidget):
 
         self.tabWidget.addTab(self.noteWidget, "Notes")
         self.tabWidget.addTab(self.packetLogWidget, "Packet Log")
+        #self.tabWidget.addTab(self.controlsSidebarWidget.window.limits.widget, "Limits")
         # self.tabWidget.addTab(self.tab3, "Packet Log2")
         # self.tabWidget.addTab(self.tab4, "Packet Log3")
         # self.tabWidget.addTab(self.tab5, "Packet Log4")
