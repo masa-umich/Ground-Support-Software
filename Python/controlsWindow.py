@@ -927,7 +927,7 @@ class ControlsWindow(QMainWindow):
         dialog.done(2)
 
         # The user only updates the x pixel scale ratio, must keep things square so this updates y
-        pixel_scale_change = self.gui.pixel_scale_ratio[0]/new_pixel_scale * self.gui.pixel_scale_ratio[1]
+        pixel_scale_change = new_pixel_scale/self.gui.pixel_scale_ratio[0] * self.gui.pixel_scale_ratio[1]
         self.gui.pixel_scale_ratio = [new_pixel_scale, pixel_scale_change]
 
         # Update other visual settings
