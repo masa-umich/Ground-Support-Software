@@ -49,15 +49,15 @@ class ControlsWindow(QMainWindow):
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
+        self.menuBar().setFixedHeight(28 * self.gui.pixel_scale_ratio[1])
+        self.setGeometry(0, 0, self.gui.screenResolution[0],
+                         self.gui.screenResolution[1]-QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight) - self.menuBar().height())
 
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
-        self.setGeometry(self.centralWidget.left, self.centralWidget.top, self.centralWidget.width, self.centralWidget.height)
         self.flash_dialog = FlashController(self.gui)
-
-
         self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateFromConnectionStatus)
 
         appid = 'MASA.GUI' # arbitrary string
@@ -290,7 +290,7 @@ class ControlsWindow(QMainWindow):
                       #"View": view_menu,
                       "Run":  run_menu,
                       "Help": help_menu}
-        
+
         self.showMaximized()
 
         # Can't assign here see below for more info
@@ -1020,7 +1020,7 @@ class ControlsCentralWidget(QWidget):
         self.left = 0
         self.top = 0
         self.width = self.gui.screenResolution[0]
-        self.height = self.gui.screenResolution[1]*.9
+        self.height = self.window.height() - self.parent.statusBar().height()
 
         self.setGeometry(self.left, self.top, self.width, self.height)
 

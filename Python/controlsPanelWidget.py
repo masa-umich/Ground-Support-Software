@@ -39,7 +39,7 @@ class ControlsPanelWidget(QWidget):
         self.top = 0
 
         self.width = self.parent.panel_width
-        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
+        self.height = self.parent.height
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Sets color of control panel

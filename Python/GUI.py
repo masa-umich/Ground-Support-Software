@@ -38,7 +38,7 @@ class GUI:
             self.platform = "OSX"
 
         # Get the screen resolution of the user
-        self.screenResolution = [app.desktop().screenGeometry().width(), app.desktop().screenGeometry().height()]
+        self.screenResolution = [app.desktop().screenGeometry().width(), app.desktop().availableGeometry().height()]
 
         # Check if the launch files exist, if so load preferences from there
         if os.path.isdir(GUI.LAUNCH_DIRECTORY):

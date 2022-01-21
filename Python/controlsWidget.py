@@ -53,7 +53,7 @@ class ControlsWidget(QWidget):
         self.top = 0
 
         self.width = self.gui.screenResolution[0] - self.parent.panel_width
-        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
+        self.height = self.parent.height
 
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.show()
@@ -133,7 +133,7 @@ class ControlsWidget(QWidget):
                                        100 * self.gui.pixel_scale_ratio[1])
         elif self.gui.platform == "Windows":
             self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
-                                   (200 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
+                                   (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
                                    100 * self.gui.pixel_scale_ratio[1])
 
     # TODO: Almost anything but this, that being said it works
