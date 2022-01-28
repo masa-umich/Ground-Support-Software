@@ -197,8 +197,18 @@ class ControlsWindow(QMainWindow):
         # Run -> Sensor Calibrations
         self.sensor_calibration = QMenu("Sensor Calibrations", self)
         self.sensor_calibration.triggered.connect(self.sensorsWindow.calibrateSensorsWindow)
+        """
+        Temporary way to save the grids after the calibrations window is closed.
+        """
+        self.gui.PCvoltagePressureGrid = []
+        self.gui.PCslopeOffsetGrid = []
+        self.gui.ECvoltagePressureGrid = []
+        self.gui.ECslopeOffsetGrid = []
+        self.gui.GSEvoltagePressureGrid = []
+        self.gui.GSEslopeOffsetGrid = []
         for board in Constants.boards:
-            self.sensor_calibration.addAction(board)
+            if not board == "Flight Computer" and not board == "Recovery Controller":
+                self.sensor_calibration.addAction(board)
 
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()

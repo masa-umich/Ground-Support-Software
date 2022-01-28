@@ -36,6 +36,8 @@ class RangesLayout(QGridLayout):
         self.rangesItems = QHBoxLayout()
         self.parent = parent
 
+        self.saveDisplayed = False
+
     def addRanges(self, channelNum):
         DropDownList = ("Voltage/Pressure Range", "Slope/Offset")
 
@@ -50,52 +52,76 @@ class RangesLayout(QGridLayout):
         for i in reversed(range(self.rangesItems.count())):
             self.rangesItems.itemAt(i).widget().deleteLater()
 
-        self.rangesItems.addWidget(QLabel("Voltage Max:"))
+        self.rangesItems.addWidget(QLabel("Voltage Max [V]:"))
         voltageMax = QLineEdit()
         voltageMax.setValidator(QDoubleValidator())
+        voltageMax.setText(self.parent.voltagePressureGrid[channelNum][0])
         voltageMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMax"))
         self.rangesItems.addWidget(voltageMax)
-        self.rangesItems.addWidget(QLabel("Voltage Min:"))
+
+        self.rangesItems.addWidget(QLabel("Voltage Min [V]:"))
         voltageMin = QLineEdit()
         voltageMin.setValidator(QDoubleValidator())
+        voltageMin.setText(self.parent.voltagePressureGrid[channelNum][1])
         voltageMin.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMin"))
         self.rangesItems.addWidget(voltageMin)
-        self.rangesItems.addWidget(QLabel("Pressure Max:"))
+
+        self.rangesItems.addWidget(QLabel("Pressure Max [psi]:"))
         pressureMax = QLineEdit()
         pressureMax.setValidator(QDoubleValidator())
+        pressureMax.setText(self.parent.voltagePressureGrid[channelNum][2])
         pressureMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "pressureMax"))
         self.rangesItems.addWidget(pressureMax)
 
+        self.saveDisplayed = False
+
         self.addLayout(self.rangesItems, 1, 0)
+        # print(self.rangesItems.itemAt(0).widget().text())
 
         return self
 
     def updateRanges(self, text, channelNum):
         # print(text)
 
+        self.parent.rangeLayoutList.pop(channelNum)
+
+        if self.itemAt(2):
+            self.itemAt(2).widget().deleteLater()
+
+        self.saveDisplayed = True
+        if channelNum not in self.parent.channelsEdited:
+            self.parent.channelsEdited.append(channelNum)
+        notSavedLabel = QLabel("Not Saved")
+        notSavedLabel.setStyleSheet('''QLabel {
+            color: rgb(210, 105, 30);
+        }''')
+        self.addWidget(notSavedLabel, 2, 0)  # ignore highlights
+
         if text == "Voltage/Pressure Range":
             # Deletes the items in rangesItems
             for i in reversed(range(self.rangesItems.count())):
                 self.rangesItems.itemAt(i).widget().deleteLater()
 
-            self.rangesItems.addWidget(QLabel("Voltage Max:"))
+            self.rangesItems.addWidget(QLabel("Voltage Max [V]:"))
             voltageMax = QLineEdit()
             voltageMax.setValidator(QDoubleValidator())
             voltageMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMax"))
             voltageMax.setText(self.parent.voltagePressureGrid[channelNum][0])
             self.rangesItems.addWidget(voltageMax)
-            self.rangesItems.addWidget(QLabel("Voltage Min:"))
+            self.rangesItems.addWidget(QLabel("Voltage Min [V]:"))
             voltageMin = QLineEdit()
             voltageMin.setValidator(QDoubleValidator())
             voltageMin.textChanged.connect(lambda x: self.textChanged(x, channelNum, "voltageMin"))
             voltageMin.setText(self.parent.voltagePressureGrid[channelNum][1])
             self.rangesItems.addWidget(voltageMin)
-            self.rangesItems.addWidget(QLabel("Pressure Max:"))
+            self.rangesItems.addWidget(QLabel("Pressure Max [psi]:"))
             pressureMax = QLineEdit()
             pressureMax.setValidator(QDoubleValidator())
             pressureMax.textChanged.connect(lambda x: self.textChanged(x, channelNum, "pressureMax"))
             pressureMax.setText(self.parent.voltagePressureGrid[channelNum][2])
             self.rangesItems.addWidget(pressureMax)
+
+            # self.saveDisplayed = False
 
             self.addLayout(self.rangesItems, 1, 0)
 
@@ -104,20 +130,24 @@ class RangesLayout(QGridLayout):
             for i in reversed(range(self.rangesItems.count())):
                 self.rangesItems.itemAt(i).widget().deleteLater()
 
-            self.rangesItems.addWidget(QLabel("Slope:"))
+            self.rangesItems.addWidget(QLabel("Slope [mV/psi]:"))
             slope = QLineEdit()
             slope.setValidator(QDoubleValidator())
             slope.textChanged.connect(lambda x: self.textChanged(x, channelNum, "slope"))
             slope.setText(self.parent.slopeOffsetGrid[channelNum][0])
             self.rangesItems.addWidget(slope)
-            self.rangesItems.addWidget(QLabel("Offset:"))
+            self.rangesItems.addWidget(QLabel("Offset [mV]:"))
             offset = QLineEdit()
             offset.setValidator(QDoubleValidator())
             offset.textChanged.connect(lambda x: self.textChanged(x, channelNum, "offset"))
             offset.setText(self.parent.slopeOffsetGrid[channelNum][1])
             self.rangesItems.addWidget(offset)
 
+            # self.saveDisplayed = False
+
             self.addLayout(self.rangesItems, 1, 0)
+
+        self.parent.rangeLayoutList.insert(channelNum, self)
 
     def textChanged(self, text, channel=-1, input="None"):
         if channel != -1:
@@ -132,21 +162,35 @@ class RangesLayout(QGridLayout):
             elif input == "offset":
                 self.parent.slopeOffsetGrid[channel] = (self.parent.slopeOffsetGrid[channel][0], text)
 
-            print(text + ", from Channel: " + str(channel) + " " + input)
-            print("Voltage/Pressure Range: " + str(self.parent.voltagePressureGrid[channel]))
-            print("Slope/Offset Range: " + str(self.parent.slopeOffsetGrid[channel]))
+            if not self.saveDisplayed:
+                self.saveDisplayed = True
+                if channel not in self.parent.channelsEdited:
+                    self.parent.channelsEdited.append(channel)
+                notSavedLabel = QLabel("Not Saved")
+                notSavedLabel.setStyleSheet('''QLabel {
+                    color: rgb(210, 105, 30);
+                }''')
+                self.addWidget(notSavedLabel, 2, 0)  # ignore highlights
+
+            # print(text + ", from Channel: " + str(channel) + " " + input)
+            # print("Voltage/Pressure Range: " + str(self.parent.voltagePressureGrid[channel]))
+            # print("Slope/Offset Range: " + str(self.parent.slopeOffsetGrid[channel]))
 
         else:
-            print('error with Channels: check "textChanged" function')
+            print('error with Channels: check "textChanged" function within sensor_calibrations.py')
 
 
 class SensorCalibrationDialog(QtWidgets.QDialog):
-    def __init__(self, parent):
+    def __init__(self, parent, voltagePressureGrid=None, slopeOffsetGrid=None):
         super().__init__()
         # EC: 20
         # Press: 6
         # GSE controller: 22
 
+        if slopeOffsetGrid is None:
+            slopeOffsetGrid = []
+        if voltagePressureGrid is None:
+            voltagePressureGrid = []
         self.gui = parent
         self.scrollArea = None
         self.layout = QGridLayout()
@@ -163,50 +207,77 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         # Vertical layout to hold everything
         self.verticalLayout = QGridLayout(self.dialog)
 
-        self.voltagePressureGrid = []
-        self.slopeOffsetGrid = []
+        self.rangeLayoutList = []
 
+        self.voltagePressureGrid = voltagePressureGrid
+        self.slopeOffsetGrid = slopeOffsetGrid
 
-    # def addRangeItems(self, text):
-    #     print(text)
-
-        # if text == "Voltage/Pressure Range":
-        #     # Deletes the items in rangesItems
-        #     for i in reversed(range(self.rangesItems.count())):
-        #         self.rangesItems.itemAt(i).widget().deleteLater()
-        #
-        #     self.rangesItems.addWidget(QLabel("Voltage Max:"))
-        #     voltageMaxSpin = QDoubleSpinBox()
-        #     self.rangesItems.addWidget(voltageMaxSpin)
-        #     self.rangesItems.addWidget(QLabel("Voltage Min:"))
-        #     voltageMinSpin = QDoubleSpinBox()
-        #     self.rangesItems.addWidget(voltageMinSpin)
-        #     self.rangesItems.addWidget(QLabel("Pressure Max:"))
-        #     pressureMaxSpin = QDoubleSpinBox()
-        #     self.rangesItems.addWidget(pressureMaxSpin)
-        #
-        #     self.rangesLayout.addLayout(self.rangesItems)
-        #
-        # else:
-        #     # Deletes the items in rangesItems
-        #     for i in reversed(range(self.rangesItems.count())):
-        #         self.rangesItems.itemAt(i).widget().deleteLater()
-        #
-        #     self.rangesItems.addWidget(QLabel("Slope:"))
-        #     Slope = QDoubleSpinBox()
-        #     self.rangesItems.addWidget(Slope)
-        #     self.rangesItems.addWidget(QLabel("Offset:"))
-        #     Offset = QDoubleSpinBox()
-        #     self.rangesItems.addWidget(Offset)
-        #
-        #     self.rangesLayout.addLayout(self.rangesItems)
+        self.channelsEdited = []
 
     def closeEvent(self, a0):
-        print('close')
+        """
+        if there are unsaved changes: ask whether the user actually wants to close the window
+        """
+
+        if self.channelsEdited:
+            dialog = QMessageBox.question(self, 'Confirmation', "There are unsaved changes. Are you sure you want to close?",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if dialog == QtWidgets.QMessageBox.Yes:
+                a0.accept()
+                print('close')
+                # save to higher class to remember data once this window closes
+                # doesn't remember after GUI closes though, need to save the data to a config file
+                if self.channel == "Pressurization Controller":
+                    self.gui.PCvoltagePressureGrid = self.voltagePressureGrid
+                    self.gui.PCslopeOffsetGrid = self.slopeOffsetGrid
+                elif self.channel == "Engine Controller":
+                    self.gui.ECvoltagePressureGrid = self.voltagePressureGrid
+                    self.gui.ECslopeOffsetGrid = self.slopeOffsetGrid
+                elif self.channel == "GSE Controller":
+                    self.gui.GSEvoltagePressureGrid = self.voltagePressureGrid
+                    self.gui.GSEslopeOffsetGrid = self.slopeOffsetGrid
+            else:
+                a0.ignore()
+
+    def printGrid(self):
+        """
+        prints the grid to the terminal for checking
+        """
+
+        print()
+        print("Voltage/Pressure", "Slope/Offset")
+        for i in range(len(self.voltagePressureGrid)):
+            print(self.voltagePressureGrid[i], self.slopeOffsetGrid[i])
+
+    def deleteSave(self):
+        """
+        just a function to call to delete the save label after 3 seconds.
+        """
+        self.savedLabel.deleteLater()
+        self.timer.deleteLater()
 
     def calibrateSensorsWindow(self, action: QAction):
-        self.__init__(self.gui)  # Resets the values - most importantly the layout
-                                 # Without this, the layout keeps appending itself and requires a reboot of the GUI
+        """
+        main function that handles everything
+        """
+
+        # Resets the values - most importantly the layout
+        # Without this, the layout keeps appending itself and requires a reboot of the GUI
+        # self.__init__(self.gui, self.gui.voltagePressureGrid, self.gui.slopeOffsetGrid)
+
+        self.channel = action.text()
+
+        if action.text() == "Pressurization Controller":
+            # receives the previous grid if there is one from the previous window
+            # TODO: still need to save this to a config file so that the data can be saved even after the GUI closes
+            self.__init__(self.gui, self.gui.PCvoltagePressureGrid, self.gui.PCslopeOffsetGrid)
+            self.channel_count = 6
+        elif action.text() == "Engine Controller":
+            self.__init__(self.gui, self.gui.ECvoltagePressureGrid, self.gui.ECslopeOffsetGrid)
+            self.channel_count = 20
+        elif action.text() == "GSE Controller":
+            self.__init__(self.gui, self.gui.GSEvoltagePressureGrid, self.gui.GSEslopeOffsetGrid)
+            self.channel_count = 22
 
         channel_settings = ["pt_cal_lower_voltage", "pt_cal_upper_voltage", "pt_cal_upper_pressure"]
 
@@ -215,20 +286,8 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         font.setFamily(Constants.default_font)
         font.setPointSize(14 * self.gui.font_scale_ratio)
 
-        # TODO: does the "flight computer" and "recovery controller" have boards? If not, then should I remove them
-        if action.text() == "Pressurization Controller":
-            self.channel_count = 6
-        elif action.text() == "Flight Computer":
-            print(action.text())
-        elif action.text() == "Engine Controller":
-            self.channel_count = 20
-        elif action.text() == "Recovery Controller":
-            print(action.text())
-        elif action.text() == "GSE Controller":
-            self.channel_count = 22
-
         end = 0
-
+        print(self.channel_count)
         for x in range(self.channel_count):
             """
             Iterates through and creates individual channels
@@ -237,17 +296,27 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             label = QLabel("\n\nPT Channel " + str(x))
             label.setFont(font)
 
-            rangeLayout = RangesLayout(parent=self)
-
-            ranges = rangeLayout.addRanges(x)
-
-            self.verticalLayout.addWidget(label, 2 * x + 2, 0)
-            self.verticalLayout.addLayout(ranges, 2 * x + 3, 0)
-
             self.voltagePressureGrid.append(("", "", ""))
             self.slopeOffsetGrid.append(("", ""))
 
-        # Old Code
+            rangeLayout = RangesLayout(parent=self)  # ignore
+
+            ranges = rangeLayout.addRanges(x)
+
+            self.rangeLayoutList.append(rangeLayout)
+
+            self.verticalLayout.addWidget(label, 2 * x + 2, 0)  # ignore
+            self.verticalLayout.addLayout(ranges, 2 * x + 3, 0)
+
+        self.printGrid()
+
+        """
+        Old Code
+        """
+        # use self.voltagePressureGrid and self.slopeOffsetGrid to index into values when needed!
+
+        # print(rangeLayout.rangesItems.itemAt(0).widget().text())
+
         # for x in range(self.channel_count):
         #     # self.rangeList.append()
         #
@@ -362,8 +431,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         #
         #     # end = 2 * x + 3
 
-        end += 1
+        end += 1  # not sure what this is for....I left it from the old code
 
+        # scroll area
         self.scrollArea = QScrollArea()
         self.scrollArea.setBackgroundRole(QPalette.Dark)
         self.scrollArea.setWidget(self.dialog)
@@ -416,19 +486,23 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         self.verticalLayout.addLayout(buttonLayout, 1, 0)
 
-        warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n"
-                               + "CALS TAKE A LONG TIME TO SAVE\n"
-                               + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n")
-        # Fixed GUI Reboot Issue (I think!)
 
-        warning_label.setStyleSheet('''QLabel {
-            color: rgb(200, 0, 0);
+        # TODO: Directions...
+        directionsLabel = QLabel("Directions: ...\n")
+
+        # warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n"
+        #                        + "CALS TAKE A LONG TIME TO SAVE\n"
+        #                        + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n")
+        # Fixed GUI Reboot Issue!
+
+        directionsLabel.setStyleSheet('''QLabel {
+            color: rgb(200, 200, 0);
         }''')
 
         font.setPointSize(20 * self.gui.font_scale_ratio)
-        warning_label.setFont(font)
+        directionsLabel.setFont(font)
         warningLayout = QtWidgets.QGridLayout()
-        warningLayout.addWidget(warning_label)
+        warningLayout.addWidget(directionsLabel)
 
         self.verticalLayout.addLayout(warningLayout, 0, 0)
 
@@ -464,6 +538,53 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
     def send_sensor_calibrations(self, board_name):
         print('sending...')
+
+        # temporary
+        if self.channelsEdited:
+
+            channelsToBeSent = []
+
+            for channel in self.channelsEdited:
+                channelsToBeSent.append((channel, True))  # boolean value represents a successful/failed save. Replace
+                                                          # with a real variable "sent back?" from transducers
+
+            self.channelsEdited = []
+
+            print("Update Channels: ")
+            for channel in channelsToBeSent:
+                print(channel[0])
+            print()
+
+            for channel, success in channelsToBeSent:
+                if success:
+                    self.rangeLayoutList[channel].itemAt(2).widget().deleteLater()
+                    self.rangeLayoutList[channel].saveDisplayed = False
+
+                    self.savedLabel = QLabel("Saved!")
+                    self.savedLabel.setStyleSheet('''QLabel {
+                        color: rgb(0, 255, 0);
+                    }''')
+                    self.layout.addWidget(self.savedLabel)
+
+                    # deletes the save label 3 seconds after saving
+                    self.timer = QTimer(self)
+                    self.timer.timeout.connect(self.deleteSave)
+                    self.timer.start(3000)
+
+                else:
+                    self.rangeLayoutList[channel].itemAt(2).widget().setText("FAILED TO SAVE!!!")
+                    self.rangeLayoutList[channel].itemAt(2).widget().setStyleSheet('''QLabel {
+                        color: rgb(210, 30, 30);
+                    }''')
+                    self.channelsEdited.append(channel)
+
+            self.printGrid()
+
+            # TODO: talk to Jack about packet transmitting
+
+        # temporary
+
+        """
         timeout = 0.5
         prefix = self.interface.getPrefix(board_name)
 
@@ -508,3 +629,4 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     "args": [x, self.upper_pressure[x].value()]
                 }
                 # self.client_dialog.client.command(3, cmd_dict)
+        """
