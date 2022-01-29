@@ -249,12 +249,12 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         for i in range(len(self.voltagePressureGrid)):
             print(self.voltagePressureGrid[i], self.slopeOffsetGrid[i])
 
-    def deleteSave(self):
-        """
-        just a function to call to delete the save label after 3 seconds.
-        """
-        self.savedLabel.deleteLater()
-        self.timer.deleteLater()
+    # def deleteSave(self):
+    #     """
+    #     just a function to call to delete the save label after 3 seconds.
+    #     """
+    #     self.savedLabel.deleteLater()
+    #     self.timer.deleteLater()
 
     def calibrateSensorsWindow(self, action: QAction):
         """
@@ -560,16 +560,16 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     self.rangeLayoutList[channel].itemAt(2).widget().deleteLater()
                     self.rangeLayoutList[channel].saveDisplayed = False
 
-                    self.savedLabel = QLabel("Saved!")
-                    self.savedLabel.setStyleSheet('''QLabel {
-                        color: rgb(0, 255, 0);
-                    }''')
-                    self.layout.addWidget(self.savedLabel)
-
-                    # deletes the save label 3 seconds after saving
-                    self.timer = QTimer(self)
-                    self.timer.timeout.connect(self.deleteSave)
-                    self.timer.start(3000)
+                    # self.savedLabel = QLabel("Saved!")
+                    # self.savedLabel.setStyleSheet('''QLabel {
+                    #     color: rgb(0, 255, 0);
+                    # }''')
+                    # self.layout.addWidget(self.savedLabel)
+                    #
+                    # # deletes the save label 3 seconds after saving
+                    # self.timer = QTimer(self)
+                    # self.timer.timeout.connect(self.deleteSave)
+                    # self.timer.start(3000)
 
                 else:
                     self.rangeLayoutList[channel].itemAt(2).widget().setText("FAILED TO SAVE!!!")
