@@ -51,7 +51,7 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(8, self.client_dialog.client)
         self.auto_manager = AutoManager(self.client_dialog.client)
         self.tank_levels = TankLevelDialog(dual=False)
-        self.sensorsWindow = SensorCalibrationDialog(self.gui)
+        self.sensorsWindow = SensorCalibrationDialog(self.gui, self)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
 
         appid = 'MASA.GUI' # arbitrary string

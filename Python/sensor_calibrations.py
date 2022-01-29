@@ -44,6 +44,7 @@ class RangesLayout(QGridLayout):
         DropDownMenu = QComboBox()
         DropDownMenu.addItems(DropDownList)
         DropDownMenu.wheelEvent = lambda event: None
+        # print(DropDownMenu.currentText())
 
         self.addWidget(DropDownMenu, 1, 2)
         DropDownMenu.activated[str].connect(lambda x: self.updateRanges(x, channelNum))
@@ -181,7 +182,7 @@ class RangesLayout(QGridLayout):
 
 
 class SensorCalibrationDialog(QtWidgets.QDialog):
-    def __init__(self, parent, voltagePressureGrid=None, slopeOffsetGrid=None):
+    def __init__(self, parent, window, voltagePressureGrid=None, slopeOffsetGrid=None):
         super().__init__()
         # EC: 20
         # Press: 6
@@ -192,6 +193,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         if voltagePressureGrid is None:
             voltagePressureGrid = []
         self.gui = parent
+        print(parent.__class__)
+        self.window = window
+        self.interface = window.interface
         self.scrollArea = None
         self.layout = QGridLayout()
         self.setLayout(self.layout)
@@ -256,7 +260,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
     #     self.savedLabel.deleteLater()
     #     self.timer.deleteLater()
 
-    def calibrateSensorsWindow(self, action: QAction):
+    def calibrateSensorsWindow(self, action: QAction = None):
         """
         main function that handles everything
         """
@@ -266,17 +270,18 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         # self.__init__(self.gui, self.gui.voltagePressureGrid, self.gui.slopeOffsetGrid)
 
         self.channel = action.text()
+        # print(action)
 
         if action.text() == "Pressurization Controller":
             # receives the previous grid if there is one from the previous window
             # TODO: still need to save this to a config file so that the data can be saved even after the GUI closes
-            self.__init__(self.gui, self.gui.PCvoltagePressureGrid, self.gui.PCslopeOffsetGrid)
+            self.__init__(self.gui, self.window, self.gui.PCvoltagePressureGrid, self.gui.PCslopeOffsetGrid)
             self.channel_count = 6
         elif action.text() == "Engine Controller":
-            self.__init__(self.gui, self.gui.ECvoltagePressureGrid, self.gui.ECslopeOffsetGrid)
+            self.__init__(self.gui, self.window, self.gui.ECvoltagePressureGrid, self.gui.ECslopeOffsetGrid)
             self.channel_count = 20
         elif action.text() == "GSE Controller":
-            self.__init__(self.gui, self.gui.GSEvoltagePressureGrid, self.gui.GSEslopeOffsetGrid)
+            self.__init__(self.gui, self.window, self.gui.GSEvoltagePressureGrid, self.gui.GSEslopeOffsetGrid)
             self.channel_count = 22
 
         channel_settings = ["pt_cal_lower_voltage", "pt_cal_upper_voltage", "pt_cal_upper_pressure"]
@@ -287,7 +292,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         font.setPointSize(14 * self.gui.font_scale_ratio)
 
         end = 0
-        print(self.channel_count)
+        # print(self.channel_count)
         for x in range(self.channel_count):
             """
             Iterates through and creates individual channels
@@ -559,6 +564,41 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                 if success:
                     self.rangeLayoutList[channel].itemAt(2).widget().deleteLater()
                     self.rangeLayoutList[channel].saveDisplayed = False
+
+                    self.rangeLayoutList[channel].itemAtPosition(1, 2).widget().currentText()
+
+                    # Send Here
+
+                    if self.rangeLayoutList[channel].itemAtPosition(1, 2).widget().currentText() == 'Slope/Offset':
+                        slope = float(self.slopeOffsetGrid[channel][0])
+                        offset = float(self.slopeOffsetGrid[channel][1])
+
+                        print(f"slope = {slope}")
+                        print(f"offset = {offset}")
+
+                        cmd_dict = {
+                            "function_name": "set_pt_slope_offset",
+                            "target_board_addr": self.interface.getBoardAddr(board_name),
+                            "timestamp": int(datetime.now().timestamp()),
+                            "args": [slope, offset]
+                        }
+                        self.window.client_dialog.client.command(3, cmd_dict)
+
+                    else:
+
+                        slope = ((float(self.voltagePressureGrid[channel][0]) - float(self.voltagePressureGrid[channel][1])) / float(self.voltagePressureGrid[channel][2])) * 1000
+                        offset = float(self.voltagePressureGrid[channel][1]) * 1000
+
+                        print(f"slope = {slope}")
+                        print(f"offset = {offset}")
+
+                        cmd_dict = {
+                            "function_name": "set_pt_slope_offset",
+                            "target_board_addr": self.interface.getBoardAddr(board_name),
+                            "timestamp": int(datetime.now().timestamp()),
+                            "args": [slope, offset]
+                        }
+                        self.window.client_dialog.client.command(3, cmd_dict)
 
                     # self.savedLabel = QLabel("Saved!")
                     # self.savedLabel.setStyleSheet('''QLabel {
