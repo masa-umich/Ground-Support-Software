@@ -335,7 +335,7 @@ class ControlsWindow(QMainWindow):
             self.fileName = fileName
             self.centralWidget.controlsWidget.saveData(fileName)
 
-            self.saveNotes(fileName.removesuffix('.json'))
+            #self.saveNotes(fileName.removesuffix('.json'))
 
     def openFileDialog(self):
         """
@@ -354,8 +354,9 @@ class ControlsWindow(QMainWindow):
             with open(fileName.removesuffix('.json') + '.txt', "r") as read_file:
                 data = read_file.read()
 
+            # TODO: Properly remove this/ move somehwere
             # rewrites the notes in the notebox
-            self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
+            #self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
 
     def newFile(self):
         """
@@ -376,8 +377,6 @@ class ControlsWindow(QMainWindow):
             del board
 
         self.centralWidget.controlsSidebarWidget.board_objects.clear()
-
-        self.centralWidget.controlsSidebarWidget.noteBox.setText("Write notes here")
 
         self.statusBar().showMessage("New configuration started")
 
