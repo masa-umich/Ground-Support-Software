@@ -181,7 +181,6 @@ class Solenoid(BaseObject):
                     self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
-            
 
         # Tells widget painter to update screen
         self.widget_parent.update()

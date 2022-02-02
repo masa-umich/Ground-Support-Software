@@ -50,8 +50,12 @@ class ControlsWindow(QMainWindow):
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
         self.menuBar().setFixedHeight(28 * self.gui.pixel_scale_ratio[1])
-        self.setGeometry(0, 0, self.gui.screenResolution[0],
-                         self.gui.screenResolution[1]-QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight) - self.menuBar().height())
+        if self.gui.platform == "Windows":
+            # Need to pull out the title bar height, and menu bar height from windows
+            # TODO: Move the title bar height adjustment to screen resolution
+            self.setGeometry(0, 0, self.gui.screenResolution[0], self.gui.screenResolution[1]-QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight) - self.menuBar().height())
+        else:
+            self.setGeometry(0, 0, self.gui.screenResolution[0], self.gui.screenResolution[1] - self.statusBar().height())
 
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
@@ -1020,7 +1024,10 @@ class ControlsCentralWidget(QWidget):
         self.left = 0
         self.top = 0
         self.width = self.gui.screenResolution[0]
-        self.height = self.window.height() - self.parent.statusBar().height()
+        if self.gui.platform == "Windows":
+            self.height = self.window.height() - self.parent.statusBar().height()
+        else:
+            self.height = self.window.height()
 
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -1031,7 +1038,6 @@ class ControlsCentralWidget(QWidget):
 
         # Marker for if the controls area is being edited
         self.is_editing = False
-
         self.controlsWidget = ControlsWidget(self)
         self.controlsPanelWidget = ControlsPanelWidget(self)
         self.controlsSidebarWidget = ControlsSidebarWidget(self)
