@@ -199,15 +199,9 @@ class DataViewer(QtWidgets.QTabWidget):
         self.slider = QtWidgets.QSlider(self)
         self.slider.setOrientation(Qt.Horizontal)
         self.slider.setMinimum(0)
-        self.slider.setMaximum(10)       # REMOVE LATER, JUST FOR TESTING
+        self.slider.setMaximum(1)       # REMOVE LATER, JUST FOR TESTING
         self.slider.setValue(0)
         self.slider.valueChanged.connect(self.range_update)
-
-        # testing with no data coming in
-        # self.slider.valueChanged.connect(self.updateTest())       still need to make updateTest
-
-        # no data coming in, probably why this line doesn't work
-        # self.slider.valueChanged.connect(self.update())
 
         # add slider
         self.plot_layout.addWidget(self.slider)
@@ -325,7 +319,8 @@ class DataViewer(QtWidgets.QTabWidget):
         """
         # super().update()
         points = int(self.duration*1000/self.cycle_time)
-        data = frame.tail(points)
+        # data = frame.tail(points)
+        data = frame
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
@@ -500,12 +495,26 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
                 idx = i * self.cols + j
 
-                if (not self.database_full):
+                if (not self.database_full and self.database[self.database.columns[0]].count() > 0):
+
                     # size of database extends beyond range viewed, increase slider size
-                    if (self.database.size >= self.viewers[idx].duration * 10):
-                        self.viewers[idx].slider.setMaximum(self.database.size - self.viewers[idx].duration * 10)
+                    print(self.database[self.database.columns[0]].count())
+                    #print(self.database["time"].to_numpy().astype(np.float64)) # array of timestamps
+                    # timestamps start when connection established, plot starts when channel name entered into thing
+                    # print(self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]) # last timestamp
+                    timestamp = self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]
+                    
+                    '''
+                    if (self.database[self.database.columns[0]].count() / 10 >= self.viewers[idx].duration):
+                        self.viewers[idx].slider.setMaximum(self.database[self.database.columns[0]].count() / 10 - self.viewers[idx].duration)
+                    '''
+
+                    if (timestamp >= self.viewers[idx].duration):
+                        self.viewers[idx].slider.setMaximum(int(timestamp) - self.viewers[idx].duration)
 
                     # lock range viewed to most recent values if slider was already at max position
+                    # print(self.viewers[idx].slider.value())
+                    # print(self.viewers[idx].slider.maximum() - 1)
                     if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setPosition(self.slider.maximum())
                 else:
