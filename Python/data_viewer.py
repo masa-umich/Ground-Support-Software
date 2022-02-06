@@ -317,7 +317,6 @@ class DataViewer(QtWidgets.QTabWidget):
         Args:
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
         """
-        # super().update()
         points = int(self.duration*1000/self.cycle_time)
         # data = frame.tail(points)
         data = frame
@@ -325,8 +324,6 @@ class DataViewer(QtWidgets.QTabWidget):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
-                #print(type(data["time"].to_numpy()))
-                #print(type(data[channel_name].to_numpy()))
                 self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
 
@@ -443,9 +440,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         for i in range(self.cols):
             idx = self.rows * self.cols + i
+            print("add row looping through column " + str(i) + " " + str(idx))
             self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
             self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
+            print("add row looping through column " + str(i) + " " + str(idx))
 
         self.rows = self.rows + 1
 
@@ -459,10 +458,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             idx = self.rows * self.cols + i
 
             dv = DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
-            dv.slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
+            self.viewers.append(dv)
+            dv.slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[len(self.viewers) - 1].slider.value()))
 
             # self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
-            self.viewers.append(dv)
+            # self.viewers.append(dv)
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
             # self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
 
@@ -497,35 +497,23 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
                 if (not self.database_full and self.database[self.database.columns[0]].count() > 0):
 
-                    # size of database extends beyond range viewed, increase slider size
-                    print(self.database[self.database.columns[0]].count())
-                    #print(self.database["time"].to_numpy().astype(np.float64)) # array of timestamps
-                    # timestamps start when connection established, plot starts when channel name entered into thing
-                    # print(self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]) # last timestamp
+                    # timestamps start when connection established, plot starts when channel name entered
                     timestamp = self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]
-                    
-                    '''
-                    if (self.database[self.database.columns[0]].count() / 10 >= self.viewers[idx].duration):
-                        self.viewers[idx].slider.setMaximum(self.database[self.database.columns[0]].count() / 10 - self.viewers[idx].duration)
-                    '''
 
+                    # size of database extends beyond range viewed, increase slider size
                     if (timestamp >= self.viewers[idx].duration):
                         self.viewers[idx].slider.setMaximum(int(timestamp) - self.viewers[idx].duration)
 
                     # lock range viewed to most recent values if slider was already at max position
-                    # print(self.viewers[idx].slider.value())
-                    # print(self.viewers[idx].slider.maximum() - 1)
                     if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setPosition(self.slider.maximum())
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
                 else:
                     # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
                     if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setPosition(self.slider.position() - 1)
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.position() - 1)
 
     def syncSlider(self, num: int):
         """If sliders are locked together, sync all sliders when one slider is moved"""
-        print("triggered")
-        print(num)
 
         if(self.checkbox.isChecked()):
 
@@ -533,7 +521,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 for j in range(self.cols):
 
                     idx = i * self.cols + j
-                    self.viewers[idx].slider.setPosition(num)
+                    self.viewers[idx].slider.setValue(num)
 
     def exit(self):
         """Exit application"""
