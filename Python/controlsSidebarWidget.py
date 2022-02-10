@@ -197,6 +197,9 @@ class ControlsSidebarWidget(QWidget):
 
 
 class SidebarTabWidget(QWidget):
+    """
+    Simple tab widget that can hold whatever is nice to display in bottom right
+    """
 
     def __init__(self, parent):
 
@@ -212,6 +215,7 @@ class SidebarTabWidget(QWidget):
         self.tabWidget.setFixedWidth(self.width())
         self.tabWidget.setFixedHeight(self.height())
 
+        # create widgets
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
         self.packetLogWidget = SidebarPacketLogWidget(self.tabWidget, self.controlsSidebarWidget)
 
@@ -220,6 +224,7 @@ class SidebarTabWidget(QWidget):
         self.tab5 = QWidget()
         self.tab6 = QWidget()
 
+        # add in tabs with widgets
         self.tabWidget.addTab(self.noteWidget, "Notes")
         self.tabWidget.addTab(self.packetLogWidget, "Packet Log")
         #self.tabWidget.addTab(self.controlsSidebarWidget.window.limits.widget, "Limits")
@@ -232,6 +237,10 @@ class SidebarTabWidget(QWidget):
 
 
 class SidebarPacketLogWidget(QWidget):
+    """
+    Adds in the equivalent of the server side packet log. This is designed to go in the tab widget in the sidebar.
+    This packet log has the advantage of being filterable so users can quickly find what they are looking for
+    """
 
     def __init__(self, tabWidget, sideBar=None):
 
@@ -242,10 +251,13 @@ class SidebarPacketLogWidget(QWidget):
         self.controlsSidebarWidget = sideBar
         self.interface = self.controlsSidebarWidget.window.interface
 
+        # holds the all the widgets
         self.vertLayout = QVBoxLayout()
 
+        # holds the filter buttons
         self.filterHLayout = QHBoxLayout()
 
+        # setup the packet log, lot of shenanigans to make things fit and look good
         self.packet_log = QTableWidget(self)
         self.packet_log.setColumnCount(3)
         self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
@@ -256,11 +268,13 @@ class SidebarPacketLogWidget(QWidget):
         self.packet_log.setColumnWidth(2, self.controlsSidebarWidget.width * .18)
         self.packet_log.verticalHeader().hide()
 
+        # Board filter, tool buttons are a special button that act like menu items
         self.boardFilterButton = QToolButton(self)
         self.boardFilterButton.setText("Board Filter")
         self.boardtoolmenu = QMenu(self)
-        self.boardFilterList = []  # Holds board names that we want to filter by. Defualt all
+        self.boardFilterList = []  # Holds board names that we want to filter by. Defualt all (added later)
 
+        # type filter, tool buttons are a special button that act like menu items
         self.typeFilterButton = QToolButton(self)
         self.typeFilterButton.setText("Type Filter")
         self.typetoolmenu = QMenu(self)
@@ -269,7 +283,8 @@ class SidebarPacketLogWidget(QWidget):
 
         self.filteredChannels = []  # populated later
 
-        # board filter setup
+        # I stole this from a stackoverflow post that I can't find again. Adds checkbox to combobox basically
+        # also this is where the function callbacks are
         for boardName in Constants.boards:
             checkBox = QCheckBox(boardName, self.boardtoolmenu)
             checkBox.stateChanged.connect(self.boardFilterButtonUpdated)
@@ -281,7 +296,7 @@ class SidebarPacketLogWidget(QWidget):
         self.boardFilterButton.setMenu(self.boardtoolmenu)
         self.boardFilterButton.setPopupMode(QToolButton.InstantPopup)
 
-        # type filter setup
+        # type filter setup, same as above board
         for typeName in self.typeFilterList:
             checkBox = QCheckBox(typeName, self.typetoolmenu)
             checkBox.setChecked(True)
@@ -301,11 +316,13 @@ class SidebarPacketLogWidget(QWidget):
         self.vertLayout.addLayout(self.filterHLayout)
         self.vertLayout.addWidget(self.packet_log)
         self.setLayout(self.vertLayout)
-        # self.packet_log.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        # self.packet_log.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        # self.packet_log.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
     def boardFilterButtonUpdated(self, state):
+        """
+        Called from board menu callback. When called it updates the filter list and table
+        :param state: state of the menu checkbox clicked. 2 = checked
+        :return: none
+        """
         board = self.sender().text()
         if state == 2:
             self.boardFilterList.append(self.controlsSidebarWidget.interface.getPrefix(board))
@@ -315,6 +332,11 @@ class SidebarPacketLogWidget(QWidget):
         self.populatePacketLogFromFilter()
 
     def typeFilterButtonUpdated(self, state):
+        """
+        Called from type menu callback. When called it updates the filter list and table
+        :param state: state of the menu checkbox clicked. 2 = checked
+        :return: none
+        """
         type = self.sender().text()
         if state == 2:
             self.typeFilterList.append(type)
@@ -325,32 +347,47 @@ class SidebarPacketLogWidget(QWidget):
 
     # TODO: Gets once for every board on startup which is probably not great
     def populatePacketLogFromFilter(self):
+        """
+        This function is called when the filter is updated. When updated, this compiles a list of all channels that
+        comply with the filter. It then updates the table to show those items
+        :return: none
+        """
+
+        # Get all the channels and then first filter by board
         allChannels = self.controlsSidebarWidget.interface.channels
         boardfilteredChannels = [x for x in allChannels if any(y in x for y in self.boardFilterList)]
 
+        # Other is used to represent items that don't fit into the filter. Other channels need to be filtered
+        # alone because the other filters will always remove them
         if "other" in self.typeFilterList:
             otherChannels = [x for x in boardfilteredChannels if all(y not in x for y in self.typeFilterList)]
         else:
             otherChannels = []
 
+        # from the board filtered list, then filter by the type filters
         filteredChannels = [x for x in boardfilteredChannels if any(y in x for y in self.typeFilterList)]
 
         # TODO: Try to preserve the given order, not just thrown at the end
         self.filteredChannels = filteredChannels + otherChannels
 
+        # Update the table, need ot clear, set the rows, then for each item add it to the table, row num, value, units
         self.clearTable()
         self.packet_log.setRowCount(len(filteredChannels))
         for n in range(len(filteredChannels)):
             item = QTableWidgetItem(filteredChannels[n])
             self.packet_log.setItem(
                 n, 0, item)
-            item = QTableWidgetItem(str(round(random.random() * 6000, 1)))
+            item = QTableWidgetItem("", 1)
             item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
             self.packet_log.setItem(n, 1, item)
             self.packet_log.setItem(n, 2, QTableWidgetItem(
                 self.interface.units[filteredChannels[n]]))
 
     def clearTable(self):
+        """
+        Clears the whole tables
+        :return: none
+        """
 
         self.packet_log.clear()
         self.packet_log.setRowCount(0)
