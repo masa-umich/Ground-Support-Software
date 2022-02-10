@@ -372,20 +372,22 @@ class SidebarPacketLogWidget(QWidget):
 
 
 class SidebarNoteWidget(QWidget):
+    """
+    This class is a wrapper for a custom note widget. It allows for single line entry of notes. Once entered the notes
+    are displayed in a nice looking grid with a timestamp. Currently only meant to be used in the tab bar but can very
+    easily be used as its own widget
+    """
 
-    # TODO: Cleanup this sections, kinda confusing on what all the parent and sidebar shit is
-    def __init__(self, parent,  sideBar = None):
+    def __init__(self, tabWidget,  sideBar):
 
         super().__init__()
 
-        self.parent = parent
-        if sideBar is None:
-            self.controlsSidebarWidget = parent
-        else:
-            self.controlsSidebarWidget = sideBar
+        self.tabWidget = tabWidget
+        self.controlsSidebarWidget = sideBar
 
         self.gui = self.controlsSidebarWidget.gui
 
+        # Only want notes to be allowed when connected with the server
         self.gui.campaign.campaignStartSignal.connect(self.enableNoteCreation)
         self.gui.campaign.campaignEndSignal.connect(self.disableNoteCreation)
 
@@ -393,45 +395,27 @@ class SidebarNoteWidget(QWidget):
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.monospace_font)
 
+        # layout to hold all the widgets
         self.vlayout = QVBoxLayout()
 
+        # widget where notes are displayed
         self.noteBox = QTableWidget(self)
         font.setPointSize(12 * self.gui.font_scale_ratio)
 
         self.vlayout.addWidget(self.noteBox)
 
+        # set up notebox to be perty
         self.noteBox.setColumnCount(2)
-        self.noteBox.setRowCount(2)
-        self.noteBox.setColumnWidth(0, math.floor(self.parent.width() * .35))
-        self.noteBox.setColumnWidth(1, math.floor(self.parent.width() * .65)-40*self.gui.pixel_scale_ratio[0])
+        self.noteBox.setRowCount(0)
+        # This is kinda a mess, need to set the width so things can fit. Can't use all the space because then starts to
+        # clip weirdly so this was easiest
+        self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * .35))
+        self.noteBox.setColumnWidth(1, math.floor(self.tabWidget.width() * .65)-40*self.gui.pixel_scale_ratio[0])
         self.noteBox.horizontalHeader().hide()
         self.noteBox.verticalHeader().hide()
 
-        self.noteBox.setStyleSheet("QTableView::item { border:0px; padding: 2px;}")
-        item = QTableWidgetItem("CET-00:00:00")
-        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-        item.setTextAlignment(Qt.AlignTop)
-        self.noteBox.setItem(0, 0, item)
-
-        item = QTableWidgetItem("Test Note that is short")
-        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-        item.setTextAlignment(Qt.AlignTop)
-        item.setBackground(Constants.MASA_Blue_color)
-        self.noteBox.setItem(0, 1, item)
-
-        item = QTableWidgetItem("CET-00:00:00")
-        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-        item.setTextAlignment(Qt.AlignTop)
-        item.setBackground(Constants.MASA_Blue_color)
-        self.noteBox.setItem(1, 0, item)
-
-        item = QTableWidgetItem("Test Note that is reallllllllly long and that hahaha omg tube bends")
-        item.setFlags(item.flags() ^ Qt.ItemIsEditable)
-        item.setTextAlignment(Qt.AlignTop)
-        item.setBackground(Constants.MASA_Blue_color)
-        self.noteBox.setItem(1, 1, item)
+        # Some settings here to prevent editing and clicking
         self.noteBox.setShowGrid(False)
-
         self.noteBox.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.noteBox.setFocusPolicy(Qt.NoFocus)
         self.noteBox.setSelectionMode(QAbstractItemView.NoSelection)
@@ -439,6 +423,7 @@ class SidebarNoteWidget(QWidget):
 
         self.noteBox.show()
 
+        # line edit is where the user can type in notes
         self.lineEdit = QLineEdit(self)
         self.lineEdit.returnPressed.connect(self.enterNewNote)
         self.lineEdit.setPlaceholderText("Start campaign for notes")
@@ -451,14 +436,22 @@ class SidebarNoteWidget(QWidget):
         self.setLayout(self.vlayout)
 
     def enterNewNote(self):
+        """
+        This is the function connected to the line edit where users type in notes. When a note is entered then it is
+        added to the table view and sent to the server
+        :return: none
+        """
 
+        # don't sent blank notes
         if self.lineEdit.text() == "":
             return
 
+        # add row for note to be displayed
         self.noteBox.setRowCount(self.noteBox.rowCount()+1)
 
         cetString = self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(self.gui.campaign.CET)
 
+        # add in both items to the table. Need to use the below class, the flags prevent them from being edited.
         item = QTableWidgetItem(cetString)
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
@@ -473,16 +466,29 @@ class SidebarNoteWidget(QWidget):
 
         self.noteBox.scrollToBottom()
 
+        # send command to server
+        self.gui.liveDataHandler.sendCommand(9, [cetString,  "NOTE", self.lineEdit.text()])
+
         self.clearFocus()
 
         self.lineEdit.clear()
 
     def enableNoteCreation(self):
+        """
+        Function that is connected to the campaignStartSignal
+        :return: none
+        """
 
         self.lineEdit.setEnabled(True)
         self.lineEdit.setPlaceholderText("Enter note here")
 
     def disableNoteCreation(self, noServer:bool = False):
+        """
+        Function that is connected to the campaignEndSignal. Can be called directly when server connection is lost to
+        display that no server is connected
+        :param noServer: is true when the gui has no active server connection
+        :return: none
+        """
 
         self.lineEdit.setDisabled(True)
         if noServer and self.gui.campaign.is_active:

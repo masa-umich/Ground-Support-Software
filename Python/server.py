@@ -366,10 +366,12 @@ class Server(QtWidgets.QMainWindow):
                             self.command_queue.queue.clear()
                         self.abort_auto = True
                     elif command["command"] == 9:
+                        print(command)
                         CET = command["args"][0]
-                        text = command["args"][1]
+                        type_ = command["args"][1]
+                        text = command["args"][2]
 
-                        self.campaign_log.write(CET + " | " + text + "\n")
+                        self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
 
                     else:
                         print("WARNING: Unhandled command")

@@ -106,6 +106,9 @@ class Campaign(QObject):
         if self.isTestActive:
             self.endTest()  # end any tests that need to be
 
+        if self.client:
+            self.client.command(9, ["CET-" + self.CETasString(), "LOG", "Campaign '" + self.title + "' ended"])
+
         self.campaignEndSignal.emit()
         if self.client:
             self.client.command(6, None)
@@ -120,11 +123,8 @@ class Campaign(QObject):
         self.isTestActive = True
         self.testStartSignal.emit(name)
 
-        qTime = QTime(0,0,0)
-        qtime = qTime.addSecs(math.floor(self.CET / 1000.0))
-
         if self.client:
-            self.client.command(9, ["CET-" + qtime.toString("hh:mm:ss"),"Test '" + name + "' started"])
+            self.client.command(9, ["CET-" + self.CETasString(), "TEST", "Test '" + name + "' started"])
 
     def endTest(self):
         """
@@ -136,11 +136,8 @@ class Campaign(QObject):
         self.testDict[self.currentTestName]["Duration"] = self.CET - self.testDict[self.currentTestName]["CET"]
         self.testEndSignal.emit()
 
-        qTime = QTime(0, 0, 0)
-        qtime = qTime.addSecs(math.floor(self.CET / 1000.0))
-
         if self.client:
-            self.client.command(9, ["CET-" + qtime.toString("hh:mm:ss"), "Test '" + self.currentTestName + "' ended"])
+            self.client.command(9, ["CET-" + self.CETasString(), "TEST", "Test '" + self.currentTestName + "' ended"])
 
     def updateCET(self):
         """
@@ -155,6 +152,16 @@ class Campaign(QObject):
                 self.updateCETSignal.emit(self.CET, self.testDict[self.currentTestName]["CET"])
             else:
                 self.updateCETSignal.emit(self.CET, None)
+
+    def CETasString(self):
+        """
+        Takes the CET and returns as a string
+        :return: CET string
+        """
+
+        qTime = QTime(0, 0, 0)
+        qtime = qTime.addSecs(math.floor(self.CET / 1000.0))
+        return qtime.toString("hh:mm:ss")
 
     def setClient(self, client):
         self.client = client
