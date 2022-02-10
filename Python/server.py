@@ -45,6 +45,7 @@ class Server(QtWidgets.QMainWindow):
         self.log_queue = queue.Queue()
         self.do_flash_dump = False
         self.dump_addr = None
+        self.dump_loc = None
         self.database_lock = threading.Lock()
         self.abort_auto = False
         self.is_actively_receiving = False
@@ -57,6 +58,7 @@ class Server(QtWidgets.QMainWindow):
         self.data_log = None
         self.command_log = None
         self.campaign_log = None
+        self.campaign_location = None
 
         # initialize parser
         self.interface = S2_Interface()
@@ -339,6 +341,11 @@ class Server(QtWidgets.QMainWindow):
                         print(command)
                         self.do_flash_dump = True
                         self.dump_addr = command["args"]
+                        if self.campaign_log is not None and not self.campaign_log.closed:
+                            self.dump_loc = self.campaign_location
+                        else:
+                            self.dump_loc = None
+
                     # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
@@ -374,7 +381,7 @@ class Server(QtWidgets.QMainWindow):
                         self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
 
                     else:
-                        print("WARNING: Unhandled command")
+                        print("WARNING: Unhandled command: ", command)
 
                     self.database_lock.acquire()
                     try:
@@ -544,6 +551,7 @@ class Server(QtWidgets.QMainWindow):
         self.open_log(campaign_save_name, "data/campaigns/", recovered_state)
 
         if not recovered_state:
+            self.campaign_location = "data/campaigns/" + campaign_save_name + "/"
             self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "w")
             self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
             self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
@@ -561,6 +569,7 @@ class Server(QtWidgets.QMainWindow):
                 os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
         else:
             os.chmod("data/campaigns/" + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
+            self.campaign_location = "data/campaigns/" + campaign_save_name + "/"
             self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "a+")
             self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
             self.campaign_log.write("Campaign %s recovered during new server connenction" % campaign_save_name)
@@ -720,6 +729,7 @@ class Server(QtWidgets.QMainWindow):
 
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
+            self.campaign_location = None
             os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
 
     @overrides
@@ -756,8 +766,9 @@ class Server(QtWidgets.QMainWindow):
                         self.log_box, "Taking a dump. Be out in just a sec")
                     QApplication.processEvents()
                     self.interface.download_flash(self.dump_addr, int(
-                        datetime.now().timestamp()), self.command_log, "")
+                        datetime.now().timestamp()), self.command_log, self.dump_loc)
                     self.do_flash_dump = False
+                    self.dump_loc = None
                     self.send_to_log(self.log_box, "Dump Complete.")
 
                 else:

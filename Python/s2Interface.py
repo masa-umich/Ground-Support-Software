@@ -307,7 +307,7 @@ class S2_Interface:
         command_log          <File>:    command log file object
         filepath (optional)  <string>:  Directory to save flash data to. Defaults to current directory.
     """
-    def download_flash(self, target_board_addr, timestamp, command_log, filepath=""):
+    def download_flash(self, target_board_addr, timestamp, command_log, filepath=None):
         cmd_info = dict()
         cmd_info["function_name"] = "download_flash"
         cmd_info["target_board_addr"] = target_board_addr
@@ -326,13 +326,15 @@ class S2_Interface:
         elif (filepath[-1] != "/"):
             filepath += "/"
         """
-        filepath = os.getcwd()
+
         time_file_stamp = time.strftime("%Y_%m_%d_%H-%M-%S")
-        datadir = filepath+"/flash_dump/"+time_file_stamp
-        os.makedirs(datadir)
+        if filepath is None:
+            filepath = os.getcwd()
+            datadir = filepath+"/flash_dump/"+time_file_stamp
+            os.makedirs(datadir)
 
         # Output file should have timestamp in name
-        filename = "board_" + str(cmd_info["target_board_addr"]) + "_flash_data.bin"
+        filename = time_file_stamp + "_board_" + str(cmd_info["target_board_addr"]) + "_flash_data.bin"
 
         try:
             with open(os.path.join(datadir, filename), "wb+") as binfile:   # Open the binary
