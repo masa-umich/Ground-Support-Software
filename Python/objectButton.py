@@ -32,6 +32,8 @@ class ObjectButton(QPushButton):
         self.dataType = dataType
         self.drag_start_pos = None
 
+        self.timer = QElapsedTimer()
+
         # Make sure button has no label
         self.setText("")
 
@@ -70,6 +72,7 @@ class ObjectButton(QPushButton):
             # Set drag start position
             self.parent.controlsPanel.addEditingObject(self.object_)
             self.drag_start_pos = event.pos()
+            self.timer.restart()
 
         super().mousePressEvent(event)
 
@@ -85,11 +88,13 @@ class ObjectButton(QPushButton):
         if self.drag_start_pos is None:
             return
 
+        # A shockingly simple way to prevent accidental small movements. Reject all moves that happen within 100
+        # milliseconds of the object being first clicked. Seems to work well
+        if self.timer.elapsed() < 100:
+            return
+
         # Only drag if the right button is pressed, the object is being edited, and position is not locked
         if event.button() == Qt.NoButton and self.object_.is_being_edited and not self.object_.position_locked:
-            # I have no idea where the 22 comes from
-            # 22 is for non full screen on my (all?) macs
-            # HMM: Elegant Solution?
 
             # If the gui is in full screen on mac don't apply the extra offset
             if self.window.gui.platform == "OSX" and self.window.isFullScreen():
