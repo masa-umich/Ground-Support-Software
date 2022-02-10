@@ -172,6 +172,16 @@ class ClientWidget(QtWidgets.QWidget):
     def getDialog(self):
         return self._dialog
 
+    def sendAllCommands(self):
+        """
+        Used for when the gui is closed by user, sends all commands in the queue rapidly to make sure server sees
+        them before quit
+        :return: none
+        """
+
+        while not self.command_queue.empty():
+            self.cycle()
+
     def cycle(self):
         try:
             # send do nothing if no command queued

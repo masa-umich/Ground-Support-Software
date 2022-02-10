@@ -380,7 +380,7 @@ class ControlsWidget(QWidget):
                 elif action.text() == "New Motor":
                     self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Chamber":
-                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=False))
+                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=True))
                 elif action.text() == "New Throttle Valve":
                     self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Heat Exchanger":

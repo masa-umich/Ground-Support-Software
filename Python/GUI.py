@@ -21,15 +21,17 @@ Program start point. This class handles all child windows of the gui
 """
 
 
-class GUI:
+class GUI(QObject):  # Inherits QObject just so signals can be used
 
     EXIT_CODE_REBOOT = -52
     EXIT_CODE_NOMINAL = 0
     EXIT_CODE_ERROR = -1
     LAUNCH_DIRECTORY = "LaunchFiles/"
 
-    def __init__(self):
+    guiExitSignal = pyqtSignal()
 
+    def __init__(self):
+        super().__init__()
 
         # Check which platform we are working with
         if sys.platform == "win32":
@@ -163,6 +165,21 @@ class GUI:
             self.workspace_path = str(QFileDialog.getExistingDirectory(None, "Workspace not found: Select Workspace Directory", options=options))
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
+
+    def guiExit(self):
+        """
+        Called from window class when the main window is closed. Also when application is quit
+        :return: none
+        """
+        # Let everyone know we about to shut down
+        self.guiExitSignal.emit()
+
+        # Let the client get out its last messages
+        if self.liveDataHandler.getClient() is not None:
+            self.liveDataHandler.getClient().sendAllCommands()
+            self.liveDataHandler.getClient().disconnect()
+
+        QCoreApplication.exit(self.EXIT_CODE_NOMINAL)
 
 
 if __name__ == '__main__':

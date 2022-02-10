@@ -1,0 +1,401 @@
+{
+	"Throttle Valve 3": {
+		"id": 3,
+		"pos": {
+			"x": 500.00000000000017,
+			"y": 561.142857142857
+		},
+		"fluid": 1,
+		"width": 18.0,
+		"height": 40.0,
+		"name": "Throttle Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel MPV",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 5.714285714285716,
+				"y": 51.428571428571416
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": -42.857142857142875,
+				"y": 30.85714285714285
+			},
+			"rows": 2.0,
+			"font size": 12.0,
+			"is visible": true
+		}
+	},
+	"Throttle Valve 5": {
+		"id": 5,
+		"pos": {
+			"x": 600.0000000000002,
+			"y": 561.142857142857
+		},
+		"fluid": 2,
+		"width": 18.0,
+		"height": 40.0,
+		"name": "Throttle Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "LOX MPV",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 5.714285714285716,
+				"y": 51.428571428571416
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Custom",
+			"local pos": {
+				"x": 13.33333333333334,
+				"y": 34.28571428571428
+			},
+			"rows": 2.0,
+			"font size": 12.0,
+			"is visible": true
+		}
+	},
+	"Solenoid 8": {
+		"id": 8,
+		"pos": {
+			"x": 684.761904761905,
+			"y": 562.2857142857141
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 36.571428571428626
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.66666666666667,
+				"y": -21.714285714285644
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": false
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Solenoid 9": {
+		"id": 9,
+		"pos": {
+			"x": 389.5238095238097,
+			"y": 562.2857142857141
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 36.571428571428626
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.66666666666667,
+				"y": -21.714285714285644
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": false
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Tank 10": {
+		"id": 10,
+		"pos": {
+			"x": 564.7619047619049,
+			"y": 237.71428571428567
+		},
+		"fluid": 2,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238097,
+				"y": 206.8571428571428
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.61904761904763,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": false
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Tank 11": {
+		"id": 11,
+		"pos": {
+			"x": 464.76190476190493,
+			"y": 237.71428571428567
+		},
+		"fluid": 1,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238097,
+				"y": 206.8571428571428
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.61904761904763,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": false
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Chamber 12": {
+		"id": 12,
+		"pos": {
+			"x": 515.2380952380954,
+			"y": 774.8571428571427
+		},
+		"fluid": 4,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Chamber",
+		"scale": 1,
+		"serial number": "RP-D2",
+		"long name": "Arpulus Delus the Second",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 25.714285714285722,
+				"y": 206.8571428571428
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -32.380952380952394,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": false
+		}
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 608.5714285714288,
+				"y": 607.9999999999999
+			},
+			"1": {
+				"x": 608.5714285714288,
+				"y": 703.9999999999998
+			},
+			"2": {
+				"x": 587.6190476190478,
+				"y": 703.9999999999998
+			},
+			"3": {
+				"x": 587.6190476190478,
+				"y": 753.142857142857
+			},
+			"4": {
+				"x": 569.5238095238097,
+				"y": 753.142857142857
+			},
+			"5": {
+				"x": 569.5238095238097,
+				"y": 772.5714285714283
+			}
+		},
+		"line width": 4.0
+	},
+	"Tube 3": {
+		"tube id": 3,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 508.5714285714288,
+				"y": 607.9999999999999
+			},
+			"1": {
+				"x": 508.5714285714288,
+				"y": 703.9999999999998
+			},
+			"2": {
+				"x": 537.1428571428573,
+				"y": 703.9999999999998
+			},
+			"3": {
+				"x": 537.1428571428573,
+				"y": 753.142857142857
+			},
+			"4": {
+				"x": 549.5238095238097,
+				"y": 753.142857142857
+			},
+			"5": {
+				"x": 549.5238095238097,
+				"y": 772.5714285714283
+			}
+		},
+		"line width": 4.0
+	},
+	"Tube 5": {
+		"tube id": 5,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 684.761904761905,
+				"y": 583.9999999999999
+			},
+			"1": {
+				"x": 617.1428571428573,
+				"y": 583.9999999999999
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 6": {
+		"tube id": 6,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 428.5714285714287,
+				"y": 583.9999999999999
+			},
+			"1": {
+				"x": 500.00000000000017,
+				"y": 583.9999999999999
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 7": {
+		"tube id": 7,
+		"fluid": 2,
+		"bend positions": {
+			"0": {
+				"x": 608.5714285714288,
+				"y": 443.42857142857133
+			},
+			"1": {
+				"x": 608.5714285714288,
+				"y": 561.142857142857
+			},
+			"2": {
+				"x": 608.5714285714288,
+				"y": 561.142857142857
+			}
+		},
+		"line width": 4.0
+	},
+	"Tube 8": {
+		"tube id": 8,
+		"fluid": 1,
+		"bend positions": {
+			"0": {
+				"x": 508.5714285714288,
+				"y": 443.42857142857133
+			},
+			"1": {
+				"x": 508.5714285714288,
+				"y": 561.142857142857
+			},
+			"2": {
+				"x": 508.5714285714288,
+				"y": 561.142857142857
+			}
+		},
+		"line width": 4.0
+	}
+}

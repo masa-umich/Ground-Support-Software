@@ -988,7 +988,7 @@ class ControlsWindow(QMainWindow):
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)
-    
+
     def show_window(self, window: QWidget):
         """Shows a window or brings it to the front if already open.
 
@@ -1006,6 +1006,15 @@ class ControlsWindow(QMainWindow):
         window.raise_()
         window.activateWindow()
 
+    @overrides
+    def closeEvent(self, event):
+        """
+        Called when the window is closed
+        :param event: window close event
+        :return: none
+        """
+        self.gui.guiExit()
+
 
 class ControlsCentralWidget(QWidget):
     """
@@ -1018,8 +1027,6 @@ class ControlsCentralWidget(QWidget):
         self.gui = parent.gui
         self.window = window
 
-        # Below numbers are arbitrary
-        # TODO: Make them not arbitrary
         self.left = 0
         self.top = 0
         self.width = self.gui.screenResolution[0]

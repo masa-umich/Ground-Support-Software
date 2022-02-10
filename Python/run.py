@@ -80,6 +80,8 @@ class Campaign(QObject):
         self.currentTestName = None  # not reset back to none after test, holds previous test name till new test created
         self.testDict = {}
 
+        self.gui.guiExitSignal.connect(self.endRun)
+
     def startRun(self, title: str):
         """
         Start the run, this just populates the pre-initialized variables
@@ -100,6 +102,9 @@ class Campaign(QObject):
         """
         End the current run
         """
+        if not self.is_active:
+            return
+
         # Want to update CET one last time to get final CET before run ends
         self.updateCET()
 
