@@ -307,6 +307,8 @@ class SidebarPacketLogWidget(QWidget):
 
         self.typeFilterButton.setMenu(self.typetoolmenu)
         self.typeFilterButton.setPopupMode(QToolButton.InstantPopup)
+        self.typeFilterButton.installEventFilter(self)
+        self.boardFilterButton.installEventFilter(self)
 
         self.filterHLayout.addWidget(self.boardFilterButton)
         self.filterHLayout.addWidget(self.typeFilterButton)
@@ -316,6 +318,19 @@ class SidebarPacketLogWidget(QWidget):
         self.vertLayout.addLayout(self.filterHLayout)
         self.vertLayout.addWidget(self.packet_log)
         self.setLayout(self.vertLayout)
+
+    @overrides
+    def eventFilter(self, source, event: QEvent):
+        """
+        Need an event filter to prevent the tool button from causing the status bar to disapear
+        :param source: the self.blahh of whatever is sending the signal
+        :param event: the event triggered
+        :return: True for preventing the event to handled again later downstream
+        """
+        if (source is self.typeFilterButton or source is self.boardFilterButton) and event.type() == QEvent.StatusTip:
+            return True  # Returning true will prevent this event from being processed again down the line
+
+        return super().eventFilter(source, event)
 
     def boardFilterButtonUpdated(self, state):
         """
