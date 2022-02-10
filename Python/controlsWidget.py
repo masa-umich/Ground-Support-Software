@@ -370,25 +370,25 @@ class ControlsWidget(QWidget):
 
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
-                    self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=0))
+                    self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=False))
                 elif action.text() == "New 3 Way Valve":
-                    self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=0))
+                    self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=False))
                 elif action.text() == "New Tank":
-                    self.object_list.append(Tank(self, position=point, fluid=0))
+                    self.object_list.append(Tank(self, position=point, fluid=False))
                 elif action.text() == "New Generic Sensor":
-                    self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Motor":
-                    self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Chamber":
-                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=1))
+                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=False))
                 elif action.text() == "New Throttle Valve":
-                    self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Heat Exchanger":
-                    self.object_list.append(HeatEx(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(HeatEx(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Regulator":
-                    self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Check Valve":
-                    self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=0))
+                    self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Tube":
                     self.tube_list.append(Tube(self, [],Constants.fluid["HE"], [self]))
                     self.setMouseTracking(True)

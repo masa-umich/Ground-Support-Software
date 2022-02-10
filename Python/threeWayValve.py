@@ -87,6 +87,7 @@ class ThreeWayValve(BaseObject):
         self.setAnchorPoints()
         self.channel = channel
         self.avionics_board = board
+        self.normally_open = False
 
         self.updateToolTip()
 

@@ -18,7 +18,7 @@ class Solenoid(BaseObject):
     object_name = "Solenoid"
 
     def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
-                 height: float = 18 *1, name: str = "Solenoid",
+                 height: float = 28, name: str = "Solenoid",
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Solenoid', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
@@ -69,7 +69,6 @@ class Solenoid(BaseObject):
                          serial_number_visible = serial_number_visible)
 
 
-
         # TODO: Grab object scale from widget_parent
 
         # State tracks whether the solenoid is open or closed
@@ -102,9 +101,11 @@ class Solenoid(BaseObject):
         Overridden because we don't want all four sides to have anchor points
         """
         # Default points are the midpoints of the four sides.
-        anchor_points = [AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
-                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, 3, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width/2), int(self.height / 2)), self, 3, parent=self.widget_parent)
+        coil_height = 10 # im sorry
+        sol_mid_point = (self.height-coil_height)/2 + coil_height
+        anchor_points = [AnchorPoint(QPoint(0, int(sol_mid_point)), self, 0, parent=self.widget_parent),
+                         AnchorPoint(QPoint(self.width, int(sol_mid_point)), self, 1, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width/2 +1), int(sol_mid_point)), self, 2, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
 
@@ -113,7 +114,6 @@ class Solenoid(BaseObject):
         """
         Draws the solenoid icon on screen
         """
-
         # Holds the path of lines to draw
         path = QPainterPath()
 
@@ -122,26 +122,57 @@ class Solenoid(BaseObject):
             self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])  # This function colors in a path
         elif self.state == 0 and self.normally_open is True:
             self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
-
-        # Move path to starting position
-        path.moveTo(0, 0)  # Top left corner
+        else:
+            self.widget_parent.painter.setBrush(Qt.NoBrush)
 
         # = 0 -> Draw horizontally
-        if self.is_vertical == 0:
-            path.lineTo(0,self.height)  # Straight Down
-            path.lineTo(self.width, 0)  # Diag to upper right
-            path.lineTo(self.width, self.height)  # Straight Up
-            path.lineTo(0, 0)
+        if self.is_vertical is False:
+            coil_height = 10 * self.gui.pixel_scale_ratio[1]
+            sol_height = self.height - coil_height
 
-            # path.moveTo(self.width/2, self.height/2)
-            # path.lineTo(self.width/2, self.height/2 - 10)
-            # path.addRect(self.width/3, self.height/2 - 10, self.width/3, self.height/2 - 20)
+            # Move path to starting position
+            path.moveTo(0, coil_height)  # Top left corner of solenoid
+
+            path.lineTo(0,self.height)  # Straight Down
+            path.lineTo(self.width, coil_height)  # Diag to upper right
+            path.lineTo(self.width, self.height)  # Straight Up
+            path.lineTo(0, coil_height)
+
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)
+            path = QPainterPath()
+
+            if self.state == 1:
+                self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
+            else:
+                self.widget_parent.painter.setBrush(Qt.NoBrush)
+
+            path.moveTo(self.width/2, coil_height + sol_height/2)
+            path.lineTo(self.width/2, sol_height/2)
+            path.addRect(self.width/3, 0, self.width/3, coil_height) #left cord, width height
 
         else:  # Draw vertically
-            path.lineTo(self.width, 0)
+            coil_width = 10 * self.gui.pixel_scale_ratio[1]
+            sol_width = self.width - coil_width
+
+            path.moveTo(0, 0)
+            path.lineTo(sol_width, 0)
             path.lineTo(0, self.height)
-            path.lineTo(self.width, self.height)
+            path.lineTo(sol_width, self.height)
             path.lineTo(0, 0)
+
+            path.translate(self.position.x(), self.position.y())
+            self.widget_parent.painter.drawPath(path)
+            path = QPainterPath()
+
+            if self.state == 1:
+                self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
+            else:
+                self.widget_parent.painter.setBrush(Qt.NoBrush)
+
+            path.moveTo(sol_width/2, self.height/2)
+            path.lineTo(sol_width/2 + coil_width, self.height/2)
+            path.addRect(sol_width/2 + coil_width, self.height/3, coil_width, self.height/3) #left cord, width height
 
         path.translate(self.position.x(), self.position.y())
 
@@ -191,9 +222,17 @@ class Solenoid(BaseObject):
         Sets the anchor points for the object. Called when object is created, and when scale changes
         Overridden to only have two anchor points
         """
-        self.anchor_points[0].updateLocalPosition(QPoint(0                 , int(self.height/2) ))
-        self.anchor_points[1].updateLocalPosition(QPoint(self.width        , int(self.height/2) ))
-        self.anchor_points[2].updateLocalPosition(QPoint(int(self.width/2) , int(self.height / 2)))
+        coil_height = 10 # im sorry
+        if self.is_vertical:
+            sol_mid_point = (self.width - coil_height) / 2
+            self.anchor_points[0].updateLocalPosition(QPoint(int(sol_mid_point)+1, 0))
+            self.anchor_points[1].updateLocalPosition(QPoint(int(sol_mid_point)+1, self.height))
+            self.anchor_points[2].updateLocalPosition(QPoint(int(sol_mid_point)+1, int(self.height/2+1)))
+        else:
+            sol_mid_point = (self.height-coil_height)/2 + coil_height
+            self.anchor_points[0].updateLocalPosition(QPoint(0                 , int(sol_mid_point) ))
+            self.anchor_points[1].updateLocalPosition(QPoint(self.width        , int(sol_mid_point) ))
+            self.anchor_points[2].updateLocalPosition(QPoint(int(self.width/2+1) , int(sol_mid_point)))
 
     def setAvionicsBoard(self, board: str):
         """

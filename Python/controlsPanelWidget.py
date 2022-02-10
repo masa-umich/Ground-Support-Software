@@ -79,6 +79,7 @@ class ControlsPanelWidget(QWidget):
         self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
+        self.solenoid_NC_NO_combobox = QComboBox()
         
         # fonts
         title_font = QFont()
@@ -130,7 +131,16 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_visibility_group = self.createTFRadioButtons("Serial Number Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size","Font Size:", 6, 50, 1)
+        self.edit_form_layout.addRow(QLabel(""))
         # Row 14
+
+        # Specific Parapemeters
+        self.component_prop_label = QLabel("Component Properties:                                                                  ")
+        self.component_prop_label.setFont(title_font)
+        self.component_prop_label.setStyleSheet("color: white")
+        self.edit_form_layout.addRow(self.component_prop_label)
+        self.createComboBox(self.solenoid_NC_NO_combobox, "Solenoid NOvNC", "Coil Type", ["Normally Closed", "Normally Open"])
+
         self.edit_frame.hide()
 
     def createLineEdit(self, lineEdit: QLineEdit, identifier, label_text: str, validator: QValidator = None):
@@ -321,7 +331,7 @@ class ControlsPanelWidget(QWidget):
         """
 
         self.blockAllEditPanelFieldSignals()
-
+        self.hideAllComponentProperties()
         # Updates the available values for the channels for solenoids and generic sensors
         try:
             board_name = object_.avionics_board
@@ -335,6 +345,7 @@ class ControlsPanelWidget(QWidget):
             if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
                 self.channel_combobox.setEditable(False)
+                self.setSolenoidComponentPropertiesVisibility(True)
             elif object_.object_name == "Motor":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.motor_channels)
                 self.channel_combobox.setEditable(False)
@@ -383,6 +394,9 @@ class ControlsPanelWidget(QWidget):
         else:
             self.channel_combobox.setDisabled(True)
             self.board_combobox.setDisabled(True)
+
+        if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
+            self.solenoid_NC_NO_combobox.setCurrentIndex(object_.normally_open)
 
         self.enableAllEditPanelFieldSignals()
 
@@ -459,6 +473,14 @@ class ControlsPanelWidget(QWidget):
                     self.window.statusBar().showMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
 
+            # Custom Parameters
+            elif identifier == "Solenoid NOvNC":
+                for object_ in self.editing_object_list:
+                    if text == "Normally Open":
+                        object_.normally_open = True
+                    else:
+                        object_.normally_open = False
+
             object_.updateToolTip()
 
     # def doesFormLayoutHaveFocus(self):
@@ -528,6 +550,28 @@ class ControlsPanelWidget(QWidget):
                 self.removeEditingObject(obj)
 
         self.setEditingObjectFocus(object_)
+
+    def hideAllComponentProperties(self):
+        """
+        Hides all the component properties
+        """
+        self.setSolenoidComponentPropertiesVisibility(False)
+
+    def setSolenoidComponentPropertiesVisibility(self, is_vis):
+        """
+        Shows the solenoid specific options
+        :param is_vis:
+        """
+        sol_NC_NO_index = self.edit_form_layout.getWidgetPosition(self.solenoid_NC_NO_combobox)
+        if is_vis:
+            self.component_prop_label.show()
+            self.solenoid_NC_NO_combobox.show()
+            self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().show()
+        else:
+            self.component_prop_label.hide()
+            self.solenoid_NC_NO_combobox.hide()
+            self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().hide()
+
 
     @overrides
     def paintEvent(self, e):
