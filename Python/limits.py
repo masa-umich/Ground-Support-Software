@@ -22,10 +22,10 @@ class Limit(QtWidgets.QGroupBox):
         self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.white)
-        self.setPalette(p)
-        self.setAutoFillBackground(True)
+        #p = self.palette()
+        #p.setColor(self.backgroundRole(), Qt.white)
+        #self.setPalette(p)
+        #self.setAutoFillBackground(True)
 
         # status indicator
         self.indicator = LedIndicator()
@@ -52,20 +52,26 @@ class Limit(QtWidgets.QGroupBox):
         completer = QtWidgets.QCompleter(channels)  # channel autocomplete
         self.channel.setCompleter(completer)
         self.layout.addWidget(self.channel, 0, 4)
+        
+        # description field
+        self.desc = QtWidgets.QLineEdit()
+        self.desc.setPlaceholderText("Description")
+        self.layout.addWidget(self.desc, 0, 5)
 
         self.delete_button = QtWidgets.QPushButton("x")
         # self.delete_button.setStyleSheet("")
-        self.layout.addWidget(self.delete_button, 0, 5)
+        self.layout.addWidget(self.delete_button, 0, 6)
         self.delete_button.clicked.connect(self.delete)
         # self.delete_button.setIcon(QtGui.QIcon('Python/xicon.jpg'))
         self.delete_button.setFixedSize(QtCore.QSize(30, 30))
 
         self.layout.setColumnStretch(0, 2)
         self.layout.setColumnStretch(1, 10)
-        self.layout.setColumnStretch(2, 10)
+        self.layout.setColumnStretch(2, 5)
         self.layout.setColumnStretch(3, 10)
-        self.layout.setColumnStretch(4, 20)
-        self.layout.setColumnStretch(5, 1)
+        self.layout.setColumnStretch(4, 50)
+        self.layout.setColumnStretch(5, 100)
+        self.layout.setColumnStretch(6, 1)
 
     def update(self, val: float):
         val = float(val)
@@ -83,9 +89,10 @@ class Limit(QtWidgets.QGroupBox):
         self.channel.setText(str(config["channel"]))
         self.low.setText(str(config["low"]))
         self.high.setText(str(config["high"]))
+        self.desc.setText(str(config["description"]))
 
     def save(self):
-        return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text()}
+        return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text(), "description": self.desc.text()}
 
     def delete(self):
         self.parent.delete_limit(self)
@@ -97,7 +104,7 @@ class LimitWidget(QtWidgets.QWidget):
 
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        self.setStyleSheet("")
+        #self.setStyleSheet("")
 
         self.interface = S2_Interface()
         self.channels = self.interface.channels
@@ -186,6 +193,7 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
+        #self.setStyleSheet("")
 
         # set up client
         if not client:
@@ -277,5 +285,5 @@ if __name__ == "__main__":
     timer.timeout.connect(limit.cycle)
     timer.start(cycle_time)
 
-    limit.show()
+    limit.showMaximized()
     sys.exit(app.exec())
