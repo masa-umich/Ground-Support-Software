@@ -341,6 +341,10 @@ class ControlsPanelWidget(QWidget):
                 self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
                 self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
                 self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks[addr])]
+            else:
+                self.valve_channels = []
+                self.motor_channels = []
+                self.tank_channels = []
 
             if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
@@ -429,6 +433,8 @@ class ControlsPanelWidget(QWidget):
                     object_.setFluid(text)
             elif identifier == "Board":
                 for object_ in self.editing_object_list:
+                    if object_.avionics_board != text:
+                        object_.setChannel("Undefined")
                     object_.setAvionicsBoard(text)
                 self.updateEditPanelFields(object_) # lazy fix for valve numbers
             elif identifier == "Channel":
