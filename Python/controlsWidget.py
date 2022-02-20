@@ -421,7 +421,7 @@ class ControlsWidget(QWidget):
 
         counter = 0
         for object_ in self.object_list:
-            if hasattr(object_, "channel") and object_.channel != "Undefined":
+            if hasattr(object_, "channel") and object_.channel != "Undefined" and object_.avionics_board != "Undefined":
                 if object_.object_name != "Generic Sensor":
                     mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + object_.channel]
                 else:
