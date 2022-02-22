@@ -317,7 +317,7 @@ class ControlsWindow(QMainWindow):
         """
         if self.fileName != "":
             self.centralWidget.controlsWidget.saveData(self.fileName)
-            self.saveNotes(self.fileName.removesuffix('.json'))
+            #self.saveNotes(self.fileName.removesuffix('.json'))
         else:
             self.saveFileDialog()
             #self.saveNotes()
@@ -351,8 +351,8 @@ class ControlsWindow(QMainWindow):
             self.fileName = fileName
             self.centralWidget.controlsWidget.loadData(fileName)
 
-            with open(fileName.removesuffix('.json') + '.txt', "r") as read_file:
-                data = read_file.read()
+            # with open(fileName.removesuffix('.json') + '.txt', "r") as read_file:
+            #     data = read_file.read()
 
             # TODO: Properly remove this/ move somehwere
             # rewrites the notes in the notebox

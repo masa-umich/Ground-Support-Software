@@ -18,8 +18,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.666666666666668,
-				"y": 36.25
+				"x": 17.083333333333666,
+				"y": 36.67857142857129
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,8 +28,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 9.375,
-				"y": -20.0
+				"x": 9.464285714286042,
+				"y": -21.607142857142982
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -43,7 +43,7 @@
 		"id": 8,
 		"pos": {
 			"x": 798.9583333333334,
-			"y": 396.25
+			"y": 396.25000000000006
 		},
 		"fluid": 1,
 		"width": 66.0,
@@ -58,8 +58,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30.208333333333336,
-				"y": 32.5
+				"x": 30.565476190476417,
+				"y": 31.178571428571292
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -68,8 +68,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 5.208333333333334,
-				"y": -20.0
+				"x": 5.803571428571647,
+				"y": -21.392857142857267
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -97,8 +97,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30.208333333333336,
-				"y": 32.5
+				"x": 30.000000000000227,
+				"y": 31.214285714285445
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -107,8 +107,8 @@
 		"long name label": {
 			"pos string": "Custom",
 			"local pos": {
-				"x": -8.333333333333334,
-				"y": -22.5
+				"x": -9.047619047618834,
+				"y": -22.500000000000256
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -120,7 +120,7 @@
 	"Generic Sensor 11": {
 		"id": 11,
 		"pos": {
-			"x": 501.0416666666667,
+			"x": 501.04166666666663,
 			"y": 811.25
 		},
 		"fluid": 0,
@@ -136,8 +136,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 30.208333333333336,
-				"y": 32.5
+				"x": 30.38690476190499,
+				"y": 32.17857142857116
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -146,8 +146,8 @@
 		"long name label": {
 			"pos string": "Custom",
 			"local pos": {
-				"x": 1.0416666666666667,
-				"y": -26.25
+				"x": 0.863095238095455,
+				"y": -27.250000000000252
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -175,8 +175,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.625,
-				"y": 207.5
+				"x": 41.07142857142891,
+				"y": 207.10714285714266
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -185,8 +185,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 14.583333333333334,
-				"y": -20.0
+				"x": 15.357142857143188,
+				"y": -21.46428571428584
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -214,8 +214,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.666666666666668,
-				"y": 36.25
+				"x": 17.559523809524034,
+				"y": 35.96428571428557
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -224,8 +224,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 3.125,
-				"y": -20.0
+				"x": 4.226190476190695,
+				"y": -21.17857142857155
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -254,8 +254,8 @@
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 16.666666666666668,
-				"y": 36.25
+				"x": 17.41071428571451,
+				"y": 36.071428571428434
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -264,8 +264,8 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 0.0,
-				"y": -20.0
+				"x": 0.2678571428573595,
+				"y": -21.071428571428697
 			},
 			"rows": 1,
 			"font size": 12.0,

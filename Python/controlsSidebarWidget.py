@@ -387,16 +387,16 @@ class SidebarPacketLogWidget(QWidget):
 
         # Update the table, need ot clear, set the rows, then for each item add it to the table, row num, value, units
         self.clearTable()
-        self.packet_log.setRowCount(len(filteredChannels))
-        for n in range(len(filteredChannels)):
-            item = QTableWidgetItem(filteredChannels[n])
+        self.packet_log.setRowCount(len(self.filteredChannels))
+        for n in range(len(self.filteredChannels)):
+            item = QTableWidgetItem(self.filteredChannels[n])
             self.packet_log.setItem(
                 n, 0, item)
             item = QTableWidgetItem("", 1)
             item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
             self.packet_log.setItem(n, 1, item)
             self.packet_log.setItem(n, 2, QTableWidgetItem(
-                self.interface.units[filteredChannels[n]]))
+                self.interface.units[self.filteredChannels[n]]))
 
     def clearTable(self):
         """
