@@ -235,9 +235,13 @@ class ControlsWindow(QMainWindow):
         menuBar.setStyleSheet("background-color:white;border:0;color:black;")
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
-        #view_menu = menuBar.addMenu('View')
-        run_menu = menuBar.addMenu('Run')
-        help_menu = menuBar.addMenu('Help')
+        view_menu = menuBar.addMenu('View')
+        campaign_menu = menuBar.addMenu('Campaign')
+
+        # Mac does not allow adding buttons directly to menu bar so we will toss them in the avionics group
+        # However if the menu bar is not native for whatever reason then can default to windows behavior
+        if self.gui.platform == "OSX" and menuBar.isNativeMenuBar():
+            avionics_menu = menuBar.addMenu('Avionics')
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -254,45 +258,48 @@ class ControlsWindow(QMainWindow):
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
         edit_menu.addAction(self.exitEditAct)
+        edit_menu.addAction(self.addAvionicsAct)
+
+        # Adds all the related view items to view menus
+        view_menu.addAction(self.showAvionicsMapAct)
+        view_menu.addAction(data_view_dialog)
+        view_menu.addAction(self.limit_action)
+        view_menu.addAction(self.auto_action)
+        view_menu.addAction(self.level_action)
 
         # Adds any related run buttons to the run tab
-        run_menu.addAction(self.startRunAct)
-        run_menu.addAction(self.endRunAct)
-        run_menu.addAction(self.startTestAct)
-        run_menu.addAction(self.endTestAct)
-        run_menu.addAction(self.showAvionicsMapAct)
-        run_menu.addAction(self.addAvionicsAct)
-        run_menu.addAction(data_view_dialog)
-        run_menu.addMenu(self.ambientizeMenu)
-        run_menu.addAction(self.tareLoadCellAct)
-        run_menu.addAction(self.zeroTimeAct)
-
-        help_menu.addAction(helpAct)
-        help_menu.addAction(reportIssueAct)
+        campaign_menu.addAction(self.startRunAct)
+        campaign_menu.addAction(self.endRunAct)
+        campaign_menu.addSeparator()
+        campaign_menu.addAction(self.startTestAct)
+        campaign_menu.addAction(self.endTestAct)
+        campaign_menu.addSeparator()
+        campaign_menu.addMenu(self.ambientizeMenu)
+        campaign_menu.addAction(self.tareLoadCellAct)
+        campaign_menu.addAction(self.zeroTimeAct)
 
         # If the gui is being run on windows, dont use the menu bar
-        if self.gui.platform == "Windows":
+        if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
             menuBar.addAction(self.connect)
             menuBar.addAction(self.flashsettings)
             menuBar.addAction(self.buttonBoxAct)
-            menuBar.addAction(self.limit_action)
-            menuBar.addAction(self.auto_action)
-            menuBar.addAction(self.level_action)
             menuBar.addMenu(self.sensor_calibration)
+
         elif self.gui.platform == "OSX":
-            run_menu.addAction(self.connect)
-            run_menu.addAction(self.flashsettings)
-            run_menu.addAction(self.buttonBoxAct)
-            run_menu.addAction(self.limit_action)
-            run_menu.addAction(self.auto_action)
-            run_menu.addAction(self.level_action)
-            run_menu.addMenu(self.sensor_calibration)
+            avionics_menu.addAction(self.connect)
+            avionics_menu.addAction(self.flashsettings)
+            avionics_menu.addAction(self.buttonBoxAct)
+            avionics_menu.addMenu(self.sensor_calibration)
+
+        help_menu = menuBar.addMenu('Help')
+        help_menu.addAction(helpAct)
+        help_menu.addAction(reportIssueAct)
 
         # Add all menus to a dict for easy access by other functions
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
-                      #"View": view_menu,
-                      "Run":  run_menu,
+                      "View": view_menu,
+                      "Run":  campaign_menu,
                       "Help": help_menu}
 
         self.showMaximized()
@@ -406,6 +413,7 @@ class ControlsWindow(QMainWindow):
             self.debugAct.setDisabled(True)
             self.exitDebugAct.setDisabled(True)
             self.startRunAct.setDisabled(True)
+            self.centralWidget.missionWidget.updateStatusLabel("Edit Mode", True)
             self.statusBar().showMessage("Enter Edit Mode")
 
     def exitEdit(self):
@@ -413,7 +421,7 @@ class ControlsWindow(QMainWindow):
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
-            self.statusBar().showMessage("Exit Edit Mode") # Do this up top because we want save to show up if it happens
+            self.statusBar().showMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
@@ -426,13 +434,14 @@ class ControlsWindow(QMainWindow):
                 board_names.append(board.name)
 
             self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(
-                board_names)
+                board_names, True)
 
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
             self.startRunAct.setEnabled(True)
+            self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
 
     def saveNotes(self, fileName=''):
         """
@@ -662,7 +671,7 @@ class ControlsWindow(QMainWindow):
 
         # Create the dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle("Add Avionics")
+        dialog.setWindowTitle("Add Boards")
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window

@@ -6,6 +6,7 @@ import ntpath
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from overrides import overrides
+from constants import Constants
 
 from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
@@ -251,7 +252,7 @@ class LineTextWidget(QtWidgets.QFrame):
         self.highlighter = Highlighter(self.edit.document())
         font = QtGui.QFont()
         font.setPointSize(12)
-        font.setFamily("Consolas")
+        font.setFamily(Constants.default_font)
         self.edit.setFont(font)
 
         self.number_bar = NumberBar()

@@ -97,10 +97,11 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setFixedHeight(self.tabWidget.y() - self.scroll.pos().y())
         self.scroll.show()
 
-    def addBoardsToScrollWidget(self, boardNames: []):
+    def addBoardsToScrollWidget(self, boardNames: [], silent = False):
         """
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
+        :param silent: boolean, for a really dirty fix when leaving edit mode
         """
 
         # Reset Layout
@@ -119,7 +120,10 @@ class ControlsSidebarWidget(QWidget):
             self.scrollAreaLayout.addWidget(board)
             self.board_objects.append(board)
 
-        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+        # We occasionally need to call this function to update boards at weird times, we don't want the status bar when
+        # that happens
+        if not silent:
+            self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
 
     '''def addBoards(self, boardNames: []):
         """
