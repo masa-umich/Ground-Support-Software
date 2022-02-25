@@ -322,7 +322,7 @@ class SidebarPacketLogWidget(QWidget):
     @overrides
     def eventFilter(self, source, event: QEvent):
         """
-        Need an event filter to prevent the tool button from causing the status bar to disapear
+        Need an event filter to prevent the tool button from causing the status bar to disappear
         :param source: the self.blahh of whatever is sending the signal
         :param event: the event triggered
         :return: True for preventing the event to handled again later downstream

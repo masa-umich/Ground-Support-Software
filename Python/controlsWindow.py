@@ -231,6 +231,7 @@ class ControlsWindow(QMainWindow):
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
+        menuBar.installEventFilter(self)  # See event filter below, allows for custom event to prevent status bar update
         menuBar.setStyleSheet("background-color:white;border:0;color:black;")
         file_menu = menuBar.addMenu('File')
         edit_menu = menuBar.addMenu('Edit')
@@ -249,7 +250,6 @@ class ControlsWindow(QMainWindow):
         file_menu.addAction(self.exitDebugAct)
         file_menu.addSeparator()
         file_menu.addAction(self.screenSettingsAct)
-        #file_menu.addAction(self.saveNotesAct)
 
         # Adds all the edit button to the edit tab
         edit_menu.addAction(self.enterEditAct)
@@ -309,6 +309,19 @@ class ControlsWindow(QMainWindow):
             self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPointF(0, self.menuBar().height())
         elif self.gui.platform == "OSX":
             self.central_widget_offset = self.pos()
+
+    @overrides
+    def eventFilter(self, source, event: QEvent):
+        """
+        Need an event filter to prevent the menu bar from causing the status bar to disappear
+        :param source: the self.blahh of whatever is sending the signal
+        :param event: the event triggered
+        :return: True for preventing the event to handled again later downstream
+        """
+        if isinstance(source, QMenuBar) and event.type() == QEvent.StatusTip:
+            return True  # Returning true will prevent this event from being processed again down the line
+
+        return super().eventFilter(source, event)
 
     def saveRegular(self):
         """

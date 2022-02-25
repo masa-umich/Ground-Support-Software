@@ -831,11 +831,16 @@ class Server(QtWidgets.QMainWindow):
 
                         self.packet_size_label.setText("Last Packet Size: %s" % self.dataframe["error_msg"])
                         pass
+            else:
+                self.packet_size_label.setText("Last Packet Size: %s" % "0")
+                self.is_actively_receiving = False
+
             self.party_parrot.step()
 
         except Exception as e:
             #traceback.print_exc()
             print("Parser failed with error ", e)
+            self.is_actively_receiving = False
             self.packet_size_label.setText("Last Packet Size: %s" % "Exception, check terminal")
 
         # update server state
