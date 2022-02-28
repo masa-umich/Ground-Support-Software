@@ -264,10 +264,18 @@ class BaseObject(QObject):
             ap.updatePosition()
 
     def hideAnchorPoints(self):
+        """
+        Hides all the anchor points
+        :return: None
+        """
         for ap in self.anchor_points:
             ap.hide()
 
     def showAnchorPoints(self):
+        """
+        Show all the anchor points, used in edit mode
+        :return: None
+        """
         for ap in self.anchor_points:
             ap.show()
 
@@ -507,6 +515,16 @@ class BaseObject(QObject):
             return True
         else:
             return False
+
+    def objectStatusCheck(self):
+        """
+        This function checks if the object has any potential errors/ warnings that the user should know. For example
+        if an object is added and has no board assigned to it
+        :return: Returns a pair, first is an int representing severity, 0 is good, 1 is warning, 2 is critical.
+                 The second argument is a string with an error message. Can be blank
+        """
+        # Currently nothing I can think of that all objects would have an error for, will be subclassed
+        return 0, ""
 
     """----------------------------------------------------------------------------------------------------------------
     EVENTS 

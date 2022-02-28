@@ -294,15 +294,30 @@ class Solenoid(BaseObject):
             text += "State: Energized\n"
         else:
             text += "State: De-energized\n"
-        
+
         text += "Voltage: %s V\nCurrent: %s A\n" % (self.voltage, self.current)
-        
+
         if self.normally_open:
             text += "Normally Open"
         else:
             text += "Normally Closed"
 
         self.setToolTip_(text)
+
+    @overrides
+    def objectStatusCheck(self):
+        """
+        Override from object class, see there for more details
+        :return: See object class
+        """
+
+        if self.long_name == "Test":
+            return 2, "Bruhhh"
+
+        if self.avionics_board == "Undefined" or self.channel == "Undefined":
+            return 1, self.long_name + "- No board and/or channel defined"
+
+        return 0, ""
 
     @overrides
     def generateSaveDict(self):
