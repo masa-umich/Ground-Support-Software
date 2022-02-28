@@ -3,12 +3,12 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from overrides import overrides
-from object import BaseObject
+from avionicsObject import AvionicsObject
 
 from constants import Constants
 
 
-class GenSensor(BaseObject):
+class GenSensor(AvionicsObject):
 
     object_name = "Generic Sensor"
 
@@ -61,14 +61,12 @@ class GenSensor(BaseObject):
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows,long_name_visible= long_name_visible,
-                         serial_number_visible = serial_number_visible)
+                         serial_number_visible = serial_number_visible, board=board, channel=channel)
 
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
         self.interface = self.widget_parent.window.interface
         self.units = ""
-        self.channel = channel
-        self.avionics_board = board
         self.measurement = 0
         self.measurement_label = QLabel(self.widget_parent)
         self.setUnits()
@@ -108,27 +106,15 @@ class GenSensor(BaseObject):
         self.measurement = measurement
         self.measurement_label.setText(str(self.measurement)+ " " + self.units)
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
     def setChannel(self, channel: str):
         """
         Sets channel of object
         :param channel: channel of the obbject
         """
-        self.channel = channel
-        self.setUnits()
-        self.updateToolTip()
 
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
+        super().setChannel(channel)
+        self.setUnits()
+        #self.updateToolTip()
     
     def setUnits(self):
         """
@@ -222,27 +208,6 @@ class GenSensor(BaseObject):
         del self.measurement_label
 
         super().deleteSelf()
-
-    @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-        info needs to be saved is added here.
-        """
-
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
-
-        # Extra data the Solenoid contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
-
-        # Update the super_dict under the solenoid entry with the solenoid specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-
-        return super_dict
 
     def updateToolTip(self):
         """

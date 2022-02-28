@@ -7,7 +7,7 @@ from overrides import overrides
 
 from constants import Constants
 from MathHelper import MathHelper
-from object import BaseObject
+from avionicsObject import AvionicsObject
 from datetime import datetime
 from LedIndicatorWidget import LedIndicator
 
@@ -17,7 +17,7 @@ Class to handle all tank objects and their functionality
 """
 
 
-class Tank(BaseObject):
+class Tank(AvionicsObject):
 
     object_name = "Tank"
 
@@ -65,7 +65,8 @@ class Tank(BaseObject):
                          serial_number_label_font_size=serial_number_label_font_size,
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible, serial_number_visible=serial_number_visible)
+                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
+                         serial_number_visible=serial_number_visible, board=board, channel=channel)
 
         self.window = self.widget_parent.window
 
@@ -74,8 +75,6 @@ class Tank(BaseObject):
         self.pressureSetPoint = None
         self.pressureLowerBounds = None
         self.pressureUpperBounds = None
-        self.channel = channel
-        self.avionics_board = board
 
         self.updateToolTip()
 
@@ -417,7 +416,6 @@ class Tank(BaseObject):
         :param spinBoxes: spin boxes with the values
         :param dialog: dialog with motor settings
         """
-
         if self.avionics_board != "Undefined" and self.channel != "Undefined":
             cmd_dict = {
                 "function_name": "set_presstank_status",
@@ -426,27 +424,6 @@ class Tank(BaseObject):
                 "args": [int(self.channel),int(status)]
             }
             self.gui.liveDataHandler.sendCommand(3, cmd_dict)
-
-    @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-        info needs to be saved is added here.
-        """
-
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
-
-        # Extra data the Solenoid contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
-
-        # Update the super_dict under the solenoid entry with the solenoid specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-
-        return super_dict
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):

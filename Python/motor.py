@@ -7,11 +7,11 @@ from datetime import datetime
 from overrides import overrides
 
 from constants import Constants
-from object import BaseObject
+from avionicsObject import AvionicsObject
 from customLabel import CustomLabel
 
 
-class Motor(BaseObject):
+class Motor(AvionicsObject):
     """
     Class to handle all solenoid objects and their functionality
     """
@@ -69,7 +69,7 @@ class Motor(BaseObject):
                          long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible)
+                         serial_number_visible=serial_number_visible, board=board, channel=channel)
 
 
         self.window = self.widget_parent.window
@@ -87,8 +87,6 @@ class Motor(BaseObject):
         self.Pconstant = 0
         self.Iconstant = 0
         self.Dconstant = 0
-        self.channel = channel
-        self.avionics_board = board
 
         # Define the labels that keep track of position and set point
         self.set_pos_title_label = CustomLabel(self.widget_parent, self.gui, text="Set Pos")
@@ -377,8 +375,6 @@ class Motor(BaseObject):
                 #print(cmd_dict)
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
-
-
     def motorDialogSave(self, spinBoxes, dialog):
         """
         Saves the new motor values and sends the commands to the board
@@ -487,26 +483,6 @@ class Motor(BaseObject):
 
         self.moveLabelsToPosition()
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
-
     def updateToolTip(self):
         """
         Called to update the tooltip of the solenoid
@@ -557,27 +533,6 @@ class Motor(BaseObject):
 
         self.pot_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
         self.pot_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-
-    @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-        info needs to be saved is added here.
-        """
-
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
-
-        # Extra data the Solenoid contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
-
-        # Update the super_dict under the solenoid entry with the solenoid specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-
-        return super_dict
 
     @overrides
     def deleteSelf(self):

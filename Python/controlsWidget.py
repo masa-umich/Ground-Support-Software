@@ -598,7 +598,7 @@ class ControlsWidget(QWidget):
                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
                                                 long_name_label_rows=idx["long name label"]["rows"]))
 
-            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "Throttle Valve":
+            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "Throttle Valve":
                 idx = data[i]
                 self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -614,7 +614,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
-            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "3 Way":
+            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "3 Way":
                 idx = data[i]
                 self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -627,6 +627,7 @@ class ControlsWidget(QWidget):
                                                  serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
+                                                 channel=idx["channel"], board=idx["board"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
