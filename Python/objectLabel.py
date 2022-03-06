@@ -95,7 +95,11 @@ class ObjectLabel(CustomLabel):
         elif self.position_string == "Custom":
             self.move(self.object_.position.x() + self.local_pos.x(), self.object_.position.y() + self.local_pos.y())
 
-        self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height()/2) - self.light.circle_radius)
+        # If label on left side, flip flop what side it goes on
+        if self.position_string == "Left":
+            self.light.move(self.pos().x() - self.light.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
+        else:
+            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height()/2) - self.light.circle_radius)
         self.setLocalPosition()
 
     def getXCenterPosition(self):
