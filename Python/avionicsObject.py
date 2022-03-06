@@ -58,14 +58,32 @@ class AvionicsObject(BaseObject):
         Override from object class, see there for more details
         :return: See object class
         """
+        status = 0
+        text = ""
 
         if self.long_name == "Test":
-            return 2, "Bruhhh"
+            status = 2
+            text = "Bruhhh"
 
-        if self.avionics_board == "Undefined" or self.channel == "Undefined":
-            return 1, self.long_name + "- No board and/or channel defined"
+        if status != 2 and (self.avionics_board == "Undefined" or self.channel == "Undefined"):
+            status = 1
+            text = self.long_name + "- No board and/or channel defined"
 
-        return 0, ""
+        self.setObjectStatusLight(status, text)
+
+        return status, text
+
+    def setObjectStatusLight(self, status, text):
+        if status == 1:
+            self.long_name_label.light.setIndicatorColor("Yellow")
+            self.long_name_label.showStatusIndicator(True)
+        elif status == 2:
+            self.long_name_label.light.setIndicatorColor("Red")
+            self.long_name_label.showStatusIndicator(True)
+        else:
+            self.long_name_label.showStatusIndicator(False)
+
+        self.long_name_label.light.setToolTip(text)
 
     @overrides
     def generateSaveDict(self):

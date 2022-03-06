@@ -3,17 +3,19 @@ from PyQt5.QtCore import *
 
 from overrides import overrides
 from customLabel import CustomLabel
+from indicatorLightWidget import IndicatorLightWidget
 
 """
 Provides custom functionality for labels specific to objects
 """
+
 
 # TODO: Somehow make it that you just create and pass in a custom label but too lazy to do that now
 class ObjectLabel(CustomLabel):
 
     def __init__(self, widget_parent, gui, object_, position_string: str = "Top", is_vertical: bool = False,
                  local_pos: QPointF = QPointF(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
-                 is_visible: bool = True):
+                 is_visible: bool = True, show_staus_light:bool = False):
 
         self.widget = widget_parent
         self.gui = gui
@@ -21,6 +23,7 @@ class ObjectLabel(CustomLabel):
         self.is_vertical = is_vertical
         self.position_string = position_string
         self.local_pos = local_pos
+        self.light = IndicatorLightWidget(widget_parent, "", 5, "Red", 14, 1, 1, 1)
         # Have to scale it, not sure if this is best location
         self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
         self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])
@@ -36,7 +39,7 @@ class ObjectLabel(CustomLabel):
         self.setText(text)
         self.setRows(rows)
         self.show()
-
+        self.showStatusIndicator(show_staus_light)
         self.setVisible(is_visible)
 
     @overrides
@@ -92,12 +95,17 @@ class ObjectLabel(CustomLabel):
         elif self.position_string == "Custom":
             self.move(self.object_.position.x() + self.local_pos.x(), self.object_.position.y() + self.local_pos.y())
 
+        self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height()/2) - self.light.circle_radius)
         self.setLocalPosition()
 
     def getXCenterPosition(self):
         """
         Gets what x position the label needs to be placed at to be centered on its base object
         """
+        # Below will center the whole text + light, but currently don't want that
+        # if self.light.isVisible():
+        #     return self.object_.position.x() + (self.object_.width / 2) - ((self.width() + self.light.width()) / 2)
+        # else:
         return self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2)
 
     def getYCenterPosition(self):
@@ -113,6 +121,16 @@ class ObjectLabel(CustomLabel):
         """
         self.local_pos = self.pos() - self.object_.position
 
+    def showStatusIndicator(self, show:  bool):
+        """
+        Hides/ shows status indicator
+        :param show: true to show, false to hide
+        :return: none
+        """
+        if show:
+            self.light.show()
+        else:
+            self.light.hide()
 
     # @overrides
     # def paintEvent(self, event):
@@ -178,6 +196,7 @@ class ObjectLabel(CustomLabel):
 
             # Moves the object into its new position
             self.move(pos.x(), pos.y())
+            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
 
             # Updates the new local position
             # HMM: May want to move this call to an overridden move() function
@@ -212,3 +231,12 @@ class ObjectLabel(CustomLabel):
             "is visible": self.isVisible()
         }
         return save_dict
+
+    def deleteLater(self):
+        """
+        Make sure to delete indicator light
+        :return: none
+        """
+        self.light.deleteLater()
+        del self.light
+        super().deleteLater()

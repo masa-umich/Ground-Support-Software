@@ -411,7 +411,8 @@ class MissionWidgetBackgroundThread(QThread):
         # While the run is active keep the thread alive, will cleanly exit when run stops
         while True:
             # Update the datetime every second, this can be increased but seems unnecessary
-            time.sleep(1)
+            # Now 0.2, to make the status update seem more instant
+            time.sleep(0.2)
             self.missionWidget.updateDateTimeLabel()
 
             # All this junk below is updating the system indicator light, may need to move again in the future
