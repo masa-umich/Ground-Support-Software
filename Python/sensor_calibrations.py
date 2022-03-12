@@ -392,12 +392,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         else:
             print("\nError with SaveData command. Most likely the user pressed 'cancel' in the save\n"
                   "dialog. (View sensor_calibrations.py saveData function for code)\n")
-            self.rangeLayoutList[channel].itemAt(5).widget().setText("FAILED TO SAVE!!!")
-            self.rangeLayoutList[channel].itemAt(5).widget().setStyleSheet('''QLabel {
-                                                        color: rgb(210, 30, 30);
-                                }''')
             self.unSavedLabel.setText("At Least 1 Channel Failed to Save!!")
-            self.channelsEdited.append(channel)
 
     def calibrateSensorsWindow(self, action: QAction = None):
         """
