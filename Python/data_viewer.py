@@ -41,7 +41,7 @@ class DataViewer(QtWidgets.QTabWidget):
     Custom QtWidget to plot data
     """
 
-    def __init__(self, gui, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
+    def __init__(self, gui, viewer_window, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
         """Initializes DataViewer object.
 
         Args:
@@ -53,6 +53,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # load data channels
         self.gui = gui
+        self.window = viewer_window
         self.channels = channels  # list of channel names
         self.num_channels = num_channels  # number of data channels in plot
         self.cycle_time = cycle_time  # cycle time of application in ms
@@ -64,6 +65,8 @@ class DataViewer(QtWidgets.QTabWidget):
             self.font_scale_ratio = 1
         else:
             self.font_scale_ratio = self.gui.font_scale_ratio
+
+        self.window.sliderUpdateSignal.connect(self.quiteUpdateSlider)
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -277,7 +280,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
                 else:
                     self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
-                    if self.aliases[idx].text() is not "":
+                    if self.aliases[idx].text() != "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
         if not hasRight and self.plot2.right_view_box is not None:
@@ -332,11 +335,24 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.setXRange(self.slider.sliderPosition(), self.slider.sliderPosition() + self.duration)
 
+    def sliderChange(self):
+        if self.window.checkbox.isChecked():
+            self.window.sliderUpdateSignal.emit(self.slider.value())
+
+    def quiteUpdateSlider(self, newvalue:int):
+
+        self.slider.blockSignals(True)
+        self.slider.setValue(newvalue)
+        self.slider.blockSignals(False)
+        self.range_update()
+
 
 class DataViewerWindow(QtWidgets.QMainWindow):
     """
     Window with client and DataViewer objects
     """
+
+    sliderUpdateSignal = pyqtSignal(int)
 
     def __init__(self, gui = None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
         """Initializes window
@@ -423,13 +439,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # init viewers
         self.viewers = [DataViewer(
-            self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+            self.gui, self, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
 
         for i in range(rows):
             for j in range(cols):
                 idx = i*cols+j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
-                self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
+                self.viewers[idx].slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
         self.starttime = datetime.now().timestamp()
         self.cycle_time = cycle_time
@@ -441,9 +457,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for i in range(self.cols):
             idx = self.rows * self.cols + i
             print("add row looping through column " + str(i) + " " + str(idx))
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.viewers.append(DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
-            self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
+            self.viewers[-1].slider.valueChanged.connect(self.viewers[-1].sliderChange)
             print("add row looping through column " + str(i) + " " + str(idx))
 
         self.rows = self.rows + 1
@@ -457,9 +473,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for i in range(self.rows):
             idx = self.rows * self.cols + i
 
-            dv = DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
+            dv = DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
             self.viewers.append(dv)
-            dv.slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[len(self.viewers) - 1].slider.value()))
+            dv.slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
             # LIST INDEX OUT OF RANGE?
             #dv.slider.valueChanged.connect(lambda x = idx: self.syncSlider(self.viewers[x].slider.value()))
@@ -515,17 +531,30 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
 
+
+    # def updateSliderValue(self, num: int):
+    #     self.viewers[idx].slider.blockSignals(True)
+    #     self.viewers[idx].slider.setValue(num)
+    #     self.viewers[idx].slider.blockSignals(False)
+
+
     def syncSlider(self, num: int):
         """If sliders are locked together, sync all sliders when one slider is moved"""
-
         if(self.checkbox.isChecked()):
+            print("start")
+
 
             for i in range(self.rows):
                 for j in range(self.cols):
-
                     idx = i * self.cols + j
+                    print(idx)
                     print("rows " + str(self.rows) + " col " + str(self.cols) + " idx " + str(idx))
+                    self.viewers[idx].slider.blockSignals(True)
                     self.viewers[idx].slider.setValue(num)
+                    self.viewers[idx].slider.blockSignals(False)
+
+
+            print("end")
 
     def exit(self):
         """Exit application"""
