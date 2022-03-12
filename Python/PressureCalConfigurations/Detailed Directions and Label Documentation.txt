@@ -1,0 +1,38 @@
+Sensor Calibrations Instructions
+
+ - Load in previously saved calibration files using the "Load" button in the top right of the window.
+ - Input calibration values manually by typing values into the input fields for each channel
+ - Use the selection box at the right of each channel to switch between voltage/pressure inputs
+and slope/offset inputs depending on the board being used.
+ - The save button will send the unsaved values to the board and the save the configuration if a file
+is selected.
+ - If no file is previously selected to save the configuration, a save dialog will open allowing the
+user to choose a configuration or save a new one.
+ - The save as button will bring up the save dialog if the user wishes to change the configuration to
+save to.
+
+Notes:
+ - If no channel is edited, the save as button will not "work" because there is nothing to save.
+ - To save an entire configuration, the user must "edit" all of the channels they wish to
+save. This can be tedious, but should allow the user to choose which channels they wish to save to the
+configuration.
+
+Error Labels:
+ - Not Saved: label that appears when an input field within a channel has been edited. This tells
+the user that the field has been changed and that they must send a command to project their
+change to the board.
+ - Failed To Save: label that appears when a channel has not been saved to the board. This 
+error will most likely occur when an input field does not contain a value. Raises error in command
+line.
+ - At Least 1 Channel Failed to Save: label that appears at the top of the window that tells the user
+that at least one channel did not save correctly.
+ - At Least 1 Channel Failed to Load!! Check that File has float-point numbers: label that appears
+at the top of the window that tells the user that at least one channel did not load correctly. Look
+over the channels in the window to find the one that didn’t load correctly. This error can occur 
+when the .json configuration file is edited outside of the GUI. The actual error is that at least one 
+field in the channel is not a float-point number – most likely a string or an integer. Find the
+configuration file and edit the .json file.
+ - At Least One Channel's Slope/Offset Values are Different From Board's: label that appears at the
+window that tells the user when a channel’s values are different the ones currently loaded on the board.
+If no board is connected, this label will always be shown because the default “fake board” values are
+zeros. 

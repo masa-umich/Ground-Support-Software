@@ -310,21 +310,37 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                 channel = data[i]
                 # print(channel["Slope"])
                 # print(channel["Offset"])
-                if (not isinstance(channel["Slope"], float) and not isinstance(channel["Slope"], int)) or \
-                        (not isinstance(channel["Offset"], float) and not isinstance(channel["Offset"], int)):
-                    self.window.statusBar().showMessage("Pressure Cal Configuration failed to open from " + fileName)
+                try:
+                    if (not isinstance(channel["Slope"], float) and not isinstance(channel["Slope"], int)) or \
+                            (not isinstance(channel["Offset"], float) and not isinstance(channel["Offset"], int)):
+                        self.window.statusBar().showMessage("Pressure Cal Configuration failed to open from " + fileName)
+                        self.failLoadLabel.setText("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
 
-                    # TODO: implement a label that tells the user that information in the config file is not numbers
-                    return
+                        # TODO: implement a label that tells the user that information in the config file is not numbers
+                        return
 
-                channelNum = int(i.removeprefix("Channel "))
+                    channelNum = int(i.removeprefix("Channel "))
 
-                self.slopeOffsetGrid[channelNum] = (channel["Slope"], channel["Offset"])
-                self.rangeLayoutList[channelNum].updateRanges("Slope/Offset", channelNum)
+                    self.slopeOffsetGrid[channelNum] = (channel["Slope"], channel["Offset"])
+                    self.rangeLayoutList[channelNum].updateRanges("Slope/Offset", channelNum)
+                except:
+                    if (not isinstance(channel["Vmax"], float) and not isinstance(channel["Vmax"], int)) or \
+                            (not isinstance(channel["Vmin"], float) and not isinstance(channel["Vmin"], int)) or \
+                            (not isinstance(channel["Pmax"], float) and not isinstance(channel["Pmax"], int)):
+                        self.window.statusBar().showMessage(
+                            "Pressure Cal Configuration failed to open from " + fileName)
+                        self.failLoadLabel.setText("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
+                        return
+
+                    channelNum = int(i.removeprefix("Channel "))
+
+                    self.voltagePressureGrid[channelNum] = (channel["Vmax"], channel["Vmin"], channel["Pmax"])
+                    self.rangeLayoutList[channelNum].updateRanges("Voltage/Pressure Range", channelNum)
 
             self.window.statusBar().showMessage("Pressure Cal Configuration opened from " + fileName)
+            self.failLoadLabel.setText("")
 
-    def saveData(self, channels, slopes, offsets, save_as=False):
+    def saveData(self, channels, slopes, offsets, Vmaxes, Vmins, Pmaxes, save_as=False):
         """
         Pulls up Save As dialog, saves data to designated file and sets filename field
         """
@@ -353,18 +369,37 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             # print(channels)
 
             for channelNum in channels:
-                data = {**data,
+                if slopes[channelNum] != 0:
+                    data = {**data,
+                            f"Channel {channelNum}":
+                                {
+                                    "Slope": slopes[channelNum],
+                                    "Offset": offsets[channelNum],
+                                }
+                            }
+                elif Vmaxes[channelNum] != 0:
+                    data = {**data,
                         f"Channel {channelNum}":
                             {
-                                "Slope": slopes[channelNum],
-                                "Offset": offsets[channelNum]
+                                "Vmax": Vmaxes[channelNum],
+                                "Vmin": Vmins[channelNum],
+                                "Pmax": Pmaxes[channelNum],
                             }
-                        }
+                    }
 
             with open(fileName, "w") as write_file:
                 json.dump(data, write_file, indent="\t")
 
             # self.window.statusBar().showMessage("Pressure Cal Configuration saved to " + fileName)
+        else:
+            print("\nError with SaveData command. Most likely the user pressed 'cancel' in the save\n"
+                  "dialog. (View sensor_calibrations.py saveData function for code)\n")
+            self.rangeLayoutList[channel].itemAt(5).widget().setText("FAILED TO SAVE!!!")
+            self.rangeLayoutList[channel].itemAt(5).widget().setStyleSheet('''QLabel {
+                                                        color: rgb(210, 30, 30);
+                                }''')
+            self.unSavedLabel.setText("At Least 1 Channel Failed to Save!!")
+            self.channelsEdited.append(channel)
 
     def calibrateSensorsWindow(self, action: QAction = None):
         """
@@ -424,9 +459,6 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         # self.printGrid()
 
-        """
-        Old Code
-        """
         # use self.voltagePressureGrid and self.slopeOffsetGrid to index into values when needed!
 
         # print(rangeLayout.rangesItems.itemAt(0).widget().text())
@@ -506,6 +538,27 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             color: rgb(200, 200, 0);
         }''')
 
+        self.unSavedLabel = QLabel("At Least 1 Channel Failed to Save!!")
+        self.unSavedLabel.setFont(font)
+        self.unSavedLabel.setStyleSheet("""QLabel {
+            color: rgb(200, 0, 0);
+        }""")
+        self.unSavedLabel.setText("")
+
+        self.failLoadLabel = QLabel("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
+        self.failLoadLabel.setFont(font)
+        self.failLoadLabel.setStyleSheet("""QLabel {
+            color: rgb(210, 105, 30);
+        }""")
+        self.failLoadLabel.setText("")
+
+        self.differentValuesLabel = QLabel("At Least One Channel's Slope/Offset Values are Different From Board's")
+        self.differentValuesLabel.setFont(font)
+        self.differentValuesLabel.setStyleSheet("""QLabel {
+            color: rgb(200, 0, 0);
+        }""")
+        self.differentValuesLabel.setText("")
+
         font.setPointSize(20 * self.gui.font_scale_ratio)
         directionsLabel.setFont(font)
 
@@ -516,6 +569,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         headerLayout = QtWidgets.QGridLayout()
         headerLayout.addWidget(directionsLabel, 0, 0)
         headerLayout.addWidget(loadFileButton, 0, 1)
+        headerLayout.addWidget(self.unSavedLabel, 1, 0)
+        headerLayout.addWidget(self.failLoadLabel, 2, 0)
+        headerLayout.addWidget(self.differentValuesLabel, 3, 0)
 
         self.verticalLayout.addLayout(headerLayout, 0, 0)
 
@@ -547,6 +603,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         # self.cal_packet = self.last_packet
 
+        atLeastOne = False
         for channel in range(self.channel_count):
             try:
                 slope = self.window.last_packet[prefix + "pt_cal_slope[" + str(channel) + "]"]
@@ -590,8 +647,12 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                 self.rangeLayoutList[channel].itemAt(4).widget().setStyleSheet('''QLabel {
                                                             color: rgb(210, 30, 30);
                                     }''')
+                self.differentValuesLabel.setText("At Least One Channel's Slope/Offset Values are Different From Board's")
+                atLeastOne = True
             else:
                 self.rangeLayoutList[channel].itemAt(4).widget().setText("")
+                if not atLeastOne:
+                    self.differentValuesLabel.setText("")
 
     def send_sensor_calibrations(self, board_name, save_as=False):
         """
@@ -613,10 +674,16 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
             slopes = []
             offsets = []
+            Vmaxes = []
+            Vmins = []
+            Pmaxes = []
 
             for _ in range(self.channel_count):
                 slopes.append(0)
                 offsets.append(0)
+                Vmaxes.append(0)
+                Vmins.append(0)
+                Pmaxes.append(0)
 
             # print("Update Channels: ")
             # for channel in channelsToBeSent:
@@ -673,8 +740,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
                         self.slopeOffsetGrid[channel] = (slope, offset)
 
-                        slopes[channel] = slope
-                        offsets[channel] = offset
+                        Vmaxes[channel] = float(self.voltagePressureGrid[channel][0])
+                        Vmins[channel] = float(self.voltagePressureGrid[channel][1])
+                        Pmaxes[channel] = float(self.voltagePressureGrid[channel][2])
 
                         print(f"Update Channel {channel}: slope = {slope}; offset = {offset}\n")
 
@@ -700,12 +768,15 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                 if success:  # remove the unsaved label from the individual channel
                     self.rangeLayoutList[channel].itemAt(5).widget().deleteLater()
                     self.rangeLayoutList[channel].saveDisplayed = False
+                    self.unSavedLabel.setText("")
                 else:  # replace the unsaved label with the failed to save label below for the individual channel
                     self.rangeLayoutList[channel].itemAt(5).widget().setText("FAILED TO SAVE!!!")
                     self.rangeLayoutList[channel].itemAt(5).widget().setStyleSheet('''QLabel {
                                             color: rgb(210, 30, 30);
                     }''')
+                    self.unSavedLabel.setText("At Least 1 Channel Failed to Save!!")
                     self.channelsEdited.append(channel)  # raises the "are you sure" window if not saved correctly
 
-            self.saveData(channelsToBeSent, slopes, offsets, save_as=save_as)
+            # TODO: send both slopes/offsets and Vmax/Vmin/Pmax lists to saveData()
+            self.saveData(channelsToBeSent, slopes, offsets, Vmaxes, Vmins, Pmaxes, save_as=save_as)
             # self.printGrid()

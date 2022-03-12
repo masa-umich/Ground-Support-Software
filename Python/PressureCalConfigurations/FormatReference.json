@@ -1,0 +1,20 @@
+{
+	"Channel 0": {
+		"Vmax": 4.5,
+		"Vmin": 0.5,
+		"Pmax": 100.0
+	},
+	"Channel 1": {
+		"Vmax": 4.5,
+		"Vmin": 0.5,
+		"Pmax": 200.0
+	},
+	"Channel 2": {
+		"Slope": 20.0,
+		"Offset": 200.0
+	},
+	"Channel 3": {
+		"Slope": 40.0,
+		"Offset": 200.0
+	}
+}
