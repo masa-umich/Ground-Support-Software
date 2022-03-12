@@ -315,8 +315,6 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                             (not isinstance(channel["Offset"], float) and not isinstance(channel["Offset"], int)):
                         self.window.statusBar().showMessage("Pressure Cal Configuration failed to open from " + fileName)
                         self.failLoadLabel.setText("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
-
-                        # TODO: implement a label that tells the user that information in the config file is not numbers
                         return
 
                     channelNum = int(i.removeprefix("Channel "))
@@ -415,7 +413,6 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         if action.text() == "Pressurization Controller":
             # receives the previous grid if there is one from the previous window
-            # TODO: still need to save this to a config file so that the data can be saved even after the GUI closes
             self.__init__(self.gui, self.window, self.gui.PCvoltagePressureGrid, self.gui.PCslopeOffsetGrid)
             self.channel_count = 6
         elif action.text() == "Engine Controller":
@@ -526,7 +523,6 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         self.verticalLayout.addLayout(buttonLayout, 1, 0)
 
-        # TODO: Directions... Make sure to mention that each value below is the current value
         directionsLabel = QLabel("Directions:\n"
                                  "* Load pressure cal data using the load button or manually type in values\n"
                                  "into the input fields below.\n"
@@ -777,6 +773,5 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     self.unSavedLabel.setText("At Least 1 Channel Failed to Save!!")
                     self.channelsEdited.append(channel)  # raises the "are you sure" window if not saved correctly
 
-            # TODO: send both slopes/offsets and Vmax/Vmin/Pmax lists to saveData()
             self.saveData(channelsToBeSent, slopes, offsets, Vmaxes, Vmins, Pmaxes, save_as=save_as)
             # self.printGrid()
