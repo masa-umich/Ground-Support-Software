@@ -461,6 +461,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.viewers.append(dv)
             dv.slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[len(self.viewers) - 1].slider.value()))
 
+            # LIST INDEX OUT OF RANGE?
+            #dv.slider.valueChanged.connect(lambda x = idx: self.syncSlider(self.viewers[x].slider.value()))
+
             # self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             # self.viewers.append(dv)
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
@@ -510,7 +513,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 else:
                     # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
                     if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.position() - 1)
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
 
     def syncSlider(self, num: int):
         """If sliders are locked together, sync all sliders when one slider is moved"""
@@ -521,6 +524,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 for j in range(self.cols):
 
                     idx = i * self.cols + j
+                    print("rows " + str(self.rows) + " col " + str(self.cols) + " idx " + str(idx))
                     self.viewers[idx].slider.setValue(num)
 
     def exit(self):
