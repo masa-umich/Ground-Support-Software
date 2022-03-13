@@ -188,20 +188,19 @@ class Solenoid(AvionicsObject):
 
         if not self.widget_parent.parent.is_editing:
 
-            if self.gui.debug_mode == False:
+            if self.gui.debug_mode is False:
                 # Toggle state of solenoid
                 if self.state == 0:
                     new_state = 1
                 elif self.state == 1:
                     new_state = 0
-                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                if self.isAvionicsFullyDefined() and self.gui.campaign.is_active:
                     cmd_dict = {
                         "function_name": "set_vlv",
                         "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                         "timestamp": int(datetime.now().timestamp()),
                         "args": [int(self.channel), int(new_state)]
                     }
-                    #print(cmd_dict)
                     self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
@@ -256,7 +255,7 @@ class Solenoid(AvionicsObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
         else:
             text += "Channel:\n"
@@ -298,7 +297,7 @@ class Solenoid(AvionicsObject):
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "vlv" + str(self.channel)
             state = data_packet[channel_name + ".en"]

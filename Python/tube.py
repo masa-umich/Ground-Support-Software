@@ -44,7 +44,7 @@ class Tube:
         self.widget_parent.is_drawing = False
         self.widget_parent.update()
 
-        self.widget_parent.window.statusBar().showMessage("Tube completed")
+        self.widget_parent.window.setStatusBarMessage("Tube completed")
 
     def deleteTube(self):
         for ap in self.attachment_aps:
@@ -226,7 +226,7 @@ class TubeAnchorPoint(QPushButton):
 
         self.show()
 
-        self.controlsWidget.window.statusBar().showMessage("Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")")
+        self.controlsWidget.window.setStatusBarMessage("Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")")
 
 
     def draw(self):
@@ -268,7 +268,7 @@ class TubeAnchorPoint(QPushButton):
         if action is not None:
             if action.text() == "Delete Tube":
                 self.tube.deleteTube()
-                self.controlsWidget.window.statusBar().showMessage("Tube deleted")
+                self.controlsWidget.window.setStatusBarMessage("Tube deleted")
             elif action.text() == "Change Fluid":
                 # TODO: Don't cycle through tubes like this it sucks
                 max_ = len(Constants.fluid) / 2 - 1
@@ -276,15 +276,15 @@ class TubeAnchorPoint(QPushButton):
                     self.tube.fluid = self.tube.fluid + 1
                 else:
                     self.tube.fluid = 0
-                self.controlsWidget.window.statusBar().showMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
+                self.controlsWidget.window.setStatusBarMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
             elif action.text() == "Increase Line Width":
                 self.tube.line_width = self.tube.line_width + 1
-                self.controlsWidget.window.statusBar().showMessage("Tube width increased to " + str(self.tube.line_width))
+                self.controlsWidget.window.setStatusBarMessage("Tube width increased to " + str(self.tube.line_width))
             elif action.text() == "Decrease Line Width":
                 self.tube.line_width = self.tube.line_width - 1
                 if self.tube.line_width < 1:
                     self.tube.line_width = 1
-                self.controlsWidget.window.statusBar().showMessage("Tube width decreaseed to " + str(self.tube.line_width))
+                self.controlsWidget.window.setStatusBarMessage("Tube width decreaseed to " + str(self.tube.line_width))
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):

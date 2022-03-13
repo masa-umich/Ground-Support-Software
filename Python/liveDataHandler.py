@@ -37,6 +37,9 @@ class LiveDataHandler:
     def getGui(self):
         return self._gui
 
+    def shouldPopulateData(self):
+        return self.dataHandler.campaign.is_active
+
     def startThread(self):
         self.is_active = True
         self.thread.start()
@@ -85,7 +88,7 @@ class LiveDataHandlerBackgroundThread(QThread):
                 elif self.dataHandler.getClient().is_connected and not packet["ser_open"]:
                     self.connectionStatusSignal.emit(2, packet["error_msg"], self.dataHandler.getClient().is_commander)
 
-                if self.dataHandler.campaign.is_active:
+                if self.dataHandler.shouldPopulateData():
                     # TODO: Not sure if this goes here, or under actively_rx, seem weird to try to push bad data
                     # {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
                     #                          "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,

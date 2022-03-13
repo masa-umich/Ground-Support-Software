@@ -77,7 +77,12 @@ class BaseObject(QObject):
         self.scale = scale
         self.serial_number = serial_number
         self.safety_status = safety_status
-        self.long_name = long_name
+
+        if _id is None:  # use this to check if the object was created from file or clicking
+            self.long_name = long_name + " " + str(self.widget_parent.object_count[self.object_name])
+        else:
+            self.long_name = long_name
+
         self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
         self.is_being_edited = is_being_edited
         self.is_being_dragged = is_being_dragged
@@ -171,7 +176,7 @@ class BaseObject(QObject):
         self.long_name = name
         self.long_name_label.setText(name)
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + " component name changed to " + name)
+        self.central_widget.window.setStatusBarMessage(self.object_name + " component name changed to " + name)
 
     def setShortName(self, name):
         """
@@ -184,7 +189,7 @@ class BaseObject(QObject):
         # Moves the label to keep it in the center if it changes length
         self.serial_number_label.moveToPosition()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
 
     def setScale(self, scale):
         """
@@ -215,7 +220,7 @@ class BaseObject(QObject):
         # Update some other dependent values
         self.setAnchorPoints()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -227,7 +232,7 @@ class BaseObject(QObject):
         """
         self.fluid = Constants.fluid[fluid]
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -238,7 +243,7 @@ class BaseObject(QObject):
         :param is_locked: is the position locked
         """
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
 
         self.position_locked = is_locked
 
@@ -378,7 +383,7 @@ class BaseObject(QObject):
         self.serial_number_label.moveToPosition()
         self.deleteConnectedTubes()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -408,7 +413,7 @@ class BaseObject(QObject):
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -495,7 +500,7 @@ class BaseObject(QObject):
         """
         self.button.lower()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
 
     def raiseObject(self):
         """
@@ -504,7 +509,7 @@ class BaseObject(QObject):
         """
         self.button.raise_()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
 
     def doesObjectHaveFocus(self):
         """
@@ -615,7 +620,7 @@ class BaseObject(QObject):
         Called for object to delete itself
         """
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
+        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
 
         self.button.deleteLater()
         del self.button

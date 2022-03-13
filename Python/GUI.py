@@ -16,6 +16,14 @@ from configurationManager import ConfigurationManager
 
 from run import Campaign
 
+
+class Prefrences:
+
+    def __init__(self):
+        self.screenResolution = [app.desktop().screenGeometry().width(), app.desktop().availableGeometry().height()]
+        print(self.screenResolution)
+
+
 """
 Program start point. This class handles all child windows of the gui
 """
@@ -66,7 +74,7 @@ class GUI(QObject):  # Inherits QObject just so signals can be used
             readMe.write("This is the directory that the GUI pulls startup files from, do not delete, "
                          "it will come back.\n\nIf for some reason u want to reset this delete the whole folder")
 
-            #Get the scaling ratio for objects. The scale ratio would be 1 on a screen of a resolution of 1600
+            # Get the scaling ratio for objects. The scale ratio would be 1 on a screen of a resolution of 1600
             # wide and 1200 tall
             self.pixel_scale_ratio = [self.screenResolution[0] / 1600, self.screenResolution[1]/1200]
 
@@ -108,7 +116,7 @@ class GUI(QObject):  # Inherits QObject just so signals can be used
         #self.plotWindow = PlotWindow()
         self.controlsWindow = ControlsWindow(self)
 
-        self.controlsWindow.statusBar().showMessage("GUI startup")
+        self.controlsWindow.setStatusBarMessage("GUI startup")
 
         self.liveDataHandler.postInit()
 

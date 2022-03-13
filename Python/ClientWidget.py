@@ -112,9 +112,9 @@ class ClientWidget(QtWidgets.QWidget):
             print(command_dict)
             if self.gui_window is not None:
                 if command_dict["command"] == 3:
-                    self.gui_window.statusBar().showMessage("Command sent to server: " + str(command_dict["args"]))
+                    self.gui_window.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
                 else:
-                    self.gui_window.statusBar().showMessage("Command sent to client: " + str(command_dict))
+                    self.gui_window.setStatusBarMessage("Command sent to client: " + str(command_dict))
 
         # add to queue
         if self.is_connected:
@@ -135,7 +135,7 @@ class ClientWidget(QtWidgets.QWidget):
                 else:
                     self.command(6, [str(self.gui_window.gui.campaign.saveName)])
                     self.gui_window.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
-                self.gui_window.statusBar().showMessage(
+                self.gui_window.setStatusBarMessage(
                         "Connected to server on " + self.host.currentText() + ":" + self.port.text())
 
         except Exception as e:
@@ -149,7 +149,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.cycle() # need to get the last command out before saying we are disconnected
         self.soft_disconnect()
         if self.gui_window is not None:
-            self.gui_window.statusBar().showMessage("Disconnected from server")
+            self.gui_window.setStatusBarMessage("Disconnected from server")
 
     def soft_disconnect(self):
         """

@@ -22,9 +22,9 @@ class Limit(QtWidgets.QGroupBox):
         self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.white)
-        self.setPalette(p)
+        # p = self.palette()
+        # p.setColor(self.backgroundRole(), Qt.white)
+        # self.setPalette(p)
         self.setAutoFillBackground(True)
 
         # status indicator

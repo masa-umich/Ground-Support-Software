@@ -202,7 +202,7 @@ class ThreeWayValve(AvionicsObject):
                     new_state = 1
                 elif self.state == 1:
                     new_state = 0
-                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                if self.isAvionicsFullyDefined():
                     cmd_dict = {
                         "function_name": "set_vlv",
                         "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -249,7 +249,7 @@ class ThreeWayValve(AvionicsObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
         else:
             text += "Channel:\n"
@@ -287,7 +287,7 @@ class ThreeWayValve(AvionicsObject):
     @pyqtSlot(object) # copied from solenoid, not great
     def updateFromDataPacket(self, data_packet: dict):
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "vlv" + str(self.channel)
             state = data_packet[channel_name + ".en"]

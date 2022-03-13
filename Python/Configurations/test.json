@@ -2,8 +2,8 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 638.0952380952383,
-			"y": 375.9999999999999
+			"x": 252.38095238095246,
+			"y": 401.14285714285705
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -11,7 +11,7 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Solenoid",
+		"long name": "Solenoid 1",
 		"is vertical": false,
 		"is locked": false,
 		"is pos locked": false,
@@ -28,7 +28,87 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6.66666666666667,
+				"x": -10.47619047619048,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 539.0476190476193,
+			"y": 303.99999999999994
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid 2",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 36.57142857142856
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.380952380952385,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 683.8095238095241,
+			"y": 289.14285714285705
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid 3",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 36.57142857142856
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -12.380952380952385,
 				"y": -20.571428571428566
 			},
 			"rows": 1,

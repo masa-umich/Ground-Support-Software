@@ -208,26 +208,6 @@ class Tank(AvionicsObject):
 
         super().draw()
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
-
     def updateToolTip(self):
         """
         Called to update the tooltip of the tank
@@ -235,7 +215,7 @@ class Tank(AvionicsObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
         else:
             text += "Channel:\n"
@@ -384,7 +364,7 @@ class Tank(AvionicsObject):
         if self.gui.debug_mode:
             self.updateValues(setpoint,lowbound,upbound)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_control_target_pressure",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -416,7 +396,7 @@ class Tank(AvionicsObject):
         :param spinBoxes: spin boxes with the values
         :param dialog: dialog with motor settings
         """
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             cmd_dict = {
                 "function_name": "set_presstank_status",
                 "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -428,7 +408,7 @@ class Tank(AvionicsObject):
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "tnk" + str(self.channel)
 

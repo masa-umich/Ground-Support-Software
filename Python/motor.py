@@ -347,7 +347,7 @@ class Motor(AvionicsObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb, 0,self.potPos,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_zero",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -365,7 +365,7 @@ class Motor(AvionicsObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb, self.currentPos,0,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "ambientize_pot",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -389,7 +389,7 @@ class Motor(AvionicsObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_pos",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -490,7 +490,7 @@ class Motor(AvionicsObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
         else:
             text += "Channel:\n"
@@ -557,7 +557,7 @@ class Motor(AvionicsObject):
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "mtr" + str(self.channel)
 

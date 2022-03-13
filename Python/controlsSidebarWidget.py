@@ -123,7 +123,7 @@ class ControlsSidebarWidget(QWidget):
         # We occasionally need to call this function to update boards at weird times, we don't want the status bar when
         # that happens
         if not silent:
-            self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")
+            self.window.setStatusBarMessage("Boards: " + str(boardNames) + " added")
 
     '''def addBoards(self, boardNames: []):
         """
@@ -147,12 +147,12 @@ class ControlsSidebarWidget(QWidget):
             self.board_objects.append(board)
             y_pos = board.pos().y() + board.height()
 
-        self.window.statusBar().showMessage("Boards: " + str(boardNames) + " added")'''
+        self.window.setStatusBarMessage("Boards: " + str(boardNames) + " added")'''
 
     def abort_init(self):
         """Changes the state of each board. 
         """
-        self.window.statusBar().showMessage("Abort button clicked!")
+        self.window.setStatusBarMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
                 board.sendBoardState("Abort")
@@ -231,7 +231,7 @@ class SidebarTabWidget(QWidget):
         # add in tabs with widgets
         self.tabWidget.addTab(self.noteWidget, "Notes")
         self.tabWidget.addTab(self.packetLogWidget, "Packet Log")
-        #self.tabWidget.addTab(self.controlsSidebarWidget.window.limits.widget, "Limits")
+        # self.tabWidget.addTab(self.controlsSidebarWidget.window.limits.widget, "Limits")
         # self.tabWidget.addTab(self.tab3, "Packet Log2")
         # self.tabWidget.addTab(self.tab4, "Packet Log3")
         # self.tabWidget.addTab(self.tab5, "Packet Log4")

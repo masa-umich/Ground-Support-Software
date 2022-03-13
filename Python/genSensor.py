@@ -216,7 +216,7 @@ class GenSensor(AvionicsObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             text += "Channel: %s\n" % self.channel
         else:
             text += "Channel:"

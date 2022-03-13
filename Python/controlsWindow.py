@@ -330,6 +330,20 @@ class ControlsWindow(QMainWindow):
 
         return super().eventFilter(source, event)
 
+    def setStatusBarMessage(self, text: str, error: bool = False):
+        """
+        Set text and possible show as error for status bar
+        :param text: text to set
+        :param error: bool, true for error
+        :return: none
+        """
+        if error:
+            self.statusBar().setStyleSheet("background-color: red")
+        else:
+            self.statusBar().setStyleSheet("")
+
+        self.statusBar().showMessage(text)
+
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
@@ -384,6 +398,12 @@ class ControlsWindow(QMainWindow):
         """
         self.fileName = ""
         self.centralWidget.controlsPanelWidget.removeAllEditingObjects()
+        self.centralWidget.controlsWidget.last_object_id = 0
+        self.centralWidget.controlsWidget.last_tube_id = 0
+
+        for obj in self.centralWidget.controlsWidget.object_type_list:
+            self.centralWidget.controlsWidget.object_count[obj.object_name] = 0
+
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
@@ -398,7 +418,7 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.controlsSidebarWidget.board_objects.clear()
 
-        self.statusBar().showMessage("New configuration started")
+        self.setStatusBarMessage("New configuration started")
 
     def enterEdit(self):
         """
@@ -414,14 +434,14 @@ class ControlsWindow(QMainWindow):
             self.exitDebugAct.setDisabled(True)
             self.startRunAct.setDisabled(True)
             self.centralWidget.missionWidget.updateStatusLabel("Edit Mode", True)
-            self.statusBar().showMessage("Enter Edit Mode")
+            self.setStatusBarMessage("Enter Edit Mode")
 
     def exitEdit(self):
         """
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
-            self.statusBar().showMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
+            self.setStatusBarMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
@@ -480,7 +500,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setDisabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
-        self.statusBar().showMessage("Enter Debug Mode")
+        self.setStatusBarMessage("Enter Debug Mode")
 
     def exitDebug(self):
         """
@@ -493,7 +513,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
-        self.statusBar().showMessage("Exit Debug Mode")
+        self.setStatusBarMessage("Exit Debug Mode")
 
     def showRunDialog(self, is_test: bool):
         """
@@ -609,7 +629,7 @@ class ControlsWindow(QMainWindow):
 
         self.gui.campaign.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
-        self.statusBar().showMessage("Campaign '" + run_name + "' started")
+        self.setStatusBarMessage("Campaign '" + run_name + "' started")
 
     def endRun(self):
         """
@@ -629,7 +649,7 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.addAvionicsAct.setEnabled(True)
         self.debugAct.setEnabled(True)
-        self.statusBar().showMessage("Campaign '" + self.gui.campaign.title + "' ended")
+        self.setStatusBarMessage("Campaign '" + self.gui.campaign.title + "' ended")
 
     def startTest(self, dialog: QDialog, test_name: str):
         """
@@ -645,7 +665,7 @@ class ControlsWindow(QMainWindow):
         self.startTestAct.setDisabled(True)
         self.gui.campaign.startTest(test_name)  # This 2 is arbitrary expect it differs from the the canceled
         dialog.done(2)
-        self.statusBar().showMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
+        self.setStatusBarMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
 
     def endTest(self):
         """
@@ -655,7 +675,7 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.startTestAct.setEnabled(True)
         self.gui.campaign.endTest()
-        self.statusBar().showMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
+        self.setStatusBarMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):

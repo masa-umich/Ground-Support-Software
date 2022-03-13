@@ -44,6 +44,14 @@ class Constants:
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]
 
+    # Avionics Objects Prefix List
+    object_prefix_map = {
+        "Solenoid": "sol.",
+        "Tank": "tnk.",
+        "Motor": "mtr.",
+        "3 Way Valve": "3sol."
+    }
+
     # Dict of fluid colors. Number on left should match value of fluid dict above.
     # Example call: fluidColor[0] -> Returns Qt.white
     fluidColor = {
