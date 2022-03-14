@@ -66,7 +66,7 @@ class DataViewer(QtWidgets.QTabWidget):
         else:
             self.font_scale_ratio = self.gui.font_scale_ratio
 
-        self.window.sliderUpdateSignal.connect(self.quiteUpdateSlider)
+        self.window.sliderUpdateSignal.connect(self.quietUpdateSlider)
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -202,7 +202,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.slider = QtWidgets.QSlider(self)
         self.slider.setOrientation(Qt.Horizontal)
         self.slider.setMinimum(0)
-        self.slider.setMaximum(1)       # REMOVE LATER, JUST FOR TESTING
+        self.slider.setMaximum(1)
         self.slider.setValue(0)
         self.slider.valueChanged.connect(self.range_update)
 
@@ -339,7 +339,7 @@ class DataViewer(QtWidgets.QTabWidget):
         if self.window.checkbox.isChecked():
             self.window.sliderUpdateSignal.emit(self.slider.value())
 
-    def quiteUpdateSlider(self, newvalue:int):
+    def quietUpdateSlider(self, newvalue:int):
 
         self.slider.blockSignals(True)
         self.slider.setValue(newvalue)
@@ -456,11 +456,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         for i in range(self.cols):
             idx = self.rows * self.cols + i
-            print("add row looping through column " + str(i) + " " + str(idx))
             self.viewers.append(DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
             self.viewers[-1].slider.valueChanged.connect(self.viewers[-1].sliderChange)
-            print("add row looping through column " + str(i) + " " + str(idx))
 
         self.rows = self.rows + 1
 
@@ -468,8 +466,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
     def addCol(self):
         
-        # CONNECTION IS BROKEN, PROBABLY DUE TO INDEXING IN 1D ARRAY
-
         for i in range(self.rows):
             idx = self.rows * self.cols + i
 
@@ -477,13 +473,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.viewers.append(dv)
             dv.slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
-            # LIST INDEX OUT OF RANGE?
-            #dv.slider.valueChanged.connect(lambda x = idx: self.syncSlider(self.viewers[x].slider.value()))
-
-            # self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
-            # self.viewers.append(dv)
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
-            # self.viewers[idx].slider.valueChanged.connect(lambda:self.syncSlider(self.viewers[idx].slider.value()))
 
         self.cols = self.cols + 1
 
@@ -530,31 +520,6 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
                     if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
-
-
-    # def updateSliderValue(self, num: int):
-    #     self.viewers[idx].slider.blockSignals(True)
-    #     self.viewers[idx].slider.setValue(num)
-    #     self.viewers[idx].slider.blockSignals(False)
-
-
-    def syncSlider(self, num: int):
-        """If sliders are locked together, sync all sliders when one slider is moved"""
-        if(self.checkbox.isChecked()):
-            print("start")
-
-
-            for i in range(self.rows):
-                for j in range(self.cols):
-                    idx = i * self.cols + j
-                    print(idx)
-                    print("rows " + str(self.rows) + " col " + str(self.cols) + " idx " + str(idx))
-                    self.viewers[idx].slider.blockSignals(True)
-                    self.viewers[idx].slider.setValue(num)
-                    self.viewers[idx].slider.blockSignals(False)
-
-
-            print("end")
 
     def exit(self):
         """Exit application"""
