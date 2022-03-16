@@ -417,7 +417,13 @@ class MissionWidgetBackgroundThread(QThread):
 
             # All this junk below is updating the system indicator light, may need to move again in the future
             object_status_tooltip = {0: ":)", 1: "", 2: ""}
+            general_status_tooltip = {0: "", 1: "", 2: ""}
             max_status = 0
+
+            if len(self.missionWidget.centralWidget.controlsSidebarWidget.board_objects) == 0:
+                general_status_tooltip[1] = "No avionics boards added (Edit->Add Avionics)\n"
+                max_status = max(1, max_status)
+
             for object_ in self.missionWidget.controlsWidget.object_list:
                 status, message = object_.objectStatusCheck()
 
@@ -425,12 +431,14 @@ class MissionWidgetBackgroundThread(QThread):
                     max_status = max(max_status, status)
                     object_status_tooltip[status] = object_status_tooltip[status] + message + "\n"
 
-            if len(object_status_tooltip[1]) > 0 and len(object_status_tooltip[2]) > 0:
-                tooltip = "Critical: \n" + object_status_tooltip[2] + "\nWarnings: \n" + object_status_tooltip[1]
-            elif len(object_status_tooltip[1]) > 0:
-                tooltip = "Warnings: \n" + object_status_tooltip[1]
-            elif len(object_status_tooltip[2]) > 0:
-                tooltip = "Critical: \n" + object_status_tooltip[2]
+            # Nasty block, first checks to see if there are both critical and warnings or just one or the other.
+            # Then actually sets the tooltip in right format to display
+            if (len(general_status_tooltip[1]) > 0 or len(object_status_tooltip[1])) > 0 and (len(general_status_tooltip[2]) > 0 or len(object_status_tooltip[2]) > 0):
+                tooltip = "Critical: \n" + general_status_tooltip[2] + object_status_tooltip[2] + "\nWarnings: \n" + general_status_tooltip[1] + object_status_tooltip[1]
+            elif len(general_status_tooltip[1]) > 0 or len(object_status_tooltip[1]) > 0:
+                tooltip = "Warnings: \n" + general_status_tooltip[1] + object_status_tooltip[1]
+            elif len(general_status_tooltip[2]) > 0 or len(object_status_tooltip[2]) > 0:
+                tooltip = "Critical: \n" + general_status_tooltip[2] + object_status_tooltip[2]
             else:
                 tooltip = object_status_tooltip[0]
 
