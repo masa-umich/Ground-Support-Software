@@ -80,11 +80,12 @@ class ControlsWindow(QMainWindow):
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
         exitAct = QAction('&Save and Quit', self)
         exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(qApp.quit)
+        exitAct.triggered.connect(self.gui.guiExit)
 
         # The next several segments of code create objects to represent each button action for the toolbar
         # Each segment has a comment above it describing what action it implements
         # The third line of each segment calls a function, defined below, that carries out the action of the button
+        # Help menu is added in the baseGUI class
         # FILE -> New
         newAct = QAction('&New Configuration', self)
         newAct.setShortcut('Ctrl+N')
@@ -221,14 +222,6 @@ class ControlsWindow(QMainWindow):
         for board in Constants.boards:
             self.sensor_calibration.addAction(board)
 
-        # Help -> Help Info
-        helpAct = QAction("&General Info", self)
-        helpAct.triggered.connect(lambda: self.showStandardMessageDialog("Help Info", "Connect with server under 'Connection'\nCampaigns and tests organize data\nCampaigns cannot be started till connected with server (do not need boards connected)\nAdjust how the gui looks with screen draw settings\nObjects can be multi selected", "Information"))
-
-        # Help -> Report Issue
-        reportIssueAct = QAction('&Report Issue', self)
-        reportIssueAct.triggered.connect(self.reportIssue)
-
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
@@ -294,16 +287,12 @@ class ControlsWindow(QMainWindow):
             avionics_menu.addAction(self.buttonBoxAct)
             avionics_menu.addMenu(self.sensor_calibration)
 
-        help_menu = menuBar.addMenu('Help')
-        help_menu.addAction(helpAct)
-        help_menu.addAction(reportIssueAct)
-
         # Add all menus to a dict for easy access by other functions
+        # Help menu is added in the baseGUI class
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       "View": view_menu,
-                      "Run":  campaign_menu,
-                      "Help": help_menu}
+                      "Run":  campaign_menu}
 
         self.showMaximized()
 
@@ -469,13 +458,6 @@ class ControlsWindow(QMainWindow):
             self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
             with open(fileName, "w") as write_file:
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
-
-    @staticmethod
-    def reportIssue():
-        """
-            Opens a link to the gitlab issue ticket form so people can quickly fill out
-        """
-        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/new?issue%5Bmilestone_id%5D=')
 
     @staticmethod
     def openCampaignFolder():

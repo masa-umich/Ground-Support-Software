@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+import webbrowser
 from constants import Constants
 from liveDataHandler import LiveDataHandler
 
@@ -111,7 +112,35 @@ class BaseGui(QObject):
 
         self._mainWindow.setWindowTitle(self._mainWindow.windowTitle() + " (" + Constants.GUI_VERSION + ")")
 
+        menuBar = self._mainWindow.menuBar()
+
+        # Help -> Help Info
+        helpAct = QAction("&Documentation", self)
+        helpAct.triggered.connect(self.openWiki)
+
+        # Help -> Report Issue
+        reportIssueAct = QAction('&Report Issue', self)
+        reportIssueAct.triggered.connect(self.reportIssue)
+
+        help_menu = menuBar.addMenu('Help')
+        help_menu.addAction(helpAct)
+        help_menu.addAction(reportIssueAct)
+
         self.setStatusBarMessage("Lightweight Gui Startup")
+
+    @staticmethod
+    def reportIssue():
+        """
+            Opens a link to the gitlab issue ticket form so people can quickly fill out
+        """
+        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/new?issue%5Bmilestone_id%5D=')
+
+    @staticmethod
+    def openWiki():
+        """
+            Opens a link to the gitlab wiki
+        """
+        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/wikis/GUI-Main-Page')
 
     @pyqtSlot()
     def gotConnectionToServer(self):
