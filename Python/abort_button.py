@@ -62,6 +62,7 @@ class AbortButton(QtWidgets.QDialog):
 
         # Software Button enable toggle
         self.soft_arming_button = QPushButton("Enable Software Button")
+        self.soft_arming_button.setDisabled(True)
         self.layout.addWidget(self.soft_arming_button)
         self.soft_arming_button.clicked.connect(self.soft_arm_toggle)
 

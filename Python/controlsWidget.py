@@ -113,6 +113,7 @@ class ControlsWidget(QWidget):
 
         self.main_abort_button.setFont(font)
         self.main_abort_button.setFixedWidth(200 * self.gui.pixel_scale_ratio[0])
+        self.main_abort_button.setStyleSheet("background-color : darkred")
         self.main_abort_button.setDisabled(False)
         self.main_abort_button.setFixedHeight(90 * self.gui.pixel_scale_ratio[1])
         self.main_abort_button.move(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0], self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1])
