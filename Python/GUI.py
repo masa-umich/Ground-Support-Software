@@ -57,6 +57,9 @@ class GUI(BaseGui):  # Inherits QObject just so signals can be used
             self.controlsWindow.startRunAct.setEnabled(True)
         else:
             self.liveDataHandler.sendCommand(6, [str(self.campaign.saveName)])
+            if self.campaign.isTestActive:
+                self.liveDataHandler.sendCommand(10, [self.campaign.saveName, self.campaign.currentTestName, True])
+
             self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
 
     @pyqtSlot()

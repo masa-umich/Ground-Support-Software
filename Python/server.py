@@ -57,6 +57,7 @@ class Server(QtWidgets.QMainWindow):
         self.server_log = None
         self.serial_log = None
         self.data_log = None
+        self.test_data_log = None
         self.command_log = None
         self.campaign_log = None
         self.campaign_location = None
@@ -381,6 +382,17 @@ class Server(QtWidgets.QMainWindow):
 
                         self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
 
+                    elif command["command"] == 10:
+                        print(command)
+                        runname = command["args"][0]
+                        testName = command["args"][1]
+
+                        if testName is not None:
+                            isRecovered = command["args"][2]
+                            self.open_test_log(runname, testName, Constants.campaign_data_dir, isRecovered)
+                        else:
+                            self.close_test_log()
+
                     else:
                         print("WARNING: Unhandled command: ", command)
 
@@ -489,8 +501,6 @@ class Server(QtWidgets.QMainWindow):
         except Exception as e:
             print("Error: could not send command because of error ", e)
 
-
-    
     def run_auto(self, lines: list, addr: int, remote: bool = False):
         """Runs an autosequence
 
@@ -549,6 +559,10 @@ class Server(QtWidgets.QMainWindow):
         self.close_log()
 
         recovered_state = os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/")
+
+        if not os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/tests/"):
+            os.makedirs(Constants.campaign_data_dir+campaign_save_name+"/tests/")
+
         self.open_log(campaign_save_name, Constants.campaign_data_dir, recovered_state)
 
         if not recovered_state:
@@ -716,6 +730,31 @@ class Server(QtWidgets.QMainWindow):
             self.serial_log.write("Time, Packet\n")
             self.data_log.write(self.header + "\n")
 
+    def open_test_log(self, runname:str, test_name, save_location: str, is_recovered: bool = False):
+
+        # make data folder if it does not exist
+        if not os.path.exists(save_location + runname + "/tests/"):
+            os.makedirs(save_location + runname + "/tests/")
+
+        # Un lock these files
+        if is_recovered:
+            os.chmod(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", S_IWUSR | S_IREAD)
+            # log file init and headers
+            self.test_data_log = open(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+
+            self.test_data_log.write(self.header + "\n")
+        else:
+            self.test_data_log = open(
+                save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+
+            self.test_data_log.write(self.header + "\n")
+
+    def close_test_log(self):
+        if self.test_data_log is not None and not self.test_data_log.closed:
+            self.test_data_log.close()
+            os.chmod(self.test_data_log.name, S_IREAD | S_IRGRP | S_IROTH)
+            self.test_data_log = None
+
     def close_log(self):
         """Safely closes all logfiles"""
 
@@ -727,6 +766,8 @@ class Server(QtWidgets.QMainWindow):
         os.chmod(self.command_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.data_log.close()
         os.chmod(self.data_log.name, S_IREAD | S_IRGRP | S_IROTH)
+
+        self.close_test_log()
 
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
@@ -819,6 +860,9 @@ class Server(QtWidgets.QMainWindow):
                                 #print([n, key, dataframe[key]])
 
                             self.data_log.write(self.get_logstring() + '\n')
+
+                            if self.test_data_log is not None:
+                                self.test_data_log.write(self.get_logstring() + '\n')
                         finally:
                             self.database_lock.release()
                     else:

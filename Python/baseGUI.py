@@ -107,11 +107,18 @@ class BaseGui(QObject):
         self._mainWindow = mainWindow
 
     def setMainWindow(self, mainWindow: QMainWindow):
+        """
+        All GUI applications created with BaseGUI class need to call this function to allow the window to actually be
+        displayed. This also does a couple simple things like add a status bar and a help menu
+        :param mainWindow: main window of the application
+        :return: None
+        """
         self._mainWindow = mainWindow
         self._mainWindow.statusBar().setFixedHeight(22 * self.pixel_scale_ratio[1])
 
         self._mainWindow.setWindowTitle(self._mainWindow.windowTitle() + " (" + Constants.GUI_VERSION + ")")
 
+        # Adds in help menu
         menuBar = self._mainWindow.menuBar()
 
         # Help -> Help Info
