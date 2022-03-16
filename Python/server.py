@@ -18,6 +18,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QDateTime
 from PyQt5.QtWidgets import *
 
+from constants import Constants
 from party import PartyParrot
 from s2Interface import S2_Interface
 import parse_auto
@@ -547,20 +548,20 @@ class Server(QtWidgets.QMainWindow):
     def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
         self.close_log()
 
-        recovered_state = os.path.isdir("data/campaigns/"+campaign_save_name+"/")
-        self.open_log(campaign_save_name, "data/campaigns/", recovered_state)
+        recovered_state = os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/")
+        self.open_log(campaign_save_name, Constants.campaign_data_dir, recovered_state)
 
         if not recovered_state:
-            self.campaign_location = "data/campaigns/" + campaign_save_name + "/"
-            self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "w")
+            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "w")
             self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
             self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
 
-            with open("data/campaigns/" + campaign_save_name + "/configuration.json", "w") as write_file:
+            with open(Constants.campaign_data_dir + campaign_save_name + "/configuration.json", "w") as write_file:
                 json.dump(dataDict, write_file, indent="\t")
                 os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
 
-            with open("data/campaigns/" + campaign_save_name + "/avionicsMappings.csv", "w") as write_file:
+            with open(Constants.campaign_data_dir + campaign_save_name + "/avionicsMappings.csv", "w") as write_file:
                 write_file.write("Channel,Name\n")
                 for key in avionicsMappings:
                     if key != "Boards":  # currently don't list the boards the user has added
@@ -568,9 +569,9 @@ class Server(QtWidgets.QMainWindow):
                             0] + "\n")  # key is not useful, first index is name, second is channel
                 os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
         else:
-            os.chmod("data/campaigns/" + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
-            self.campaign_location = "data/campaigns/" + campaign_save_name + "/"
-            self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "a+")
+            os.chmod(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
+            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "a+")
             self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
             self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
 
