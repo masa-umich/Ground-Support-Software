@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+import webbrowser
 from constants import Constants
 from liveDataHandler import LiveDataHandler
 
@@ -106,12 +107,47 @@ class BaseGui(QObject):
         self._mainWindow = mainWindow
 
     def setMainWindow(self, mainWindow: QMainWindow):
+        """
+        All GUI applications created with BaseGUI class need to call this function to allow the window to actually be
+        displayed. This also does a couple simple things like add a status bar and a help menu
+        :param mainWindow: main window of the application
+        :return: None
+        """
         self._mainWindow = mainWindow
         self._mainWindow.statusBar().setFixedHeight(22 * self.pixel_scale_ratio[1])
 
         self._mainWindow.setWindowTitle(self._mainWindow.windowTitle() + " (" + Constants.GUI_VERSION + ")")
 
+        # Adds in help menu
+        menuBar = self._mainWindow.menuBar()
+
+        # Help -> Help Info
+        helpAct = QAction("&Documentation", self)
+        helpAct.triggered.connect(self.openWiki)
+
+        # Help -> Report Issue
+        reportIssueAct = QAction('&Report Issue', self)
+        reportIssueAct.triggered.connect(self.reportIssue)
+
+        help_menu = menuBar.addMenu('Help')
+        help_menu.addAction(helpAct)
+        help_menu.addAction(reportIssueAct)
+
         self.setStatusBarMessage("Lightweight Gui Startup")
+
+    @staticmethod
+    def reportIssue():
+        """
+            Opens a link to the gitlab issue ticket form so people can quickly fill out
+        """
+        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/new?issue%5Bmilestone_id%5D=')
+
+    @staticmethod
+    def openWiki():
+        """
+            Opens a link to the gitlab wiki
+        """
+        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/wikis/GUI-Main-Page')
 
     @pyqtSlot()
     def gotConnectionToServer(self):

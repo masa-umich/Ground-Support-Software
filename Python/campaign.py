@@ -12,8 +12,7 @@ class Campaign(QObject):
     Class that holds all the functions for a new campaign
     """
 
-    # HMM: We only want one instance of this class ever so do we make it a Singleton?!
-    # TODO: Currently the Gui will have to be closed and reopened to allow for a new run
+    # TODO: This class references the client class when it should be using liveDataHandler
 
     # Signals for this class
     campaignStartSignal = pyqtSignal()
@@ -103,6 +102,7 @@ class Campaign(QObject):
         self.testStartSignal.emit(name)
 
         if self.client:
+            self.client.command(10, [self.saveName, self.currentTestName, False])
             self.client.command(9, ["CET-" + self.CETasString(), "TEST", "Test '" + name + "' started"])
 
     def endTest(self):
@@ -116,6 +116,7 @@ class Campaign(QObject):
         self.testEndSignal.emit()
 
         if self.client:
+            self.client.command(10, [self.saveName, None])
             self.client.command(9, ["CET-" + self.CETasString(), "TEST", "Test '" + self.currentTestName + "' ended"])
 
     def updateCET(self):

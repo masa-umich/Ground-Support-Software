@@ -69,6 +69,8 @@ class Constants:
         4: QColor(255,150,0,255)
     }
 
+    campaign_data_dir = "data/campaigns/"
+
     event_lookup = {"0": "QEvent::None",
                     "114": "QEvent::ActionAdded",
                     "113": "QEvent::ActionChanged",

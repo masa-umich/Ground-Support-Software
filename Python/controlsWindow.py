@@ -80,11 +80,12 @@ class ControlsWindow(QMainWindow):
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
         exitAct = QAction('&Save and Quit', self)
         exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(qApp.quit)
+        exitAct.triggered.connect(self.gui.guiExit)
 
         # The next several segments of code create objects to represent each button action for the toolbar
         # Each segment has a comment above it describing what action it implements
         # The third line of each segment calls a function, defined below, that carries out the action of the button
+        # Help menu is added in the baseGUI class
         # FILE -> New
         newAct = QAction('&New Configuration', self)
         newAct.setShortcut('Ctrl+N')
@@ -116,11 +117,7 @@ class ControlsWindow(QMainWindow):
         self.exitDebugAct.triggered.connect(self.exitDebug)
         self.exitDebugAct.setDisabled(True)
 
-        # FILE -> Save Notes
-        self.saveNotesAct = QAction('&Save notes', self)
-        self.saveNotesAct.triggered.connect(self.saveNotes)
-
-        # Run -> Add Boards
+        # FILE -> Screen Draw Settings
         self.screenSettingsAct = QAction('&Screen Draw Settings', self)
         self.screenSettingsAct.triggered.connect(self.showDrawingSettingsDialog)
 
@@ -133,100 +130,97 @@ class ControlsWindow(QMainWindow):
         self.exitEditAct = QAction('&Leave Edit Mode', self)
         self.exitEditAct.setShortcut('Ctrl+Shift+E')
         self.exitEditAct.triggered.connect(self.exitEdit)
-        self.exitEditAct.setDisabled(True) # Start with it disabled
+        self.exitEditAct.setDisabled(True)  # Start with it disabled
 
-        # Run -> Start Campaign
+        # EDIT -> Add Boards
+        self.addAvionicsAct = QAction('&Add Avionics', self)
+        self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
+        self.addAvionicsAct.setShortcut('Alt+A')
+
+        # VIEW -> Show Avionics Mappings
+        self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
+        self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
+
+        # VIEW -> Data Viewer
+        data_view_dialog = QAction("&Data Viewer", self)
+        data_view_dialog.triggered.connect(lambda: self.gui.show_window(self.data_viewer_dialog))
+
+        # VIEW -> Limits
+        self.limit_action = QAction('&Limits', self)
+        self.limit_action.triggered.connect(lambda: self.gui.show_window(self.limits))
+        self.limit_action.setShortcut('Alt+L')
+
+        # VIEW -> Autosequence Manager
+        self.auto_action = QAction('Auto&sequence Manager', self)
+        self.auto_action.triggered.connect(lambda: self.gui.show_window(self.auto_manager))
+        self.auto_action.setShortcut('Alt+S')
+
+        # VIEW -> Level Sensing
+        self.level_action = QAction("&Level Sensing", self)
+        self.level_action.triggered.connect(lambda: self.gui.show_window(self.tank_levels))
+        # self.level_action.setShortcut('Alt+D')
+
+        # Campaign -> Start Campaign
         self.startRunAct = QAction('&Start Campaign', self)
         self.startRunAct.setShortcut('Ctrl+R')
         self.startRunAct.triggered.connect(lambda: self.showRunDialog(False))
 
-        # Run -> End Campaign
+        # Campaign -> End Campaign
         self.endRunAct = QAction('&End Campaign', self)
         self.endRunAct.setShortcut('Ctrl+Shift+R')
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
 
-        # Run -> Start Test
+        # Campaign -> Start Test
         self.startTestAct = QAction('&Start Test', self)
         self.startTestAct.setShortcut('Ctrl+T')
         self.startTestAct.triggered.connect(lambda: self.showRunDialog(True))
         self.startTestAct.setDisabled(True)
 
-        # Run -> End Test
+        # Campaign -> End Test
         self.endTestAct = QAction('&End Test', self)
         self.endTestAct.setShortcut('Ctrl+Shift+T')
         self.endTestAct.triggered.connect(self.endTest)
         self.endTestAct.setDisabled(True)  # Start with it disabled
 
-        # Run -> Show Avionics Mappings
-        self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
-        self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
-
-        # Run -> Add Boards
-        self.addAvionicsAct = QAction('&Add Avionics', self)
-        self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
-        self.addAvionicsAct.setShortcut('Alt+A')
-
-        # Run -> Connection Settings
-        self.connect = QAction("&Connection", self)
-        self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
-        self.connect.setShortcut('Alt+C')
-
-        # Run -> Connection Settings
-        data_view_dialog = QAction("&Data Viewer", self)
-        data_view_dialog.triggered.connect(lambda: self.gui.show_window(self.data_viewer_dialog))
-
-        # Run -> Flash
-        self.flashsettings = QAction("&Flash", self)
-        self.flashsettings.triggered.connect(lambda: self.gui.show_window(self.flash_dialog))
-        self.flashsettings.setShortcut('Alt+F')
-
-        #Run -> Tare Load Cells
-        self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
-        self.tareLoadCellAct.triggered.connect(self.tareLoadCell)
-
-        # Run -> Zero Board System Time
-        self.zeroTimeAct = QAction('Zero Board System Clocks', self)
-        self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
-
-        # Run -> Abort Button Settings
-        self.buttonBoxAct = QAction('Abort &Button', self)
-        self.buttonBoxAct.setShortcut('Alt+B')
-        self.buttonBoxAct.triggered.connect(lambda: self.gui.show_window(self.button_box))
-
-        # Run -> Limits
-        self.limit_action = QAction('&Limits', self)
-        self.limit_action.triggered.connect(lambda: self.gui.show_window(self.limits))
-        self.limit_action.setShortcut('Alt+L')
-
-        # Run -> Autosequence Manager
-        self.auto_action = QAction('Auto&sequence Manager', self)
-        self.auto_action.triggered.connect(lambda: self.gui.show_window(self.auto_manager))
-        self.auto_action.setShortcut('Alt+S')
-
-        self.ambientizeMenu = QMenu('Ambientize',self)
+        # Campaign -> Ambientize
+        self.ambientizeMenu = QMenu('Ambientize', self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
         for board in Constants.boards:
             self.ambientizeMenu.addAction(board)
 
-        # Run -> Level Sensing
-        self.level_action = QAction("&Level Sensing", self)
-        self.level_action.triggered.connect(lambda: self.gui.show_window(self.tank_levels))
-        #self.level_action.setShortcut('Alt+D')
+        # Campaign -> Tare Load Cells
+        self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
+        self.tareLoadCellAct.triggered.connect(self.tareLoadCell)
 
-        # Run -> Sensor Calibrations
+        # Campaign -> Zero Board System Time
+        self.zeroTimeAct = QAction('Zero Board System Clocks', self)
+        self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
+
+        # Campaign -> Open Campaign Folder
+        self.openCampaignDir = QAction('Open Campaign Folder', self)
+        self.openCampaignDir.triggered.connect(self.openCampaignFolder)
+
+        # Avionics -> Connection Settings
+        self.connect = QAction("&Connection", self)
+        self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+        self.connect.setShortcut('Alt+C')
+
+        # Avionics -> Flash
+        self.flashsettings = QAction("&Flash", self)
+        self.flashsettings.triggered.connect(lambda: self.gui.show_window(self.flash_dialog))
+        self.flashsettings.setShortcut('Alt+F')
+
+        # Avionics -> Abort Button Settings
+        self.buttonBoxAct = QAction('Abort &Button', self)
+        self.buttonBoxAct.setShortcut('Alt+B')
+        self.buttonBoxAct.triggered.connect(lambda: self.gui.show_window(self.button_box))
+
+        # Avionics -> Sensor Calibrations
         self.sensor_calibration = QMenu("Sensor Calibrations", self)
         self.sensor_calibration.triggered.connect(self.sensorsWindow.calibrateSensorsWindow)
         for board in Constants.boards:
             self.sensor_calibration.addAction(board)
-
-        # Help -> Help Info
-        helpAct = QAction("&General Info", self)
-        helpAct.triggered.connect(lambda: self.showStandardMessageDialog("Help Info", "Connect with server under 'Connection'\nCampaigns and tests organize data\nCampaigns cannot be started till connected with server (do not need boards connected)\nAdjust how the gui looks with screen draw settings\nObjects can be multi selected", "Information"))
-
-        # Help -> Report Issue
-        reportIssueAct = QAction('&Report Issue', self)
-        reportIssueAct.triggered.connect(self.reportIssue)
 
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
@@ -277,6 +271,8 @@ class ControlsWindow(QMainWindow):
         campaign_menu.addMenu(self.ambientizeMenu)
         campaign_menu.addAction(self.tareLoadCellAct)
         campaign_menu.addAction(self.zeroTimeAct)
+        campaign_menu.addSeparator()
+        campaign_menu.addAction(self.openCampaignDir)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
@@ -291,16 +287,12 @@ class ControlsWindow(QMainWindow):
             avionics_menu.addAction(self.buttonBoxAct)
             avionics_menu.addMenu(self.sensor_calibration)
 
-        help_menu = menuBar.addMenu('Help')
-        help_menu.addAction(helpAct)
-        help_menu.addAction(reportIssueAct)
-
         # Add all menus to a dict for easy access by other functions
+        # Help menu is added in the baseGUI class
         self.menus = {"File": file_menu,
                       "Edit": edit_menu,
                       "View": view_menu,
-                      "Run":  campaign_menu,
-                      "Help": help_menu}
+                      "Run":  campaign_menu}
 
         self.showMaximized()
 
@@ -468,11 +460,12 @@ class ControlsWindow(QMainWindow):
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
     @staticmethod
-    def reportIssue():
+    def openCampaignFolder():
         """
-            Opens a link to the gitlab issue ticket form so people can quickly fill out
+        Opens the OS specific file explorer to where all the campaign data is saved for
+        :return: None
         """
-        webbrowser.open('https://gitlab.eecs.umich.edu/masa/avionics/gui/-/issues/new?issue%5Bmilestone_id%5D=')
+        webbrowser.open('file:///' + os.path.realpath(Constants.campaign_data_dir))
 
     def enterDebug(self):
         """
