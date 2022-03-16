@@ -11,34 +11,38 @@ class LiveDataHandler:
     def __init__(self, gui: None):
 
         self._gui = gui
-        self._client = None
+        self._client = ClientWidget(True, self._gui)
+        self.is_active = False  # Use this to check if the thread is running
+
         self.thread = LiveDataHandlerBackgroundThread(self)
-        self.campaign = self._gui.campaign
+        self.startThread()
+        self.populateData = False
 
         self.dataPacketSignal = self.thread.lastPacketDataSignal
         self.updateScreenSignal = self.thread.updateScreenSignal
         self.connectionStatusSignal = self.thread.connectionStatusSignal
 
-        self.is_active = False  # Use this to check if the run is running
-
-    def postInit(self):
-        self._initClient()
-
-    def _initClient(self):
-        self._client = ClientWidget(True, self._gui)
-        self.startThread()
+    # def postInit(self):
+    #     self._initClient()
+    #
+    # def _initClient(self):
+    #     self._client = ClientWidget(True, self._gui)
+    #     self.startThread()
 
     def sendCommand(self, cmd_id: int, args: dict):
         self._client.command(cmd_id, args)
 
     def getClient(self):
-        return self._client
+        return self._client  # type: ClientWidget
 
     def getGui(self):
         return self._gui
 
+    def setPopulateData(self, value: bool):
+        self.populateData = value
+
     def shouldPopulateData(self):
-        return self.dataHandler.campaign.is_active
+        return self.populateData
 
     def startThread(self):
         self.is_active = True
@@ -73,9 +77,6 @@ class LiveDataHandlerBackgroundThread(QThread):
             # Check for data ever 200ms
             time.sleep(0.2)
             packet = self.dataHandler.getClient().cycle()
-
-            # Not really data updating but oh well
-            self.dataHandler.getGui().controlsWindow.button_box.cycle()
 
             if packet is not None:
                 # All is well

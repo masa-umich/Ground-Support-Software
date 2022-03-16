@@ -8,8 +8,8 @@ from PyQt5.QtCore import Qt
 from overrides import overrides
 from constants import Constants
 
+from baseGUI import BaseGui
 from s2Interface import S2_Interface
-from ClientWidget import ClientDialog
 from parse_auto import parse_auto
 
 INTERFACE = S2_Interface()
@@ -305,7 +305,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
 
 class AutoManager(QtWidgets.QMainWindow):
-    def __init__(self, gui = None, *args, **kwargs):
+    def __init__(self, gui, singular : bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filename = 'Untitled'
@@ -365,12 +365,17 @@ class AutoManager(QtWidgets.QMainWindow):
         load_action.triggered.connect(self.load)
         options_menu.addAction(load_action)
 
+        if singular:
+            connect = QtGui.QAction("&Connection", options_menu)
+            connect.setShortcut('Alt+C')
+            connect.triggered.connect(lambda: self._gui.show_window(self._gui.liveDataHandler.getClient()))
+            options_menu.addAction(connect)
+
         self.code_area = LineTextWidget()
         top_layout.addWidget(self.code_area)
         self.code_area.setMouseTracking(True)
 
         self.code_area.setText("#Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70")
-
 
         butt_layout = QtWidgets.QHBoxLayout()
         self.run_button = QtWidgets.QPushButton("Execute")
@@ -464,14 +469,10 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
-    CYCLE_TIME = 250  # in ms
-    window = AutoManager()
 
-    # timer and tick updates
-    cycle_time = 100  # in ms
-    timer = QtCore.QTimer()
-    timer.timeout.connect(window.client.cycle)
-    timer.start(CYCLE_TIME)
+    lwgui = BaseGui(app)
+    window = AutoManager(gui=lwgui, singular=True)
+    lwgui.setMainWindow(window)
 
     window.show()
     sys.exit(app.exec())

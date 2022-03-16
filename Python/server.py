@@ -572,7 +572,7 @@ class Server(QtWidgets.QMainWindow):
             self.campaign_location = "data/campaigns/" + campaign_save_name + "/"
             self.campaign_log = open("data/campaigns/" + campaign_save_name + "/campaign_log.txt", "a+")
             self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
-            self.campaign_log.write("Campaign %s recovered during new server connenction" % campaign_save_name)
+            self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
 
     def checkpoint_logs(self, filename, dataDict, avionicsMappings):
         if filename in (None, (), []):

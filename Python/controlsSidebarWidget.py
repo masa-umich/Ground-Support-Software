@@ -123,7 +123,7 @@ class ControlsSidebarWidget(QWidget):
         # We occasionally need to call this function to update boards at weird times, we don't want the status bar when
         # that happens
         if not silent:
-            self.window.setStatusBarMessage("Boards: " + str(boardNames) + " added")
+            self.gui.setStatusBarMessage("Boards: " + str(boardNames) + " added")
 
     '''def addBoards(self, boardNames: []):
         """
@@ -152,7 +152,7 @@ class ControlsSidebarWidget(QWidget):
     def abort_init(self):
         """Changes the state of each board. 
         """
-        self.window.setStatusBarMessage("Abort button clicked!")
+        self.gui.setStatusBarMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
                 board.sendBoardState("Abort")

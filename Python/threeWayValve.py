@@ -250,7 +250,7 @@ class ThreeWayValve(AvionicsObject):
         text = ""
 
         if self.isAvionicsFullyDefined():
-            text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
+            text += "Channel: %s\n" % (self.getBoardChannelString())
         else:
             text += "Channel:\n"
 

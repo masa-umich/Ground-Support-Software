@@ -434,6 +434,7 @@ class MissionWidgetBackgroundThread(QThread):
             else:
                 tooltip = object_status_tooltip[0]
 
+            tooltip = tooltip.rstrip('\r\n')
             self.updateStatusIndicatorSignal.emit(max_status, tooltip)
 
             if self.missionWidget.gui.campaign.is_active:

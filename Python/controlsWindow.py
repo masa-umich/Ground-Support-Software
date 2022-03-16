@@ -14,7 +14,7 @@ from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
-from flash import FlashController
+from flash import FlashWindow
 from abort_button import AbortButton
 from limits import LimitWindow
 from auto_manager import AutoManager
@@ -61,7 +61,7 @@ class ControlsWindow(QMainWindow):
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
-        self.flash_dialog = FlashController(self.gui)
+        self.flash_dialog = FlashWindow(self.gui)
         self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateFromConnectionStatus)
 
         appid = 'MASA.GUI' # arbitrary string
@@ -169,16 +169,16 @@ class ControlsWindow(QMainWindow):
 
         # Run -> Connection Settings
         self.connect = QAction("&Connection", self)
-        self.connect.triggered.connect(lambda: self.show_window(self.gui.liveDataHandler.getClient()))
+        self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
         self.connect.setShortcut('Alt+C')
 
         # Run -> Connection Settings
         data_view_dialog = QAction("&Data Viewer", self)
-        data_view_dialog.triggered.connect(lambda: self.show_window(self.data_viewer_dialog))
+        data_view_dialog.triggered.connect(lambda: self.gui.show_window(self.data_viewer_dialog))
 
         # Run -> Flash
         self.flashsettings = QAction("&Flash", self)
-        self.flashsettings.triggered.connect(lambda: self.show_window(self.flash_dialog))
+        self.flashsettings.triggered.connect(lambda: self.gui.show_window(self.flash_dialog))
         self.flashsettings.setShortcut('Alt+F')
 
         #Run -> Tare Load Cells
@@ -192,16 +192,16 @@ class ControlsWindow(QMainWindow):
         # Run -> Abort Button Settings
         self.buttonBoxAct = QAction('Abort &Button', self)
         self.buttonBoxAct.setShortcut('Alt+B')
-        self.buttonBoxAct.triggered.connect(lambda: self.show_window(self.button_box))
+        self.buttonBoxAct.triggered.connect(lambda: self.gui.show_window(self.button_box))
 
         # Run -> Limits
         self.limit_action = QAction('&Limits', self)
-        self.limit_action.triggered.connect(lambda: self.show_window(self.limits))
+        self.limit_action.triggered.connect(lambda: self.gui.show_window(self.limits))
         self.limit_action.setShortcut('Alt+L')
 
         # Run -> Autosequence Manager
         self.auto_action = QAction('Auto&sequence Manager', self)
-        self.auto_action.triggered.connect(lambda: self.show_window(self.auto_manager))
+        self.auto_action.triggered.connect(lambda: self.gui.show_window(self.auto_manager))
         self.auto_action.setShortcut('Alt+S')
 
         self.ambientizeMenu = QMenu('Ambientize',self)
@@ -211,7 +211,7 @@ class ControlsWindow(QMainWindow):
 
         # Run -> Level Sensing
         self.level_action = QAction("&Level Sensing", self)
-        self.level_action.triggered.connect(lambda: self.show_window(self.tank_levels))
+        self.level_action.triggered.connect(lambda: self.gui.show_window(self.tank_levels))
         #self.level_action.setShortcut('Alt+D')
 
         # Run -> Sensor Calibrations
@@ -330,20 +330,6 @@ class ControlsWindow(QMainWindow):
 
         return super().eventFilter(source, event)
 
-    def setStatusBarMessage(self, text: str, error: bool = False):
-        """
-        Set text and possible show as error for status bar
-        :param text: text to set
-        :param error: bool, true for error
-        :return: none
-        """
-        if error:
-            self.statusBar().setStyleSheet("background-color: red")
-        else:
-            self.statusBar().setStyleSheet("")
-
-        self.statusBar().showMessage(text)
-
     def saveRegular(self):
         """
         Executes the save action. If file is named, just runs saveData.
@@ -418,7 +404,7 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.controlsSidebarWidget.board_objects.clear()
 
-        self.setStatusBarMessage("New configuration started")
+        self.gui.setStatusBarMessage("New configuration started")
 
     def enterEdit(self):
         """
@@ -434,14 +420,14 @@ class ControlsWindow(QMainWindow):
             self.exitDebugAct.setDisabled(True)
             self.startRunAct.setDisabled(True)
             self.centralWidget.missionWidget.updateStatusLabel("Edit Mode", True)
-            self.setStatusBarMessage("Enter Edit Mode")
+            self.gui.setStatusBarMessage("Enter Edit Mode")
 
     def exitEdit(self):
         """
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
-            self.setStatusBarMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
+            self.gui.setStatusBarMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
@@ -500,7 +486,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setDisabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
-        self.setStatusBarMessage("Enter Debug Mode")
+        self.gui.setStatusBarMessage("Enter Debug Mode")
 
     def exitDebug(self):
         """
@@ -513,7 +499,7 @@ class ControlsWindow(QMainWindow):
         self.startRunAct.setEnabled(True)
 
         self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
-        self.setStatusBarMessage("Exit Debug Mode")
+        self.gui.setStatusBarMessage("Exit Debug Mode")
 
     def showRunDialog(self, is_test: bool):
         """
@@ -629,7 +615,7 @@ class ControlsWindow(QMainWindow):
 
         self.gui.campaign.startRun(run_name)
         dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
-        self.setStatusBarMessage("Campaign '" + run_name + "' started")
+        self.gui.setStatusBarMessage("Campaign '" + run_name + "' started")
 
     def endRun(self):
         """
@@ -649,7 +635,7 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.addAvionicsAct.setEnabled(True)
         self.debugAct.setEnabled(True)
-        self.setStatusBarMessage("Campaign '" + self.gui.campaign.title + "' ended")
+        self.gui.setStatusBarMessage("Campaign '" + self.gui.campaign.title + "' ended")
 
     def startTest(self, dialog: QDialog, test_name: str):
         """
@@ -665,7 +651,7 @@ class ControlsWindow(QMainWindow):
         self.startTestAct.setDisabled(True)
         self.gui.campaign.startTest(test_name)  # This 2 is arbitrary expect it differs from the the canceled
         dialog.done(2)
-        self.setStatusBarMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
+        self.gui.setStatusBarMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
 
     def endTest(self):
         """
@@ -675,7 +661,7 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.startTestAct.setEnabled(True)
         self.gui.campaign.endTest()
-        self.setStatusBarMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
+        self.gui.setStatusBarMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -1030,23 +1016,6 @@ class ControlsWindow(QMainWindow):
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)
-
-    def show_window(self, window: QWidget):
-        """Shows a window or brings it to the front if already open.
-
-        Args:
-            window (QWidget): window to show (normally a dialog)
-        """
-        if hasattr(window, 'getDialog'):
-            window = window.getDialog()
-
-        # open window
-        window.show()
-
-        # bring to front
-        window.setWindowState(window.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
-        window.raise_()
-        window.activateWindow()
 
     @overrides
     def closeEvent(self, event):

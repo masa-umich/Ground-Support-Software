@@ -8,20 +8,37 @@ from datetime import datetime
 import serial
 import serial.tools.list_ports
 
+from baseGUI import BaseGui
 from constants import Constants
 from s2Interface import S2_Interface
 from LedIndicatorWidget import LedIndicator
+import time
+
+
+class AbortButtonWindow(QMainWindow):
+
+    def __init__(self, gui, singular : bool = False):
+        super().__init__()
+
+        self.abortButton = AbortButton(gui=gui, singular=singular)
+        self.setWindowTitle("Abort Button")
+        self.setCentralWidget(self.abortButton)
 
 
 class AbortButton(QtWidgets.QDialog):
 
     softwareAbortSoftArmedSignal = pyqtSignal(bool)
+    cycleSignal = pyqtSignal()
 
-    def __init__(self, gui):
+    def __init__(self, gui, singular : bool = False):
         super().__init__()
         self.setWindowTitle("Abort Button Settings")
         self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
+
+        self.backgroundThread = AbortButtonBackgroundThread(self)
+        self.cycleSignal.connect(self.cycle)
+        self.backgroundThread.start()
 
         self._gui = gui
         self.interface = S2_Interface()
@@ -117,10 +134,12 @@ class AbortButton(QtWidgets.QDialog):
         if not self.is_soft_armed:
             self.is_soft_armed = True
             self.softwareAbortSoftArmedSignal.emit(True)
+            self._gui.setStatusBarMessage("Abort Button Soft Armed")
             self.soft_arming_button.setText("Disable Software Button")
         else:
             self.softwareAbortSoftArmedSignal.emit(False)
             self.is_soft_armed = False
+            self._gui.setStatusBarMessage("Abort Button Not Soft Armed")
             self.soft_arming_button.setText("Enable Software Button")
 
     def arm_toggle(self):
@@ -130,9 +149,11 @@ class AbortButton(QtWidgets.QDialog):
             self.is_armed = True
             #self.last_state = False # to ensure abort triggers if button already depressed
             #self.state = False
+            self._gui.setStatusBarMessage("Hardware Button Enabled")
             self.arming_button.setText("Disable Hardware Button")
         else:
             self.is_armed = False
+            self._gui.setStatusBarMessage("Hardware Button Disabled")
             self.arming_button.setText("Enable Hardware Button")
     
     def cycle(self):
@@ -158,16 +179,34 @@ class AbortButton(QtWidgets.QDialog):
             #     self.last_abort_time = datetime.now().timestamp()
 
 
+class AbortButtonBackgroundThread(QThread):
+    """
+    Background class solely for calling the above Cycle function
+    """
+
+    def __init__(self, abort_button: AbortButton):
+        super().__init__()
+        self.abort_button = abort_button
+
+    def run(self):
+        while True:
+            time.sleep(.2)
+            self.abort_button.cycleSignal.emit()
+
+
 if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    controller = AbortButton(None)
+
+    lwgui = BaseGui(app)
+    controller = AbortButtonWindow(gui=lwgui, singular=True)
+    lwgui.setMainWindow(controller)
     
-    timer = QtCore.QTimer()
-    timer.timeout.connect(controller.cycle)
-    timer.start(50) # in ms, 20hz
+    # timer = QtCore.QTimer()
+    # timer.timeout.connect(controller.cycle)
+    # timer.start(50) # in ms, 20hz
     
     controller.show()
     sys.exit(app.exec())

@@ -297,7 +297,7 @@ class ControlsWidget(QWidget):
                     tube.deleteTube()
                     self.resetObjectsAnchorPointAlignment()
                     self.update()
-                    self.window.setStatusBarMessage("Tube canceled")
+                    self.gui.setStatusBarMessage("Tube canceled")
         # If 'r' key is pressed:
         elif e.key() == Qt.Key_R:
             # Calls rotate method on last object in editing list
@@ -420,7 +420,7 @@ class ControlsWidget(QWidget):
                     self.controlsPanel.addEditingObject(self.object_list[-1])
                     self.object_list[-1].move(point)
 
-                self.window.setStatusBarMessage(action.text() + " created")
+                self.gui.setStatusBarMessage(action.text() + " created")
 
             self.update()
 
@@ -505,11 +505,11 @@ class ControlsWidget(QWidget):
             with open(filename, "w") as write_file:
                 json.dump(data, write_file, indent="\t")
 
-            self.window.setStatusBarMessage("Configuration saved to " + filename)
+            self.gui.setStatusBarMessage("Configuration saved to " + filename)
 
         except PermissionError:
             self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify", "Warning")
-            self.window.setStatusBarMessage("Edit permission denied for file: " + filename)
+            self.gui.setStatusBarMessage("Edit permission denied for file: " + filename)
 
 
     # TODO: This should not be the location that data is started the load from,
@@ -683,7 +683,7 @@ class ControlsWidget(QWidget):
                 boards.append(data[i])
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
-        self.window.setStatusBarMessage("Configuration opened from " + fileName)
+        self.gui.setStatusBarMessage("Configuration opened from " + fileName)
 
 
 

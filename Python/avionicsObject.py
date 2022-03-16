@@ -50,7 +50,7 @@ class AvionicsObject(BaseObject):
 
         self.updateAvionicsMappings(oldBoardChan)
 
-        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
 
     def setChannel(self, channel: str):
         """
@@ -64,7 +64,7 @@ class AvionicsObject(BaseObject):
 
         self.updateAvionicsMappings(oldBoardChan)
 
-        self.central_widget.window.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
 
     def setLongName(self, name):
         """
@@ -80,7 +80,7 @@ class AvionicsObject(BaseObject):
         if not succeeded:
             super().setLongName(old_name)
             self.updateAvionicsMappings(self.getBoardChannelString())
-            self.central_widget.window.setStatusBarMessage("Cannot update name to '" + name + "' as that name is already taken!", True)
+            self.gui.setStatusBarMessage("Cannot update name to '" + name + "' as that name is already taken!", True)
 
     def updateAvionicsMappings(self, oldBoardChan: str):
         """

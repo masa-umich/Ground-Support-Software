@@ -108,7 +108,7 @@ class AnchorPoint(QPushButton):
             self.widget.is_drawing = True
             self.widget.setMouseTracking(True)
             self.widget.tube_list.append(self.tube)
-            self.widget.window.setStatusBarMessage("Tube draw started")
+            self.gui.setStatusBarMessage("Tube draw started")
 
         elif event.button() == Qt.LeftButton:
             self.widget.is_drawing = False

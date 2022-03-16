@@ -7,6 +7,7 @@ import hashlib
 import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QMainWindow
 import pyqtgraph as pg
 
@@ -28,6 +29,10 @@ class ClientDialog(QtWidgets.QDialog):
 
 
 class ClientWidget(QtWidgets.QWidget):
+
+    gotConnectionToServerSignal = pyqtSignal()
+    serverDisconnectSignal = pyqtSignal()
+
     def __init__(self, commandable: bool=True, gui = None, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -42,9 +47,6 @@ class ClientWidget(QtWidgets.QWidget):
 
         if gui is not None:
             self._gui = gui
-            self.gui_window = self._gui.controlsWindow
-        else:
-            self.gui_window = None
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
@@ -110,11 +112,10 @@ class ClientWidget(QtWidgets.QWidget):
 
         if command != 0:
             print(command_dict)
-            if self.gui_window is not None:
-                if command_dict["command"] == 3:
-                    self.gui_window.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
-                else:
-                    self.gui_window.setStatusBarMessage("Command sent to client: " + str(command_dict))
+            if command_dict["command"] == 3:
+                self._gui.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
+            else:
+                self._gui.setStatusBarMessage("Command sent to client: " + str(command_dict))
 
         # add to queue
         if self.is_connected:
@@ -129,38 +130,38 @@ class ClientWidget(QtWidgets.QWidget):
                 self.port.text())))  # connect to socket
 
             self.is_connected = True  # update status
-            if self.gui_window is not None:
-                if not self.gui_window.gui.campaign.is_active:
-                    self.gui_window.startRunAct.setEnabled(True)
-                else:
-                    self.command(6, [str(self.gui_window.gui.campaign.saveName)])
-                    self.gui_window.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
-                self.gui_window.setStatusBarMessage(
-                        "Connected to server on " + self.host.currentText() + ":" + self.port.text())
+            self.gotConnectionToServerSignal.emit()
+            print("Connected to server on " + self.host.currentText() + ":" + self.port.text())
+            self._gui.setStatusBarMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
 
         except Exception as e:
             print(traceback.format_exc())
+            self._gui.setStatusBarMessage("Error connecting to server, see terminal", True)
             self.soft_disconnect()
         #print(self.is_connected)
 
     def disconnect(self):
-        # send disconnect message
+        """
+        This function is called when the user disconnects from server. For cases where the server side is terminated,
+        the server errors out the connection, server crashes, etc then this is not called but instead soft disconnect is
+        called. Reason being that in those cases we cannot send a command to disconnect, yet still need to perform
+        some client side actions for cleanup
+        :return: None
+        """
+
         self.command(4)
-        self.cycle() # need to get the last command out before saying we are disconnected
+        self.cycle()  # need to get the last command out before saying we are disconnected
         self.soft_disconnect()
-        if self.gui_window is not None:
-            self.gui_window.setStatusBarMessage("Disconnected from server")
+        self._gui.setStatusBarMessage("Disconnected from server")
 
     def soft_disconnect(self):
         """
         Performs all the required steps when client and server are disconnected, however it does not send any commands
-        to the server that indicate the client is attempting to disconnect
+        to the server that indicate the client is attempting to disconnect. See above disconnect for more
         :return:
         """
         self.is_connected = False
-        if self.gui_window is not None:
-            self.gui_window.startRunAct.setDisabled(True)
-            self.gui_window.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.disableNoteCreation(True)
+        self.serverDisconnectSignal.emit()  # See gui class for what needs to be done
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -218,18 +219,3 @@ class ClientWidget(QtWidgets.QWidget):
                 traceback.print_exc()
             self.soft_disconnect()
             return None
-
-
-if __name__ == "__main__":
-    if not QtWidgets.QApplication.instance():
-        app = QtWidgets.QApplication(sys.argv)
-    else:
-        app = QtWidgets.QApplication.instance()
-    controller = ClientWidget(commandable=True)
-
-    timer = QtCore.QTimer()
-    timer.timeout.connect(controller.cycle)
-    timer.start(50)  # in ms, 20hz
-
-    controller.show()
-    sys.exit(app.exec())

@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 import sys
 from overrides import overrides
 
+
 class PartyParrot(QLabel):
     def __init__(self):
         super().__init__()
