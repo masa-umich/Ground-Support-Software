@@ -1,4 +1,5 @@
 from PyQt5.QtCore import *
+from constants import Constants
 import math
 
 """
@@ -65,6 +66,7 @@ class Campaign(QObject):
         self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
         if self.client:
             self.client.command(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData(), self.gui.controlsWindow.centralWidget.controlsWidget.generateSensorMappingsToSend()])
+            self.client.command(9, ["CET-" + self.CETasString(), "LOG", "GUI Version: " + Constants.GUI_VERSION])
         self.is_active = True
         self.gui.liveDataHandler.setPopulateData(True)
         self.campaignStartSignal.emit()

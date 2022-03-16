@@ -29,7 +29,8 @@ class BaseGui(QObject):
     def __init__(self, qapp : QApplication, mainWindow: QWindow = None):
         super().__init__()
 
-        print("Python Version:" + str(sys.version_info))
+        print("MASA GUI Version: " + Constants.GUI_VERSION)
+        print("Python Version: " + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)
 
         self.applyDarkTheme(qapp)
@@ -104,9 +105,11 @@ class BaseGui(QObject):
 
         self._mainWindow = mainWindow
 
-    def setMainWindow(self, mainWindow: QWindow):
+    def setMainWindow(self, mainWindow: QMainWindow):
         self._mainWindow = mainWindow
         self._mainWindow.statusBar().setFixedHeight(22 * self.pixel_scale_ratio[1])
+
+        self._mainWindow.setWindowTitle(self._mainWindow.windowTitle() + " (" + Constants.GUI_VERSION + ")")
 
         self.setStatusBarMessage("Lightweight Gui Startup")
 
@@ -181,7 +184,7 @@ class BaseGui(QObject):
         if error:
             self._mainWindow.statusBar().setStyleSheet("background-color: red")
         else:
-            self._mainWindow.statusBar().setStyleSheet("")
+            self._mainWindow.statusBar().setStyleSheet("border-top :1px solid #4F4F52")
 
         self._mainWindow.statusBar().showMessage(text)
 
