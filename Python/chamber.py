@@ -21,9 +21,9 @@ class Chamber(BaseObject):
                  scale: float = 1, serial_number: str = 'RP-D2',
                  long_name: str = 'Arpulus Delus the Second', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1):
         """
         Initializer for Solenoid

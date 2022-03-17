@@ -7,27 +7,47 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 
+from baseGUI import BaseGui
 from constants import Constants
 from s2Interface import S2_Interface
 
 
+class FlashWindow(QtWidgets.QMainWindow):
 
-class FlashDialog(QtWidgets.QDialog):
-    def __init__(self, client):
+    def __init__(self, gui, singular: bool = False, *args, **kwargs):
+
         super().__init__()
-        self.flash_controller = FlashController(client)
 
-        self.setWindowTitle("Flash Controller")
-        self.layout = QtWidgets.QVBoxLayout()
-        self.layout.addWidget(self.flash_controller)
-        self.setLayout(self.layout)
+        self.gui = gui
+        self.singular = singular
+
+        self.main_menu = self.menuBar()
+        self.main_menu.setNativeMenuBar(True)
+        self.options_menu = self.main_menu.addMenu('&Options')
+
+        # # set up client
+        # if client is None:
+        #     self.client_dialog = ClientDialog(None)
+        #     # connection menu item
+
+        if singular:
+            self.connect = QtGui.QAction("&Connection", self.options_menu)
+            self.connect.setShortcut('Alt+C')
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.options_menu.addAction(self.connect)
+
+        self.widget = FlashController(self.gui)
+        self.setCentralWidget(self.widget)
 
 
 class FlashController(QtWidgets.QWidget):
-    def __init__(self, client, *args, **kwargs):
+    def __init__(self, gui, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.interface = S2_Interface()
-        self.client = client
+        self._gui = gui
+
+        self._gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
         self.logo = QtGui.QLabel()
@@ -45,7 +65,11 @@ class FlashController(QtWidgets.QWidget):
         self.stop_button = QtWidgets.QPushButton("Stop Logging")
 
         self.rem_mem = QtWidgets.QLabel(self)
-        self.rem_mem.setFont(QtGui.QFont('Arial, 30'))
+        rem_mem_font = QtGui.QFont()
+        rem_mem_font.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        rem_mem_font.setFamily(Constants.monospace_font)
+        rem_mem_font.setPointSizeF(14 * self._gui.font_scale_ratio)
+        self.rem_mem.setFont(rem_mem_font)
         self.rem_mem.setText("0000 kb")
         #self.rem_mem.setStyleSheet("color: black")
 
@@ -69,8 +93,8 @@ class FlashController(QtWidgets.QWidget):
         self.start_button.clicked.connect(self.start_logging)
         self.stop_button.clicked.connect(self.stop_logging)
 
-
-
+    def getDialog(self):
+        return self._dialog
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
@@ -96,11 +120,10 @@ class FlashController(QtWidgets.QWidget):
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         return msgBox.exec()
 
-
     def dump(self):
         addr = self.get_addr()
         if addr != -1:
-            self.client.command(5, addr)
+            self._gui.liveDataHandler.sendCommand(5, addr)
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Information)
         msgBox.setText("It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper.")
@@ -118,7 +141,7 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def stop_logging(self):
         addr = self.get_addr()
@@ -129,7 +152,7 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def start_logging(self):
         addr = self.get_addr()
@@ -140,17 +163,27 @@ class FlashController(QtWidgets.QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": []
             }
-            self.client.command(3, cmd_dict)
+            self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
-    @overrides
-    def update(self, last_packet):
+    # @overrides
+    # def update(self, last_packet):
+    #     prefix = self.interface.getPrefix(self.board_selector.currentText())
+    #     key = prefix + "flash_mem"
+    #     if( key in last_packet.keys()):
+    #         rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
+    #     else:
+    #         rem_mem = 0
+    #     self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
+
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
         prefix = self.interface.getPrefix(self.board_selector.currentText())
         key = prefix + "flash_mem"
-        if( key in last_packet.keys()):
-            rem_mem = (134086656 - int(last_packet[prefix + "flash_mem"]))/1024
-        else: 
+        if key in data_packet.keys():
+            rem_mem = (134086656 - int(data_packet[prefix + "flash_mem"])) / 1024
+        else:
             rem_mem = 0
-        self.rem_mem.setText("Bytes Used: %.2f kB" %rem_mem)
+        self.rem_mem.setText("Bytes Used: %.2f kB" % rem_mem)
 
 
 if __name__ == "__main__":
@@ -158,7 +191,10 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    controller = FlashDialog(None)
+
+    lwgui = BaseGui(app)
+    controller = FlashWindow(gui=lwgui, singular=True)
+    lwgui.setMainWindow(controller)
 
     controller.show()
     sys.exit(app.exec())

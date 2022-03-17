@@ -6,9 +6,10 @@ import ntpath
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from overrides import overrides
+from constants import Constants
 
+from baseGUI import BaseGui
 from s2Interface import S2_Interface
-from ClientWidget import ClientDialog
 from parse_auto import parse_auto
 
 INTERFACE = S2_Interface()
@@ -251,7 +252,7 @@ class LineTextWidget(QtWidgets.QFrame):
         self.highlighter = Highlighter(self.edit.document())
         font = QtGui.QFont()
         font.setPointSize(12)
-        font.setFamily("Consolas")
+        font.setFamily(Constants.default_font)
         self.edit.setFont(font)
 
         self.number_bar = NumberBar()
@@ -290,7 +291,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
         self.commentFormat = QtGui.QTextCharFormat()
         self.commentFormat.setForeground(QtGui.QColor(34, 139, 34))
         self.cmdFormat = QtGui.QTextCharFormat()
-        self.cmdFormat.setForeground(QtCore.Qt.blue)
+        self.cmdFormat.setForeground(QtCore.Qt.white)
 
     def highlightBlock(self, text):
         stripped = text.lstrip()
@@ -304,11 +305,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
 
 class AutoManager(QtWidgets.QMainWindow):
-    def __init__(self, client=None, *args, **kwargs):
+    def __init__(self, gui, singular : bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filename = 'Untitled'
         self.path = None
+        self._gui = gui
 
         self.setWindowTitle("MASAscript Auto Manager")
         widget = QtWidgets.QWidget()
@@ -316,9 +318,8 @@ class AutoManager(QtWidgets.QMainWindow):
         top_layout = QtWidgets.QVBoxLayout()
         widget.setLayout(top_layout)
         base_size = 850
-        AR = 0.7  # H/W
-        self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
+        AR = 0.5  # H/W
+        self.resize(int(base_size), int(AR * base_size))
         self.setMouseTracking(True)
 
         # menu bar
@@ -328,22 +329,23 @@ class AutoManager(QtWidgets.QMainWindow):
 
         # connection menu item
         # set up client
-        if not client:
-            self.client_dialog = ClientDialog(True)
-            self.client = self.client_dialog.client
-            connect = QtGui.QAction("&Connection", options_menu)
-            # self.quit.setShortcut("Ctrl+K")
-            connect.triggered.connect(self.client_dialog.show)
-            options_menu.addAction(connect)
-            # quit application menu item
-            quit = QtGui.QAction("&Quit", options_menu)
-            quit.setShortcut("Ctrl+Q")
-            quit.triggered.connect(self.exit)
-            options_menu.addAction(quit)
-            self.is_master = True
-        else:
-            self.client = client
-            self.is_master = False
+        # if not client:
+        #     self.client_dialog = ClientDialog(True)
+        #     self.client = self.client_dialog.client
+        #     connect = QtGui.QAction("&Connection", options_menu)
+        #     # self.quit.setShortcut("Ctrl+K")
+        #     connect.triggered.connect(self.client_dialog.show)
+        #     options_menu.addAction(connect)
+        #     # quit application menu item
+        #     quit = QtGui.QAction("&Quit", options_menu)
+        #     quit.setShortcut("Ctrl+Q")
+        #     quit.triggered.connect(self.exit)
+        #     options_menu.addAction(quit)
+        #     self.is_master = True
+        # else:
+        #     self.client = client
+        #     self.is_master = False
+        self.is_master = False
 
         # save menu item
         save_action = QtGui.QAction("&Save", options_menu)
@@ -363,9 +365,17 @@ class AutoManager(QtWidgets.QMainWindow):
         load_action.triggered.connect(self.load)
         options_menu.addAction(load_action)
 
+        if singular:
+            connect = QtGui.QAction("&Connection", options_menu)
+            connect.setShortcut('Alt+C')
+            connect.triggered.connect(lambda: self._gui.show_window(self._gui.liveDataHandler.getClient()))
+            options_menu.addAction(connect)
+
         self.code_area = LineTextWidget()
         top_layout.addWidget(self.code_area)
         self.code_area.setMouseTracking(True)
+
+        self.code_area.setText("#Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70")
 
         butt_layout = QtWidgets.QHBoxLayout()
         self.run_button = QtWidgets.QPushButton("Execute")
@@ -393,7 +403,7 @@ class AutoManager(QtWidgets.QMainWindow):
             (constructed, i) = parse_auto(command_list)
             print(constructed, i)
             if i > 0:
-                self.client.command(7, (constructed,))
+                self._gui.liveDataHandler.sendCommand(7, (constructed,))
     
     def showDialog(self, msg):
         msgBox = QtWidgets.QMessageBox()
@@ -404,7 +414,7 @@ class AutoManager(QtWidgets.QMainWindow):
         return msgBox.exec()
 
     def abort(self):
-        self.client.command(8)
+        self._gui.liveDataHandler(8)
 
     def save(self):
         if self.path:
@@ -459,14 +469,10 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
-    CYCLE_TIME = 250  # in ms
-    window = AutoManager()
 
-    # timer and tick updates
-    cycle_time = 100  # in ms
-    timer = QtCore.QTimer()
-    timer.timeout.connect(window.client.cycle)
-    timer.start(CYCLE_TIME)
+    lwgui = BaseGui(app)
+    window = AutoManager(gui=lwgui, singular=True)
+    lwgui.setMainWindow(window)
 
     window.show()
     sys.exit(app.exec())

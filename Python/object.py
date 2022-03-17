@@ -11,7 +11,8 @@ from anchorPoint import AnchorPoint
 Base class for GUI objects. Used to define parameters all GUI objects need
 """
 
-class BaseObject:
+
+class BaseObject(QObject):
 
     object_name = "Default Object"
 
@@ -76,7 +77,12 @@ class BaseObject:
         self.scale = scale
         self.serial_number = serial_number
         self.safety_status = safety_status
-        self.long_name = long_name
+
+        if _id is None:  # use this to check if the object was created from file or clicking
+            self.long_name = long_name + " " + str(self.widget_parent.object_count[self.object_name])
+        else:
+            self.long_name = long_name
+
         self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
         self.is_being_edited = is_being_edited
         self.is_being_dragged = is_being_dragged
@@ -103,7 +109,6 @@ class BaseObject:
         self.runContextMenuItems = []
         self._initContextMenu()
         self._initToolTip()
-
 
     def _initAnchorPoints(self):
         """
@@ -150,7 +155,11 @@ class BaseObject:
         Sets the toolTip of the button
         :param text: text to be set on the tooltip
         """
-        self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
+
+        if self.serial_number == "":
+            self.button.setToolTip(text)
+        else:
+            self.button.setToolTip("SN: " + self.serial_number + "\n" + text)
 
     def setIsEditing(self, is_editing: bool):
         """
@@ -167,7 +176,7 @@ class BaseObject:
         self.long_name = name
         self.long_name_label.setText(name)
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + " component name changed to " + name)
+        self.gui.setStatusBarMessage(self.object_name + " component name changed to " + name)
 
     def setShortName(self, name):
         """
@@ -180,7 +189,7 @@ class BaseObject:
         # Moves the label to keep it in the center if it changes length
         self.serial_number_label.moveToPosition()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
 
     def setScale(self, scale):
         """
@@ -211,7 +220,7 @@ class BaseObject:
         # Update some other dependent values
         self.setAnchorPoints()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -223,7 +232,7 @@ class BaseObject:
         """
         self.fluid = Constants.fluid[fluid]
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -234,7 +243,7 @@ class BaseObject:
         :param is_locked: is the position locked
         """
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
 
         self.position_locked = is_locked
 
@@ -260,10 +269,18 @@ class BaseObject:
             ap.updatePosition()
 
     def hideAnchorPoints(self):
+        """
+        Hides all the anchor points
+        :return: None
+        """
         for ap in self.anchor_points:
             ap.hide()
 
     def showAnchorPoints(self):
+        """
+        Show all the anchor points, used in edit mode
+        :return: None
+        """
         for ap in self.anchor_points:
             ap.show()
 
@@ -344,7 +361,7 @@ class BaseObject:
         self.widget_parent.painter.setPen(pen)
         self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
         
-    def move(self, point: QPoint):
+    def move(self, point: QPointF):
         """
         Move object to a new position. This function does not handle the dragging and dropping of objects directly.
         Instead look in objectButton.py, the button class that object builds on, inside of the mouseMoveEvent function.
@@ -354,17 +371,19 @@ class BaseObject:
         :param point: point to move to
         """
 
+        intPoint = QPoint(point.x(),point.y())
+
         # Move the object and all the shit connected to it
-        self.button.move(point)
-        self.edit_context_menu.move(point)
-        self.run_context_menu.move(point)
+        self.button.move(intPoint)
+        self.edit_context_menu.move(intPoint)
+        self.run_context_menu.move(intPoint)
         self.position = point
         self.updateAnchorPoints()
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
         self.deleteConnectedTubes()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -394,7 +413,7 @@ class BaseObject:
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -481,7 +500,7 @@ class BaseObject:
         """
         self.button.lower()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
 
     def raiseObject(self):
         """
@@ -490,7 +509,7 @@ class BaseObject:
         """
         self.button.raise_()
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
 
     def doesObjectHaveFocus(self):
         """
@@ -501,6 +520,16 @@ class BaseObject:
             return True
         else:
             return False
+
+    def objectStatusCheck(self):
+        """
+        This function checks if the object has any potential errors/ warnings that the user should know. For example
+        if an object is added and has no board assigned to it
+        :return: Returns a pair, first is an int representing severity, 0 is good, 1 is warning, 2 is critical.
+                 The second argument is a string with an error message. Can be blank
+        """
+        # Currently nothing I can think of that all objects would have an error for, will be subclassed
+        return 0, ""
 
     """----------------------------------------------------------------------------------------------------------------
     EVENTS 
@@ -550,6 +579,7 @@ class BaseObject:
 
         return action
 
+
     """----------------------------------------------------------------------------------------------------------------
    File save and Loading
    ----------------------------------------------------------------------------------------------------------------"""
@@ -590,7 +620,7 @@ class BaseObject:
         Called for object to delete itself
         """
 
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
+        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
 
         self.button.deleteLater()
         del self.button

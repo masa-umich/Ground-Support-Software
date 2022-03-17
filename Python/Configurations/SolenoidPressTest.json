@@ -2,24 +2,24 @@
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 504.76190476190493,
-			"y": 252.5714285714285
+			"x": 443.75,
+			"y": 463.75
 		},
-		"fluid": 0,
+		"fluid": 3,
 		"width": 40.0,
-		"height": 28.0,
+		"height": 18.000000000000004,
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "SGs2",
-		"is vertical": false,
+		"long name": "Purge Solenoid 1",
+		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 17.14285714285715,
-				"y": 36.57142857142856
+				"x": 16.666666666666668,
+				"y": 25.0
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,38 +28,38 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 3.809523809523811,
-				"y": -20.571428571428566
+				"x": -15.625,
+				"y": -36.25
 			},
-			"rows": 1,
+			"rows": 2.0,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "2",
+		"channel": "14",
 		"board": "GSE Controller",
 		"normally open": false
 	},
 	"Solenoid 2": {
 		"id": 2,
 		"pos": {
-			"x": 763.8095238095241,
-			"y": 318.8571428571428
+			"x": 806.25,
+			"y": 240.0
 		},
-		"fluid": 0,
+		"fluid": 3,
 		"width": 40.0,
-		"height": 28.0,
+		"height": 18.000000000000004,
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Sp5",
-		"is vertical": false,
+		"long name": "Purge Solenoid 2",
+		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 17.14285714285715,
-				"y": 36.57142857142856
+				"x": 16.666666666666668,
+				"y": 25.0
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -68,38 +68,38 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 6.66666666666667,
-				"y": -20.571428571428566
+				"x": -15.625,
+				"y": -36.25
 			},
-			"rows": 1,
+			"rows": 2.0,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "5",
-		"board": "Pressurization Controller",
+		"channel": "16",
+		"board": "GSE Controller",
 		"normally open": false
 	},
-	"Tank 3": {
+	"Generic Sensor 3": {
 		"id": 3,
 		"pos": {
-			"x": 387.61904761904776,
-			"y": 443.42857142857133
+			"x": 717.7083333333334,
+			"y": 562.5
 		},
-		"fluid": false,
-		"width": 88.0,
-		"height": 170.0,
-		"name": "Tank",
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
 		"scale": 1,
 		"serial number": "",
-		"long name": "TPC1",
-		"is vertical": true,
+		"long name": "Pressure Transducer",
+		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.95238095238097,
-				"y": 206.8571428571428
+				"x": 30.208333333333336,
+				"y": 32.5
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -108,37 +108,37 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 28.571428571428584,
-				"y": -20.571428571428566
+				"x": -10.416666666666668,
+				"y": -36.25
 			},
-			"rows": 1,
+			"rows": 2.0,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "1",
-		"board": "Pressurization Controller"
+		"channel": "gse.pressure[10]",
+		"board": "GSE Controller"
 	},
-	"Tank 4": {
+	"Generic Sensor 4": {
 		"id": 4,
 		"pos": {
-			"x": 714.2857142857146,
-			"y": 583.9999999999999
+			"x": 972.9166666666667,
+			"y": 343.75
 		},
-		"fluid": false,
-		"width": 88.0,
-		"height": 170.0,
-		"name": "Tank",
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
 		"scale": 1,
 		"serial number": "",
-		"long name": "TPCu",
-		"is vertical": true,
+		"long name": "PS 2 A",
+		"is vertical": 0,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.95238095238097,
-				"y": 206.85714285714275
+				"x": 30.208333333333336,
+				"y": 32.5
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -147,14 +147,15 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 26.66666666666668,
-				"y": -20.57142857142863
+				"x": 11.458333333333334,
+				"y": -20.0
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "Undefined",
-		"board": "Undefined"
-	}
+		"channel": "gse.vlv16.i",
+		"board": "GSE Controller"
+	},
+	"Board 0": "GSE Controller"
 }

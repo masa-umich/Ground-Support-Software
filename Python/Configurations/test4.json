@@ -1,25 +1,25 @@
 {
-	"Solenoid 1": {
+	"Motor 1": {
 		"id": 1,
 		"pos": {
-			"x": 504.76190476190493,
-			"y": 252.5714285714285
+			"x": 523.809523809524,
+			"y": 294.8571428571428
 		},
 		"fluid": 0,
-		"width": 40.0,
-		"height": 28.0,
-		"name": "Solenoid",
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
 		"scale": 1,
 		"serial number": "",
-		"long name": "SGs2",
+		"long name": "M0",
 		"is vertical": false,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
-			"pos string": "Bottom",
+			"pos string": "Right",
 			"local pos": {
-				"x": 17.14285714285715,
-				"y": 36.57142857142856
+				"x": 72.38095238095241,
+				"y": 67.42857142857142
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -28,22 +28,21 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 3.809523809523811,
+				"x": 22.857142857142865,
 				"y": -20.571428571428566
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "2",
-		"board": "GSE Controller",
-		"normally open": false
+		"channel": "0",
+		"board": "Pressurization Controller"
 	},
 	"Solenoid 2": {
 		"id": 2,
 		"pos": {
-			"x": 763.8095238095241,
-			"y": 318.8571428571428
+			"x": 231.42857142857153,
+			"y": 246.8571428571428
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -51,7 +50,7 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Sp5",
+		"long name": "SGse1O",
 		"is vertical": false,
 		"is locked": false,
 		"is pos locked": false,
@@ -68,22 +67,22 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 6.66666666666667,
+				"x": -2.857142857142858,
 				"y": -20.571428571428566
 			},
 			"rows": 1,
 			"font size": 12.0,
 			"is visible": true
 		},
-		"channel": "5",
-		"board": "Pressurization Controller",
-		"normally open": false
+		"channel": "1",
+		"board": "GSE Controller",
+		"normally open": true
 	},
 	"Tank 3": {
 		"id": 3,
 		"pos": {
-			"x": 387.61904761904776,
-			"y": 443.42857142857133
+			"x": 317.1428571428573,
+			"y": 273.14285714285705
 		},
 		"fluid": false,
 		"width": 88.0,
@@ -99,7 +98,7 @@
 			"pos string": "Bottom",
 			"local pos": {
 				"x": 40.95238095238097,
-				"y": 206.8571428571428
+				"y": 206.85714285714283
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -109,7 +108,7 @@
 			"pos string": "Top",
 			"local pos": {
 				"x": 28.571428571428584,
-				"y": -20.571428571428566
+				"y": -21.714285714285676
 			},
 			"rows": 1,
 			"font size": 12.0,
@@ -118,27 +117,27 @@
 		"channel": "1",
 		"board": "Pressurization Controller"
 	},
-	"Tank 4": {
+	"Generic Sensor 4": {
 		"id": 4,
 		"pos": {
-			"x": 714.2857142857146,
-			"y": 583.9999999999999
+			"x": 751.4285714285717,
+			"y": 358.8571428571428
 		},
-		"fluid": false,
-		"width": 88.0,
-		"height": 170.0,
-		"name": "Tank",
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
 		"scale": 1,
 		"serial number": "",
-		"long name": "TPCu",
-		"is vertical": true,
+		"long name": "Gse.press12",
+		"is vertical": false,
 		"is locked": false,
 		"is pos locked": false,
 		"serial number label": {
 			"pos string": "Bottom",
 			"local pos": {
-				"x": 40.95238095238097,
-				"y": 206.85714285714275
+				"x": 30.47619047619049,
+				"y": 31.999999999999993
 			},
 			"rows": 1,
 			"font size": 10.0,
@@ -147,8 +146,47 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": 26.66666666666668,
-				"y": -20.57142857142863
+				"x": -1.9047619047619055,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[12]",
+		"board": "GSE Controller"
+	},
+	"3 Way Valve 5": {
+		"id": 5,
+		"pos": {
+			"x": 879.0476190476194,
+			"y": 426.28571428571416
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "3gse3",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 35.428571428571416
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 0.9523809523809528,
+				"y": -20.571428571428566
 			},
 			"rows": 1,
 			"font size": 12.0,

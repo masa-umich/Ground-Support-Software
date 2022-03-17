@@ -12,6 +12,7 @@ from enum import Enum
 
 from PyQt5 import QtWidgets
 
+
 class Board(QWidget):
 
     object_name = "Board"
@@ -27,10 +28,9 @@ class Board(QWidget):
         self.gui = self.controlsSidebarWidget.gui
         self.window = self.controlsSidebarWidget.window
         self.painter = QPainter()
-        self.client = self.controlsSidebarWidget.window.client_dialog.client
 
         # The height value is updated later
-        self.setGeometry(0, 0, self.controlsSidebarWidget.width, 200*self.gui.pixel_scale_ratio[1])
+        self.setGeometry(0, 0, self.controlsSidebarWidget.width - 30, 200*self.gui.pixel_scale_ratio[1])
 
         # Set background color to match
         self.setAutoFillBackground(True)
@@ -89,9 +89,29 @@ class Board(QWidget):
                 "IgnitionFail": 9,
                 "Continue": 255
             }
+        elif self.name == "Engine Controller":
+            self.stateMap = {
+                -1: "",
+                0: "Manual",
+                1: "Armed",
+                4: "Ignition",
+                5: "Hotfire",
+                6: "Abort",
+                7: "Post",
+            }
+            self.stateNum = {
+                "": -1,
+                "Manual": 0,
+                "Armed": 1,
+                "Ignition": 4,
+                "Hotfire": 5,
+                "Abort": 6,
+                "Post": 7,
+            }
+
+
             """  TODO fill this out when we figure out other boards' state mappings
-            elif self.name == "Engine Controller":
-                pass
+            
             elif self.name == "Flight Computer":
                 pass
             elif self.name == "Recovery Controller":
@@ -176,8 +196,6 @@ class Board(QWidget):
         state_form_label = self.createDataFormLayoutLabel("State:")
         self.state_label = self.createDataFormLayoutLabel("Aggressively long string don't change")
 
-
-
         # lame lame to set parent
         state_form_label.setParent(self)
         self.state_label.setParent(self)
@@ -189,7 +207,7 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(11 * self.gui.font_scale_ratio)
+        font.setPointSize(9 * self.gui.font_scale_ratio)
 
         if self.gui.platform == "OSX":
             fwidth = self.width()/5 * .85
@@ -237,7 +255,7 @@ class Board(QWidget):
         self.abort_button.setDisabled(True)
 
         self.rem_timer = QLabel(self)
-        if self.name == "Pressurization Controller":
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller":
          # Remaining time in state
             rem_timer_font = QFont()
             rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
@@ -250,7 +268,7 @@ class Board(QWidget):
 
         # Set text depending on board
         if self.name == "Engine Controller":
-            self.fire_button.setText("Hotfire")
+            self.fire_button.setText("Ignition")
         elif self.name == "Pressurization Controller":
             self.fire_button.setText("Press")
         elif self.name == "Flight Computer":
@@ -263,7 +281,8 @@ class Board(QWidget):
         buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
-        buttonLayout.addWidget(self.continue_button)
+        if self.name == "Pressurization Controller":
+            buttonLayout.addWidget(self.continue_button)
         buttonLayout.addWidget(self.abort_button)
 
         self.show()  # Need to show before able to access some data_frame values
@@ -271,7 +290,6 @@ class Board(QWidget):
 
         # Set the board height to be the same size as the text because it looks good
         self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
-
 
         # Update the frame geometry
         self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 60*self.gui.pixel_scale_ratio[1])
@@ -289,6 +307,8 @@ class Board(QWidget):
         self.board_background_button.clicked.connect(self.onClick)
         self.board_background_button.show()
 
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
     def onClick(self):
         print(self.name + " clicked! But doing nothing about it")
         #self.showBoardSettingsDialog()
@@ -300,7 +320,7 @@ class Board(QWidget):
         """
 
         # Right now only have settings for press board
-        if self.name != "Pressurization Controller":
+        if self.name != "Pressurization Controller" or self.name != "Engine Controller"  :
             return
 
 
@@ -447,22 +467,28 @@ class Board(QWidget):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 cmd_dict = {
                     "function_name": "set_system_clock",
                     "target_board_addr": 0,
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [0]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             newState = self.stateNum["Armed"]
         # If state is armed, allow for state to be run
         elif identifier == "Run":
-            if self.state == self.stateNum["Armed"]:  # Push Press to go into Autopress
-                newState = self.stateNum["Auto-Press"]
-            elif self.state == self.stateNum["Auto-Press"]:  # Push Press again to go into Startup
-                newState = self.stateNum["Startup"]
-        # Anytime can call an abort to abort out
+            if self.name == "Pressurization Controller":
+                if self.state == self.stateNum["Armed"]:  # Push Press to go into Autopress
+                    newState = self.stateNum["Auto-Press"]
+                elif self.state == self.stateNum["Auto-Press"]:  # Push Press again to go into Startup
+                    newState = self.stateNum["Startup"]
+            elif self.name == "Engine Controller":
+                if self.state == self.stateNum["Armed"]:
+                    newState = self.stateNum["Ignition"] # this might need to be removed idk why we are switching to the next state client side
+                elif self.state == self.stateNum["Ignition"]:
+                    newState = self.stateNum["Hotfire"]
+                    # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = self.stateNum["Abort"]
         elif identifier == "Continue":
@@ -481,7 +507,7 @@ class Board(QWidget):
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [int(newState)]
             }
-            self.client.command(3, cmd_dict)
+            self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             #self.setBoardState(newState)
         #if self.name == "Pressurization Controller":
          #   self.controlsSidebarWidget.title_label.setText(self.stateMap[newState])
@@ -497,7 +523,6 @@ class Board(QWidget):
        #     p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
        #     self.controlsSidebarWidget.setPalette(p)
 
-
     def setBoardState(self, state: int):
         """
         Sets the current board state, updates all the buttons and state labels
@@ -510,12 +535,15 @@ class Board(QWidget):
         # Update labels
         self.state_label.setText(self.stateMap[self.state])
 
+        # TODO: not sure what this does???
         if self.name == "Pressurization Controller":
             pass
         elif self.name == "GSE Controller":
             pass
+        elif self.name == "Engine Controller":
+            pass
         else:
-            print("Invalid board somehow used in setBoardState, it should never get to this point lol")
+            print("Invalid board(" + self.name + ") somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
             return
 
     @overrides
@@ -557,25 +585,25 @@ class Board(QWidget):
 
         # Make the connector positions look similar to the real board, not really pretty but wanted to do something
         if self.name == "Flight Computer" or self.name == "Recovery Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .25,self.board_pos.y()+ self.board_height/2),2.5*connector_diam, 2.5*connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .25,self.board_pos.y()+ self.board_height/2),2.5*connector_diam, 2.5*connector_diam)
         elif self.name == "Pressurization Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + self.board_height / 2), 1.5 * connector_diam, 1.5 * connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + self.board_height / 2), 1.5 * connector_diam, 1.5 * connector_diam)
             self.painter.drawEllipse(
-                QPoint(self.board_pos.x() + self.board_width * .45, self.board_pos.y() + self.board_height / 2),
+                QPointF(self.board_pos.x() + self.board_width * .45, self.board_pos.y() + self.board_height / 2),
                 1.5 * connector_diam, 1.5 * connector_diam)
             self.painter.drawEllipse(
-                QPoint(self.board_pos.x() + self.board_width * .80, self.board_pos.y() + self.board_height / 2),
+                QPointF(self.board_pos.x() + self.board_width * .80, self.board_pos.y() + self.board_height / 2),
                 1.5 * connector_diam, 1.5 * connector_diam)
         elif self.name == "Engine Controller" or self.name == "GSE Controller":
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
-            
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
-            self.painter.drawEllipse(QPoint(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 2*self.board_height / 7), connector_diam, connector_diam)
+
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .15, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .38, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .59, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
+            self.painter.drawEllipse(QPointF(self.board_pos.x() + self.board_width * .85, self.board_pos.y() + 5*self.board_height / 7), connector_diam, connector_diam)
 
         # Default pen qualities
         pen = QPen()
@@ -606,7 +634,10 @@ class Board(QWidget):
         :param telem_rate: telem packet rate
         :return: None
         """
+
+        print(self.size())
         super().update()
+        print(self.size())
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
         self.setBoardState(int(state))
@@ -615,23 +646,24 @@ class Board(QWidget):
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
         self.rem_timer.setText(str(state_rem_time/1000) + " s")
-        if self.name == "Pressurization Controller":
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller" :
             self.controlsSidebarWidget.title_label.setText(self.stateMap[state])
-            self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
+            #self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
 
         self.LPT = LPT
 
         # Draw red background in abort state
-        if self.name == "Pressurization Controller" and self.state == self.stateNum["Abort"]:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
-            self.controlsSidebarWidget.setPalette(p)
-        else:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
-            self.controlsSidebarWidget.setPalette(p)
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller":
+             if self.state == self.stateNum["Abort"]:
+                 self.controlsSidebarWidget.setAutoFillBackground(True)
+                 p = self.controlsSidebarWidget.palette()
+                 p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+                 self.controlsSidebarWidget.setPalette(p)
+             else:
+                 self.controlsSidebarWidget.setAutoFillBackground(True)
+                 p = self.controlsSidebarWidget.palette()
+                 p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+                 self.controlsSidebarWidget.setPalette(p)
 
         
         # Disable all GSE state commands
@@ -723,3 +755,81 @@ class Board(QWidget):
                 self.fire_button.setEnabled(False)
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+
+            elif self.name == "Engine Controller":
+                if self.state == self.stateNum["Manual"]:
+                    self.manual_button.setText("Manual")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(True)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Armed"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(True)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(True)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Ignition"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Hotfire"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(True)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Post"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+
+                elif self.state == self.stateNum["Abort"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(True)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+        print(self.size())
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        prefix = self.gui.controlsWindow.interface.getPrefix(self.name)
+
+        if self.name == "Flight Computer":
+            self.update(data_packet[prefix + "e_batt"], 0, data_packet[prefix + "STATE"], False,
+                         data_packet[prefix + "timestamp"], data_packet[prefix + "adc_rate"],
+                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt
+        elif self.name == "Black Box":
+            self.update(0, 0, data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"],
+                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt, no e_batt
+        elif self.name == "Pressurization Controller":
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "i_batt"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                         data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         data_packet[prefix + "state_rem_duration"])
+        elif self.name == "GSE Controller":
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "ibus"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                         data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         0)  # no flash state yet
+        elif self.name == "Engine Controller":
+            self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "i_batt"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                        data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
+                         0)  # no flash state yet

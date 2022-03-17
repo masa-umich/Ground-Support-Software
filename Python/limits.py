@@ -10,6 +10,7 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import pandas as pd
 
+from baseGUI import BaseGui
 from s2Interface import S2_Interface
 from LedIndicatorWidget import LedIndicator
 from ClientWidget import ClientWidget, ClientDialog
@@ -22,9 +23,9 @@ class Limit(QtWidgets.QGroupBox):
         self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.white)
-        self.setPalette(p)
+        # p = self.palette()
+        # p.setColor(self.backgroundRole(), Qt.white)
+        # self.setPalette(p)
         self.setAutoFillBackground(True)
 
         # status indicator
@@ -92,7 +93,7 @@ class Limit(QtWidgets.QGroupBox):
 
 
 class LimitWidget(QtWidgets.QWidget):
-    def __init__(self, num_channels, client, *args, **kwargs):
+    def __init__(self, num_channels, *args, **kwargs):
         super(LimitWidget, self).__init__(*args, **kwargs)
 
         self.layout = QtWidgets.QGridLayout()
@@ -102,7 +103,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.interface = S2_Interface()
         self.channels = self.interface.channels
         self.num_channels = num_channels
-        self.client_dialog = client
+        #self.client_dialog = client
 
         self.limits_box = QtWidgets.QWidget()
         self.limits_layout = QtWidgets.QVBoxLayout()
@@ -173,35 +174,39 @@ class LimitWidget(QtWidgets.QWidget):
                 if channel in self.channels:
                     self.limits[i].update(last_packet[channel])
     
-    def cycle(self):
-        last_packet = self.client_dialog.client.cycle()
-        self.update_limits(last_packet)
+    # def cycle(self):
+    #     last_packet = self.client_dialog.client.cycle()
+    #     self.update_limits(last_packet)
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, client=None, *args, **kwargs):
+    def __init__(self, num_channels, gui, singular : bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.gui = gui
         # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
 
-        # set up client
-        if not client:
-            self.client_dialog = ClientDialog(False)
-            # connection menu item
+        # # set up client
+        # if client is None:
+        #     self.client_dialog = ClientDialog(None)
+        #     # connection menu item
+
+        if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
-            # self.quit.setShortcut("Ctrl+K")
-            self.connect.triggered.connect(self.client_dialog.show)
+            self.connect.setShortcut('Alt+C')
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
             self.options_menu.addAction(self.connect)
-        else:
-            self.client_dialog = client
+        # else:
+        #     self.client_dialog = client
+
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
-        self.widget = LimitWidget(num_channels, self.client_dialog, *args, **kwargs)
+        self.widget = LimitWidget(num_channels, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
-        
 
         # save menu item
         self.save_action = QtGui.QAction("&Save Config", self.options_menu)
@@ -214,12 +219,6 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.load_action.setShortcut("Ctrl+O")
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
-
-        # quit application menu item
-        self.quit = QtGui.QAction("&Quit", self.options_menu)
-        self.quit.setShortcut("Ctrl+Q")
-        self.quit.triggered.connect(self.exit)
-        self.options_menu.addAction(self.quit)
 
         # set up environment and database
         self.interface = S2_Interface()
@@ -237,9 +236,9 @@ class LimitWindow(QtWidgets.QMainWindow):
     
     def exit(self):
         """Exit application"""
-        self.client_dialog.client.disconnect()
-        app.quit()
-        sys.exit()
+        #self.client_dialog.disconnect() #.client
+        #app.quit()
+        #sys.exit()
 
     def closeEvent(self, event):
         """Handler for closeEvent at window close"""
@@ -251,6 +250,10 @@ class LimitWindow(QtWidgets.QMainWindow):
     
     def update_limits(self, last_packet: dict):
         self.widget.update_limits(last_packet)
+
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        self.update_limits(data_packet)
 
 
 if __name__ == "__main__":
@@ -269,13 +272,9 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     #app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    limit = LimitWindow(8)
-
-    # timer and tick updates
-    cycle_time = 100  # in ms
-    timer = QtCore.QTimer()
-    timer.timeout.connect(limit.cycle)
-    timer.start(cycle_time)
+    lwgui = BaseGui(app)
+    limit = LimitWindow(8, gui=lwgui, singular=True)
+    lwgui.setMainWindow(limit)
 
     limit.show()
     sys.exit(app.exec())

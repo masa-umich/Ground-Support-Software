@@ -7,6 +7,7 @@ import hashlib
 import traceback
 
 from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QMainWindow
 import pyqtgraph as pg
 
@@ -14,10 +15,13 @@ from LedIndicatorWidget import LedIndicator
 
 
 class ClientDialog(QtWidgets.QDialog):
-    def __init__(self, commandable, gui_window: QMainWindow = None):
+    def __init__(self, client):
         super().__init__()
-        self.client = ClientWidget(commandable=commandable, gui_window = gui_window)
 
+        if client is not None:
+            self.client = client
+        else:
+            self.client = ClientWidget(commandable=False)
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.client)
@@ -25,7 +29,12 @@ class ClientDialog(QtWidgets.QDialog):
 
 
 class ClientWidget(QtWidgets.QWidget):
-    def __init__(self, commandable: bool=True, gui_window: QMainWindow = None, *args, **kwargs):
+
+    gotConnectionToServerSignal = pyqtSignal()
+    serverDisconnectSignal = pyqtSignal()
+
+    def __init__(self, commandable: bool=True, gui = None, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
         #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,7 +43,10 @@ class ClientWidget(QtWidgets.QWidget):
         self.is_connected = False
         self.last_packet = None
 
-        self.gui_window = gui_window
+        self._dialog = ClientDialog(self)
+
+        if gui is not None:
+            self._gui = gui
 
         # connection box init
         self.connection_widget = QtWidgets.QGroupBox("Server Connection")
@@ -100,11 +112,10 @@ class ClientWidget(QtWidgets.QWidget):
 
         if command != 0:
             print(command_dict)
-            if self.gui_window is not None:
-                if command_dict["command"] == 3:
-                    self.gui_window.statusBar().showMessage("Command sent to server: " + str(command_dict["args"]))
-                else:
-                    self.gui_window.statusBar().showMessage("Command sent to client: " + str(command_dict))
+            if command_dict["command"] == 3:
+                self._gui.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
+            else:
+                self._gui.setStatusBarMessage("Command sent to client: " + str(command_dict))
 
         # add to queue
         if self.is_connected:
@@ -117,19 +128,40 @@ class ClientWidget(QtWidgets.QWidget):
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.connect((self.host.currentText(), int(
                 self.port.text())))  # connect to socket
+
             self.is_connected = True  # update status
-            if self.gui_window is not None:
-                self.gui_window.statusBar().showMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
-        except:
-            self.is_connected = False  # update status
+            self.gotConnectionToServerSignal.emit()
+            print("Connected to server on " + self.host.currentText() + ":" + self.port.text())
+            self._gui.setStatusBarMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
+
+        except Exception as e:
+            print(traceback.format_exc())
+            self._gui.setStatusBarMessage("Error connecting to server, see terminal", True)
+            self.soft_disconnect()
         #print(self.is_connected)
 
     def disconnect(self):
-        # send disconnect message
+        """
+        This function is called when the user disconnects from server. For cases where the server side is terminated,
+        the server errors out the connection, server crashes, etc then this is not called but instead soft disconnect is
+        called. Reason being that in those cases we cannot send a command to disconnect, yet still need to perform
+        some client side actions for cleanup
+        :return: None
+        """
+
         self.command(4)
+        self.cycle()  # need to get the last command out before saying we are disconnected
+        self.soft_disconnect()
+        self._gui.setStatusBarMessage("Disconnected from server")
+
+    def soft_disconnect(self):
+        """
+        Performs all the required steps when client and server are disconnected, however it does not send any commands
+        to the server that indicate the client is attempting to disconnect. See above disconnect for more
+        :return:
+        """
         self.is_connected = False
-        if self.gui_window is not None:
-            self.gui_window.statusBar().showMessage("Disconnected from server")
+        self.serverDisconnectSignal.emit()  # See gui class for what needs to be done
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -137,6 +169,19 @@ class ClientWidget(QtWidgets.QWidget):
             self.command(2)
         else:
             self.command(1)
+
+    def getDialog(self):
+        return self._dialog
+
+    def sendAllCommands(self):
+        """
+        Used for when the gui is closed by user, sends all commands in the queue rapidly to make sure server sees
+        them before quit
+        :return: none
+        """
+
+        while not self.command_queue.empty():
+            self.cycle()
 
     def cycle(self):
         try:
@@ -146,14 +191,19 @@ class ClientWidget(QtWidgets.QWidget):
 
             if self.is_connected:
                 # send next command
-                self.s.sendall(self.command_queue.get())
+                data = self.command_queue.get()
+                self.s.sendall(data)
 
                 # get data
                 data = self.s.recv(4096*4)
                 packet = pickle.loads(data)
+            else:
+                packet = None
 
             # update command status
-            if packet["commander"] == None:
+            if packet is None:
+                self.is_commander = False
+            elif packet["commander"] is None:
                 self.is_commander = False
             elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
                 self.is_commander = True
@@ -164,22 +214,8 @@ class ClientWidget(QtWidgets.QWidget):
             self.last_packet = packet
             return self.last_packet
 
-        except:
-            #traceback.print_exc()
-            self.is_connected = False
+        except Exception as e:
+            if not isinstance(e, EOFError):
+                traceback.print_exc()
+            self.soft_disconnect()
             return None
-
-
-if __name__ == "__main__":
-    if not QtWidgets.QApplication.instance():
-        app = QtWidgets.QApplication(sys.argv)
-    else:
-        app = QtWidgets.QApplication.instance()
-    controller = ClientWidget(commandable=True)
-
-    timer = QtCore.QTimer()
-    timer.timeout.connect(controller.cycle)
-    timer.start(50)  # in ms, 20hz
-
-    controller.show()
-    sys.exit(app.exec())
