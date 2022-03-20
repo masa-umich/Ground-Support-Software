@@ -755,50 +755,52 @@ class Board(QWidget):
                 self.fire_button.setEnabled(False)
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+                
+        elif self.name == "Engine Controller":
+            if self.state == self.stateNum["Manual"]:
+                self.manual_button.setText("Manual")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(True)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
 
-            elif self.name == "Engine Controller":
-                if self.state == self.stateNum["Manual"]:
-                    self.manual_button.setText("Manual")
-                    self.manual_button.setEnabled(False)
-                    self.arm_button.setEnabled(True)
-                    self.fire_button.setEnabled(False)
-                    self.abort_button.setEnabled(False)
+            elif self.state == self.stateNum["Armed"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(True)
+                self.abort_button.setEnabled(False)
 
-                elif self.state == self.stateNum["Armed"]:
-                    self.manual_button.setText("Disarm")
-                    self.manual_button.setEnabled(True)
-                    self.arm_button.setEnabled(False)
-                    self.fire_button.setEnabled(True)
-                    self.abort_button.setEnabled(False)
+            elif self.state == self.stateNum["Ignition"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
 
-                elif self.state == self.stateNum["Ignition"]:
-                    self.manual_button.setText("Disarm")
-                    self.manual_button.setEnabled(False)
-                    self.arm_button.setEnabled(False)
-                    self.fire_button.setEnabled(False)
-                    self.abort_button.setEnabled(False)
+            elif self.state == self.stateNum["Hotfire"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(True)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
 
-                elif self.state == self.stateNum["Hotfire"]:
-                    self.manual_button.setText("Disarm")
-                    self.manual_button.setEnabled(False)
-                    self.arm_button.setEnabled(True)
-                    self.fire_button.setEnabled(False)
-                    self.abort_button.setEnabled(False)
-
-                elif self.state == self.stateNum["Post"]:
-                    self.manual_button.setText("Disarm")
-                    self.manual_button.setEnabled(False)
-                    self.arm_button.setEnabled(False)
-                    self.fire_button.setEnabled(False)
-                    self.abort_button.setEnabled(False)
+            elif self.state == self.stateNum["Post"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
 
 
-                elif self.state == self.stateNum["Abort"]:
-                    self.manual_button.setText("Disarm")
-                    self.manual_button.setEnabled(True)
-                    self.arm_button.setEnabled(False)
-                    self.fire_button.setEnabled(False)
-                    self.abort_button.setEnabled(False)
+            elif self.state == self.stateNum["Abort"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
+
+
 
         print(self.size())
 

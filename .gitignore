@@ -29,3 +29,4 @@ MASA Avionics • GUI.code-workspace
 GUI.spec
 build/
 dist/
+venv/
