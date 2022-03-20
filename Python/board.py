@@ -298,7 +298,7 @@ class Board(QWidget):
             self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
         # Move to position, little dirty atm
         state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
-        if self.name == "Pressurization Controller":
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller":
             self.rem_timer.move(state_form_label.x() + state_form_label.width()+155, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
         self.board_background_button = QPushButton(self)
@@ -834,4 +834,4 @@ class Board(QWidget):
                          data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
                         data_packet[prefix + "timestamp"],
                          data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
-                         0)  # no flash state yet
+                         data_packet[prefix + "state_rem_duration"])  # no flash state yet

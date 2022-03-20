@@ -126,7 +126,7 @@ class _S2_InterfaceAutogen:
 
 		# Fill first 12 bytes of packet with CLB packet header information
 		packet[0] = self.cmd_names_dict[cmd_info["function_name"]]	# packet_type
-		packet[1] = 0	# ground computer addr
+		packet[1] = 7	# ground computer addr
 		packet[2] = cmd_info["target_board_addr"]	# target_addr
 		packet[3] = 1	# priority
 		packet[4] = 1	# num_packets
