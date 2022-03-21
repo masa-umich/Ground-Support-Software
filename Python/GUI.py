@@ -22,7 +22,6 @@ Program start point. This class handles all child windows of the gui
 
 class GUI(BaseGui):  # Inherits QObject just so signals can be used
 
-
     def __init__(self, qapp: QApplication):
         super().__init__(qapp)  # This calls above BaseGui __init__
 

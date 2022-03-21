@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from ClientWidget import ClientWidget
+from constants import Constants
 import time
 
 
@@ -75,7 +76,7 @@ class LiveDataHandlerBackgroundThread(QThread):
         # While the run is active keep the thread alive, will cleanly exit when run stops
         while True:
             # Check for data ever 200ms
-            time.sleep(0.2)
+            time.sleep(Constants.dataHandlerUpdateRate/1000)  # convert to seconds
             packet = self.dataHandler.getClient().cycle()
 
             if packet is not None:
@@ -90,10 +91,6 @@ class LiveDataHandlerBackgroundThread(QThread):
                     self.connectionStatusSignal.emit(2, packet["error_msg"], self.dataHandler.getClient().is_commander)
 
                 if self.dataHandler.shouldPopulateData():
-                    # TODO: Not sure if this goes here, or under actively_rx, seem weird to try to push bad data
-                    # {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
-                    #                          "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,
-                    #                          "gse.telem_rate": 10, "gse.flash_mem": 1053, "time": 353}
                     self.lastPacketDataSignal.emit(packet)  # change to packet when ready
 
             else:
