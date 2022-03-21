@@ -499,7 +499,10 @@ class ControlsWidget(QWidget):
         """
         Saves generated dictionary data to json
         """
-        data = self.generateConfigurationSaveData()
+
+        data = {"VERSION": Constants.GUI_VERSION}
+
+        data = {**data, **(self.generateConfigurationSaveData())}
 
         try:
             # With the open file, write to json with a tab as an indent
@@ -532,7 +535,7 @@ class ControlsWidget(QWidget):
         for i in data:
             obj_type = i.rsplit(' ', 1)[0]
 
-            if obj_type != "Board" and obj_type != "Tube":
+            if obj_type in self.object_count.keys():
                 self.object_count[obj_type] = self.object_count[obj_type] + 1
 
             if obj_type == "Solenoid":
