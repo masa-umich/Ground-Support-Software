@@ -182,6 +182,4 @@ class AvionicsObject(BaseObject):
         # Update the super_dict under the solenoid entry with the solenoid specific data
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)
 
-        print(super_dict)
-
         return super_dict

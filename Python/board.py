@@ -635,9 +635,7 @@ class Board(QWidget):
         :return: None
         """
 
-        print(self.size())
         super().update()
-        print(self.size())
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
         self.setBoardState(int(state))
@@ -799,8 +797,6 @@ class Board(QWidget):
                     self.arm_button.setEnabled(False)
                     self.fire_button.setEnabled(False)
                     self.abort_button.setEnabled(False)
-
-        print(self.size())
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):

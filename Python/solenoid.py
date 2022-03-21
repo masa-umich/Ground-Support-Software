@@ -194,7 +194,7 @@ class Solenoid(AvionicsObject):
                     new_state = 1
                 elif self.state == 1:
                     new_state = 0
-                if self.isAvionicsFullyDefined() and self.gui.campaign.is_active:
+                if self.isAvionicsFullyDefined():
                     cmd_dict = {
                         "function_name": "set_vlv",
                         "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),

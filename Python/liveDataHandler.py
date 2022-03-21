@@ -16,21 +16,16 @@ class LiveDataHandler:
 
         self.thread = LiveDataHandlerBackgroundThread(self)
         self.startThread()
-        self.populateData = False
+        self.sendAndPopulateData = False
 
         self.dataPacketSignal = self.thread.lastPacketDataSignal
         self.updateScreenSignal = self.thread.updateScreenSignal
         self.connectionStatusSignal = self.thread.connectionStatusSignal
 
-    # def postInit(self):
-    #     self._initClient()
-    #
-    # def _initClient(self):
-    #     self._client = ClientWidget(True, self._gui)
-    #     self.startThread()
-
     def sendCommand(self, cmd_id: int, args: dict):
-        self._client.command(cmd_id, args)
+        # TODO: Option to force commands through
+        if self.sendAndPopulateData:
+            self._client.command(cmd_id, args)
 
     def getClient(self):
         return self._client  # type: ClientWidget
@@ -38,11 +33,11 @@ class LiveDataHandler:
     def getGui(self):
         return self._gui
 
-    def setPopulateData(self, value: bool):
-        self.populateData = value
+    def setSendAndPopulateData(self, value: bool):
+        self.sendAndPopulateData = value
 
-    def shouldPopulateData(self):
-        return self.populateData
+    def shouldSendAndPopulateData(self):
+        return self.sendAndPopulateData
 
     def startThread(self):
         self.is_active = True
@@ -89,7 +84,7 @@ class LiveDataHandlerBackgroundThread(QThread):
                 elif self.dataHandler.getClient().is_connected and not packet["ser_open"]:
                     self.connectionStatusSignal.emit(2, packet["error_msg"], self.dataHandler.getClient().is_commander)
 
-                if self.dataHandler.shouldPopulateData():
+                if self.dataHandler.shouldSendAndPopulateData():
                     # TODO: Not sure if this goes here, or under actively_rx, seem weird to try to push bad data
                     # {"gse.vlv0.en": 1, "gse.vlv0.e": 12, "gse.vlv0.i": 2, "gse.e_batt": 11.1, "gse.ibus": .12,
                     #                          "gse.STATE": 0, "gse.LOGGING_ACTIVE": 1, "gse.timestamp": 102242, "gse.adc_rate": 200,
