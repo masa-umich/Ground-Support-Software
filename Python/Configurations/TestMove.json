@@ -1,0 +1,291 @@
+{
+	"Solenoid 1": {
+		"id": 1,
+		"pos": {
+			"x": 659.047619047619,
+			"y": 273.14285714285717
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 23.999999999999968
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428605
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "5",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Tank 2": {
+		"id": 2,
+		"pos": {
+			"x": 730.4761904761905,
+			"y": 405.7142857142857
+		},
+		"fluid": 0,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238095,
+				"y": 206.85714285714286
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 90.47619047619047,
+				"y": 90.28571428571429
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 250.47619047619045,
+			"y": 132.57142857142858
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "5",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 543.8095238095237,
+			"y": 459.42857142857144
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 24.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -6.666666666666666,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "7",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"3 Way Valve 5": {
+		"id": 5,
+		"pos": {
+			"x": 933.3333333333333,
+			"y": 333.7142857142857
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "3 Way Valve",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.142857142857142,
+				"y": 35.42857142857143
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -16.19047619047619,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	},
+	"Generic Sensor 6": {
+		"id": 6,
+		"pos": {
+			"x": 1003.8095238095237,
+			"y": 494.85714285714283
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Sensor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.476190476190474,
+				"y": 32.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 11.428571428571429,
+				"y": -20.571428571428573
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.load[3]",
+		"board": "GSE Controller"
+	},
+	"Tube 1": {
+		"tube id": 1,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 563.8095238095237,
+				"y": 476.57142857142856
+			},
+			"1": {
+				"x": 563.8095238095237,
+				"y": 761.1428571428571
+			},
+			"2": {
+				"x": 774.2857142857142,
+				"y": 761.1428571428571
+			},
+			"3": {
+				"x": 774.2857142857142,
+				"y": 609.1428571428571
+			},
+			"4": {
+				"x": 774.2857142857142,
+				"y": 609.1428571428571
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 700.0,
+				"y": 283.42857142857144
+			},
+			"1": {
+				"x": 774.2857142857142,
+				"y": 283.42857142857144
+			},
+			"2": {
+				"x": 774.2857142857142,
+				"y": 405.7142857142857
+			},
+			"3": {
+				"x": 774.2857142857142,
+				"y": 405.7142857142857
+			}
+		},
+		"line width": 1.0
+	},
+	"Board 0": "GSE Controller",
+	"Board 1": "Flight Computer"
+}

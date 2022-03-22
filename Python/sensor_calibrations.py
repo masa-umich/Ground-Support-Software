@@ -1,5 +1,3 @@
-import random
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -16,7 +14,6 @@ from constants import Constants
 from ClientWidget import ClientWidget, ClientDialog
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
-from flash import FlashDialog
 from abort_button import AbortButton
 from limits import LimitWindow
 from auto_manager import AutoManager

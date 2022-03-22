@@ -13,7 +13,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+from baseGUI import BaseGui
 from Switch import Switch
+from constants import Constants
 from ColorButton import ColorButton
 from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
@@ -30,7 +32,7 @@ class DataViewerDialog(QtWidgets.QDialog):
         print("pyqtgraph Version: " + pg.__version__)
 
         self.gui = gui
-        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=250)
+        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=Constants.dataHandlerUpdateRate)
         self.setWindowTitle("Data Viewer")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.data_viewer)
@@ -42,7 +44,7 @@ class DataViewer(QtWidgets.QTabWidget):
     Custom QtWidget to plot data
     """
 
-    def __init__(self, gui, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
+    def __init__(self, gui, viewer_window, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
         """Initializes DataViewer object.
 
         Args:
@@ -54,6 +56,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # load data channels
         self.gui = gui
+        self.window = viewer_window
         self.channels = channels  # list of channel names
         self.num_channels = num_channels  # number of data channels in plot
         self.cycle_time = cycle_time  # cycle time of application in ms
@@ -61,10 +64,9 @@ class DataViewer(QtWidgets.QTabWidget):
                                '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']  # stolen from matplotlib
 
         # Some support if the gui is not attached
-        if self.gui is None:
-            self.font_scale_ratio = 1
-        else:
-            self.font_scale_ratio = self.gui.font_scale_ratio
+        self.font_scale_ratio = self.gui.font_scale_ratio
+
+        self.window.sliderUpdateSignal.connect(self.quietUpdateSlider)
 
         # initialize tabs
         self.config_tab = QtWidgets.QWidget()
@@ -108,7 +110,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.title_edit.setPlaceholderText("Plot Title")
         self.config_layout.addWidget(self.title_edit, 0, 1, 1, 2)
         font = QtGui.QFont()
-        font.setPointSize(12 * self.font_scale_ratio)
+        font.setPointSizeF(12 * self.font_scale_ratio)
         self.title_edit.setFont(font)
         self.title_edit.editingFinished.connect(self.title_update)
 
@@ -127,7 +129,7 @@ class DataViewer(QtWidgets.QTabWidget):
             # Channel dropdown with autocomplete
             channel_dropdown = QtWidgets.QLineEdit()
             font = channel_dropdown.font()
-            font.setPointSize(12 * self.font_scale_ratio)
+            font.setPointSizeF(12 * self.font_scale_ratio)
             channel_dropdown.setFont(font)
             channel_dropdown.setCompleter(completer)
             channel_dropdown.setPlaceholderText("Channel Name")
@@ -138,7 +140,7 @@ class DataViewer(QtWidgets.QTabWidget):
             # Alias dropdown
             alias_dropdown = QtWidgets.QLineEdit()
             font = alias_dropdown.font()
-            font.setPointSize(12 * self.font_scale_ratio)
+            font.setPointSizeF(12 * self.font_scale_ratio)
             alias_dropdown.setFont(font)
             alias_dropdown.setPlaceholderText("Alias")
             alias_dropdown.editingFinished.connect(lambda: self.redraw_curves())
@@ -196,7 +198,16 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.showLegend()
 
+        # set up slider
+        self.slider = QtWidgets.QSlider(self)
+        self.slider.setOrientation(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(1)
+        self.slider.setValue(0)
+        self.slider.valueChanged.connect(self.range_update)
 
+        # add slider
+        self.plot_layout.addWidget(self.slider)
 
     def load_config(self, config: list):
         """Loads a DataViewer config
@@ -267,7 +278,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
                 else:
                     self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
-                    if self.aliases[idx].text() is not "":
+                    if self.aliases[idx].text() != "":
                         self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
 
         if not hasRight and self.plot2.right_view_box is not None:
@@ -307,17 +318,31 @@ class DataViewer(QtWidgets.QTabWidget):
         Args:
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
         """
-        # super().update()
         points = int(self.duration*1000/self.cycle_time)
-        data = frame.tail(points)
+        # data = frame.tail(points)
+        data = frame
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
-                #print(type(data["time"].to_numpy()))
-                #print(type(data[channel_name].to_numpy()))
                 self.plot2.curves[channel_name].setData(
                     x=data["time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
+
+    def range_update(self):
+        """Updates plot range when slider is moved"""
+
+        self.plot2.setXRange(self.slider.sliderPosition(), self.slider.sliderPosition() + self.duration)
+
+    def sliderChange(self):
+        if self.window.checkbox.isChecked():
+            self.window.sliderUpdateSignal.emit(self.slider.value())
+
+    def quietUpdateSlider(self, newvalue:int):
+
+        self.slider.blockSignals(True)
+        self.slider.setValue(newvalue)
+        self.slider.blockSignals(False)
+        self.range_update()
 
 
 class DataViewerWindow(QtWidgets.QMainWindow):
@@ -325,7 +350,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     Window with client and DataViewer objects
     """
 
-    def __init__(self, gui = None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
+    sliderUpdateSignal = pyqtSignal(int)
+
+    def __init__(self, gui, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, singular:bool = False, *args, **kwargs):
         """Initializes window
 
         Args:
@@ -343,18 +370,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.top_layout = QtWidgets.QGridLayout()
         self.widget.setLayout(self.top_layout)
 
+        # Connection to the signal
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
         self.rows = rows
         self.cols = cols
         self.num_channels = num_channels
         self.cycle_time = cycle_time
-
-        # set up client
-        if not client:
-            self.client_dialog = ClientDialog(False)
-        else:
-            self.client_dialog = client
-
-        self.last_packet = None
 
         # menu bar
         self.main_menu = self.menuBar()
@@ -362,10 +384,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.options_menu = self.main_menu.addMenu('&Options')
 
         # connection menu item
-        if not client:
+        if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
             # self.quit.setShortcut("Ctrl+K")
-            self.connect.triggered.connect(self.client_dialog.show)
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
             self.options_menu.addAction(self.connect)
 
         # save menu item
@@ -403,43 +425,64 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.channels = self.interface.channels
         self.header = ['time', 'packet_num', 'commander'] + self.channels
         self.database = pd.DataFrame(columns=self.header)
+        self.database_full = False
+
+        self.checkbox = QtWidgets.QCheckBox(self)
+        self.checkbox.setText("Lock")
 
         # init viewers
         self.viewers = [DataViewer(
-            self.gui, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+            self.gui, self, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+
         for i in range(rows):
             for j in range(cols):
                 idx = i*cols+j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
+                self.viewers[idx].slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
         self.starttime = datetime.now().timestamp()
         self.cycle_time = cycle_time
 
+        self.top_layout.addWidget(self.checkbox)
+
     def addRow(self):
 
         for i in range(self.cols):
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            idx = self.rows * self.cols + i
+            self.viewers.append(DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
+            self.viewers[-1].slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
         self.rows = self.rows + 1
 
-    def addCol(self):
+        self.top_layout.addWidget(self.checkbox)
 
+        self.gui.setStatusBarMessage("Added Row")
+
+    def addCol(self):
+        
         for i in range(self.rows):
-            self.viewers.append(DataViewer(self.gui, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            idx = self.rows * self.cols + i
+
+            dv = DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
+            self.viewers.append(dv)
+            dv.slider.valueChanged.connect(self.viewers[-1].sliderChange)
+
             self.top_layout.addWidget(self.viewers[-1], i, self.cols)
 
         self.cols = self.cols + 1
 
+        self.gui.setStatusBarMessage("Added Col", error=True)
+
     # loop
-    def update(self):
+    @pyqtSlot(dict)
+    def updateFromDataPacket(self, packet: dict):
         """Update application"""
         # super().update()
-        self.last_packet = self.client_dialog.client.cycle()
 
         if self.client_dialog.client.is_connected:
-            self.last_packet["time"] -= self.starttime  # time to elapsed
-            last_frame = pd.DataFrame(self.last_packet, index=[0])
+            packet["time"] -= self.starttime  # time to elapsed
+            last_frame = pd.DataFrame(packet, index=[0])
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
                 int(15*60*1000/self.cycle_time))  # cap data to 15 min
 
@@ -447,6 +490,33 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(self.database)
+
+        # check if database has reached 15 minute cap
+        if (self.database.size == 15 * 60 * 10):
+            self.database_full = True
+        
+        # when packet is received increase slider size as necessary
+        for i in range(self.rows):
+            for j in range(self.cols):
+
+                idx = i * self.cols + j
+
+                if (not self.database_full and self.database[self.database.columns[0]].count() > 0):
+
+                    # timestamps start when connection established, plot starts when channel name entered
+                    timestamp = self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]
+
+                    # size of database extends beyond range viewed, increase slider size
+                    if (timestamp >= self.viewers[idx].duration):
+                        self.viewers[idx].slider.setMaximum(int(timestamp) - self.viewers[idx].duration)
+
+                    # lock range viewed to most recent values if slider was already at max position
+                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
+                else:
+                    # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
+                    if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
 
     def exit(self):
         """Exit application"""
@@ -500,44 +570,11 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
-    CYCLE_TIME = 250  # in ms
-    window = DataViewerWindow(num_channels=4, rows=1,
-                              cols=1, cycle_time=CYCLE_TIME)
-
-    # timer and tick updates
-    timer = QtCore.QTimer()
-    timer.timeout.connect(window.update)
-    timer.start(CYCLE_TIME)
-
-    # TODO: Add in light mode
-    print("Python Version:" + str(sys.version_info))
-    print("QT Version: " + QT_VERSION_STR)
-
-    app.setStyle("Fusion")
-
-    darkPalette = QPalette()
-    darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
-    darkPalette.setColor(QPalette.WindowText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
-    darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
-    darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
-    darkPalette.setColor(QPalette.ToolTipText, Qt.white)
-    darkPalette.setColor(QPalette.Text, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
-    darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
-    darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
-    darkPalette.setColor(QPalette.ButtonText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.BrightText, Qt.red)
-    darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
-    darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
-    darkPalette.setColor(QPalette.HighlightedText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
-
-    app.setPalette(darkPalette)
+    lwgui = BaseGui(app)
+    CYCLE_TIME = Constants.dataHandlerUpdateRate  # in ms
+    window = DataViewerWindow(lwgui, num_channels=4, rows=1,
+                              cols=1, cycle_time=CYCLE_TIME, singular=True)
+    lwgui.setMainWindow(window)
 
     # run
     window.show()

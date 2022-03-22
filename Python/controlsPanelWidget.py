@@ -3,8 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
-
-import inspect
+import traceback
+from overrides import overrides
 
 
 class ControlsPanelWidget(QWidget):
@@ -22,6 +22,8 @@ class ControlsPanelWidget(QWidget):
         self.gui = self.parent.gui
         self.interface = self.window.interface
 
+        self.painter = QPainter()
+
         # Keeps track of the differnt channels in boxes
         self.sensor_channels = self.interface.channels
         self.valve_channels = []
@@ -37,13 +39,13 @@ class ControlsPanelWidget(QWidget):
         self.top = 0
 
         self.width = self.parent.panel_width
-        self.height = self.gui.screenResolution[1] - self.parent.status_bar_height
+        self.height = self.parent.height
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         # Sets color of control panel
         self.setAutoFillBackground(True)
         p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.darkGray)
+        p.setColor(self.backgroundRole(), QColor(66, 66, 66))
         self.setPalette(p)
         
         # Inits widgets for edit frame
@@ -77,6 +79,7 @@ class ControlsPanelWidget(QWidget):
         self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
+        self.solenoid_NC_NO_combobox = QComboBox()
         
         # fonts
         title_font = QFont()
@@ -98,13 +101,15 @@ class ControlsPanelWidget(QWidget):
         self.createSpinbox(self.scale_spinbox, "Component Scale", "Scale:", .1, 10, 0.1)
         self.createComboBox(self.fluid_combobox, "Component Fluid", "Fluid:", Constants.fluids)
         self.createComboBox(self.board_combobox, "Board", "Board:",
-                            ["Undefined"] + Constants.boards)  # TODO: Instead of allowing all boards, only allow boards that are currently configured
+                            ["Undefined"] + Constants.boards)
         self.createComboBox(self.channel_combobox, "Channel", "Channel:",
                             ["Undefined"] + self.sensor_channels)
         self.channel_combobox.setEditable(True)
         completer = QCompleter(self.sensor_channels)
         completer.setCaseSensitivity(False)
         self.channel_combobox.setCompleter(completer)
+        self.channel_combobox.setStyleSheet("QComboBox { combobox-popup: 0; }");
+        self.channel_combobox.setMaxVisibleItems(8)
         self.edit_form_layout.addRow(QLabel(""))
 
         # Component Label Parameters
@@ -126,7 +131,16 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_visibility_group = self.createTFRadioButtons("Serial Number Visibility", "Visibility:", "Shown", "Hidden", True)
         self.createComboBox(self.serial_number_position_combobox, "Serial Number Position","Position:", ["Top", "Right", "Bottom", "Left", "Custom"])
         self.createSpinbox(self.serial_number_font_size_spinbox, "Serial Number Font Size","Font Size:", 6, 50, 1)
+        self.edit_form_layout.addRow(QLabel(""))
         # Row 14
+
+        # Specific Parapemeters
+        self.component_prop_label = QLabel("Component Properties:                                                                  ")
+        self.component_prop_label.setFont(title_font)
+        self.component_prop_label.setStyleSheet("color: white")
+        self.edit_form_layout.addRow(self.component_prop_label)
+        self.createComboBox(self.solenoid_NC_NO_combobox, "Solenoid NOvNC", "Coil Type", ["Normally Closed", "Normally Open"])
+
         self.edit_frame.hide()
 
     def createLineEdit(self, lineEdit: QLineEdit, identifier, label_text: str, validator: QValidator = None):
@@ -317,9 +331,12 @@ class ControlsPanelWidget(QWidget):
         """
 
         self.blockAllEditPanelFieldSignals()
-
+        self.hideAllComponentProperties()
         # Updates the available values for the channels for solenoids and generic sensors
         try:
+            if not hasattr(object_, "avionics_board"):
+                return None
+
             board_name = object_.avionics_board
 
             if board_name in Constants.boards:
@@ -327,10 +344,15 @@ class ControlsPanelWidget(QWidget):
                 self.valve_channels = [str(x) for x in range(0, self.interface.num_valves[addr])]
                 self.motor_channels = [str(x) for x in range(0, self.interface.num_motors[addr])]
                 self.tank_channels = [str(x) for x in range(0, self.interface.num_tanks[addr])]
+            else:
+                self.valve_channels = []
+                self.motor_channels = []
+                self.tank_channels = []
 
             if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.valve_channels)
                 self.channel_combobox.setEditable(False)
+                self.setSolenoidComponentPropertiesVisibility(True)
             elif object_.object_name == "Motor":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.motor_channels)
                 self.channel_combobox.setEditable(False)
@@ -338,19 +360,24 @@ class ControlsPanelWidget(QWidget):
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
                 self.channel_combobox.setEditable(False)
             elif object_.object_name == "Generic Sensor":
-                prefix = self.interface.getPrefix(board_name)
-                specific_channels = [i for i in self.sensor_channels if i.startswith(prefix)]
+                if board_name in Constants.boards:
+                    prefix = self.interface.getPrefix(board_name)
+                    specific_channels = [i for i in self.sensor_channels if i.startswith(prefix)]
+                else:
+                    specific_channels = []
+
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + specific_channels)
                 self.channel_combobox.setEditable(True)
-                completer = QCompleter(self.sensor_channels)
+                completer = QCompleter(specific_channels)
                 completer.setCaseSensitivity(False)
                 self.channel_combobox.setCompleter(completer)
             else:
                 self.channel_combobox.setEditable(False)
         except Exception as e:
-            pass
+            print(traceback.format_exc())
             # print("UpdateEditPanelFields Threw Exception")
             # print(e)
+            pass
 
         self.component_name_textbox.setText(object_.long_name)
         self.long_name_position_combobox.setCurrentText(object_.long_name_label.position_string)
@@ -374,6 +401,9 @@ class ControlsPanelWidget(QWidget):
         else:
             self.channel_combobox.setDisabled(True)
             self.board_combobox.setDisabled(True)
+
+        if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
+            self.solenoid_NC_NO_combobox.setCurrentIndex(object_.normally_open)
 
         self.enableAllEditPanelFieldSignals()
 
@@ -406,6 +436,8 @@ class ControlsPanelWidget(QWidget):
                     object_.setFluid(text)
             elif identifier == "Board":
                 for object_ in self.editing_object_list:
+                    if object_.avionics_board != text:
+                        object_.setChannel("Undefined")
                     object_.setAvionicsBoard(text)
                 self.updateEditPanelFields(object_) # lazy fix for valve numbers
             elif identifier == "Channel":
@@ -415,40 +447,50 @@ class ControlsPanelWidget(QWidget):
             elif identifier == "Component Name Visibility":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setVisible(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name visible to " + str(text))
             elif identifier == "Component Name Position":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.moveToPosition(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name position to " + str(text))
             elif identifier == "Component Name Font Size":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setFontSize(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name font size to " + str(text))
             elif identifier == "Component Name Rows":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setRows(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name rows to " + str(text))
 
             # Serial Number Label Parameters
             elif identifier == "Serial Number Visibility":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setVisible(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number visibility to " + str(text))
             elif identifier == "Serial Number Position":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.moveToPosition(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number position to " + str(text))
             elif identifier == "Serial Number Font Size":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setFontSize(text)
-                    self.window.statusBar().showMessage(
+                    self.window.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
+
+            # Custom Parameters
+            elif identifier == "Solenoid NOvNC":
+                for object_ in self.editing_object_list:
+                    if text == "Normally Open":
+                        object_.normally_open = True
+                    else:
+                        object_.normally_open = False
+
+            object_.updateToolTip()
 
     # def doesFormLayoutHaveFocus(self):
     #     numRow = self.edit_form_layout.count()
@@ -517,3 +559,54 @@ class ControlsPanelWidget(QWidget):
                 self.removeEditingObject(obj)
 
         self.setEditingObjectFocus(object_)
+
+    def hideAllComponentProperties(self):
+        """
+        Hides all the component properties
+        """
+        self.setSolenoidComponentPropertiesVisibility(False)
+
+    def setSolenoidComponentPropertiesVisibility(self, is_vis):
+        """
+        Shows the solenoid specific options
+        :param is_vis:
+        """
+        sol_NC_NO_index = self.edit_form_layout.getWidgetPosition(self.solenoid_NC_NO_combobox)
+        if is_vis:
+            self.component_prop_label.show()
+            self.solenoid_NC_NO_combobox.show()
+            self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().show()
+        else:
+            self.component_prop_label.hide()
+            self.solenoid_NC_NO_combobox.hide()
+            self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().hide()
+
+
+    @overrides
+    def paintEvent(self, e):
+        """
+        This event is called automatically in the background by pyQt. It is used to update the drawing on screen
+        This function calls the objects own drawing methods to perform the actual drawing calculations
+        """
+        self.painter.begin(self)
+
+        # This makes the objects onscreen more crisp
+        self.painter.setRenderHint(QPainter.HighQualityAntialiasing)
+
+        # Default pen qualities
+        pen = QPen()
+        pen.setWidth(Constants.line_width)
+        pen.setColor(Constants.MASA_Beige_color)
+        self.painter.setPen(pen)
+
+        # Draw the bottom border on the widget
+        path = QPainterPath()
+        # path.moveTo(0, 75 * self.gui.pixel_scale_ratio[1]-1)  # Bottom left corner
+        # path.lineTo(self.width, 75 * self.gui.pixel_scale_ratio[1]-1)  # Straight across
+
+        path.moveTo(1, 0)
+        path.lineTo(1, self.height)
+
+        self.painter.drawPath(path)
+
+        self.painter.end()

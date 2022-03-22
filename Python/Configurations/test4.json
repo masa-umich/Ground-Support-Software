@@ -1,0 +1,198 @@
+{
+	"Motor 1": {
+		"id": 1,
+		"pos": {
+			"x": 523.809523809524,
+			"y": 294.8571428571428
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "M0",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.38095238095241,
+				"y": 67.42857142857142
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 22.857142857142865,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 231.42857142857153,
+			"y": 246.8571428571428
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "SGse1O",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 36.57142857142856
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -2.857142857142858,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "GSE Controller",
+		"normally open": true
+	},
+	"Tank 3": {
+		"id": 3,
+		"pos": {
+			"x": 317.1428571428573,
+			"y": 273.14285714285705
+		},
+		"fluid": false,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "TPC1",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238097,
+				"y": 206.85714285714283
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 28.571428571428584,
+				"y": -21.714285714285676
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Pressurization Controller"
+	},
+	"Generic Sensor 4": {
+		"id": 4,
+		"pos": {
+			"x": 751.4285714285717,
+			"y": 358.8571428571428
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Gse.press12",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.47619047619049,
+				"y": 31.999999999999993
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -1.9047619047619055,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[12]",
+		"board": "GSE Controller"
+	},
+	"3 Way Valve 5": {
+		"id": 5,
+		"pos": {
+			"x": 879.0476190476194,
+			"y": 426.28571428571416
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 27.0,
+		"name": "3 Way Valve",
+		"scale": 1,
+		"serial number": "",
+		"long name": "3gse3",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 17.14285714285715,
+				"y": 35.428571428571416
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 0.9523809523809528,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
+	}
+}

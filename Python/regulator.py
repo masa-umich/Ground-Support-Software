@@ -22,9 +22,9 @@ class Regulator(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Regulator', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1):
         """
         Initializer for Solenoid
@@ -136,12 +136,12 @@ class Regulator(BaseObject):
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
         if self.is_vertical == False:
-            self.anchor_points[0].updateLocalPosition(QPoint(0,int(3*self.height/4)))
-            self.anchor_points[1].updateLocalPosition(QPoint(self.width ,int(3*self.height/4)))
-            self.anchor_points[2].updateLocalPosition(QPoint(self.width/2,0))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width/2, self.height))
+            self.anchor_points[0].updateLocalPosition(QPointF(0,int(3*self.height/4)))
+            self.anchor_points[1].updateLocalPosition(QPointF(self.width ,int(3*self.height/4)))
+            self.anchor_points[2].updateLocalPosition(QPointF(self.width/2,0))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width/2, self.height))
         else:
-            self.anchor_points[0].updateLocalPosition(QPoint(int(self.width/2),0))
-            self.anchor_points[1].updateLocalPosition(QPoint(int(self.width/2),self.height))
-            self.anchor_points[2].updateLocalPosition(QPoint(0,int(3*self.height/4)))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width, int(3*self.height/4)))
+            self.anchor_points[0].updateLocalPosition(QPointF(int(self.width/2),0))
+            self.anchor_points[1].updateLocalPosition(QPointF(int(self.width/2),self.height))
+            self.anchor_points[2].updateLocalPosition(QPointF(0,int(3*self.height/4)))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width, int(3*self.height/4)))
