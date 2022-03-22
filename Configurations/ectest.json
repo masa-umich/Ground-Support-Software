@@ -1,0 +1,523 @@
+{
+	"Solenoid 1": {
+		"id": 1,
+		"pos": {
+			"x": 60.0,
+			"y": 228.33333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "COPV Vent",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -17.5,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 60.0,
+			"y": 310.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Control",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -21.25,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "1",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 60.0,
+			"y": 380.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox Control",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -18.75,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "3",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 60.0,
+			"y": 461.6666666666667
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Press Vent",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -31.25,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "4",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 5": {
+		"id": 5,
+		"pos": {
+			"x": 60.0,
+			"y": 538.3333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox Vent",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -10.0,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "5",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 6": {
+		"id": 6,
+		"pos": {
+			"x": 60.0,
+			"y": 618.3333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Prevalve",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -25.0,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "6",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 7": {
+		"id": 7,
+		"pos": {
+			"x": 166.25,
+			"y": 228.33333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox Prevalve",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -21.25,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "8",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 8": {
+		"id": 8,
+		"pos": {
+			"x": 60.0,
+			"y": 696.6666666666667
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Tank Vent",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -30.0,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "7",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 9": {
+		"id": 9,
+		"pos": {
+			"x": 166.25,
+			"y": 380.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel Purge",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -17.5,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "10",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 10": {
+		"id": 10,
+		"pos": {
+			"x": 166.25,
+			"y": 310.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox Purge",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -15.0,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "9",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 11": {
+		"id": 11,
+		"pos": {
+			"x": 166.25,
+			"y": 461.6666666666667
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Lox MPV",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -10.0,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "11",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 12": {
+		"id": 12,
+		"pos": {
+			"x": 166.25,
+			"y": 538.3333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Fuel MPV",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -13.75,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "12",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Solenoid 13": {
+		"id": 13,
+		"pos": {
+			"x": 166.25,
+			"y": 618.3333333333334
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Igniter",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.25,
+				"y": 41.66666666666667
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -3.75,
+				"y": -25.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "13",
+		"board": "Engine Controller",
+		"normally open": false
+	},
+	"Board 0": "Engine Controller"
+}
