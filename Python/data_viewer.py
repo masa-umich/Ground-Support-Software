@@ -379,11 +379,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         # set up client
         if not client:
-            self.client_dialog = ClientDialog(None)
-            print("made client")
+            self.client_dialog = ClientDialog(None, self.gui)
         else:
             self.client_dialog = client
-            print("made client")
 
         self.last_packet = None
 
