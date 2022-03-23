@@ -63,7 +63,8 @@ class BaseGui(QObject):
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 
-            os.mkdir(path=self.workspace_path + "/Configurations/")
+            if not os.path.isdir(self.workspace_path + "/Configurations/"):
+                os.makedirs(self.workspace_path + "/Configurations/")
 
             os.mkdir(path=self.LAUNCH_DIRECTORY)
             readMe = open(self.LAUNCH_DIRECTORY + "README.txt", "x")
@@ -207,6 +208,11 @@ class BaseGui(QObject):
             self.workspace_path = str(
                 QFileDialog.getExistingDirectory(None, "Workspace not found: Select Workspace Directory",
                                                  options=options))
+
+            # In case workspace path was deleted, need to recreate config files
+            if not os.path.isdir(self.workspace_path + "/Configurations/"):
+                os.makedirs(self.workspace_path + "/Configurations/")
+
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 
