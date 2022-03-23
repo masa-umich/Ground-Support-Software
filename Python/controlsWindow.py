@@ -47,7 +47,7 @@ class ControlsWindow(QMainWindow):
         self.limits = LimitWindow(10, gui=self.gui)  # .client)
         self.auto_manager = AutoManager(self.gui) #.client)
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
-        self.sensorsWindow = SensorCalibrationDialog(self.gui)
+        self.sensorsWindow = SensorCalibrationDialog(self.gui, self)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
         self.menuBar().setFixedHeight(32 * self.gui.pixel_scale_ratio[1])
         if self.gui.platform == "Windows":
