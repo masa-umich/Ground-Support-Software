@@ -93,3 +93,5 @@ if __name__ == '__main__':
         currentExitCode = app.exec_()
         gui.savePreferences()
         app = None
+
+#https://stackoverflow.com/questions/8356336/how-to-capture-output-of-pythons-interpreter-and-show-in-a-text-widget
