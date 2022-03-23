@@ -130,7 +130,7 @@ class ControlsWidget(QWidget):
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap('Images/masawhiteworm3.png')
+        pixmap = QPixmap(self.gui.LAUNCH_DIRECTORY+'Images/masawhiteworm3.png')
         pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
 

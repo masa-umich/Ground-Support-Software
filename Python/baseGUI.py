@@ -35,7 +35,10 @@ class BaseGui(QObject):
         print("Python Version: " + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)
 
+        print(self.LAUNCH_DIRECTORY)
+
         self.applyDarkTheme(qapp)
+        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY+'Images/M_icon.png'))
 
         # Check which platform we are working with
         if sys.platform == "win32":

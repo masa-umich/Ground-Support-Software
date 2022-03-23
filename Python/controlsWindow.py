@@ -38,7 +38,7 @@ class ControlsWindow(QMainWindow):
         # Set geometry
         self.gui = parent
         self.title = 'MASA Console'
-        self.setWindowIcon(QIcon('Images/M_icon.png'))
+        self.setWindowIcon(QIcon(self.gui.LAUNCH_DIRECTORY+'Images/M_icon.png'))
         #self.client = ClientWidget(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()

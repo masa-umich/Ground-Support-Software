@@ -86,7 +86,6 @@ if __name__ == '__main__':
         app.setApplicationName("MASA GUI")
         app.setApplicationDisplayName("MASA GUI")
 
-        app.setWindowIcon(QIcon('Images/M_icon.png'))
         gui = GUI(app)
 
         QTimer.singleShot(100, gui.postInit)  # Need to call this after exec_ for proper screen placement

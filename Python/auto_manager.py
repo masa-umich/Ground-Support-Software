@@ -461,12 +461,14 @@ if __name__ == "__main__":
 
     # initialize application
     APPID = 'MASA.AutoManager'  # arbitrary string
+    app.setApplicationName("MASA GUI")
+    app.setApplicationDisplayName("MASA GUI (Singular) - Autosequence Manager")
+
     if os.name == 'nt':  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
 
