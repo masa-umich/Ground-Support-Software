@@ -92,12 +92,12 @@ class BaseGui(QObject):
         print("Workspace Path: " + self.workspace_path)
 
         # Add in fonts
-        QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Light.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Medium.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Thin.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/Montserrat/Montserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Regular.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Light.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Medium.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Thin.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         # This is a handler for the Client, which receives data and sends commands
         self.liveDataHandler = LiveDataHandler(self)
