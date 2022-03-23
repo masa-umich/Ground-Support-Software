@@ -198,8 +198,8 @@ class ControlsWindow(QMainWindow):
         self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
 
         # Campaign -> Open Campaign Folder
-        self.openCampaignDir = QAction('Open Campaign Folder', self)
-        self.openCampaignDir.triggered.connect(self.openCampaignFolder)
+        self.openConfigurationDir = QAction('Open Configuration Folder', self)
+        self.openConfigurationDir.triggered.connect(self.openConfigurationFolder)
 
         # Avionics -> Connection Settings
         self.connect = QAction("&Connection", self)
@@ -272,7 +272,7 @@ class ControlsWindow(QMainWindow):
         campaign_menu.addAction(self.tareLoadCellAct)
         campaign_menu.addAction(self.zeroTimeAct)
         campaign_menu.addSeparator()
-        campaign_menu.addAction(self.openCampaignDir)
+        campaign_menu.addAction(self.openConfigurationDir)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
@@ -459,13 +459,12 @@ class ControlsWindow(QMainWindow):
             with open(fileName, "w") as write_file:
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
-    @staticmethod
-    def openCampaignFolder():
+    def openConfigurationFolder(self):
         """
         Opens the OS specific file explorer to where all the campaign data is saved for
         :return: None
         """
-        webbrowser.open('file:///' + os.path.realpath(Constants.campaign_data_dir))
+        webbrowser.open('file:///' + os.path.realpath(self.gui.workspace_path))
 
     def enterDebug(self):
         """

@@ -23,12 +23,13 @@ class BaseGui(QObject):
     EXIT_CODE_REBOOT = -52
     EXIT_CODE_NOMINAL = 0
     EXIT_CODE_ERROR = -1
-    LAUNCH_DIRECTORY = "LaunchFiles/"
 
     guiExitSignal = pyqtSignal()
 
     def __init__(self, qapp : QApplication, mainWindow: QWindow = None):
         super().__init__()
+
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
 
         print("MASA GUI Version: " + Constants.GUI_VERSION)
         print("Python Version: " + str(sys.version_info))
@@ -50,7 +51,7 @@ class BaseGui(QObject):
             self.screenResolution = [qapp.desktop().screenGeometry().width(), qapp.desktop().screenGeometry().height()]
 
         # Check if the launch files exist, if so load preferences from there
-        if os.path.isdir(BaseGui.LAUNCH_DIRECTORY):
+        if os.path.isdir(self.LAUNCH_DIRECTORY):
             self.loadPreferences()
         # If this is the first time running, create required directories, and guess at scaling values
         else:
@@ -63,10 +64,9 @@ class BaseGui(QObject):
                 sys.exit("No Workspace Path Provided")
 
             os.mkdir(path=self.workspace_path + "/Configurations/")
-            os.mkdir(path=self.workspace_path + "/Run_Data/")
 
-            os.mkdir(path=BaseGui.LAUNCH_DIRECTORY)
-            readMe = open(BaseGui.LAUNCH_DIRECTORY + "README.txt", "x")
+            os.mkdir(path=self.LAUNCH_DIRECTORY)
+            readMe = open(self.LAUNCH_DIRECTORY + "README.txt", "x")
             readMe.write("This is the directory that the GUI pulls startup files from, do not delete, "
                          "it will come back.\n\nIf for some reason u want to reset this delete the whole folder")
 
@@ -177,10 +177,10 @@ class BaseGui(QObject):
         }
 
         # If file exits, open it and write over, if it does not, create and write
-        if os.path.isfile(BaseGui.LAUNCH_DIRECTORY + "prefs.json"):
-            pref_file = open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", 'w')
+        if os.path.isfile(self.LAUNCH_DIRECTORY + "prefs.json"):
+            pref_file = open(self.LAUNCH_DIRECTORY + "prefs.json", 'w')
         else:
-            pref_file = open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", "x")
+            pref_file = open(self.LAUNCH_DIRECTORY + "prefs.json", "x")
 
         # Write the file
         json.dump(preferences, pref_file, indent="\t")
@@ -192,7 +192,7 @@ class BaseGui(QObject):
     def loadPreferences(self):
 
         # Open and read the loaded json file
-        with open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", "r") as read_file:
+        with open(self.LAUNCH_DIRECTORY + "prefs.json", "r") as read_file:
             prefs = json.load(read_file)
 
         self.pixel_scale_ratio = [prefs["pixel_scale_ratio"]["x"], prefs["pixel_scale_ratio"]["y"]]
