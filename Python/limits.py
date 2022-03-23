@@ -10,6 +10,7 @@ from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 import pandas as pd
 
+from baseGUI import BaseGui
 from s2Interface import S2_Interface
 from LedIndicatorWidget import LedIndicator
 from ClientWidget import ClientWidget, ClientDialog
@@ -22,9 +23,9 @@ class Limit(QtWidgets.QGroupBox):
         self.parent = parent
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.white)
-        self.setPalette(p)
+        # p = self.palette()
+        # p.setColor(self.backgroundRole(), Qt.white)
+        # self.setPalette(p)
         self.setAutoFillBackground(True)
 
         # status indicator
@@ -179,7 +180,7 @@ class LimitWidget(QtWidgets.QWidget):
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, gui=None, *args, **kwargs):
+    def __init__(self, num_channels, gui, singular : bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.gui = gui
@@ -192,15 +193,16 @@ class LimitWindow(QtWidgets.QMainWindow):
         # if client is None:
         #     self.client_dialog = ClientDialog(None)
         #     # connection menu item
-        #     self.connect = QtGui.QAction("&Connection", self.options_menu)
-        #     # self.quit.setShortcut("Ctrl+K")
-        #     self.connect.triggered.connect(self.client_dialog.show)
-        #     self.options_menu.addAction(self.connect)
+
+        if singular:
+            self.connect = QtGui.QAction("&Connection", self.options_menu)
+            self.connect.setShortcut('Alt+C')
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.options_menu.addAction(self.connect)
         # else:
         #     self.client_dialog = client
 
-        if self.gui is not None:
-            self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
         self.widget = LimitWidget(num_channels, *args, **kwargs)
         self.setWindowTitle("Limits")
@@ -217,12 +219,6 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.load_action.setShortcut("Ctrl+O")
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
-
-        # quit application menu item
-        self.quit = QtGui.QAction("&Quit", self.options_menu)
-        self.quit.setShortcut("Ctrl+Q")
-        self.quit.triggered.connect(self.exit)
-        self.options_menu.addAction(self.quit)
 
         # set up environment and database
         self.interface = S2_Interface()
@@ -276,13 +272,9 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     #app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    limit = LimitWindow(8)
-
-    # timer and tick updates
-    cycle_time = 100  # in ms
-    timer = QtCore.QTimer()
-    timer.timeout.connect(limit.cycle)
-    timer.start(cycle_time)
+    lwgui = BaseGui(app)
+    limit = LimitWindow(8, gui=lwgui, singular=True)
+    lwgui.setMainWindow(limit)
 
     limit.show()
     sys.exit(app.exec())

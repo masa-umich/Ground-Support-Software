@@ -6,11 +6,12 @@ from datetime import datetime
 from overrides import overrides
 
 from constants import Constants
-from object import BaseObject
+#from object import BaseObject
 from anchorPoint import AnchorPoint
+from avionicsObject import AvionicsObject
 
 
-class Solenoid(BaseObject):
+class Solenoid(AvionicsObject):
     """
     Class to handle all solenoid objects and their functionality
     """
@@ -66,7 +67,7 @@ class Solenoid(BaseObject):
                          long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows, long_name_visible = long_name_visible,
-                         serial_number_visible = serial_number_visible)
+                         serial_number_visible = serial_number_visible, board=board, channel=channel)
 
 
         # TODO: Grab object scale from widget_parent
@@ -75,17 +76,9 @@ class Solenoid(BaseObject):
         self.state = 0
         self.voltage = 0
         self.current = 0
-        self.channel = channel
-        self.avionics_board = board
         self.normally_open = bool(normally_open)
 
         self.updateToolTip()
-
-        # self.energized_label = QLabel(self.widget_parent)
-        # self.energized_label.setText("⚡️")
-        # self.energized_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
-        # self.energized_label.adjustSize()
-        # self.energized_label.move(self.position.x()+self.width/2 - self.energized_label.width()/2, self.position.y()+self.height/2- self.energized_label.height()/2)
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
@@ -149,7 +142,7 @@ class Solenoid(BaseObject):
 
             path.moveTo(self.width/2, coil_height + sol_height/2)
             path.lineTo(self.width/2, sol_height/2)
-            path.addRect(self.width/3, 0, self.width/3, coil_height) #left cord, width height
+            path.addRect(self.width/3, 0, self.width/3, coil_height)  # left cord, width height
 
         else:  # Draw vertically
             coil_width = 10 * self.gui.pixel_scale_ratio[1]
@@ -195,20 +188,19 @@ class Solenoid(BaseObject):
 
         if not self.widget_parent.parent.is_editing:
 
-            if self.gui.debug_mode == False:
+            if self.gui.debug_mode is False:
                 # Toggle state of solenoid
                 if self.state == 0:
                     new_state = 1
                 elif self.state == 1:
                     new_state = 0
-                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                if self.isAvionicsFullyDefined():
                     cmd_dict = {
                         "function_name": "set_vlv",
                         "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                         "timestamp": int(datetime.now().timestamp()),
                         "args": [int(self.channel), int(new_state)]
                     }
-                    #print(cmd_dict)
                     self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
@@ -234,24 +226,6 @@ class Solenoid(BaseObject):
             self.anchor_points[1].updateLocalPosition(QPoint(self.width        , int(sol_mid_point) ))
             self.anchor_points[2].updateLocalPosition(QPoint(int(self.width/2+1) , int(sol_mid_point)))
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-
-        self.central_widget.window.statusBar().showMessage(self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
-
     def toggle(self):
         """
         Toggle the state of the solenoid
@@ -263,10 +237,6 @@ class Solenoid(BaseObject):
             self.setState(0, self.voltage, self.current)
         else:
             print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
-
-    # @pyqtSlot(object)
-    # def updateFromDataPacket(self,  data_packet: dict):
-    #     pass
 
     def setState(self, state: bool, voltage: float, current: float):
         """
@@ -285,8 +255,8 @@ class Solenoid(BaseObject):
 
         text = ""
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
-            text += "Channel: %s\n" % (self.central_widget.window.interface.getPrefix(self.avionics_board) + str(self.channel))
+        if self.isAvionicsFullyDefined():
+            text += "Channel: %s\n" % (self.getBoardChannelString())
         else:
             text += "Channel:\n"
 
@@ -294,9 +264,9 @@ class Solenoid(BaseObject):
             text += "State: Energized\n"
         else:
             text += "State: De-energized\n"
-        
+
         text += "Voltage: %s V\nCurrent: %s A\n" % (self.voltage, self.current)
-        
+
         if self.normally_open:
             text += "Normally Open"
         else:
@@ -316,8 +286,6 @@ class Solenoid(BaseObject):
 
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board,
             "normally open": self.normally_open
         }
 
@@ -329,7 +297,7 @@ class Solenoid(BaseObject):
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
 
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "vlv" + str(self.channel)
             state = data_packet[channel_name + ".en"]

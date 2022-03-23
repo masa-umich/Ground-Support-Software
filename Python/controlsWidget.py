@@ -18,6 +18,7 @@ from overrides import overrides
 #from datetime import datetime
 
 from termcolor import colored
+from bidict import bidict
 import os
 
 import json
@@ -65,6 +66,11 @@ class ControlsWidget(QWidget):
 
         # Object Tracker
         self.object_list = []
+        self.avionics_mappings = bidict({})
+        self.object_count = {}
+
+        for obj in self.object_type_list:
+            self.object_count[obj.object_name] = 0
 
         # Object Id Tracker
         self.last_object_id = 0
@@ -107,7 +113,8 @@ class ControlsWidget(QWidget):
 
         self.main_abort_button.setFont(font)
         self.main_abort_button.setFixedWidth(200 * self.gui.pixel_scale_ratio[0])
-        self.main_abort_button.setDisabled(True)
+        self.main_abort_button.setStyleSheet("background-color : darkred")
+        self.main_abort_button.setDisabled(False)
         self.main_abort_button.setFixedHeight(90 * self.gui.pixel_scale_ratio[1])
         self.main_abort_button.move(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0], self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1])
         self.main_abort_button.show()
@@ -291,7 +298,7 @@ class ControlsWidget(QWidget):
                     tube.deleteTube()
                     self.resetObjectsAnchorPointAlignment()
                     self.update()
-                    self.window.statusBar().showMessage("Tube canceled")
+                    self.gui.setStatusBarMessage("Tube canceled")
         # If 'r' key is pressed:
         elif e.key() == Qt.Key_R:
             # Calls rotate method on last object in editing list
@@ -370,24 +377,34 @@ class ControlsWidget(QWidget):
 
                 #TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
+                    self.object_count["Solenoid"] = self.object_count["Solenoid"]+1
                     self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=False))
                 elif action.text() == "New 3 Way Valve":
+                    self.object_count["3 Way Valve"] = self.object_count["3 Way Valve"] + 1
                     self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=False))
                 elif action.text() == "New Tank":
+                    self.object_count["Tank"] = self.object_count["Tank"] + 1
                     self.object_list.append(Tank(self, position=point, fluid=False))
                 elif action.text() == "New Generic Sensor":
+                    self.object_count["Generic Sensor"] = self.object_count["Generic Sensor"] + 1
                     self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Motor":
+                    self.object_count["Motor"] = self.object_count["Motor"] + 1
                     self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Chamber":
+                    self.object_count["Chamber"] = self.object_count["Chamber"] + 1
                     self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=True))
                 elif action.text() == "New Throttle Valve":
+                    self.object_count["Throttle Valve"] = self.object_count["Throttle Valve"] + 1
                     self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Heat Exchanger":
+                    self.object_count["Heat Exchanger"] = self.object_count["Heat Exchanger"] + 1
                     self.object_list.append(HeatEx(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Regulator":
+                    self.object_count["Regulator"] = self.object_count["Regulator"] + 1
                     self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Check Valve":
+                    self.object_count["Check Valve"] = self.object_count["Check Valve"] + 1
                     self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=False))
                 elif action.text() == "New Tube":
                     self.tube_list.append(Tube(self, [],Constants.fluid["HE"], [self]))
@@ -404,7 +421,7 @@ class ControlsWidget(QWidget):
                     self.controlsPanel.addEditingObject(self.object_list[-1])
                     self.object_list[-1].move(point)
 
-                self.window.statusBar().showMessage(action.text() + " created")
+                self.gui.setStatusBarMessage(action.text() + " created")
 
             self.update()
 
@@ -421,7 +438,7 @@ class ControlsWidget(QWidget):
 
         counter = 0
         for object_ in self.object_list:
-            if hasattr(object_, "channel") and object_.channel != "Undefined" and object_.avionics_board != "Undefined":
+            if hasattr(object_, "channel") and object_.isAvionicsFullyDefined():
                 if object_.object_name != "Generic Sensor":
                     mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + object_.channel]
                 else:
@@ -482,18 +499,21 @@ class ControlsWidget(QWidget):
         """
         Saves generated dictionary data to json
         """
-        data = self.generateConfigurationSaveData()
+
+        data = {"VERSION": Constants.GUI_VERSION}
+
+        data = {**data, **(self.generateConfigurationSaveData())}
 
         try:
             # With the open file, write to json with a tab as an indent
             with open(filename, "w") as write_file:
                 json.dump(data, write_file, indent="\t")
 
-            self.window.statusBar().showMessage("Configuration saved to " + filename)
+            self.gui.setStatusBarMessage("Configuration saved to " + filename)
 
         except PermissionError:
             self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify", "Warning")
-            self.window.statusBar().showMessage("Edit permission denied for file: " + filename)
+            self.gui.setStatusBarMessage("Edit permission denied for file: " + filename)
 
 
     # TODO: This should not be the location that data is started the load from,
@@ -513,7 +533,12 @@ class ControlsWidget(QWidget):
         # TODO: I was really lazy so I just copy pasted but can be done nicer
         # Quickly parses json data dict and calls the right object initializer to add it to screen
         for i in data:
-            if i.split()[0] == "Solenoid":
+            obj_type = i.rsplit(' ', 1)[0]
+
+            if obj_type in self.object_count.keys():
+                self.object_count[obj_type] = self.object_count[obj_type] + 1
+
+            if obj_type == "Solenoid":
                 sol = data[i]
                 self.object_list.append(Solenoid(self, _id=sol["id"], position=QPointF(sol["pos"]["x"],sol["pos"]["y"]),
                                                  fluid=sol["fluid"],width=sol["width"], height=sol["height"],
@@ -531,7 +556,7 @@ class ControlsWidget(QWidget):
                                                  normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
                                                  serial_number_visible=sol["serial number label"]["is visible"]))
 
-            if i.split()[0] == "Tank":
+            elif obj_type == "Tank":
                 tnk = data[i]
                 self.object_list.append(Tank(self, _id=tnk["id"], position=QPointF(tnk["pos"]["x"], tnk["pos"]["y"]),
                                              fluid=tnk["fluid"], width=tnk["width"], height=tnk["height"],
@@ -547,7 +572,7 @@ class ControlsWidget(QWidget):
                                              long_name_label_local_pos=QPointF(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
                                              long_name_label_rows=tnk["long name label"]["rows"],long_name_visible=tnk["long name label"]["is visible"],
                                              serial_number_visible=tnk["serial number label"]["is visible"], board=tnk["board"], channel=tnk["channel"]))
-            if i.split()[0] == "Motor":
+            elif obj_type == "Motor":
                 motor = data[i]
                 self.object_list.append(Motor(self, _id=motor["id"], position=QPointF(motor["pos"]["x"],motor["pos"]["y"]),
                                                  fluid=motor["fluid"],width=motor["width"], height=motor["height"],
@@ -564,7 +589,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"],long_name_visible=motor["long name label"]["is visible"],
                                                  serial_number_visible=motor["serial number label"]["is visible"]))
 
-            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "Generic Sensor":  # Truly a lazy mans fix
+            elif obj_type == "Generic Sensor":
                 pt = data[i]
                 self.object_list.append(GenSensor(self, _id=pt["id"], position=QPointF(pt["pos"]["x"], pt["pos"]["y"]),
                                                  fluid=pt["fluid"], width=pt["width"], height=pt["height"],
@@ -582,7 +607,7 @@ class ControlsWidget(QWidget):
                                                  channel=pt["channel"],board=pt["board"],long_name_visible=pt["long name label"]["is visible"],
                                                  serial_number_visible=pt["serial number label"]["is visible"]))
             
-            if i.split()[0] == "Chamber":
+            elif obj_type == "Chamber":
                 idx = data[i]
                 self.object_list.append(Chamber(self, _id=idx["id"], position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
                                                 fluid=idx["fluid"], width=idx["width"], height=idx["height"],
@@ -598,7 +623,7 @@ class ControlsWidget(QWidget):
                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
                                                 long_name_label_rows=idx["long name label"]["rows"]))
 
-            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "Throttle Valve":
+            elif obj_type == "Throttle Valve":
                 idx = data[i]
                 self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -614,7 +639,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
-            if len(i.split()) > 1  and i.split()[0] + " " + i.split()[1] == "3 Way":
+            elif obj_type == "3 Way":
                 idx = data[i]
                 self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -627,10 +652,11 @@ class ControlsWidget(QWidget):
                                                  serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
+                                                 channel=idx["channel"], board=idx["board"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
             
-            if len(i.split()) > 1 and i.split()[0] + " " + i.split()[1] == "Heat Exchanger":
+            elif obj_type == "Heat Exchanger":
                 idx = data[i]
                 self.object_list.append(HeatEx(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
                                                  fluid=idx["fluid"],width=idx["width"], height=idx["height"],
@@ -647,7 +673,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_rows=idx["long name label"]["rows"]))
 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
-            if i.split()[0] == "Tube":
+            elif obj_type == "Tube":
                 tube = data[i]
                 # First pull all the point data out and put it in an array
                 points = []
@@ -657,11 +683,11 @@ class ControlsWidget(QWidget):
 
                 self.tube_list.append(Tube(self, tube_id=tube["tube id"], attachment_aps=[], fluid=tube["fluid"], points=points, line_width=tube["line width"]))
 
-            if i.split()[0] == "Board":
+            elif obj_type == "Board":
                 boards.append(data[i])
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
-        self.window.statusBar().showMessage("Configuration opened from " + fileName)
+        self.gui.setStatusBarMessage("Configuration opened from " + fileName)
 
 
 

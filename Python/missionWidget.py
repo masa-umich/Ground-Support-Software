@@ -40,6 +40,8 @@ class MissionWidget(QWidget):
         self.thread = MissionWidgetBackgroundThread(self)
         self.thread.start()
 
+        self.thread.updateStatusIndicatorSignal.connect(self.updateSystemStatus)
+
         # Set Geometry
         self.width = self.centralWidget.width - self.controlsPanelWidget.width
         self.mainHeight = 85 * self.gui.pixel_scale_ratio[1]
@@ -143,9 +145,9 @@ class MissionWidget(QWidget):
         self.commandIndicator.move(self.connectionIndicator.pos().x() + self.connectionIndicator.width(), 0)
         self.commandIndicator.setToolTip("In command")
 
-        self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Red", 14, 30, 5, 1)
+        self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Green", 14, 30, 5, 1)
         self.systemIndicator.move(self.commandIndicator.pos().x() + self.commandIndicator.width(), 0)
-        self.systemIndicator.setToolTip("He Tank Overpressure\n No pneumatic pressure")
+        self.systemIndicator.setToolTip("Norminal")
 
         # self.stateIndicator = IndicatorLightWidget(self, 'State', 20, "Red", 14, 20, 5, 2)
         # self.stateIndicator.move(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
@@ -372,30 +374,26 @@ class MissionWidget(QWidget):
         else:
             self.commandIndicator.setIndicatorColor("Red")
             self.commandIndicator.setToolTip("No Command Authority")
-    
-    # @overrides
-    # def update(self):
-    #     super().update()
-    #     # connection
-    #
-    #     if self.client.is_connected and self.window.last_packet["actively_rx"]:
-    #         self.connectionIndicator.setIndicatorColor("Green")
-    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nGood Data\nServer Error Message: " + self.window.last_packet["error_msg"])
-    #     elif self.client.is_connected and self.window.last_packet["ser_open"]:
-    #         self.connectionIndicator.setIndicatorColor("Yellow")
-    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Open\nNo Data\nServer Error Message: " + self.window.last_packet["error_msg"])
-    #     elif self.client.is_connected and self.window.last_packet["ser_open"]: #supposed to be not ser_open I think
-    #         self.connectionIndicator.setIndicatorColor("Yellow")
-    #         self.connectionIndicator.setToolTip("Server Connected\nSerial Closed\nNo Data")
-    #     else:
-    #         self.connectionIndicator.setIndicatorColor("Red")
-    #         self.connectionIndicator.setToolTip("No Server Connection")
+
+    @pyqtSlot(int, str)
+    def updateSystemStatus(self, status, tooltip):
+
+        if status == 0:
+            self.systemIndicator.setIndicatorColor("Green")
+        elif status == 1:
+            self.systemIndicator.setIndicatorColor("Yellow")
+        elif status == 2:
+            self.systemIndicator.setIndicatorColor("Red")
+
+        self.systemIndicator.setToolTip(tooltip)
 
 
 class MissionWidgetBackgroundThread(QThread):
     """
     Class that handles background threading for the mission widget class, this is to prevent the GUI from hanging
     """
+
+    updateStatusIndicatorSignal = pyqtSignal(int, str)
 
     def __init__(self, missionWidget):
         """
@@ -413,8 +411,39 @@ class MissionWidgetBackgroundThread(QThread):
         # While the run is active keep the thread alive, will cleanly exit when run stops
         while True:
             # Update the datetime every second, this can be increased but seems unnecessary
-            time.sleep(1)
+            # Now 0.2, to make the status update seem more instant
+            time.sleep(0.2)
             self.missionWidget.updateDateTimeLabel()
+
+            # All this junk below is updating the system indicator light, may need to move again in the future
+            object_status_tooltip = {0: ":)", 1: "", 2: ""}
+            general_status_tooltip = {0: "", 1: "", 2: ""}
+            max_status = 0
+
+            if len(self.missionWidget.centralWidget.controlsSidebarWidget.board_objects) == 0:
+                general_status_tooltip[1] = "No avionics boards added (Edit->Add Avionics)\n"
+                max_status = max(1, max_status)
+
+            for object_ in self.missionWidget.controlsWidget.object_list:
+                status, message = object_.objectStatusCheck()
+
+                if status > 0:
+                    max_status = max(max_status, status)
+                    object_status_tooltip[status] = object_status_tooltip[status] + message + "\n"
+
+            # Nasty block, first checks to see if there are both critical and warnings or just one or the other.
+            # Then actually sets the tooltip in right format to display
+            if (len(general_status_tooltip[1]) > 0 or len(object_status_tooltip[1])) > 0 and (len(general_status_tooltip[2]) > 0 or len(object_status_tooltip[2]) > 0):
+                tooltip = "Critical: \n" + general_status_tooltip[2] + object_status_tooltip[2] + "\nWarnings: \n" + general_status_tooltip[1] + object_status_tooltip[1]
+            elif len(general_status_tooltip[1]) > 0 or len(object_status_tooltip[1]) > 0:
+                tooltip = "Warnings: \n" + general_status_tooltip[1] + object_status_tooltip[1]
+            elif len(general_status_tooltip[2]) > 0 or len(object_status_tooltip[2]) > 0:
+                tooltip = "Critical: \n" + general_status_tooltip[2] + object_status_tooltip[2]
+            else:
+                tooltip = object_status_tooltip[0]
+
+            tooltip = tooltip.rstrip('\r\n')
+            self.updateStatusIndicatorSignal.emit(max_status, tooltip)
 
             if self.missionWidget.gui.campaign.is_active:
                 self.missionWidget.gui.campaign.updateCET()

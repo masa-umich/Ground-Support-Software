@@ -7,28 +7,45 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 import pyqtgraph as pg
 
+from baseGUI import BaseGui
 from constants import Constants
 from s2Interface import S2_Interface
 
 
-class FlashDialog(QtWidgets.QDialog):
-    def __init__(self, flash_controller):
-        super().__init__()
-        self.flash_controller = flash_controller
+class FlashWindow(QtWidgets.QMainWindow):
 
-        self.setWindowTitle("Flash Controller")
-        self.layout = QtWidgets.QVBoxLayout()
-        self.layout.addWidget(self.flash_controller)
-        self.setLayout(self.layout)
+    def __init__(self, gui, singular: bool = False, *args, **kwargs):
+
+        super().__init__()
+
+        self.gui = gui
+        self.singular = singular
+
+        self.main_menu = self.menuBar()
+        self.main_menu.setNativeMenuBar(True)
+        self.options_menu = self.main_menu.addMenu('&Options')
+
+        # # set up client
+        # if client is None:
+        #     self.client_dialog = ClientDialog(None)
+        #     # connection menu item
+
+        if singular:
+            self.connect = QtGui.QAction("&Connection", self.options_menu)
+            self.connect.setShortcut('Alt+C')
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.options_menu.addAction(self.connect)
+
+        self.widget = FlashController(self.gui)
+        self.setCentralWidget(self.widget)
 
 
 class FlashController(QtWidgets.QWidget):
-    def __init__(self, gui=None, *args, **kwargs):
+    def __init__(self, gui, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.interface = S2_Interface()
         self._gui = gui
-        self._dialog = FlashDialog(self)
 
         self._gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
@@ -103,7 +120,6 @@ class FlashController(QtWidgets.QWidget):
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         return msgBox.exec()
 
-
     def dump(self):
         addr = self.get_addr()
         if addr != -1:
@@ -175,7 +191,10 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    controller = FlashDialog(None)
+
+    lwgui = BaseGui(app)
+    controller = FlashWindow(gui=lwgui, singular=True)
+    lwgui.setMainWindow(controller)
 
     controller.show()
     sys.exit(app.exec())

@@ -8,6 +8,8 @@ Class to hold any constant value that is important to the entire program
 
 class Constants:
 
+    GUI_VERSION = 'B-2.0.0'
+
     # Dict of fluids. Example call: fluid["HE"] -> Returns 0
     # TODO: I'm picky so change to LOX
     fluid = {
@@ -44,6 +46,14 @@ class Constants:
     # List of fluids
     fluids = ["HE", "Fuel", "OX", "LN2", "Exhaust"]
 
+    # Avionics Objects Prefix List
+    object_prefix_map = {
+        "Solenoid": "sol.",
+        "Tank": "tnk.",
+        "Motor": "mtr.",
+        "3 Way Valve": "3sol."
+    }
+
     # Dict of fluid colors. Number on left should match value of fluid dict above.
     # Example call: fluidColor[0] -> Returns Qt.white
     fluidColor = {
@@ -58,6 +68,8 @@ class Constants:
         "Exhaust": QColor(255,150,0,255),
         4: QColor(255,150,0,255)
     }
+
+    campaign_data_dir = "data/campaigns/"
 
     event_lookup = {"0": "QEvent::None",
                     "114": "QEvent::ActionAdded",

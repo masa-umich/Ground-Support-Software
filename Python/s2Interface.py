@@ -334,7 +334,8 @@ class S2_Interface:
             os.makedirs(datadir)
         else:
             datadir = filepath+"/flash_dump/"
-            os.makedirs(datadir)
+            if not os.path.exists(datadir):
+                os.makedirs(datadir)
 
         # Output file should have timestamp in name
         filename = time_file_stamp + "_board_" + str(cmd_info["target_board_addr"]) + "_flash_data.bin"

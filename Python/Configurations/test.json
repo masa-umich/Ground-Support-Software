@@ -1,9 +1,10 @@
 {
+	"VERSION": "B-2.0.0",
 	"Solenoid 1": {
 		"id": 1,
 		"pos": {
-			"x": 638.0952380952383,
-			"y": 375.9999999999999
+			"x": 558.0952380952383,
+			"y": 340.5714285714285
 		},
 		"fluid": 0,
 		"width": 40.0,
@@ -11,7 +12,7 @@
 		"name": "Solenoid",
 		"scale": 1,
 		"serial number": "",
-		"long name": "Solenoid",
+		"long name": "Solenoid 1",
 		"is vertical": false,
 		"is locked": false,
 		"is pos locked": false,
@@ -28,7 +29,7 @@
 		"long name label": {
 			"pos string": "Top",
 			"local pos": {
-				"x": -6.66666666666667,
+				"x": -10.47619047619048,
 				"y": -20.571428571428566
 			},
 			"rows": 1,
@@ -38,5 +39,44 @@
 		"channel": "Undefined",
 		"board": "Undefined",
 		"normally open": false
+	},
+	"Tank 2": {
+		"id": 2,
+		"pos": {
+			"x": 764.761904761905,
+			"y": 460.57142857142844
+		},
+		"fluid": false,
+		"width": 88.0,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank 1",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.95238095238097,
+				"y": 206.8571428571428
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 24.76190476190477,
+				"y": -20.571428571428566
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined"
 	}
 }

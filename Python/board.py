@@ -89,9 +89,29 @@ class Board(QWidget):
                 "IgnitionFail": 9,
                 "Continue": 255
             }
+        elif self.name == "Engine Controller":
+            self.stateMap = {
+                -1: "",
+                0: "Manual",
+                1: "Armed",
+                4: "Ignition",
+                5: "Hotfire",
+                6: "Abort",
+                7: "Post",
+            }
+            self.stateNum = {
+                "": -1,
+                "Manual": 0,
+                "Armed": 1,
+                "Ignition": 4,
+                "Hotfire": 5,
+                "Abort": 6,
+                "Post": 7,
+            }
+
+
             """  TODO fill this out when we figure out other boards' state mappings
-            elif self.name == "Engine Controller":
-                pass
+            
             elif self.name == "Flight Computer":
                 pass
             elif self.name == "Recovery Controller":
@@ -235,7 +255,7 @@ class Board(QWidget):
         self.abort_button.setDisabled(True)
 
         self.rem_timer = QLabel(self)
-        if self.name == "Pressurization Controller":
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller":
          # Remaining time in state
             rem_timer_font = QFont()
             rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
@@ -248,7 +268,7 @@ class Board(QWidget):
 
         # Set text depending on board
         if self.name == "Engine Controller":
-            self.fire_button.setText("Hotfire")
+            self.fire_button.setText("Ignition")
         elif self.name == "Pressurization Controller":
             self.fire_button.setText("Press")
         elif self.name == "Flight Computer":
@@ -261,7 +281,8 @@ class Board(QWidget):
         buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
-        buttonLayout.addWidget(self.continue_button)
+        if self.name == "Pressurization Controller":
+            buttonLayout.addWidget(self.continue_button)
         buttonLayout.addWidget(self.abort_button)
 
         self.show()  # Need to show before able to access some data_frame values
@@ -299,7 +320,7 @@ class Board(QWidget):
         """
 
         # Right now only have settings for press board
-        if self.name != "Pressurization Controller":
+        if self.name != "Pressurization Controller" or self.name != "Engine Controller"  :
             return
 
 
@@ -457,11 +478,17 @@ class Board(QWidget):
             newState = self.stateNum["Armed"]
         # If state is armed, allow for state to be run
         elif identifier == "Run":
-            if self.state == self.stateNum["Armed"]:  # Push Press to go into Autopress
-                newState = self.stateNum["Auto-Press"]
-            elif self.state == self.stateNum["Auto-Press"]:  # Push Press again to go into Startup
-                newState = self.stateNum["Startup"]
-        # Anytime can call an abort to abort out
+            if self.name == "Pressurization Controller":
+                if self.state == self.stateNum["Armed"]:  # Push Press to go into Autopress
+                    newState = self.stateNum["Auto-Press"]
+                elif self.state == self.stateNum["Auto-Press"]:  # Push Press again to go into Startup
+                    newState = self.stateNum["Startup"]
+            elif self.name == "Engine Controller":
+                if self.state == self.stateNum["Armed"]:
+                    newState = self.stateNum["Ignition"] # this might need to be removed idk why we are switching to the next state client side
+                elif self.state == self.stateNum["Ignition"]:
+                    newState = self.stateNum["Hotfire"]
+                    # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = self.stateNum["Abort"]
         elif identifier == "Continue":
@@ -512,6 +539,8 @@ class Board(QWidget):
         if self.name == "Pressurization Controller":
             pass
         elif self.name == "GSE Controller":
+            pass
+        elif self.name == "Engine Controller":
             pass
         else:
             print("Invalid board(" + self.name + ") somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
@@ -606,9 +635,7 @@ class Board(QWidget):
         :return: None
         """
 
-        print(self.size())
         super().update()
-        print(self.size())
         self.Ebatt_label.setText(str(ebatt) + " V")
         self.amp_label.setText(str(ibatt) + " A")
         self.setBoardState(int(state))
@@ -617,23 +644,24 @@ class Board(QWidget):
         self.adcrate_label.setText(str(adc_rate) + " Hz")
         self.telemrate_label.setText(str(telem_rate) + " Hz")
         self.rem_timer.setText(str(state_rem_time/1000) + " s")
-        if self.name == "Pressurization Controller":
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller" :
             self.controlsSidebarWidget.title_label.setText(self.stateMap[state])
             #self.controlsSidebarWidget.state_time_label.setText("Rem Time: " + str(state_rem_time/1000) + " s")
 
         self.LPT = LPT
 
         # Draw red background in abort state
-        if self.name == "Pressurization Controller" and self.state == self.stateNum["Abort"]:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
-            self.controlsSidebarWidget.setPalette(p)
-        else:
-            self.controlsSidebarWidget.setAutoFillBackground(True)
-            p = self.controlsSidebarWidget.palette()
-            p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
-            self.controlsSidebarWidget.setPalette(p)
+        if self.name == "Pressurization Controller" or self.name == "Engine Controller":
+             if self.state == self.stateNum["Abort"]:
+                 self.controlsSidebarWidget.setAutoFillBackground(True)
+                 p = self.controlsSidebarWidget.palette()
+                 p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.Indicator_Red_color)
+                 self.controlsSidebarWidget.setPalette(p)
+             else:
+                 self.controlsSidebarWidget.setAutoFillBackground(True)
+                 p = self.controlsSidebarWidget.palette()
+                 p.setColor(self.controlsSidebarWidget.backgroundRole(), Constants.MASA_Blue_color)
+                 self.controlsSidebarWidget.setPalette(p)
 
         
         # Disable all GSE state commands
@@ -726,7 +754,49 @@ class Board(QWidget):
                 self.continue_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
 
-        print(self.size())
+            elif self.name == "Engine Controller":
+                if self.state == self.stateNum["Manual"]:
+                    self.manual_button.setText("Manual")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(True)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Armed"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(True)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(True)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Ignition"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Hotfire"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(True)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+                elif self.state == self.stateNum["Post"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(False)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
+
+
+                elif self.state == self.stateNum["Abort"]:
+                    self.manual_button.setText("Disarm")
+                    self.manual_button.setEnabled(True)
+                    self.arm_button.setEnabled(False)
+                    self.fire_button.setEnabled(False)
+                    self.abort_button.setEnabled(False)
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
@@ -753,8 +823,9 @@ class Board(QWidget):
                          data_packet[prefix + "timestamp"],
                          data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
                          0)  # no flash state yet
-        else:
+        elif self.name == "Engine Controller":
             self.update(data_packet[prefix + "e_batt"], data_packet[prefix + "i_batt"],
-                         data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
+                         data_packet[prefix + "STATE"], data_packet[prefix + "LOGGING_ACTIVE"],
+                        data_packet[prefix + "timestamp"],
                          data_packet[prefix + "adc_rate"], data_packet[prefix + "telem_rate"],
                          0)  # no flash state yet

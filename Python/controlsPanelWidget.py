@@ -334,6 +334,9 @@ class ControlsPanelWidget(QWidget):
         self.hideAllComponentProperties()
         # Updates the available values for the channels for solenoids and generic sensors
         try:
+            if not hasattr(object_, "avionics_board"):
+                return None
+
             board_name = object_.avionics_board
 
             if board_name in Constants.boards:
@@ -444,39 +447,39 @@ class ControlsPanelWidget(QWidget):
             elif identifier == "Component Name Visibility":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setVisible(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name visible to " + str(text))
             elif identifier == "Component Name Position":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.moveToPosition(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name position to " + str(text))
             elif identifier == "Component Name Font Size":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setFontSize(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name font size to " + str(text))
             elif identifier == "Component Name Rows":
                 for object_ in self.editing_object_list:
                     object_.long_name_label.setRows(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": set component name rows to " + str(text))
 
             # Serial Number Label Parameters
             elif identifier == "Serial Number Visibility":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setVisible(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number visibility to " + str(text))
             elif identifier == "Serial Number Position":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.moveToPosition(text)
-                    self.window.statusBar().showMessage(
+                    self.gui.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number position to " + str(text))
             elif identifier == "Serial Number Font Size":
                 for object_ in self.editing_object_list:
                     object_.serial_number_label.setFontSize(text)
-                    self.window.statusBar().showMessage(
+                    self.window.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
 
             # Custom Parameters
