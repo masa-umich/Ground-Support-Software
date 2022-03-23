@@ -1,0 +1,96 @@
+{
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 168.75,
+			"y": 646.25
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 28.0,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "gay3",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 36.25
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 3.125,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "14",
+		"board": "GSE Controller",
+		"normally open": false
+	},
+	"Generic Sensor 6": {
+		"id": 6,
+		"pos": {
+			"x": 464.58333333333337,
+			"y": 370.0
+		},
+		"fluid": 0,
+		"width": 66.0,
+		"height": 24.0,
+		"name": "PT",
+		"scale": 1,
+		"serial number": "",
+		"long name": "gay1",
+		"is vertical": false,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 30.208333333333336,
+				"y": 32.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 17.708333333333336,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "gse.pressure[10]",
+		"board": "GSE Controller"
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 768.75,
+				"y": 628.75
+			},
+			"1": {
+				"x": 768.75,
+				"y": 401.25
+			}
+		},
+		"line width": 1.0
+	}
+}

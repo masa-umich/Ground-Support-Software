@@ -1,0 +1,284 @@
+{
+	"Tank 1": {
+		"id": 1,
+		"pos": {
+			"x": 517.7083333333334,
+			"y": 460.0
+		},
+		"fluid": 0,
+		"width": 87.99999999999999,
+		"height": 170.0,
+		"name": "Tank",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Tank",
+		"is vertical": true,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 40.625,
+				"y": 207.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 27.083333333333336,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller"
+	},
+	"Solenoid 2": {
+		"id": 2,
+		"pos": {
+			"x": 442.70833333333337,
+			"y": 400.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "Undefined",
+		"board": "Undefined",
+		"normally open": false
+	},
+	"Solenoid 3": {
+		"id": 3,
+		"pos": {
+			"x": 617.7083333333334,
+			"y": 688.75
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "4",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Solenoid 4": {
+		"id": 4,
+		"pos": {
+			"x": 608.3333333333334,
+			"y": 400.0
+		},
+		"fluid": 0,
+		"width": 40.0,
+		"height": 18.000000000000004,
+		"name": "Solenoid",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Solenoid",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Bottom",
+			"local pos": {
+				"x": 16.666666666666668,
+				"y": 25.0
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": -8.333333333333334,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller",
+		"normally open": false
+	},
+	"Motor 5": {
+		"id": 5,
+		"pos": {
+			"x": 493.75,
+			"y": 256.25
+		},
+		"fluid": 0,
+		"width": 70.0,
+		"height": 117.0,
+		"name": "Motor",
+		"scale": 1,
+		"serial number": "",
+		"long name": "Motor",
+		"is vertical": 0,
+		"is locked": false,
+		"is pos locked": false,
+		"serial number label": {
+			"pos string": "Right",
+			"local pos": {
+				"x": 72.91666666666667,
+				"y": 67.5
+			},
+			"rows": 1,
+			"font size": 10.0,
+			"is visible": true
+		},
+		"long name label": {
+			"pos string": "Top",
+			"local pos": {
+				"x": 14.583333333333334,
+				"y": -20.0
+			},
+			"rows": 1,
+			"font size": 12.0,
+			"is visible": true
+		},
+		"channel": "0",
+		"board": "Pressurization Controller"
+	},
+	"Tube 2": {
+		"tube id": 2,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 561.4583333333334,
+				"y": 460.0
+			},
+			"1": {
+				"x": 561.4583333333334,
+				"y": 411.25
+			},
+			"2": {
+				"x": 561.4583333333334,
+				"y": 411.25
+			},
+			"3": {
+				"x": 561.4583333333334,
+				"y": 411.25
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 3": {
+		"tube id": 3,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 482.2916666666667,
+				"y": 410.0
+			},
+			"1": {
+				"x": 561.4583333333334,
+				"y": 410.0
+			},
+			"2": {
+				"x": 561.4583333333334,
+				"y": 411.25
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 4": {
+		"tube id": 4,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 608.3333333333334,
+				"y": 410.0
+			},
+			"1": {
+				"x": 561.4583333333334,
+				"y": 410.0
+			},
+			"2": {
+				"x": 561.4583333333334,
+				"y": 410.0
+			}
+		},
+		"line width": 1.0
+	},
+	"Tube 6": {
+		"tube id": 6,
+		"fluid": 0,
+		"bend positions": {
+			"0": {
+				"x": 617.7083333333334,
+				"y": 698.75
+			},
+			"1": {
+				"x": 564.5833333333334,
+				"y": 698.75
+			},
+			"2": {
+				"x": 564.5833333333334,
+				"y": 663.75
+			},
+			"3": {
+				"x": 561.4583333333334,
+				"y": 663.75
+			}
+		},
+		"line width": 1.0
+	}
+}
