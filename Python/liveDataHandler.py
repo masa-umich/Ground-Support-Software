@@ -71,7 +71,6 @@ class LiveDataHandlerBackgroundThread(QThread):
         # While the run is active keep the thread alive, will cleanly exit when run stops
         while True:
             # Check for data ever 200ms
-            self.dataHandler.setSendAndPopulateData(True)
             time.sleep(Constants.dataHandlerUpdateRate/1000)  # convert to seconds
             packet = self.dataHandler.getClient().cycle()
 
@@ -91,7 +90,6 @@ class LiveDataHandlerBackgroundThread(QThread):
 
             else:
                 # Server to GUI connection bad, no info to display at the time
-                self.dataHandler.setSendAndPopulateData(False)
                 self.connectionStatusSignal.emit(3, "", self.dataHandler.getClient().is_commander)
 
             self.updateScreenSignal.emit()

@@ -13,7 +13,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+from baseGUI import BaseGui
 from Switch import Switch
+from constants import Constants
 from ColorButton import ColorButton
 from s2Interface import S2_Interface
 from ClientWidget import ClientDialog
@@ -30,11 +32,12 @@ class DataViewerDialog(QtWidgets.QDialog):
         print("pyqtgraph Version: " + pg.__version__)
 
         self.gui = gui
-        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=250)
+        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=Constants.dataHandlerUpdateRate)
         self.setWindowTitle("Data Viewer")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.data_viewer)
         self.setLayout(self.layout)
+
 
 class DataViewer(QtWidgets.QTabWidget):
     """
@@ -61,10 +64,7 @@ class DataViewer(QtWidgets.QTabWidget):
                                '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']  # stolen from matplotlib
 
         # Some support if the gui is not attached
-        if self.gui is None:
-            self.font_scale_ratio = 1
-        else:
-            self.font_scale_ratio = self.gui.font_scale_ratio
+        self.font_scale_ratio = self.gui.font_scale_ratio
 
         self.window.sliderUpdateSignal.connect(self.quietUpdateSlider)
 
@@ -110,7 +110,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.title_edit.setPlaceholderText("Plot Title")
         self.config_layout.addWidget(self.title_edit, 0, 1, 1, 2)
         font = QtGui.QFont()
-        font.setPointSize(12 * self.font_scale_ratio)
+        font.setPointSizeF(12 * self.font_scale_ratio)
         self.title_edit.setFont(font)
         self.title_edit.editingFinished.connect(self.title_update)
 
@@ -129,7 +129,7 @@ class DataViewer(QtWidgets.QTabWidget):
             # Channel dropdown with autocomplete
             channel_dropdown = QtWidgets.QLineEdit()
             font = channel_dropdown.font()
-            font.setPointSize(12 * self.font_scale_ratio)
+            font.setPointSizeF(12 * self.font_scale_ratio)
             channel_dropdown.setFont(font)
             channel_dropdown.setCompleter(completer)
             channel_dropdown.setPlaceholderText("Channel Name")
@@ -140,7 +140,7 @@ class DataViewer(QtWidgets.QTabWidget):
             # Alias dropdown
             alias_dropdown = QtWidgets.QLineEdit()
             font = alias_dropdown.font()
-            font.setPointSize(12 * self.font_scale_ratio)
+            font.setPointSizeF(12 * self.font_scale_ratio)
             alias_dropdown.setFont(font)
             alias_dropdown.setPlaceholderText("Alias")
             alias_dropdown.editingFinished.connect(lambda: self.redraw_curves())
@@ -208,8 +208,6 @@ class DataViewer(QtWidgets.QTabWidget):
 
         # add slider
         self.plot_layout.addWidget(self.slider)
-
-
 
     def load_config(self, config: list):
         """Loads a DataViewer config
@@ -354,7 +352,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
     sliderUpdateSignal = pyqtSignal(int)
 
-    def __init__(self, gui = None, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, client=None, *args, **kwargs):
+    def __init__(self, gui, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, singular:bool = False, *args, **kwargs):
         """Initializes window
 
         Args:
@@ -372,18 +370,13 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.top_layout = QtWidgets.QGridLayout()
         self.widget.setLayout(self.top_layout)
 
+        # Connection to the signal
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
         self.rows = rows
         self.cols = cols
         self.num_channels = num_channels
         self.cycle_time = cycle_time
-
-        # set up client
-        if not client:
-            self.client_dialog = ClientDialog(None, self.gui)
-        else:
-            self.client_dialog = client
-
-        self.last_packet = None
 
         # menu bar
         self.main_menu = self.menuBar()
@@ -391,10 +384,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.options_menu = self.main_menu.addMenu('&Options')
 
         # connection menu item
-        if not client:
+        if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
             # self.quit.setShortcut("Ctrl+K")
-            self.connect.triggered.connect(self.client_dialog.show)
+            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
             self.options_menu.addAction(self.connect)
 
         # save menu item
@@ -464,6 +457,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         self.top_layout.addWidget(self.checkbox)
 
+        self.gui.setStatusBarMessage("Added Row")
+
     def addCol(self):
         
         for i in range(self.rows):
@@ -477,15 +472,17 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         self.cols = self.cols + 1
 
+        self.gui.setStatusBarMessage("Added Col", error=True)
+
     # loop
-    def update(self):
+    @pyqtSlot(dict)
+    def updateFromDataPacket(self, packet: dict):
         """Update application"""
         # super().update()
-        self.last_packet = self.client_dialog.client.cycle()
 
         if self.client_dialog.client.is_connected:
-            self.last_packet["time"] -= self.starttime  # time to elapsed
-            last_frame = pd.DataFrame(self.last_packet, index=[0])
+            packet["time"] -= self.starttime  # time to elapsed
+            last_frame = pd.DataFrame(packet, index=[0])
             self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
                 int(15*60*1000/self.cycle_time))  # cap data to 15 min
 
@@ -573,44 +570,11 @@ if __name__ == "__main__":
     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
-    CYCLE_TIME = 250  # in ms
-    window = DataViewerWindow(num_channels=4, rows=1,
-                              cols=1, cycle_time=CYCLE_TIME)
-
-    # timer and tick updates
-    timer = QtCore.QTimer()
-    timer.timeout.connect(window.update)
-    timer.start(CYCLE_TIME)
-
-    # TODO: Add in light mode
-    print("Python Version:" + str(sys.version_info))
-    print("QT Version: " + QT_VERSION_STR)
-
-    app.setStyle("Fusion")
-
-    darkPalette = QPalette()
-    darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
-    darkPalette.setColor(QPalette.WindowText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
-    darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
-    darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
-    darkPalette.setColor(QPalette.ToolTipText, Qt.white)
-    darkPalette.setColor(QPalette.Text, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
-    darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
-    darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
-    darkPalette.setColor(QPalette.ButtonText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
-    darkPalette.setColor(QPalette.BrightText, Qt.red)
-    darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
-    darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
-    darkPalette.setColor(QPalette.HighlightedText, Qt.white)
-    darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
-
-    app.setPalette(darkPalette)
+    lwgui = BaseGui(app)
+    CYCLE_TIME = Constants.dataHandlerUpdateRate  # in ms
+    window = DataViewerWindow(lwgui, num_channels=4, rows=1,
+                              cols=1, cycle_time=CYCLE_TIME, singular=True)
+    lwgui.setMainWindow(window)
 
     # run
     window.show()
