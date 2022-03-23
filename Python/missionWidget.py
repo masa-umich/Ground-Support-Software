@@ -206,6 +206,7 @@ class MissionWidget(QWidget):
             self.CET_label.liveUpdateText()
         else:
             self.CET_label.setToolTip(self.CET_static_tooltip)
+            self.CET_label.liveUpdateText()
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
