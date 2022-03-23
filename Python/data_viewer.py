@@ -480,11 +480,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """Update application"""
         # super().update()
 
-        if self.client_dialog.client.is_connected:
-            packet["time"] -= self.starttime  # time to elapsed
-            last_frame = pd.DataFrame(packet, index=[0])
-            self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
-                int(15*60*1000/self.cycle_time))  # cap data to 15 min
+        packet["time"] -= self.starttime  # time to elapsed
+        last_frame = pd.DataFrame(packet, index=[0])
+        self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
+            int(15*60*1000/self.cycle_time))  # cap data to 15 min
 
         # maybe only run if connection established?
         for viewer in self.viewers:

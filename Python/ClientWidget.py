@@ -15,13 +15,13 @@ from LedIndicatorWidget import LedIndicator
 
 
 class ClientDialog(QtWidgets.QDialog):
-    def __init__(self, client):
+    def __init__(self, client, gui):
         super().__init__()
 
         if client is not None:
             self.client = client
         else:
-            self.client = ClientWidget(commandable=False)
+            self.client = ClientWidget(commandable=False, gui=gui) # this needs a gui
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.client)
@@ -43,7 +43,7 @@ class ClientWidget(QtWidgets.QWidget):
         self.is_connected = False
         self.last_packet = None
 
-        self._dialog = ClientDialog(self)
+        self._dialog = ClientDialog(self, gui)
 
         if gui is not None:
             self._gui = gui
