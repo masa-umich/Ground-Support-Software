@@ -120,13 +120,13 @@ class Solenoid(AvionicsObject):
 
         # = 0 -> Draw horizontally
         if self.is_vertical is False:
-            coil_height = 10 * self.gui.pixel_scale_ratio[1]
+            coil_height = self.scale * 10 * self.gui.pixel_scale_ratio[1]
             sol_height = self.height - coil_height
 
             # Move path to starting position
             path.moveTo(0, coil_height)  # Top left corner of solenoid
 
-            path.lineTo(0,self.height)  # Straight Down
+            path.lineTo(0, self.height)  # Straight Down
             path.lineTo(self.width, coil_height)  # Diag to upper right
             path.lineTo(self.width, self.height)  # Straight Up
             path.lineTo(0, coil_height)
@@ -141,11 +141,11 @@ class Solenoid(AvionicsObject):
                 self.widget_parent.painter.setBrush(Qt.NoBrush)
 
             path.moveTo(self.width/2, coil_height + sol_height/2)
-            path.lineTo(self.width/2, sol_height/2)
+            path.lineTo(self.width/2, coil_height)
             path.addRect(self.width/3, 0, self.width/3, coil_height)  # left cord, width height
 
         else:  # Draw vertically
-            coil_width = 10 * self.gui.pixel_scale_ratio[1]
+            coil_width = self.scale * 10 * self.gui.pixel_scale_ratio[1]
             sol_width = self.width - coil_width
 
             path.moveTo(0, 0)
@@ -163,7 +163,7 @@ class Solenoid(AvionicsObject):
             else:
                 self.widget_parent.painter.setBrush(Qt.NoBrush)
 
-            path.moveTo(sol_width/2, self.height/2)
+            path.moveTo(coil_width, self.height/2)
             path.lineTo(sol_width/2 + coil_width, self.height/2)
             path.addRect(sol_width/2 + coil_width, self.height/3, coil_width, self.height/3) #left cord, width height
 
@@ -214,7 +214,7 @@ class Solenoid(AvionicsObject):
         Sets the anchor points for the object. Called when object is created, and when scale changes
         Overridden to only have two anchor points
         """
-        coil_height = 10 # im sorry
+        coil_height = 10 * self.scale * self.gui.pixel_scale_ratio[1] # im sorry
         if self.is_vertical:
             sol_mid_point = (self.width - coil_height) / 2
             self.anchor_points[0].updateLocalPosition(QPoint(int(sol_mid_point)+1, 0))

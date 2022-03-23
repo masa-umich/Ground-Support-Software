@@ -281,6 +281,10 @@ class Board(QWidget):
         buttonLayout.addWidget(self.manual_button)
         buttonLayout.addWidget(self.arm_button)
         buttonLayout.addWidget(self.fire_button)
+
+        if self.name == "GSE Controller":
+            self.arm_button.setDisabled(True)
+
         if self.name == "Pressurization Controller":
             buttonLayout.addWidget(self.continue_button)
         buttonLayout.addWidget(self.abort_button)
