@@ -126,9 +126,10 @@ class ClientWidget(QtWidgets.QWidget):
         try:
             # setup socket interface
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.s.settimeout(1)
             self.s.connect((self.host.currentText(), int(
                 self.port.text())))  # connect to socket
-
+            self.s.settimeout(None)  #  from https://stackoverflow.com/questions/3432102/python-socket-connection-timeout to prevent blocking
             self.is_connected = True  # update status
             self.gotConnectionToServerSignal.emit()
             print("Connected to server on " + self.host.currentText() + ":" + self.port.text())
