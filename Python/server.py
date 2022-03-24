@@ -748,8 +748,6 @@ class Server(QtWidgets.QMainWindow):
             os.chmod(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", S_IWUSR | S_IREAD)
             # log file init and headers
             self.test_data_log = open(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
-
-            self.test_data_log.write(self.header + "\n")
         else:
             self.test_data_log = open(
                 save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
