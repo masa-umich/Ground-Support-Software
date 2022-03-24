@@ -155,7 +155,8 @@ class ControlsSidebarWidget(QWidget):
         self.gui.setStatusBarMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
-                board.sendBoardState("Abort")
+                if board.name == "Pressurization Controller" and board.name == "Engine Controller":
+                    board.sendBoardState("Abort")
 
     @overrides
     def paintEvent(self, e):
