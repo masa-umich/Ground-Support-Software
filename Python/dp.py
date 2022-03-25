@@ -191,9 +191,13 @@ class LevelWidget(QtWidgets.QGroupBox):
 
             
 class TankLevelDialog(QtWidgets.QDialog):
-    def __init__(self, dual=False):
+    def __init__(self, dual=False, gui=None):
         super().__init__()
         self._dual = dual
+        self.gui = gui
+
+        if self.gui is not None:
+            self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         self.setWindowTitle("Tank Level Calculator")
         layout = QtWidgets.QVBoxLayout()
@@ -216,25 +220,28 @@ class TankLevelDialog(QtWidgets.QDialog):
         if self._dual:
             self.level1.update_values(last_packet)
 
+    @QtCore.pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        self.update_values(data_packet)
   
 
-if __name__ == "__main__":
-    QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-    if not QtWidgets.QApplication.instance():
-        app = QtWidgets.QApplication(sys.argv)
-    else:
-        app = QtWidgets.QApplication.instance()
-
-    # initialize application
-    APPID = 'MASA.AutoManager'  # arbitrary string
-    if os.name == 'nt':  # Bypass command because it is not supported on Linux
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
-    else:
-        pass
-        # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
-
-    window = TankLevelDialog(dual = False)
-    window.show()
-    sys.exit(app.exec())
+# if __name__ == "__main__":
+#     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+#     QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+#     if not QtWidgets.QApplication.instance():
+#         app = QtWidgets.QApplication(sys.argv)
+#     else:
+#         app = QtWidgets.QApplication.instance()
+#
+#     # initialize application
+#     APPID = 'MASA.AutoManager'  # arbitrary string
+#     if os.name == 'nt':  # Bypass command because it is not supported on Linux
+#         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
+#     else:
+#         pass
+#         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
+#     app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
+#
+#     window = TankLevelDialog(dual = False)
+#     window.show()
+#     sys.exit(app.exec())

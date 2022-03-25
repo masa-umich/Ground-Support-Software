@@ -6,10 +6,10 @@ from overrides import overrides
 from datetime import datetime
 
 from constants import Constants
-from object import BaseObject
+from avionicsObject import AvionicsObject
 
 
-class ThreeWayValve(BaseObject):
+class ThreeWayValve(AvionicsObject):
     """
     Class to handle all ThreeWayValve objects and their functionality
     """
@@ -21,9 +21,9 @@ class ThreeWayValve(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = '3 Way Valve', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0,0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined'):
 
         """
@@ -62,7 +62,7 @@ class ThreeWayValve(BaseObject):
                              serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
+                             long_name_label_rows=long_name_label_rows, board=board, channel=channel)
         else:
             # Initialize base classes
             super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
@@ -73,7 +73,7 @@ class ThreeWayValve(BaseObject):
                              serial_number_label_font_size=serial_number_label_font_size,
                              long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                              long_name_label_font_size=long_name_label_font_size,
-                             long_name_label_rows=long_name_label_rows)
+                             long_name_label_rows=long_name_label_rows, board=board, channel=channel)
 
 
         # TODO: Grab height and width from csv file
@@ -85,11 +85,11 @@ class ThreeWayValve(BaseObject):
         self.current = 0
         self.sec_width = 18*self.widget_parent.gui.pixel_scale_ratio[0] #width of a valve "section" same as 2 way valve width
         self.setAnchorPoints()
-        self.channel = channel
-        self.avionics_board = board
-        self.client = self.widget_parent.window.client_dialog.client
+        self.normally_open = False
 
         self.updateToolTip()
+
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
     @overrides
     def draw(self):
@@ -177,15 +177,15 @@ class ThreeWayValve(BaseObject):
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
         if self.is_vertical == False:
-            self.anchor_points[0].updateLocalPosition(QPoint(0,int(self.sec_width/2)))
-            self.anchor_points[1].updateLocalPosition(QPoint(self.width ,int(self.sec_width/2)))
-            self.anchor_points[2].updateLocalPosition(QPoint(self.width/2,0))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width/2, self.height))
+            self.anchor_points[0].updateLocalPosition(QPointF(0,int(self.sec_width/2)))
+            self.anchor_points[1].updateLocalPosition(QPointF(self.width ,int(self.sec_width/2)))
+            self.anchor_points[2].updateLocalPosition(QPointF(self.width/2,0))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width/2, self.height))
         else:
-            self.anchor_points[0].updateLocalPosition(QPoint(int(self.sec_width/2),0))
-            self.anchor_points[1].updateLocalPosition(QPoint(int(self.sec_width/2),self.height))
-            self.anchor_points[2].updateLocalPosition(QPoint(0,int(self.height/2)))
-            self.anchor_points[3].updateLocalPosition(QPoint(self.width, int(self.height/2)))
+            self.anchor_points[0].updateLocalPosition(QPointF(int(self.sec_width/2),0))
+            self.anchor_points[1].updateLocalPosition(QPointF(int(self.sec_width/2),self.height))
+            self.anchor_points[2].updateLocalPosition(QPointF(0,int(self.height/2)))
+            self.anchor_points[3].updateLocalPosition(QPointF(self.width, int(self.height/2)))
         
     def onClick(self):
         """
@@ -202,7 +202,7 @@ class ThreeWayValve(BaseObject):
                     new_state = 1
                 elif self.state == 1:
                     new_state = 0
-                if self.avionics_board != "Undefined" and self.channel != "Undefined":
+                if self.isAvionicsFullyDefined():
                     cmd_dict = {
                         "function_name": "set_vlv",
                         "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -210,7 +210,7 @@ class ThreeWayValve(BaseObject):
                         "args": [int(self.channel), int(new_state)]
                     }
                     #print(cmd_dict)
-                    self.client.command(3, cmd_dict)
+                    self.gui.liveDataHandler.sendCommand(3, cmd_dict)
             else:
                 self.toggle()
             
@@ -232,20 +232,6 @@ class ThreeWayValve(BaseObject):
         else:
             print("WARNING STATE OF ThreeWayValve " + str(self._id) + " IS NOT PROPERLY DEFINED")
     
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-    
     def setState(self, state: bool, voltage: float, current: float):
         """
         Set the state of the solenoid
@@ -263,39 +249,48 @@ class ThreeWayValve(BaseObject):
 
         text = ""
 
+        if self.isAvionicsFullyDefined():
+            text += "Channel: %s\n" % (self.getBoardChannelString())
+        else:
+            text += "Channel:\n"
+
         if self.state == 1:
             text += "State: Energized\n"
         else:
             text += "State: De-energized\n"
         
         text += "Voltage: %s V\nCurrent: %s A" % (self.voltage, self.current)
-        
-        # if self.normally_open:
-        #     text += "Normally Open"
-        # else:
-        #     text += "Normally Closed"
 
         self.setToolTip_(text)
 
     # There is currently no ThreeWayValve specific data that needs to be persistent but if some ever does it goes here
-    @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever ThreeWayValve specific
-        info needs to be saved is added here.
-        """
-    
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
-    
-        # Extra data the ThreeWayValve contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board,
-            # "normally open": self.normally_open
-        }
-    
-        # Update the super_dict under the ThreeWayValve entry with the ThreeWayValve specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-    
-        return super_dict
+    # @overrides
+    # def generateSaveDict(self):
+    #     """
+    #     Generates dict of data to save. Most of the work happens in the object class but whatever ThreeWayValve specific
+    #     info needs to be saved is added here.
+    #     """
+    #
+    #     # Gets the BaseObject data that needs to be saved
+    #     super_dict = super().generateSaveDict()
+    #
+    #     # Extra data the ThreeWayValve contains that needs to be saved
+    #     save_dict = {
+    #         # "normally open": self.normally_open
+    #     }
+    #
+    #     # Update the super_dict under the ThreeWayValve entry with the ThreeWayValve specific data
+    #     super_dict[self.object_name + " " + str(self._id)].update(save_dict)
+    #
+    #     return super_dict
+
+    @pyqtSlot(object) # copied from solenoid, not great
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.isAvionicsFullyDefined():
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "vlv" + str(self.channel)
+            state = data_packet[channel_name + ".en"]
+            voltage = data_packet[channel_name + ".e"]
+            current = data_packet[channel_name + ".i"]
+            self.setState(state, voltage, current)

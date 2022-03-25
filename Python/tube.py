@@ -12,9 +12,10 @@ class Tube:
 
     object_name = "Tube"
 
-    def __init__(self, parent: QWidget, points: [QPoint], fluid: int, attachment_aps, tube_id: int = None, line_width: int = Constants.line_width/2):
+    def __init__(self, parent: QWidget, points: [QPointF], fluid: int, attachment_aps, tube_id: int = None, line_width: int = Constants.line_width/2):
         self.parent = parent
         self.widget_parent = parent
+        self.gui = self.widget_parent.gui
         self.points = points
         self.attachment_aps = attachment_aps
         self.tube_anchor_points = []
@@ -44,7 +45,7 @@ class Tube:
         self.widget_parent.is_drawing = False
         self.widget_parent.update()
 
-        self.widget_parent.window.statusBar().showMessage("Tube completed")
+        self.gui.setStatusBarMessage("Tube completed")
 
     def deleteTube(self):
         for ap in self.attachment_aps:
@@ -59,7 +60,7 @@ class Tube:
         self.widget_parent.setObjectsMouseTransparency(False)
         del self
 
-    def setCurrentPos(self, current_pos: QPoint, deleteLast: bool = False):
+    def setCurrentPos(self, current_pos: QPointF, deleteLast: bool = False):
         if deleteLast:
             del self.points[-1]
 
@@ -70,7 +71,7 @@ class Tube:
         if len(self.points) > 2:
             self.tube_anchor_points.append(TubeAnchorPoint(self.widget_parent, self, self.points[-2], len(self.points)-2))
 
-    def updateCurrentPos(self, current_pos: QPoint):
+    def updateCurrentPos(self, current_pos: QPointF):
 
         if len(self.points) < 2:
             return
@@ -82,10 +83,10 @@ class Tube:
         # If this is the first point allow the user to make a straight line in the x or y direction
         if len(self.points) <= 2:
             if abs(diff.x()) > abs(diff.y()):
-                self.points[-1] = QPoint(current_pos.x(), self.points[-2].y())
+                self.points[-1] = QPointF(current_pos.x(), self.points[-2].y())
                 self.draw_direction = "Horizontal"
             else:
-                self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
+                self.points[-1] = QPointF(self.points[-2].x(), current_pos.y())
                 self.draw_direction = "Vertical"
         # If this is not the first line make sure the new segment is perpendicular to the last segment, if shift is
         # being held down, then the new segment is parallel
@@ -95,19 +96,19 @@ class Tube:
             # vertical, otherwise make it horizontal
             if abs(self.points[-2].x() - self.points[-3].x()) == 0:
                 if mod == Qt.ShiftModifier:
-                    self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
+                    self.points[-1] = QPointF(self.points[-2].x(), current_pos.y())
                     self.draw_direction = "Vertical"
                 else:
-                    self.points[-1] = QPoint(current_pos.x(), self.points[-2].y())
+                    self.points[-1] = QPointF(current_pos.x(), self.points[-2].y())
                     self.draw_direction = "Horizontal"
             # If the two last y points are in line, the previous line was horizontal, if shift is being held continue
             # horizontal, otherwise make it vertical
             elif abs(self.points[-2].y() - self.points[-3].y()) == 0:
                 if mod == Qt.ShiftModifier:
-                    self.points[-1] = QPoint(current_pos.x(), self.points[-2].y())
+                    self.points[-1] = QPointF(current_pos.x(), self.points[-2].y())
                     self.draw_direction = "Horizontal"
                 else:
-                    self.points[-1] = QPoint(self.points[-2].x(), current_pos.y())
+                    self.points[-1] = QPointF(self.points[-2].x(), current_pos.y())
                     self.draw_direction = "Vertical"
 
         # This will check for tube end alignment with object anchor points
@@ -116,10 +117,10 @@ class Tube:
                 obj_ap.x_aligned = False
                 obj_ap.y_aligned = False
                 if obj_ap.x()-5 < self.points[-1].x() < obj_ap.x()+5 and self.draw_direction == "Horizontal":
-                    self.points[-1] = QPoint(obj_ap.x() + 3, self.points[-1].y())
+                    self.points[-1] = QPointF(obj_ap.x() + 3, self.points[-1].y())
                     obj_ap.x_aligned = True
                 if obj_ap.y()-5 < self.points[-1].y() < obj_ap.y()+5  and self.draw_direction == "Vertical":
-                    self.points[-1] = QPoint(self.points[-1].x(),obj_ap.y() + 3)
+                    self.points[-1] = QPointF(self.points[-1].x(),obj_ap.y() + 3)
                     obj_ap.y_aligned = True
 
         # This will check for tube end alignment with tube anchor points
@@ -129,10 +130,10 @@ class Tube:
                     tube_ap.x_aligned = False
                     tube_ap.y_aligned = False
                     if tube_ap.x()-5 < self.points[-1].x() < tube_ap.x()+5 and self.draw_direction == "Horizontal":
-                        self.points[-1] = QPoint(tube_ap.x() + 3, self.points[-1].y())
+                        self.points[-1] = QPointF(tube_ap.x() + 3, self.points[-1].y())
                         tube_ap.x_aligned = True
                     if tube_ap.y()-5 < self.points[-1].y() < tube_ap.y()+5  and self.draw_direction == "Vertical":
-                        self.points[-1] = QPoint(self.points[-1].x(),tube_ap.y() + 3)
+                        self.points[-1] = QPointF(self.points[-1].x(),tube_ap.y() + 3)
                         tube_ap.y_aligned = True
 
         self.widget_parent.update()
@@ -226,7 +227,7 @@ class TubeAnchorPoint(QPushButton):
 
         self.show()
 
-        self.controlsWidget.window.statusBar().showMessage("Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")")
+        self.gui.setStatusBarMessage("Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")")
 
 
     def draw(self):
@@ -249,11 +250,11 @@ class TubeAnchorPoint(QPushButton):
             self.controlsWidget.painter.setPen(pen)
 
             if self.x_aligned:
-                self.controlsWidget.painter.drawLine(QPoint(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
-                                             QPoint(self.x(), self.gui.screenResolution[1]))
+                self.controlsWidget.painter.drawLine(QPointF(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
+                                             QPointF(self.x(), self.gui.screenResolution[1]))
             if self.y_aligned:
-                self.controlsWidget.painter.drawLine(QPoint(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
-                                             QPoint(self.gui.screenResolution[0], self.y()))
+                self.controlsWidget.painter.drawLine(QPointF(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
+                                             QPointF(self.gui.screenResolution[0], self.y()))
 
     def contextMenuEvent_(self, event):
         """
@@ -268,7 +269,7 @@ class TubeAnchorPoint(QPushButton):
         if action is not None:
             if action.text() == "Delete Tube":
                 self.tube.deleteTube()
-                self.controlsWidget.window.statusBar().showMessage("Tube deleted")
+                self.gui.setStatusBarMessage("Tube deleted")
             elif action.text() == "Change Fluid":
                 # TODO: Don't cycle through tubes like this it sucks
                 max_ = len(Constants.fluid) / 2 - 1
@@ -276,15 +277,15 @@ class TubeAnchorPoint(QPushButton):
                     self.tube.fluid = self.tube.fluid + 1
                 else:
                     self.tube.fluid = 0
-                self.controlsWidget.window.statusBar().showMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
+                self.gui.setStatusBarMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
             elif action.text() == "Increase Line Width":
                 self.tube.line_width = self.tube.line_width + 1
-                self.controlsWidget.window.statusBar().showMessage("Tube width increased to " + str(self.tube.line_width))
+                self.gui.setStatusBarMessage("Tube width increased to " + str(self.tube.line_width))
             elif action.text() == "Decrease Line Width":
                 self.tube.line_width = self.tube.line_width - 1
                 if self.tube.line_width < 1:
                     self.tube.line_width = 1
-                self.controlsWidget.window.statusBar().showMessage("Tube width decreaseed to " + str(self.tube.line_width))
+                self.gui.setStatusBarMessage("Tube width decreaseed to " + str(self.tube.line_width))
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
@@ -301,8 +302,8 @@ class TubeAnchorPoint(QPushButton):
         #     if self.tube is not None:
         #         self.tube.deleteTube()
         #
-        #     self.tube = Tube(self.widget, [self.pos() + QPoint(self.width() / 2, self.height() / 2),
-        #                                    self.pos() + QPoint(self.width() / 2, self.height() / 2)],
+        #     self.tube = Tube(self.widget, [self.pos() + QPointF(self.width() / 2, self.height() / 2),
+        #                                    self.pos() + QPointF(self.width() / 2, self.height() / 2)],
         #                      self.object_.fluid, [self])
         #     self.tube.is_being_drawn = True
         #     self.widget.is_drawing = True
@@ -314,10 +315,10 @@ class TubeAnchorPoint(QPushButton):
             for tube in self.controlsWidget.tube_list:
                 if tube.is_being_drawn:
                     if tube.draw_direction == "Vertical":
-                        tube.setCurrentPos(QPoint(tube.points[-1].x(),self.tube.points[self.points_index].y()), True)
+                        tube.setCurrentPos(QPointF(tube.points[-1].x(),self.tube.points[self.points_index].y()), True)
                         tube.setCurrentPos(self.tube.points[self.points_index])
                     else:
-                        tube.setCurrentPos(QPoint(self.tube.points[self.points_index].x(),tube.points[-1].y()), True)
+                        tube.setCurrentPos(QPointF(self.tube.points[self.points_index].x(),tube.points[-1].y()), True)
                         tube.setCurrentPos(self.tube.points[self.points_index])
 
                     tube.completeTube(False)

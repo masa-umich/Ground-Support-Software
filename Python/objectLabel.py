@@ -3,17 +3,19 @@ from PyQt5.QtCore import *
 
 from overrides import overrides
 from customLabel import CustomLabel
+from indicatorLightWidget import IndicatorLightWidget
 
 """
 Provides custom functionality for labels specific to objects
 """
 
+
 # TODO: Somehow make it that you just create and pass in a custom label but too lazy to do that now
 class ObjectLabel(CustomLabel):
 
     def __init__(self, widget_parent, gui, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPoint = QPoint(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
-                 is_visible: bool = True):
+                 local_pos: QPointF = QPointF(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
+                 is_visible: bool = True, show_staus_light:bool = False):
 
         self.widget = widget_parent
         self.gui = gui
@@ -21,6 +23,7 @@ class ObjectLabel(CustomLabel):
         self.is_vertical = is_vertical
         self.position_string = position_string
         self.local_pos = local_pos
+        self.light = IndicatorLightWidget(widget_parent, "", 5, "Red", 14, 1, 1, 1)
         # Have to scale it, not sure if this is best location
         self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
         self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])
@@ -36,7 +39,7 @@ class ObjectLabel(CustomLabel):
         self.setText(text)
         self.setRows(rows)
         self.show()
-
+        self.showStatusIndicator(show_staus_light)
         self.setVisible(is_visible)
 
     @overrides
@@ -90,14 +93,23 @@ class ObjectLabel(CustomLabel):
         elif self.position_string == "Left":
             self.move(self.object_.position.x() - self.width() - 3, self.getYCenterPosition())
         elif self.position_string == "Custom":
-            self.move(self.object_.position + self.local_pos)
+            self.move(self.object_.position.x() + self.local_pos.x(), self.object_.position.y() + self.local_pos.y())
 
+        # If label on left side, flip flop what side it goes on
+        if self.position_string == "Left":
+            self.light.move(self.pos().x() - self.light.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
+        else:
+            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height()/2) - self.light.circle_radius)
         self.setLocalPosition()
 
     def getXCenterPosition(self):
         """
         Gets what x position the label needs to be placed at to be centered on its base object
         """
+        # Below will center the whole text + light, but currently don't want that
+        # if self.light.isVisible():
+        #     return self.object_.position.x() + (self.object_.width / 2) - ((self.width() + self.light.width()) / 2)
+        # else:
         return self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2)
 
     def getYCenterPosition(self):
@@ -113,6 +125,16 @@ class ObjectLabel(CustomLabel):
         """
         self.local_pos = self.pos() - self.object_.position
 
+    def showStatusIndicator(self, show:  bool):
+        """
+        Hides/ shows status indicator
+        :param show: true to show, false to hide
+        :return: none
+        """
+        if show:
+            self.light.show()
+        else:
+            self.light.hide()
 
     # @overrides
     # def paintEvent(self, event):
@@ -127,10 +149,10 @@ class ObjectLabel(CustomLabel):
     #     painter.rotate(rotation * self.is_vertical)
     #     if self.text:
     #         if self.is_vertical:
-    #             painter.drawText(QPoint(0,0), self.text())
+    #             painter.drawText(QPointF(0,0), self.text())
     #         else:
     #             self.show()
-    #             painter.drawText(QPoint(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
+    #             painter.drawText(QPointF(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
     #     painter.end()
 
     @overrides
@@ -159,21 +181,26 @@ class ObjectLabel(CustomLabel):
         """
 
         # For some unknown reason mouse move events handle buttons differently on OSX and Windows
-        target_button = Qt.LeftButton
-        if self.widget.gui.platform == "Windows":
-            target_button = Qt.NoButton
+        # target_button = Qt.LeftButton
+        # if self.widget.gui.platform == "Windows":
+        target_button = Qt.NoButton
 
         if event.button() == target_button and self.object_.is_being_edited:
-            # I have no idea where the 22 comes from
-            # 22 is for non full screen on my (all?) macs
-            # HMM: Elegant Solution?
-            self.window_pos = self.widget.parent.pos() #+ QPoint(0, 22)
+
+            # If the gui is in full screen on mac don't apply the extra offset
+            if self.gui.platform == "OSX" and self.gui.controlsWindow.isFullScreen():
+                window_pos = self.gui.controlsWindow.pos()
+            elif self.gui.platform == "Windows" and self.gui.controlsWindow.isFullScreen():
+                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset - self.gui.controlsWindow.central_widget.pos()
+            else:
+                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset
 
             # Move the button into place on screen
-            pos = event.globalPos() - self.window_pos - self.drag_start_pos
+            pos = event.globalPos() - window_pos - self.drag_start_pos
 
             # Moves the object into its new position
-            self.move(pos)
+            self.move(pos.x(), pos.y())
+            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
 
             # Updates the new local position
             # HMM: May want to move this call to an overridden move() function
@@ -208,3 +235,12 @@ class ObjectLabel(CustomLabel):
             "is visible": self.isVisible()
         }
         return save_dict
+
+    def deleteLater(self):
+        """
+        Make sure to delete indicator light
+        :return: none
+        """
+        self.light.deleteLater()
+        del self.light
+        super().deleteLater()

@@ -24,3 +24,9 @@ Python/LaunchFiles
 
 # VSCode Workspace Files
 MASA Avionics • GUI.code-workspace
+
+# Pyinstaller Files
+*.spec
+build/
+dist/
+venv/
