@@ -92,7 +92,7 @@ class Server(QtWidgets.QMainWindow):
         self.open_log(self.starttime, "data/")  # start initial run
 
         # window layout
-        self.setWindowTitle("Server")
+        self.setWindowTitle("Server (" + Constants.GUI_VERSION + ")")
         w = QtWidgets.QWidget()
         self.setCentralWidget(w)
         top_layout = QtWidgets.QGridLayout()
