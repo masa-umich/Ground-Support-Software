@@ -7,11 +7,11 @@ from datetime import datetime
 from overrides import overrides
 
 from constants import Constants
-from object import BaseObject
+from avionicsObject import AvionicsObject
 from customLabel import CustomLabel
 
 
-class Motor(BaseObject):
+class Motor(AvionicsObject):
     """
     Class to handle all solenoid objects and their functionality
     """
@@ -23,9 +23,9 @@ class Motor(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Motor', is_vertical: bool = False,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Right", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Right", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0, 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
                  long_name_visible:bool = True, serial_number_visible:bool = True):
 
@@ -69,7 +69,7 @@ class Motor(BaseObject):
                          long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible)
+                         serial_number_visible=serial_number_visible, board=board, channel=channel)
 
 
         self.window = self.widget_parent.window
@@ -87,8 +87,6 @@ class Motor(BaseObject):
         self.Pconstant = 0
         self.Iconstant = 0
         self.Dconstant = 0
-        self.channel = channel
-        self.avionics_board = board
 
         # Define the labels that keep track of position and set point
         self.set_pos_title_label = CustomLabel(self.widget_parent, self.gui, text="Set Pos")
@@ -123,7 +121,7 @@ class Motor(BaseObject):
 
         self.updateToolTip()
 
-        self.client = self.widget_parent.window.client_dialog.client
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
     # TODO: Use this withe new configuration manager
     # @classmethod
@@ -169,9 +167,9 @@ class Motor(BaseObject):
 
         path.addRect(0, 0, self.width, self.height)
 
-        path.moveTo(self.width/2,self.height)
+        path.moveTo(self.width/2 - 1,self.height)
 
-        path.lineTo(self.width/2,self.height+20*self.gui.pixel_scale_ratio[1])
+        path.lineTo(self.width/2 - 1,self.height+20*self.gui.pixel_scale_ratio[1])
 
         x1 = (self.width - self.boxWidth)/2
         x2 = x1 + self.boxWidth
@@ -349,7 +347,7 @@ class Motor(BaseObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb, 0,self.potPos,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_zero",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -357,7 +355,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel)]
                 }
                 #print(cmd_dict)
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 spinBoxes[0].setValue(0)
     
     def motorDialogZeroPotButtonClicked(self): #TODO: update
@@ -367,7 +365,7 @@ class Motor(BaseObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb, self.currentPos,0,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "ambientize_pot",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
@@ -375,9 +373,7 @@ class Motor(BaseObject):
                     "args": [int(self.channel)]
                 }
                 #print(cmd_dict)
-                self.client.command(3, cmd_dict)
-
-
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def motorDialogSave(self, spinBoxes, dialog):
         """
@@ -393,14 +389,14 @@ class Motor(BaseObject):
         if self.gui.debug_mode:
             self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_pos",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kp",
@@ -408,7 +404,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(p)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_ki",
@@ -416,7 +412,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(i)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kd",
@@ -424,7 +420,7 @@ class Motor(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(d)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
 
     def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):
@@ -487,32 +483,17 @@ class Motor(BaseObject):
 
         self.moveLabelsToPosition()
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
-
     def updateToolTip(self):
         """
         Called to update the tooltip of the solenoid
         """
 
         text = ""
+
+        if self.isAvionicsFullyDefined():
+            text += "Channel: %s\n" % (self.getBoardChannelString())
+        else:
+            text += "Channel:\n"
 
         text += "Currenta: " + str(self.currenta) + "A\n"
         text += "Currentb: " + str(self.currentb) + "A\n"
@@ -554,27 +535,6 @@ class Motor(BaseObject):
         self.pot_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
 
     @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-        info needs to be saved is added here.
-        """
-
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
-
-        # Extra data the Solenoid contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
-
-        # Update the super_dict under the solenoid entry with the solenoid specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-
-        return super_dict
-
-    @overrides
     def deleteSelf(self):
         """
         Delete itself
@@ -593,3 +553,20 @@ class Motor(BaseObject):
         del self.pot_pos_title_label
 
         super().deleteSelf()
+
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+
+        if self.isAvionicsFullyDefined():
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "mtr" + str(self.channel)
+
+            curra = data_packet[channel_name + ".ia"]
+            currb = data_packet[channel_name + ".ib"]
+            pos = data_packet[channel_name + ".pos"]
+            pot_pos = data_packet[channel_name + ".pot"]
+            setp = data_packet[channel_name + ".set"]
+            p = data_packet[channel_name + ".p"]
+            i = data_packet[channel_name + ".i"]
+            d = data_packet[channel_name + ".d"]
+            self.updateValues(curra, currb, pos, pot_pos, setp, p, i, d)

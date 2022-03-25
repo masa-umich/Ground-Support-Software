@@ -7,7 +7,7 @@ from overrides import overrides
 
 from constants import Constants
 from MathHelper import MathHelper
-from object import BaseObject
+from avionicsObject import AvionicsObject
 from datetime import datetime
 from LedIndicatorWidget import LedIndicator
 
@@ -17,7 +17,7 @@ Class to handle all tank objects and their functionality
 """
 
 
-class Tank(BaseObject):
+class Tank(AvionicsObject):
 
     object_name = "Tank"
 
@@ -26,9 +26,9 @@ class Tank(BaseObject):
                  scale: float = 1, serial_number: str = '',
                  long_name: str = 'Tank', is_vertical: bool = True,
                  locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0, 0),
+                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0 , 0), long_name_label_font_size: float = 12,
+                 long_name_label_local_pos: QPointF = QPointF(0 , 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True,
                  channel: str = 'Undefined', board: str = 'Undefined'):
         """
@@ -65,7 +65,8 @@ class Tank(BaseObject):
                          serial_number_label_font_size=serial_number_label_font_size,
                          long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible, serial_number_visible=serial_number_visible)
+                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
+                         serial_number_visible=serial_number_visible, board=board, channel=channel)
 
         self.window = self.widget_parent.window
 
@@ -74,8 +75,6 @@ class Tank(BaseObject):
         self.pressureSetPoint = None
         self.pressureLowerBounds = None
         self.pressureUpperBounds = None
-        self.channel = channel
-        self.avionics_board = board
 
         self.updateToolTip()
 
@@ -84,7 +83,7 @@ class Tank(BaseObject):
 
         #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
-        self.client = self.widget_parent.window.client_dialog.client
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
     @overrides
     def onClick(self):
@@ -209,32 +208,17 @@ class Tank(BaseObject):
 
         super().draw()
 
-    def setAvionicsBoard(self, board: str):
-        """
-        Sets the avionics board the object is connected to
-        :param board: string name of board object is connected to
-        """
-        self.avionics_board = board
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
-
-    def setChannel(self, channel: str):
-        """
-        Sets channel of object
-        :param channel: channel of the object
-        """
-        self.channel = channel
-
-        self.central_widget.window.statusBar().showMessage(
-            self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
-
     def updateToolTip(self):
         """
         Called to update the tooltip of the tank
         """
 
         text = ""
+
+        if self.isAvionicsFullyDefined():
+            text += "Channel: %s\n" % (self.getBoardChannelString())
+        else:
+            text += "Channel:\n"
 
         text += "Fill Level: " + str(int(self.fillPercent * 100)) + "%"
 
@@ -380,14 +364,14 @@ class Tank(BaseObject):
         if self.gui.debug_mode:
             self.updateValues(setpoint,lowbound,upbound)
         else:
-            if self.avionics_board != "Undefined" and self.channel != "Undefined":
+            if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_control_target_pressure",
                     "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_low_toggle_percent",
@@ -395,7 +379,7 @@ class Tank(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(lowbound/setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_high_toggle_percent",
@@ -403,7 +387,7 @@ class Tank(BaseObject):
                     "timestamp": int(datetime.now().timestamp()),
                     "args": [int(self.channel), float(upbound/setpoint)]
                 }
-                self.client.command(3, cmd_dict)
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
     
     def setTankStatus(self, status):
@@ -412,33 +396,23 @@ class Tank(BaseObject):
         :param spinBoxes: spin boxes with the values
         :param dialog: dialog with motor settings
         """
-
-        if self.avionics_board != "Undefined" and self.channel != "Undefined":
+        if self.isAvionicsFullyDefined():
             cmd_dict = {
                 "function_name": "set_presstank_status",
                 "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
                 "timestamp": int(datetime.now().timestamp()),
                 "args": [int(self.channel),int(status)]
             }
-            self.client.command(3, cmd_dict)
+            self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
-    @overrides
-    def generateSaveDict(self):
-        """
-        Generates dict of data to save. Most of the work happens in the object class but whatever solenoid specific
-        info needs to be saved is added here.
-        """
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
 
-        # Gets the BaseObject data that needs to be saved
-        super_dict = super().generateSaveDict()
+        if self.isAvionicsFullyDefined():
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            channel_name = board_prefix + "tnk" + str(self.channel)
 
-        # Extra data the Solenoid contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
-
-        # Update the super_dict under the solenoid entry with the solenoid specific data
-        super_dict[self.object_name + " " + str(self._id)].update(save_dict)
-
-        return super_dict
+            setPoint = data_packet[channel_name + ".tp"]
+            lowbound = data_packet[channel_name + ".lp"]
+            highBound = data_packet[channel_name + ".hp"]
+            self.updateValues(setPoint, lowbound, highBound)

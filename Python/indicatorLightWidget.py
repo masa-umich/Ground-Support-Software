@@ -45,6 +45,7 @@ class IndicatorLightWidget(QWidget):
         monospace_light_font.setStyleStrategy(QFont.PreferAntialias)
         monospace_light_font.setFamily(Constants.monospace_font)
         monospace_light_font.setWeight(QFont.Light)
+        monospace_light_font.setHintingPreference(QFont.PreferNoHinting)
 
         # Declare the label and set it parameters
         self.label = QLabel(self)
@@ -99,7 +100,7 @@ class IndicatorLightWidget(QWidget):
             self.painter.setBrush(Qt.NoBrush)
 
         # Draw the ellipse with a beige border, buffers on width and height
-        self.painter.drawEllipse(QPoint(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
+        self.painter.drawEllipse(QPointF(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
                                  self.circle_radius, self.circle_radius)
         self.painter.setBrush(Qt.NoBrush)
 

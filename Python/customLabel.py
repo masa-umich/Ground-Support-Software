@@ -70,6 +70,11 @@ class CustomLabel(QLabel):
 
         # Get the height of a line of text and the width of the text
         fixedHeight = self.fontMetrics().boundingRect(self.text()).height()
+
+        if self.text() == "":
+            # if there is no text, spoof it to keep it with some height
+            fixedHeight = self.fontMetrics().boundingRect("J").height()  # J for jack
+
         textWidth = self.fontMetrics().boundingRect(self.text()).width()
 
         # Find the longest word
@@ -136,8 +141,8 @@ class CustomLabel(QLabel):
     #     painter.rotate(rotation * self.is_vertical)
     #     if self.text:
     #         if self.is_vertical:
-    #             painter.drawText(QPoint(0,0), self.text())
+    #             painter.drawText(QPointF(0,0), self.text())
     #         else:
     #             self.show()
-    #             painter.drawText(QPoint(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
+    #             painter.drawText(QPointF(0, self.fontMetrics().boundingRect(self.text()).height()), self.text())
     #     painter.end()

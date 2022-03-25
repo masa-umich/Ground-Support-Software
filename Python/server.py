@@ -1,5 +1,6 @@
 import ctypes
 import os
+from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
 import pickle
 import queue
 import socket
@@ -9,13 +10,15 @@ from datetime import datetime
 import traceback
 import time
 import hashlib
+import json
 
 
 from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDateTime, QStandardPaths
 from PyQt5.QtWidgets import *
 
+from constants import Constants
 from party import PartyParrot
 from s2Interface import S2_Interface
 import parse_auto
@@ -28,21 +31,29 @@ class Server(QtWidgets.QMainWindow):
     MASA Data Aggregation Server
     """
 
-    def __init__(self, autoconnect=False):
+    def __init__(self, qapp, autoconnect=False):
         """Init server window"""
         super().__init__()
+
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+
+        if not os.path.isdir(self.LAUNCH_DIRECTORY):
+            os.mkdir(path=self.LAUNCH_DIRECTORY)
+
+        qapp.setWindowIcon(QtGui.QIcon(self.LAUNCH_DIRECTORY+'Images/logo_server.png'))
 
         # init variables
         self.packet_num = 0
         self.packet_size = 0
         self.commander = None
         self.dataframe = {}
-        self.starttime = datetime.now().strftime("%Y%m%d%H%M%S")
+        self.starttime = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
         self.threads = []
         self.command_queue = queue.Queue()
         self.log_queue = queue.Queue()
         self.do_flash_dump = False
         self.dump_addr = None
+        self.dump_loc = None
         self.database_lock = threading.Lock()
         self.abort_auto = False
         self.is_actively_receiving = False
@@ -53,7 +64,10 @@ class Server(QtWidgets.QMainWindow):
         self.server_log = None
         self.serial_log = None
         self.data_log = None
+        self.test_data_log = None
         self.command_log = None
+        self.campaign_log = None
+        self.campaign_location = None
 
         # initialize parser
         self.interface = S2_Interface()
@@ -64,32 +78,33 @@ class Server(QtWidgets.QMainWindow):
         self.dataframe["packet_num"] = 0
         self.dataframe["ser_open"] = False
         self.dataframe["actively_rx"] = False
-        self.dataframe["error_msg"] = "No Connection Attempted"
+        self.dataframe["error_msg"] = "No Board Connection Attempted"
         self.dataframe["time"] = datetime.now().timestamp()
         for channel in self.interface.channels:  # hardcoded
             self.dataframe[channel] = 0
         self.dataframe["press.vlv3.en"] = 1
 
+        self.log_box = QTextEdit()
+        self.log_box.setReadOnly(True)
+
         # init csv header
         self.header = "Time," + self.interface.get_header()
-        self.open_log(self.starttime)  # start initial run
+        self.open_log(self.starttime, "data/")  # start initial run
 
         # window layout
-        self.setWindowTitle("Server")
+        self.setWindowTitle("Server (" + Constants.GUI_VERSION + ")")
         w = QtWidgets.QWidget()
         self.setCentralWidget(w)
         top_layout = QtWidgets.QGridLayout()
         w.setLayout(top_layout)
         base_size = 500
         AR = 1.5  # H/W
-        self.setFixedWidth(int(AR * base_size))
-        self.setFixedHeight(int(base_size))
+        self.setMinimumWidth(int(AR * base_size))
+        self.setMinimumHeight(int(base_size))
+
 
         # server log
         tab = QTabWidget()
-
-        self.log_box = QTextEdit()
-        self.log_box.setReadOnly(True)
 
         packet_widget = QWidget()
         packet_layout = QHBoxLayout()
@@ -198,6 +213,8 @@ class Server(QtWidgets.QMainWindow):
         self.t = threading.Thread(target=self.server_handler, daemon=True)
         self.t.start()
 
+        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % self.starttime)
+
         # menu bar
         main_menu = self.menuBar()
         main_menu.setNativeMenuBar(True)
@@ -220,7 +237,6 @@ class Server(QtWidgets.QMainWindow):
             timestamp (bool): add timestamp
         """
         self.log_queue.put([textedit, text, timestamp])
-        
 
     def eventFilter(self, source, event):
         # up and down arrows in command line to see previous commands
@@ -302,7 +318,7 @@ class Server(QtWidgets.QMainWindow):
         last_uuid = None
         while True:
             try:
-                msg = clientsocket.recv(2048)
+                msg = clientsocket.recv(4096*8)  # if the data is ever bigger then this so help me
                 if msg == b'':
                     # remote connection closed
                     if self.commander == last_uuid:
@@ -334,11 +350,24 @@ class Server(QtWidgets.QMainWindow):
                         print(command)
                         self.do_flash_dump = True
                         self.dump_addr = command["args"]
+                        if self.campaign_log is not None and not self.campaign_log.closed:
+                            self.dump_loc = self.campaign_location
+                        else:
+                            self.dump_loc = None
+
                     # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
                     elif command["command"] == 6:  # checkpoint logs
                         print(command)
                         new_runname = command["args"]
-                        self.checkpoint_logs(new_runname)
+                        dictData = None
+                        mappings = None
+                        if command["args"] is not None and len(command["args"]) > 1:
+                            new_runname = command["args"][0]
+                            dictData = command["args"][1]
+                            mappings = command["args"][2]
+                        elif new_runname is not None:
+                            new_runname = command["args"][0]
+                        self.checkpoint_logs(new_runname, dictData, mappings)
                     # run autosequence
                     elif command["command"] == 7 and self.commander == command["clientid"]:
                         print(command)
@@ -352,9 +381,27 @@ class Server(QtWidgets.QMainWindow):
                         with self.command_queue.mutex:
                             self.command_queue.queue.clear()
                         self.abort_auto = True
+                    elif command["command"] == 9:
+                        print(command)
+                        CET = command["args"][0]
+                        type_ = command["args"][1]
+                        text = command["args"][2]
+
+                        self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
+
+                    elif command["command"] == 10:
+                        print(command)
+                        runname = command["args"][0]
+                        testName = command["args"][1]
+
+                        if testName is not None:
+                            isRecovered = command["args"][2]
+                            self.open_test_log(runname, testName, Constants.campaign_data_dir, isRecovered)
+                        else:
+                            self.close_test_log()
 
                     else:
-                        print("WARNING: Unhandled command")
+                        print("WARNING: Unhandled command: ", command)
 
                     self.database_lock.acquire()
                     try:
@@ -364,7 +411,9 @@ class Server(QtWidgets.QMainWindow):
                         else:
                             self.dataframe["commander"] = None
                         self.dataframe["packet_num"] = self.packet_num
+                        # if the serial to the board is even open
                         self.dataframe["ser_open"] = self.interface.ser.is_open
+                        # is actively recieving good data
                         self.dataframe["actively_rx"] = self.is_actively_receiving
                         data = pickle.dumps(self.dataframe)
                     except:
@@ -375,7 +424,8 @@ class Server(QtWidgets.QMainWindow):
 
                     clientsocket.sendall(data)
                 counter = 0
-            except:  # detect dropped connection
+            except Exception as e:  # detect dropped connection
+                print(traceback.format_exc())
                 if counter > 3:  # close connection after 3 consecutive failed packets
                     if self.commander == command["clientid"]:
                         self.override_commander()
@@ -458,8 +508,6 @@ class Server(QtWidgets.QMainWindow):
         except Exception as e:
             print("Error: could not send command because of error ", e)
 
-
-    
     def run_auto(self, lines: list, addr: int, remote: bool = False):
         """Runs an autosequence
 
@@ -507,25 +555,59 @@ class Server(QtWidgets.QMainWindow):
                     
                     if len(args) > 0:
                         print("new_log %s" % args[0])
-                        self.checkpoint_logs(args[0])
+                        self.checkpoint_logs(args[0], None, None)
                     else:
                         print("new_log")
-                        self.checkpoint_logs(None)
+                        self.checkpoint_logs(None, None, None)
                 elif cmd in commands:  # handle commands
                     self.parse_command(cmd, args, addr)
-        
-    def checkpoint_logs(self, new_runname):
-        if new_runname in (None, (), []):
-            runname = datetime.now().strftime("%Y%m%d%H%M%S")
-        elif isinstance(new_runname, str):
-            runname = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + new_runname
+
+    def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
+        self.close_log()
+
+        recovered_state = os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/")
+
+        if not os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/tests/"):
+            os.makedirs(Constants.campaign_data_dir+campaign_save_name+"/tests/")
+
+        self.open_log(campaign_save_name, Constants.campaign_data_dir, recovered_state)
+
+        if not recovered_state:
+            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "w")
+            self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
+            self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
+
+            with open(Constants.campaign_data_dir + campaign_save_name + "/configuration.json", "w") as write_file:
+                json.dump(dataDict, write_file, indent="\t")
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+
+            with open(Constants.campaign_data_dir + campaign_save_name + "/avionicsMappings.csv", "w") as write_file:
+                write_file.write("Channel,Name\n")
+                for key in avionicsMappings:
+                    if key != "Boards":  # currently don't list the boards the user has added
+                        write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][
+                            0] + "\n")  # key is not useful, first index is name, second is channel
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+        else:
+            os.chmod(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
+            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "a+")
+            self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
+            self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
+
+    def checkpoint_logs(self, filename, dataDict, avionicsMappings):
+        if filename in (None, (), []):
+            runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
+        elif isinstance(filename, str):
+            self.startCampaignLogging(filename, dataDict, avionicsMappings)
+            return
         else:
             print("Error: Unhandled Runname")
 
         self.close_log()
-        self.open_log(runname)
-        self.send_to_log(self.log_box, "Checkpoint Created: %s" % runname)
-
+        self.open_log(runname, "data/")
+        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % runname)
 
     def getHelp(self, selected_command):
         commands = list(self.interface.get_cmd_names_dict().keys())
@@ -592,9 +674,9 @@ class Server(QtWidgets.QMainWindow):
         elif cmd == "new_log":
             #print("new_log %s" % args[0])
             if len(args) > 0:
-                self.checkpoint_logs(args[0])
+                self.checkpoint_logs(args[0], None, None)
             else:
-                self.checkpoint_logs(None)
+                self.checkpoint_logs(None, None, None)
 
         self.command_line.clear()
 
@@ -611,37 +693,91 @@ class Server(QtWidgets.QMainWindow):
             logstring += "%s," % (self.dataframe[channel])
         return logstring
 
-    def open_log(self, runname: str):
+    def open_log(self, runname: str, save_location: str, is_recovered: bool = False):
         """Opens a new set of log files.
 
         Args:
             runname (str): Run-name label
+            save_location (str): location where to save logs, must have ending /
+            is_recovered (bool): pass in true if you are opening logs that were previously open. Does not write new
+            headers
         """
 
         # make data folder if it does not exist
-        if not os.path.exists("data/" + runname + "/"):
-            os.makedirs("data/" + runname + "/")
+        if not os.path.exists(save_location + runname + "/"):
+            os.makedirs(save_location + runname + "/")
 
-        # log file init and headers
-        self.server_log = open('data/' + runname + "/" +
-                               runname + "_server_log.txt", "w+")
-        self.serial_log = open('data/' + runname + "/" +
-                               runname + "_serial_log.csv", "w+")
-        self.data_log = open('data/' + runname + "/" +
-                             runname + "_data_log.csv", "w+")
-        self.command_log = open('data/' + runname + "/" +
-                                runname + "_command_log.csv", "w+")
-        self.command_log.write("Time, Command/info\n")
-        self.serial_log.write("Time, Packet\n")
-        self.data_log.write(self.header + "\n")
+        # Un lock these files
+        if is_recovered:
+            os.chmod(save_location + runname + "/" + runname + "_server_log.txt", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_data_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "/" + runname + "_command_log.csv", S_IWUSR | S_IREAD)
+            # log file init and headers
+            self.server_log = open(save_location + runname + "/" +
+                                   runname + "_server_log.txt", "a+")
+            self.serial_log = open(save_location + runname + "/" +
+                                   runname + "_serial_log.csv", "a+")
+            self.data_log = open(save_location + runname + "/" +
+                                 runname + "_data_log.csv", "a+")
+            self.command_log = open(save_location + runname + "/" +
+                                    runname + "_command_log.csv", "a+")
+        else:
+
+            # log file init and headers
+            self.server_log = open(save_location + runname + "/" +
+                                   runname + "_server_log.txt", "w")
+            self.serial_log = open(save_location + runname + "/" +
+                                   runname + "_serial_log.csv", "w")
+            self.data_log = open(save_location + runname + "/" +
+                                 runname + "_data_log.csv", "w")
+            self.command_log = open(save_location + runname + "/" +
+                                    runname + "_command_log.csv", "w")
+            self.command_log.write("Time, Command/info\n")
+            self.serial_log.write("Time, Packet\n")
+            self.data_log.write(self.header + "\n")
+
+    def open_test_log(self, runname:str, test_name, save_location: str, is_recovered: bool = False):
+
+        # make data folder if it does not exist
+        if not os.path.exists(save_location + runname + "/tests/"):
+            os.makedirs(save_location + runname + "/tests/")
+
+        # Un lock these files
+        if is_recovered:
+            os.chmod(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", S_IWUSR | S_IREAD)
+            # log file init and headers
+            self.test_data_log = open(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+        else:
+            self.test_data_log = open(
+                save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+
+            self.test_data_log.write(self.header + "\n")
+
+    def close_test_log(self):
+        if self.test_data_log is not None and not self.test_data_log.closed:
+            self.test_data_log.close()
+            os.chmod(self.test_data_log.name, S_IREAD | S_IRGRP | S_IROTH)
+            self.test_data_log = None
 
     def close_log(self):
         """Safely closes all logfiles"""
 
         self.server_log.close()
+        os.chmod(self.server_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.serial_log.close()
+        os.chmod(self.serial_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.command_log.close()
+        os.chmod(self.command_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.data_log.close()
+        os.chmod(self.data_log.name, S_IREAD | S_IRGRP | S_IROTH)
+
+        self.close_test_log()
+
+        if self.campaign_log is not None and not self.campaign_log.closed:
+            self.campaign_log.close()
+            self.campaign_location = None
+            os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
 
     @overrides
     def update(self):
@@ -677,8 +813,9 @@ class Server(QtWidgets.QMainWindow):
                         self.log_box, "Taking a dump. Be out in just a sec")
                     QApplication.processEvents()
                     self.interface.download_flash(self.dump_addr, int(
-                        datetime.now().timestamp()), self.command_log, "")
+                        datetime.now().timestamp()), self.command_log, self.dump_loc)
                     self.do_flash_dump = False
+                    self.dump_loc = None
                     self.send_to_log(self.log_box, "Dump Complete.")
 
                 else:
@@ -728,21 +865,33 @@ class Server(QtWidgets.QMainWindow):
                                 #print([n, key, dataframe[key]])
 
                             self.data_log.write(self.get_logstring() + '\n')
+
+                            if self.test_data_log is not None:
+                                self.test_data_log.write(self.get_logstring() + '\n')
                         finally:
                             self.database_lock.release()
                     else:
+
                         # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
                         self.is_actively_receiving = False
                         if packet_addr == -1:
                             self.dataframe["error_msg"] = "Serial Parse Failed"
                         elif packet_addr == -2:
                             self.dataframe["error_msg"] = "Packet Parse Failed"
+
+                        self.packet_size_label.setText("Last Packet Size: %s" % self.dataframe["error_msg"])
                         pass
+            else:
+                self.packet_size_label.setText("Last Packet Size: %s" % "0")
+                self.is_actively_receiving = False
+
             self.party_parrot.step()
 
         except Exception as e:
             #traceback.print_exc()
             print("Parser failed with error ", e)
+            self.is_actively_receiving = False
+            self.packet_size_label.setText("Last Packet Size: %s" % "Exception, check terminal")
 
         # update server state
         self.packet_num += 1
@@ -764,15 +913,16 @@ if __name__ == "__main__":
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
+    app.setApplicationName("MASA Server")
+    app.setApplicationDisplayName("MASA Server")
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "--connect":
-            server = Server(autoconnect=True)
+            server = Server(app, autoconnect=True)
         else:
-            server = Server(autoconnect=False)
+            server = Server(app, autoconnect=False)
     else:
-        server = Server(autoconnect=False)
+        server = Server(app, autoconnect=False)
 
     # timer and tick updates
     timer = QtCore.QTimer()

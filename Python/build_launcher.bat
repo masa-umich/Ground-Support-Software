@@ -1,1 +1,0 @@
-pyinstaller launcher.py --onefile --distpath ./

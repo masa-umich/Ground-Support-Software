@@ -1,1 +1,0 @@
-Note: for tests 1 and 3, we forgot to click run before the test, and thus the data in those folders has a lot of extra time in the beggining. The data for those tests need to have the beggining chopped off.

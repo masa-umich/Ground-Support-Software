@@ -4,14 +4,17 @@ from PyQt5.QtCore import *
 import sys
 from overrides import overrides
 
+
 class PartyParrot(QLabel):
     def __init__(self):
         super().__init__()
         self.current_frame = 0
+
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
         
         self.frames = []
         for i in range(10):
-            self.frames.append(QPixmap("Images/Parrot/frame{}.png".format(i)))
+            self.frames.append(QPixmap(self.LAUNCH_DIRECTORY+"Images/Parrot/frame{}.png".format(i)))
         
         self.setAlignment(Qt.AlignCenter)
         self._set_frame()
@@ -28,7 +31,7 @@ class PartyParrot(QLabel):
     def setFixedSize(self, h, w, *args, **kwargs):
         super().setFixedSize(h, w, *args, **kwargs)
         for i in range(10):
-            frame = QPixmap("Images/Parrot/frame{}.png".format(i))
+            frame = QPixmap(self.LAUNCH_DIRECTORY+"Images/Parrot/frame{}.png".format(i))
             self.frames[i] = frame.scaled(h, w, Qt.KeepAspectRatio)
 
 if __name__ == "__main__":
