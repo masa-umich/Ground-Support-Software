@@ -26,7 +26,7 @@ Python/LaunchFiles
 MASA Avionics • GUI.code-workspace
 
 # Pyinstaller Files
-GUI.spec
+*.spec
 build/
 dist/
 venv/
