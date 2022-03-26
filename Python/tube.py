@@ -111,30 +111,44 @@ class Tube:
                     self.points[-1] = QPointF(self.points[-2].x(), current_pos.y())
                     self.draw_direction = "Vertical"
 
-        # This will check for tube end alignment with object anchor points
-        for obj in self.widget_parent.object_list:
-            for obj_ap in obj.anchor_points:
-                obj_ap.x_aligned = False
-                obj_ap.y_aligned = False
-                if obj_ap.x()-5 < self.points[-1].x() < obj_ap.x()+5 and self.draw_direction == "Horizontal":
-                    self.points[-1] = QPointF(obj_ap.x() + 3, self.points[-1].y())
-                    obj_ap.x_aligned = True
-                if obj_ap.y()-5 < self.points[-1].y() < obj_ap.y()+5  and self.draw_direction == "Vertical":
-                    self.points[-1] = QPointF(self.points[-1].x(),obj_ap.y() + 3)
-                    obj_ap.y_aligned = True
+        if self.widget_parent.shouldSnap:
+            # This will check for tube end alignment with object anchor points
+            for obj in self.widget_parent.object_list:
+                for obj_ap in obj.anchor_points:
+                    obj_ap.x_aligned = False
+                    obj_ap.y_aligned = False
+                    if obj_ap.x()-5 < self.points[-1].x() < obj_ap.x()+5 and self.draw_direction == "Horizontal":
+                        self.points[-1] = QPointF(obj_ap.x() + 3, self.points[-1].y())
+                        obj_ap.x_aligned = True
+                    if obj_ap.y()-5 < self.points[-1].y() < obj_ap.y()+5  and self.draw_direction == "Vertical":
+                        self.points[-1] = QPointF(self.points[-1].x(),obj_ap.y() + 3)
+                        obj_ap.y_aligned = True
 
-        # This will check for tube end alignment with tube anchor points
-        for tube in self.widget_parent.tube_list:
-            if tube is not self:
-                for tube_ap in tube.tube_anchor_points:
-                    tube_ap.x_aligned = False
-                    tube_ap.y_aligned = False
-                    if tube_ap.x()-5 < self.points[-1].x() < tube_ap.x()+5 and self.draw_direction == "Horizontal":
-                        self.points[-1] = QPointF(tube_ap.x() + 3, self.points[-1].y())
-                        tube_ap.x_aligned = True
-                    if tube_ap.y()-5 < self.points[-1].y() < tube_ap.y()+5  and self.draw_direction == "Vertical":
-                        self.points[-1] = QPointF(self.points[-1].x(),tube_ap.y() + 3)
-                        tube_ap.y_aligned = True
+            # This will check for tube end alignment with tube anchor points
+            for tube in self.widget_parent.tube_list:
+                if tube is not self:
+                    for tube_ap in tube.tube_anchor_points:
+                        tube_ap.x_aligned = False
+                        tube_ap.y_aligned = False
+                        if tube_ap.x()-5 < self.points[-1].x() < tube_ap.x()+5 and self.draw_direction == "Horizontal":
+                            self.points[-1] = QPointF(tube_ap.x() + 3, self.points[-1].y())
+                            tube_ap.x_aligned = True
+                        if tube_ap.y()-5 < self.points[-1].y() < tube_ap.y()+5  and self.draw_direction == "Vertical":
+                            self.points[-1] = QPointF(self.points[-1].x(),tube_ap.y() + 3)
+                            tube_ap.y_aligned = True
+
+        else:
+            # Now lets talk ineffecient
+            for obj in self.widget_parent.object_list:
+                for obj_ap in obj.anchor_points:
+                    obj_ap.x_aligned = False
+                    obj_ap.y_aligned = False
+
+            for tube in self.widget_parent.tube_list:
+                if tube is not self:
+                    for tube_ap in tube.tube_anchor_points:
+                        tube_ap.x_aligned = False
+                        tube_ap.y_aligned = False
 
         self.widget_parent.update()
 

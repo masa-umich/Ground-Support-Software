@@ -495,8 +495,8 @@ class Motor(AvionicsObject):
         else:
             text += "Channel:\n"
 
-        text += "Currenta: " + str(self.currenta) + "A\n"
-        text += "Currentb: " + str(self.currentb) + "A\n"
+        # text += "Currenta: " + str(self.currenta) + "A\n"
+        # text += "Currentb: " + str(self.currentb) + "A\n"
         text += "P constant: " + str(self.Pconstant) +"\n"
         text += "I constant: " + str(self.Iconstant) +"\n"
         text += "D constant: " + str(self.Dconstant)
@@ -561,12 +561,14 @@ class Motor(AvionicsObject):
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "mtr" + str(self.channel)
 
-            curra = data_packet[channel_name + ".ia"]
-            currb = data_packet[channel_name + ".ib"]
+            # curra = data_packet[channel_name + ".ia"]
+            # currb = data_packet[channel_name + ".ib"]
+            curra = 0
+            currb = 0
             pos = data_packet[channel_name + ".pos"]
-            pot_pos = data_packet[channel_name + ".pot"]
+            pot_pos = data_packet[board_prefix+"pot" + str(self.channel)+".e"]  # i hate u avionics
             setp = data_packet[channel_name + ".set"]
-            p = data_packet[channel_name + ".p"]
-            i = data_packet[channel_name + ".i"]
-            d = data_packet[channel_name + ".d"]
+            p = data_packet[channel_name + ".kp"]
+            i = data_packet[channel_name + ".ki"]
+            d = data_packet[channel_name + ".kd"]
             self.updateValues(curra, currb, pos, pot_pos, setp, p, i, d)
