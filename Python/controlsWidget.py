@@ -441,7 +441,7 @@ class ControlsWidget(QWidget):
         for object_ in self.object_list:
             if hasattr(object_, "channel") and object_.isAvionicsFullyDefined():
                 if object_.object_name != "Generic Sensor":
-                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + object_.channel]
+                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] + object_.channel]
                 else:
                     mapDict[counter] = [object_.long_name, object_.channel]
                 counter += 1
@@ -455,17 +455,17 @@ class ControlsWidget(QWidget):
         """
 
         with open("data/.tempMappings.txt", "w") as write_file:
-            write_file.write("CONNECTED BOARDS:\n--------------------------------------\n")
+            write_file.write("CONNECTED BOARDS:\n---------------------------------------------------------\n")
             for board in self.centralWidget.controlsSidebarWidget.board_objects:
                 write_file.write(board.name + "\n")
 
-            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n--------------------------------------\n")
+            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n---------------------------------------------------------\n")
             for object_ in self.object_list:
                 if hasattr(object_, 'channel') and object_.channel != "Undefined":
                     if object_.object_name != "Generic Sensor":
-                        write_file.write(f'{object_.long_name + ",":<25}{self.window.interface.getPrefix(object_.avionics_board) + object_.channel:<12}' + "\n")
+                        write_file.write(f'{object_.long_name + ",":<40}{self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] +  object_.channel:<12}' + "\n")
                     else:
-                        write_file.write(f'{object_.long_name + ",":<25}{object_.channel:<12}' + "\n")
+                        write_file.write(f'{object_.long_name + ",":<40}{object_.channel:<12}' + "\n")
 
         if self.gui.platform == "Windows":
             os.system('notepad data/.tempMappings.txt')
