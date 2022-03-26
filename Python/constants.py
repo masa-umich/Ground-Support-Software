@@ -8,7 +8,7 @@ Class to hold any constant value that is important to the entire program
 
 class Constants:
 
-    GUI_VERSION = 'v2.0.0'
+    GUI_VERSION = 'v2.0.1'
 
     # Dict of fluids. Example call: fluid["HE"] -> Returns 0
     # TODO: I'm picky so change to LOX

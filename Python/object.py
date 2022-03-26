@@ -418,6 +418,9 @@ class BaseObject(QObject):
         # Tells widget painter to update screen
         self.widget_parent.update()
 
+    def updateToolTip(self):
+        pass  # to fix random bug
+
     def checkApAlignment(self, pos: QPoint = None):
         """
         Checks to see if object should snap into place based on anchor points.

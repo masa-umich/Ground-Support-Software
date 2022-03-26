@@ -95,11 +95,20 @@ class Solenoid(AvionicsObject):
         """
         # Default points are the midpoints of the four sides.
         coil_height = 10 # im sorry
-        sol_mid_point = (self.height-coil_height)/2 + coil_height
-        anchor_points = [AnchorPoint(QPoint(0, int(sol_mid_point)), self, 0, parent=self.widget_parent),
-                         AnchorPoint(QPoint(self.width, int(sol_mid_point)), self, 1, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width/2 +1), int(sol_mid_point)), self, 2, parent=self.widget_parent)
-                         ]
+        if self.is_vertical:
+            sol_mid_point = (self.width - coil_height) / 2
+            anchor_points = [AnchorPoint(QPoint(int(sol_mid_point) + 1, 0), self, 0, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(sol_mid_point) + 1, self.height), self, 1, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(sol_mid_point) + 1, int(self.height / 2 + 1)), self, 2,
+                                         parent=self.widget_parent)
+                             ]
+        else:
+            sol_mid_point = (self.height - coil_height) / 2 + coil_height
+            anchor_points = [AnchorPoint(QPoint(0, int(sol_mid_point)), self, 0, parent=self.widget_parent),
+                             AnchorPoint(QPoint(self.width, int(sol_mid_point)), self, 1, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(self.width/2 +1), int(sol_mid_point)), self, 2, parent=self.widget_parent)
+                             ]
+
         self.anchor_points = anchor_points
 
     @overrides
@@ -142,7 +151,7 @@ class Solenoid(AvionicsObject):
 
             path.moveTo(self.width/2, coil_height + sol_height/2)
             path.lineTo(self.width/2, coil_height)
-            path.addRect(self.width/3, 0, self.width/3, coil_height)  # left cord, width height
+            path.addRect(self.width/4, 0, self.width/2, coil_height)  # left cord, width height
 
         else:  # Draw vertically
             coil_width = self.scale * 10 * self.gui.pixel_scale_ratio[1]
@@ -165,7 +174,7 @@ class Solenoid(AvionicsObject):
 
             path.moveTo(coil_width, self.height/2)
             path.lineTo(sol_width/2 + coil_width, self.height/2)
-            path.addRect(sol_width/2 + coil_width, self.height/3, coil_width, self.height/3) #left cord, width height
+            path.addRect(sol_width/2 + coil_width, self.height/4, coil_width, self.height/2) #left cord, width height
 
         path.translate(self.position.x(), self.position.y())
 

@@ -137,6 +137,11 @@ class ControlsWindow(QMainWindow):
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
         self.addAvionicsAct.setShortcut('Alt+A')
 
+        # EDIT -> Toggle Snapping
+        self.toggleSnappingAct = QAction('&Disable Snapping', self)
+        self.toggleSnappingAct.triggered.connect(self.toggleSnapping)
+        self.toggleSnappingAct.setShortcut('Alt+J')
+
         # VIEW -> Show Avionics Mappings
         self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
         self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
@@ -253,6 +258,7 @@ class ControlsWindow(QMainWindow):
         edit_menu.addAction(self.enterEditAct)
         edit_menu.addAction(self.exitEditAct)
         edit_menu.addAction(self.addAvionicsAct)
+        edit_menu.addAction(self.toggleSnappingAct)
 
         # Adds all the related view items to view menus
         view_menu.addAction(self.showAvionicsMapAct)
@@ -386,7 +392,7 @@ class ControlsWindow(QMainWindow):
         for i in range(length):
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
-        for tube in self.centralWidget.controlsWidget.tube_list:
+        for tube in reversed(self.centralWidget.controlsWidget.tube_list):
             tube.deleteTube()
 
         for board in self.centralWidget.controlsSidebarWidget.board_objects:
@@ -808,6 +814,16 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         dialog.done(2)
+
+    def toggleSnapping(self):
+        self.centralWidget.controlsWidget.shouldSnap = not self.centralWidget.controlsWidget.shouldSnap
+
+        if self.centralWidget.controlsWidget.shouldSnap:
+            self.gui.setStatusBarMessage("Snapping Enabled")
+            self.toggleSnappingAct.setText("Disable Snapping")
+        else:
+            self.gui.setStatusBarMessage("Snapping Disabled")
+            self.toggleSnappingAct.setText("Enable Snapping")
 
     def showDrawingSettingsDialog(self):
         """
