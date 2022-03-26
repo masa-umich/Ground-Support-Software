@@ -335,9 +335,9 @@ class ControlsPanelWidget(QWidget):
         # Updates the available values for the channels for solenoids and generic sensors
         try:
             if not hasattr(object_, "avionics_board"):
-                return None
-
-            board_name = object_.avionics_board
+                board_name = None
+            else:
+                board_name = object_.avionics_board
 
             if board_name in Constants.boards:
                 addr = self.interface.getBoardAddr(board_name)

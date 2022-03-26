@@ -91,6 +91,7 @@ class ControlsWidget(QWidget):
 
         # Var to keep track of the importance of mouse clicks
         self.should_ignore_mouse_release = False
+        self.shouldSnap = True
 
         # Var to keep track when a tube is being drawn
         self.is_drawing = False
@@ -621,7 +622,8 @@ class ControlsWidget(QWidget):
                                                 long_name_label_pos=idx["long name label"]["pos string"],
                                                 long_name_label_font_size=idx["long name label"]["font size"],
                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
-                                                long_name_label_rows=idx["long name label"]["rows"]))
+                                                long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
+                                                 serial_number_visible=idx["serial number label"]["is visible"]))
 
             elif obj_type == "Throttle Valve":
                 idx = data[i]
@@ -637,7 +639,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=idx["long name label"]["rows"]))
+                                                 long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
+                                                 serial_number_visible=idx["serial number label"]["is visible"]))
             
             elif obj_type == "3 Way":
                 idx = data[i]
@@ -671,6 +674,26 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
+
+            elif obj_type == "Regulator":
+                idx = data[i]
+                self.object_list.append(Regulator(self, _id=idx["id"], position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                                               fluid=idx["fluid"], width=idx["width"], height=idx["height"],
+                                               name=idx["name"], scale=idx["scale"],
+                                               serial_number=idx["serial number"],
+                                               long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                               locked=idx["is locked"], position_locked=idx["is pos locked"],
+                                               serial_number_label_pos=idx["serial number label"]["pos string"],
+                                               serial_number_label_font_size=idx["serial number label"]["font size"],
+                                               serial_number_label_local_pos=QPointF(
+                                                   idx["serial number label"]["local pos"]["x"],
+                                                   idx["serial number label"]["local pos"]["y"]),
+                                               long_name_label_pos=idx["long name label"]["pos string"],
+                                               long_name_label_font_size=idx["long name label"]["font size"],
+                                               long_name_label_local_pos=QPointF(
+                                                   idx["long name label"]["local pos"]["x"],
+                                                   idx["long name label"]["local pos"]["y"]),
+                                               long_name_label_rows=idx["long name label"]["rows"]))
 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             elif obj_type == "Tube":

@@ -131,8 +131,9 @@ class ObjectButton(QPushButton):
                     pos.setY(self.object_.position.y())
                     self.drag_start_pos.setY(event.pos().y())
 
-            # Checks if the object should be snapped into place, and get that new pos if it does
-            pos = self.object_.checkApAlignment(pos)
+            if self.central_widget.controlsWidget.shouldSnap:
+                # Checks if the object should be snapped into place, and get that new pos if it does
+                pos = self.object_.checkApAlignment(pos)
 
             # Calculate the difference in location
             dif = pos - self.object_.position
