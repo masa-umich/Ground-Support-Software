@@ -314,7 +314,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                         self.failLoadLabel.setText("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
                         return
 
-                    channelNum = int(i.removeprefix("Channel "))
+                    #channelNum = int(i.removePrefix("Channel ")) # only works with python 3.9
+                    channelNum = int(i[len("Channel "):]) #lazy works with <3.9 you can remove later
+
 
                     self.slopeOffsetGrid[channelNum] = (channel["Slope"], channel["Offset"])
                     self.rangeLayoutList[channelNum].updateRanges("Slope/Offset", channelNum)
@@ -327,7 +329,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                         self.failLoadLabel.setText("At Least 1 Channel Failed to Load!! Check that File has float-point numbers")
                         return
 
-                    channelNum = int(i.removeprefix("Channel "))
+                    channelNum = int(i[len("Channel "):])  #int(i.removeprefix("Channel "))
 
                     self.voltagePressureGrid[channelNum] = (channel["Vmax"], channel["Vmin"], channel["Pmax"])
                     self.rangeLayoutList[channelNum].updateRanges("Voltage/Pressure Range", channelNum)
@@ -346,6 +348,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                                                       self.gui.workspace_path.removesuffix(
                                                           '/Configurations') + "/PressureCalConfigurations",
                                                       "JSON Files (*.json)", options=options)
+            
         elif self.fileName:
             fileName = self.fileName
         else:
@@ -554,9 +557,14 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         loadFileButton.setFixedWidth(150 * self.gui.pixel_scale_ratio[0])
         loadFileButton.clicked.connect(lambda: self.loadData())
 
+        saveButton = QPushButton("save")
+        saveButton.setFixedWidth(150 * self.gui.pixel_scale_ratio[0])
+        saveButton.clicked.connect(lambda: self.send_sensor_calibrations(action.text()))
+
         headerLayout = QtWidgets.QGridLayout()
         headerLayout.addWidget(directionsLabel, 0, 0)
         headerLayout.addWidget(loadFileButton, 0, 1)
+        headerLayout.addWidget(saveButton, 1, 1)
         headerLayout.addWidget(self.unSavedLabel, 1, 0)
         headerLayout.addWidget(self.failLoadLabel, 2, 0)
         headerLayout.addWidget(self.differentValuesLabel, 3, 0)
@@ -597,10 +605,12 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                 slope = self.window.last_packet[prefix + "pt_cal_slope[" + str(channel) + "]"]
                 offset = self.window.last_packet[prefix + "pt_cal_offset[" + str(channel) + "]"]
             except:
-                slope = float(self.rangeLayoutList[channel].itemAt(2).widget().text().removeprefix("Current Board Slope [mV/psi]: "))
-                offset = float(self.rangeLayoutList[channel].itemAt(3).widget().text().removeprefix("Current Board Offset [mV]: "))
+                #slope = float(self.rangeLayoutList[channel].itemAt(2).widget().text().removeprefix("Current Board Slope [mV/psi]: "))
+                #offset = float(self.rangeLayoutList[channel].itemAt(3).widget().text().removeprefix("Current Board Offset [mV]: "))
+                slope = slope = float(self.rangeLayoutList[channel].itemAt(2).widget().text()[len("Current Board Slope [mV/psi]: "):])
+                offset = float(self.rangeLayoutList[channel].itemAt(3).widget().text()[len("Current Board Offset [mV]: "):])
 
-            # testing
+                # testing
             # import random
             # slope = random.randint(0, 10)
             # offset = random.randint(100, 500)
