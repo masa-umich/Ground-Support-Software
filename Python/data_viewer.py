@@ -480,11 +480,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """Update application"""
         # super().update()
 
-        if self.client_dialog.client.is_connected:
-            packet["time"] -= self.starttime  # time to elapsed
-            last_frame = pd.DataFrame(packet, index=[0])
-            self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
-                int(15*60*1000/self.cycle_time))  # cap data to 15 min
+        packet["time"] -= self.starttime  # time to elapsed
+        last_frame = pd.DataFrame(packet, index=[0])
+        self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
+            int(15*60*1000/self.cycle_time))  # cap data to 15 min
 
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -562,12 +561,14 @@ if __name__ == "__main__":
 
     # initialize application
     APPID = 'MASA.DataViewer'  # arbitrary string
+    app.setApplicationName("MASA GUI")
+    app.setApplicationDisplayName("MASA GUI (Singular) - Data Viewer")
+
     if os.name == 'nt':  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
 
     # init window
     lwgui = BaseGui(app)

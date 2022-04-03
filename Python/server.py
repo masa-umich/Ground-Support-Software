@@ -15,7 +15,7 @@ import json
 
 from overrides import overrides
 from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt, QDateTime
+from PyQt5.QtCore import Qt, QDateTime, QStandardPaths
 from PyQt5.QtWidgets import *
 
 from constants import Constants
@@ -31,9 +31,16 @@ class Server(QtWidgets.QMainWindow):
     MASA Data Aggregation Server
     """
 
-    def __init__(self, autoconnect=False):
+    def __init__(self, qapp, autoconnect=False):
         """Init server window"""
         super().__init__()
+
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+
+        if not os.path.isdir(self.LAUNCH_DIRECTORY):
+            os.mkdir(path=self.LAUNCH_DIRECTORY)
+
+        qapp.setWindowIcon(QtGui.QIcon(self.LAUNCH_DIRECTORY+'Images/logo_server.png'))
 
         # init variables
         self.packet_num = 0
@@ -85,7 +92,7 @@ class Server(QtWidgets.QMainWindow):
         self.open_log(self.starttime, "data/")  # start initial run
 
         # window layout
-        self.setWindowTitle("Server")
+        self.setWindowTitle("Server (" + Constants.GUI_VERSION + ")")
         w = QtWidgets.QWidget()
         self.setCentralWidget(w)
         top_layout = QtWidgets.QGridLayout()
@@ -741,8 +748,6 @@ class Server(QtWidgets.QMainWindow):
             os.chmod(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", S_IWUSR | S_IREAD)
             # log file init and headers
             self.test_data_log = open(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
-
-            self.test_data_log.write(self.header + "\n")
         else:
             self.test_data_log = open(
                 save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
@@ -908,15 +913,16 @@ if __name__ == "__main__":
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
-    app.setWindowIcon(QtGui.QIcon('Images/logo_server.png'))
+    app.setApplicationName("MASA Server")
+    app.setApplicationDisplayName("MASA Server")
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "--connect":
-            server = Server(autoconnect=True)
+            server = Server(app, autoconnect=True)
         else:
-            server = Server(autoconnect=False)
+            server = Server(app, autoconnect=False)
     else:
-        server = Server(autoconnect=False)
+        server = Server(app, autoconnect=False)
 
     # timer and tick updates
     timer = QtCore.QTimer()

@@ -23,18 +23,22 @@ class BaseGui(QObject):
     EXIT_CODE_REBOOT = -52
     EXIT_CODE_NOMINAL = 0
     EXIT_CODE_ERROR = -1
-    LAUNCH_DIRECTORY = "LaunchFiles/"
 
     guiExitSignal = pyqtSignal()
 
     def __init__(self, qapp : QApplication, mainWindow: QWindow = None):
         super().__init__()
 
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+
         print("MASA GUI Version: " + Constants.GUI_VERSION)
         print("Python Version: " + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)
 
+        print(self.LAUNCH_DIRECTORY)
+
         self.applyDarkTheme(qapp)
+        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY+'Images/M_icon.png'))
 
         # Check which platform we are working with
         if sys.platform == "win32":
@@ -50,7 +54,7 @@ class BaseGui(QObject):
             self.screenResolution = [qapp.desktop().screenGeometry().width(), qapp.desktop().screenGeometry().height()]
 
         # Check if the launch files exist, if so load preferences from there
-        if os.path.isdir(BaseGui.LAUNCH_DIRECTORY):
+        if os.path.isdir(self.LAUNCH_DIRECTORY):
             self.loadPreferences()
         # If this is the first time running, create required directories, and guess at scaling values
         else:
@@ -62,11 +66,11 @@ class BaseGui(QObject):
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 
-            os.mkdir(path=self.workspace_path + "/Configurations/")
-            os.mkdir(path=self.workspace_path + "/Run_Data/")
+            if not os.path.isdir(self.workspace_path + "/Configurations/"):
+                os.makedirs(self.workspace_path + "/Configurations/")
 
-            os.mkdir(path=BaseGui.LAUNCH_DIRECTORY)
-            readMe = open(BaseGui.LAUNCH_DIRECTORY + "README.txt", "x")
+            os.mkdir(path=self.LAUNCH_DIRECTORY)
+            readMe = open(self.LAUNCH_DIRECTORY + "README.txt", "x")
             readMe.write("This is the directory that the GUI pulls startup files from, do not delete, "
                          "it will come back.\n\nIf for some reason u want to reset this delete the whole folder")
 
@@ -92,12 +96,12 @@ class BaseGui(QObject):
         print("Workspace Path: " + self.workspace_path)
 
         # Add in fonts
-        QFontDatabase.addApplicationFont("Fonts/Montserrat/Montserrat-Medium.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Regular.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Light.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Medium.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Thin.ttf")
-        QFontDatabase.addApplicationFont("Fonts/RobotoMono/RobotoMono-Italic.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/Montserrat/Montserrat-Medium.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Regular.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Light.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Medium.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Thin.ttf")
+        QFontDatabase.addApplicationFont(self.LAUNCH_DIRECTORY+"Fonts/RobotoMono/RobotoMono-Italic.ttf")
 
         # This is a handler for the Client, which receives data and sends commands
         self.liveDataHandler = LiveDataHandler(self)
@@ -177,10 +181,10 @@ class BaseGui(QObject):
         }
 
         # If file exits, open it and write over, if it does not, create and write
-        if os.path.isfile(BaseGui.LAUNCH_DIRECTORY + "prefs.json"):
-            pref_file = open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", 'w')
+        if os.path.isfile(self.LAUNCH_DIRECTORY + "prefs.json"):
+            pref_file = open(self.LAUNCH_DIRECTORY + "prefs.json", 'w')
         else:
-            pref_file = open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", "x")
+            pref_file = open(self.LAUNCH_DIRECTORY + "prefs.json", "x")
 
         # Write the file
         json.dump(preferences, pref_file, indent="\t")
@@ -192,7 +196,7 @@ class BaseGui(QObject):
     def loadPreferences(self):
 
         # Open and read the loaded json file
-        with open(BaseGui.LAUNCH_DIRECTORY + "prefs.json", "r") as read_file:
+        with open(self.LAUNCH_DIRECTORY + "prefs.json", "r") as read_file:
             prefs = json.load(read_file)
 
         self.pixel_scale_ratio = [prefs["pixel_scale_ratio"]["x"], prefs["pixel_scale_ratio"]["y"]]
@@ -207,6 +211,11 @@ class BaseGui(QObject):
             self.workspace_path = str(
                 QFileDialog.getExistingDirectory(None, "Workspace not found: Select Workspace Directory",
                                                  options=options))
+
+            # In case workspace path was deleted, need to recreate config files
+            if not os.path.isdir(self.workspace_path + "/Configurations/"):
+                os.makedirs(self.workspace_path + "/Configurations/")
+
             if self.workspace_path == "":
                 sys.exit("No Workspace Path Provided")
 

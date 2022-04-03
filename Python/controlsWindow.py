@@ -38,7 +38,7 @@ class ControlsWindow(QMainWindow):
         # Set geometry
         self.gui = parent
         self.title = 'MASA Console'
-        self.setWindowIcon(QIcon('Images/M_icon.png'))
+        self.setWindowIcon(QIcon(self.gui.LAUNCH_DIRECTORY+'Images/M_icon.png'))
         #self.client = ClientWidget(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()
@@ -137,6 +137,11 @@ class ControlsWindow(QMainWindow):
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
         self.addAvionicsAct.setShortcut('Alt+A')
 
+        # EDIT -> Toggle Snapping
+        self.toggleSnappingAct = QAction('&Disable Snapping', self)
+        self.toggleSnappingAct.triggered.connect(self.toggleSnapping)
+        self.toggleSnappingAct.setShortcut('Alt+J')
+
         # VIEW -> Show Avionics Mappings
         self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
         self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
@@ -198,8 +203,8 @@ class ControlsWindow(QMainWindow):
         self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
 
         # Campaign -> Open Campaign Folder
-        self.openCampaignDir = QAction('Open Campaign Folder', self)
-        self.openCampaignDir.triggered.connect(self.openCampaignFolder)
+        self.openConfigurationDir = QAction('Open Configuration Folder', self)
+        self.openConfigurationDir.triggered.connect(self.openConfigurationFolder)
 
         # Avionics -> Connection Settings
         self.connect = QAction("&Connection", self)
@@ -253,6 +258,7 @@ class ControlsWindow(QMainWindow):
         edit_menu.addAction(self.enterEditAct)
         edit_menu.addAction(self.exitEditAct)
         edit_menu.addAction(self.addAvionicsAct)
+        edit_menu.addAction(self.toggleSnappingAct)
 
         # Adds all the related view items to view menus
         view_menu.addAction(self.showAvionicsMapAct)
@@ -272,7 +278,7 @@ class ControlsWindow(QMainWindow):
         campaign_menu.addAction(self.tareLoadCellAct)
         campaign_menu.addAction(self.zeroTimeAct)
         campaign_menu.addSeparator()
-        campaign_menu.addAction(self.openCampaignDir)
+        campaign_menu.addAction(self.openConfigurationDir)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
@@ -386,7 +392,7 @@ class ControlsWindow(QMainWindow):
         for i in range(length):
             self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
 
-        for tube in self.centralWidget.controlsWidget.tube_list:
+        for tube in reversed(self.centralWidget.controlsWidget.tube_list):
             tube.deleteTube()
 
         for board in self.centralWidget.controlsSidebarWidget.board_objects:
@@ -459,13 +465,12 @@ class ControlsWindow(QMainWindow):
             with open(fileName, "w") as write_file:
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
-    @staticmethod
-    def openCampaignFolder():
+    def openConfigurationFolder(self):
         """
         Opens the OS specific file explorer to where all the campaign data is saved for
         :return: None
         """
-        webbrowser.open('file:///' + os.path.realpath(Constants.campaign_data_dir))
+        webbrowser.open('file:///' + os.path.realpath(self.gui.workspace_path))
 
     def enterDebug(self):
         """
@@ -809,6 +814,16 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         dialog.done(2)
+
+    def toggleSnapping(self):
+        self.centralWidget.controlsWidget.shouldSnap = not self.centralWidget.controlsWidget.shouldSnap
+
+        if self.centralWidget.controlsWidget.shouldSnap:
+            self.gui.setStatusBarMessage("Snapping Enabled")
+            self.toggleSnappingAct.setText("Disable Snapping")
+        else:
+            self.gui.setStatusBarMessage("Snapping Disabled")
+            self.toggleSnappingAct.setText("Enable Snapping")
 
     def showDrawingSettingsDialog(self):
         """

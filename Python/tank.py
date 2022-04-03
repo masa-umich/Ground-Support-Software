@@ -412,7 +412,7 @@ class Tank(AvionicsObject):
             board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
             channel_name = board_prefix + "tnk" + str(self.channel)
 
-            setPoint = data_packet[channel_name + ".tp"]
-            lowbound = data_packet[channel_name + ".lp"]
-            highBound = data_packet[channel_name + ".hp"]
+            setPoint = data_packet[channel_name + ".target_pres"]
+            lowbound = data_packet[channel_name + ".low_pres"]
+            highBound = data_packet[channel_name + ".high_pres"]
             self.updateValues(setPoint, lowbound, highBound)

@@ -91,6 +91,7 @@ class ControlsWidget(QWidget):
 
         # Var to keep track of the importance of mouse clicks
         self.should_ignore_mouse_release = False
+        self.shouldSnap = True
 
         # Var to keep track when a tube is being drawn
         self.is_drawing = False
@@ -130,7 +131,7 @@ class ControlsWidget(QWidget):
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap('Images/masawhiteworm3.png')
+        pixmap = QPixmap(self.gui.LAUNCH_DIRECTORY+'Images/masawhiteworm3.png')
         pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
 
@@ -440,7 +441,7 @@ class ControlsWidget(QWidget):
         for object_ in self.object_list:
             if hasattr(object_, "channel") and object_.isAvionicsFullyDefined():
                 if object_.object_name != "Generic Sensor":
-                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + object_.channel]
+                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] + object_.channel]
                 else:
                     mapDict[counter] = [object_.long_name, object_.channel]
                 counter += 1
@@ -454,17 +455,17 @@ class ControlsWidget(QWidget):
         """
 
         with open("data/.tempMappings.txt", "w") as write_file:
-            write_file.write("CONNECTED BOARDS:\n--------------------------------------\n")
+            write_file.write("CONNECTED BOARDS:\n---------------------------------------------------------\n")
             for board in self.centralWidget.controlsSidebarWidget.board_objects:
                 write_file.write(board.name + "\n")
 
-            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n--------------------------------------\n")
+            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n---------------------------------------------------------\n")
             for object_ in self.object_list:
                 if hasattr(object_, 'channel') and object_.channel != "Undefined":
                     if object_.object_name != "Generic Sensor":
-                        write_file.write(f'{object_.long_name + ",":<25}{self.window.interface.getPrefix(object_.avionics_board) + object_.channel:<12}' + "\n")
+                        write_file.write(f'{object_.long_name + ",":<40}{self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] +  object_.channel:<12}' + "\n")
                     else:
-                        write_file.write(f'{object_.long_name + ",":<25}{object_.channel:<12}' + "\n")
+                        write_file.write(f'{object_.long_name + ",":<40}{object_.channel:<12}' + "\n")
 
         if self.gui.platform == "Windows":
             os.system('notepad data/.tempMappings.txt')
@@ -621,7 +622,8 @@ class ControlsWidget(QWidget):
                                                 long_name_label_pos=idx["long name label"]["pos string"],
                                                 long_name_label_font_size=idx["long name label"]["font size"],
                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
-                                                long_name_label_rows=idx["long name label"]["rows"]))
+                                                long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
+                                                 serial_number_visible=idx["serial number label"]["is visible"]))
 
             elif obj_type == "Throttle Valve":
                 idx = data[i]
@@ -637,7 +639,8 @@ class ControlsWidget(QWidget):
                                                  long_name_label_pos=idx["long name label"]["pos string"],
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=idx["long name label"]["rows"]))
+                                                 long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
+                                                 serial_number_visible=idx["serial number label"]["is visible"]))
             
             elif obj_type == "3 Way":
                 idx = data[i]
@@ -671,6 +674,26 @@ class ControlsWidget(QWidget):
                                                  long_name_label_font_size=idx["long name label"]["font size"],
                                                  long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=idx["long name label"]["rows"]))
+
+            elif obj_type == "Regulator":
+                idx = data[i]
+                self.object_list.append(Regulator(self, _id=idx["id"], position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                                               fluid=idx["fluid"], width=idx["width"], height=idx["height"],
+                                               name=idx["name"], scale=idx["scale"],
+                                               serial_number=idx["serial number"],
+                                               long_name=idx["long name"], is_vertical=idx["is vertical"],
+                                               locked=idx["is locked"], position_locked=idx["is pos locked"],
+                                               serial_number_label_pos=idx["serial number label"]["pos string"],
+                                               serial_number_label_font_size=idx["serial number label"]["font size"],
+                                               serial_number_label_local_pos=QPointF(
+                                                   idx["serial number label"]["local pos"]["x"],
+                                                   idx["serial number label"]["local pos"]["y"]),
+                                               long_name_label_pos=idx["long name label"]["pos string"],
+                                               long_name_label_font_size=idx["long name label"]["font size"],
+                                               long_name_label_local_pos=QPointF(
+                                                   idx["long name label"]["local pos"]["x"],
+                                                   idx["long name label"]["local pos"]["y"]),
+                                               long_name_label_rows=idx["long name label"]["rows"]))
 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             elif obj_type == "Tube":

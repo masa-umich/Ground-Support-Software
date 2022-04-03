@@ -206,6 +206,7 @@ class MissionWidget(QWidget):
             self.CET_label.liveUpdateText()
         else:
             self.CET_label.setToolTip(self.CET_static_tooltip)
+            self.CET_label.liveUpdateText()
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
@@ -475,7 +476,7 @@ class CustomCETLabel(QLabel):
         Simply hides tooltip text and then re-shows it to allow the tooltip to update as you hover
         """
         if self._last_event_pos is not None:
-            QToolTip.hideText()
+            #QToolTip.hideText()
             QToolTip.showText(self._last_event_pos, self.toolTip())
 
 

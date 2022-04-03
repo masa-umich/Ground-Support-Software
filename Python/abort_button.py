@@ -201,6 +201,9 @@ if __name__ == "__main__":
     else:
         app = QtWidgets.QApplication.instance()
 
+    app.setApplicationName("MASA GUI")
+    app.setApplicationDisplayName("MASA GUI (Singular) - Abort Button")
+
     lwgui = BaseGui(app)
     controller = AbortButtonWindow(gui=lwgui, singular=True)
     lwgui.setMainWindow(controller)

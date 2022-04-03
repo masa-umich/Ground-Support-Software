@@ -51,7 +51,7 @@ class FlashController(QtWidgets.QWidget):
 
         # logo
         self.logo = QtGui.QLabel()
-        pixmap = QtGui.QPixmap("Images/flash.png")
+        pixmap = QtGui.QPixmap(self._gui.LAUNCH_DIRECTORY+"Images/flash.png")
         #pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
         self.logo.setPixmap(pixmap)
         self.logo.setAlignment(QtCore.Qt.AlignCenter)
@@ -191,6 +191,9 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
+
+    app.setApplicationName("MASA GUI")
+    app.setApplicationDisplayName("MASA GUI (Singular) - Flash")
 
     lwgui = BaseGui(app)
     controller = FlashWindow(gui=lwgui, singular=True)
