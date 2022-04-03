@@ -1,9 +1,12 @@
 #Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70
 
 # Test description:
+# 	LOX Purge only (fuel not connected)
 # 	regulator pressurization
 # 	both tanks
-# 	no MPVs (MPV harnesses connected into prevalves)
+# 	no MPVs (prevalves only)
+
+# 100ms delays are to resolve possible issue of board dropping commands
 
 # Select engine controller
 set_addr 2
@@ -11,43 +14,61 @@ set_addr 2
 # Countdown from 5
 delay 5000
 
+#LOX Purge, fuel NC
+set_vlv 9 1
+delay 1000
+set_vlv 9 0
+
+delay 100
+
 # HOTFIRE
-# Open fuel MPV
-set_vlv 6 1
-# Open LOX MPV
-set_vlv 8 1
 
 # Open Fuel Press
 set_vlv 1 1
 # Open LOX Press
 set_vlv 3 1
 
+delay 100
+
+# Open fuel Prevalve
+set_vlv 6 1
+# Open LOX Prevalve
+set_vlv 8 1
+
 # Wait for burn duration
 delay 10000
 
 # POST
-# Close Fuel MPV
-set_vlv 6 0
-# Close LOX MPV
-set_vlv 8 0
-
 # Close Fuel Press
 set_vlv 1 0
 # Close LOX Press
 set_vlv 3 0
 
-# Wait before venting tanks
+delay 100
+
+# Close Fuel Prevalve
+set_vlv 6 0
+# Close LOX Prevalve
+set_vlv 8 0
+
+delay 100
+
+#LOX Purge, fuel NC
+set_vlv 9 1
 delay 1000
+set_vlv 9 0
+
+delay 100
 
 # Open LOX Tank Vent
-set_vlv 5 1
+set_vlv 5 0
 # Open Fuel Tank Vent
-set_vlv 4 1
+set_vlv 4 0
 
 # Wait for vent duration
 delay 6000
 
 # Close LOX Tank Vent
-set_vlv 5 0
+set_vlv 5 1
 # Close Fuel Tank Vent
-set_vlv 4 0
+set_vlv 4 1
