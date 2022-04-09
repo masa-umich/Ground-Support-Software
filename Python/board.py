@@ -783,7 +783,7 @@ class Board(QWidget):
             elif self.state == self.stateNum["Hotfire"]:
                 self.manual_button.setText("Disarm")
                 self.manual_button.setEnabled(False)
-                self.arm_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
                 self.fire_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
 
