@@ -1,0 +1,27 @@
+set_addr 0
+
+delay 5000
+#igniter on
+set_vlv 3 1
+delay 100
+# fuel valve on
+set_vlv 0 1
+# igniter off
+set_vlv 3 0
+
+delay 50
+# ox valve on
+set_vlv 1 1
+
+# test duration
+delay 3000
+
+set_vlv 1 0
+
+delay 60000
+
+# both valves off
+set_vlv 0 0
+delay 100
+
+set_vlv 1 0
