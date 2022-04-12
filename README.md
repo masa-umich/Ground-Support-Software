@@ -6,7 +6,7 @@ Alex Philpott
 Alex Davenport
 Elham Islam
 Samantha Liu
-Firuz Sharipov
+Julie Wu
 
 This GUI will be written in Python using PyQT.
 It will be suplemented by MATLAB.
