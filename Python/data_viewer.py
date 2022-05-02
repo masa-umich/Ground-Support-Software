@@ -491,7 +491,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
         # check if database has reached 15 minute cap
-        if (not self.database_full and self.database.size >= 15 * 60 * 10):
+        if (not self.database_full and self.database.size >= 15 * 60 * 1000 / dataHandlerUpdateRate):
             self.database_full = True
         
         # when packet is received increase slider size as necessary
