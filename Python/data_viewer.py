@@ -491,7 +491,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
         # check if database has reached 15 minute cap
-        if (self.database.size == 15 * 60 * 10):
+        if (not self.database_full and self.database.size >= 15 * 60 * 10):
             self.database_full = True
         
         # when packet is received increase slider size as necessary
@@ -512,7 +512,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     # lock range viewed to most recent values if slider was already at max position
                     if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
-                else:
+                elif (self.database[self.database.columns[0]].count() > 0):
                     # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
                     if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
