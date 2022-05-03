@@ -524,10 +524,10 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     if (end >= self.viewers[idx].duration):
                         self.viewers[idx].slider.setMaximum(end - self.viewers[idx].duration)
                         self.viewers[idx].slider.setMinimum(start)
-                    
-                    # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
-                    if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
+
+                    # database is full, and slider was at max position then keep it there
+                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
 
                     
 
