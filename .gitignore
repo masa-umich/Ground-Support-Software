@@ -1,5 +1,6 @@
 #OS Files
 *.DS_Store
+*.spec
 
 # Visual debugger configurations
 .vscode/

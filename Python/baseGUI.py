@@ -10,6 +10,8 @@ import webbrowser
 from constants import Constants
 from liveDataHandler import LiveDataHandler
 
+import requests
+
 from plotWindow import PlotWindow
 
 from configurationManager import ConfigurationManager
@@ -33,6 +35,29 @@ class BaseGui(QObject):
         print("MASA GUI Version: " + Constants.GUI_VERSION)
         print("Python Version: " + str(sys.version_info))
         print("QT Version: " + QT_VERSION_STR)
+
+
+        # id = 52141
+        #
+        # curl --header "Private-Token: glpat-tDWaRHsnCPAUkW5C-zzy" https://gitlab.eecs.umich.edu/api/v4/projects/52141/repository/files/.gitignore\?ref\=master
+
+        #glpat-HRV4peMF18KDz_-1U3Cr
+
+        #curl --header "PRIVATE-TOKEN: glpat-HRV4peMF18KDz_-1U3Cr" "https://gitlab.eecs.umich.edu/api/v4/projects"
+
+        header = {"PRIVATE-TOKEN": "glpat-HRV4peMF18KDz_-1U3Cr"}
+
+        testURL = "https://gitlab.eecs.umich.edu/api/v4/projects/52141/repository/files/.gitignore?ref=master"
+
+        r = requests.get(testURL, headers= header)
+
+        print(r.content)
+
+        # with open("test.json", "wb") as f:
+        #     f.write(r.content)
+
+
+        print(self.LAUNCH_DIRECTORY)
 
         self.applyDarkTheme(qapp)
 

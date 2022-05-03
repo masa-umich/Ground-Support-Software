@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Upload files for free - Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json - ufile.io</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+<meta name="description" content="Download Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json for free from ufile.io instantly, no signup required and no popup ads" />
+<meta name="keywords" content="upload files, file hosting, file sharing, send files" />
+<meta name="msvalidate.01" content="7C70CBDB9DD34C1862C4324F7888265E" />
+<meta name="robots" content="noindex,nofollow">
+
+<meta itemprop="name" content="Upload files for free - Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json - ufile.io">
+<meta itemprop="description" content="Download Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json for free from ufile.io instantly, no signup required and no popup ads">
+<meta itemprop="image" content="https://ufile.io/assets/img/stats.png">
+
+<meta property="og:url" content="https://ufile.io">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Upload files for free - Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json - ufile.io">
+<meta property="og:description" content="Download Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json for free from ufile.io instantly, no signup required and no popup ads">
+<meta property="og:image" content="https://ufile.io/assets/img/stats.jpg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Upload files for free - Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json - ufile.io">
+<meta name="twitter:description" content="Download Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json for free from ufile.io instantly, no signup required and no popup ads">
+<meta name="twitter:image" content="https://ufile.io/assets/img/stats.jpg">
+
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="/assets/icons/apple-touch-icon-57x57.png" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/icons/apple-touch-icon-114x114.png" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/icons/apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/icons/apple-touch-icon-144x144.png" />
+<link rel="apple-touch-icon-precomposed" sizes="60x60" href="/assets/icons/apple-touch-icon-60x60.png" />
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="/assets/icons/apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon-precomposed" sizes="76x76" href="/assets/icons/apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/assets/icons/apple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="/assets/icons/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/png" href="/assets/icons/favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="/assets/icons/favicon-16x16.png" sizes="16x16" />
+<link rel="icon" type="image/png" href="/assets/icons/favicon-128.png" sizes="128x128" />
+<meta name="application-name" content="&nbsp;" />
+<meta name="msapplication-TileColor" content="#FFFFFF" />
+<meta name="msapplication-TileImage" content="/assets/icons/mstile-144x144.png" />
+<meta name="msapplication-square70x70logo" content="/assets/icons/mstile-70x70.png" />
+<meta name="msapplication-square150x150logo" content="/assets/icons/mstile-150x150.png" />
+<meta name="msapplication-wide310x150logo" content="/assets/icons/mstile-310x150.png" />
+<meta name="msapplication-square310x310logo" content="/assets/icons/mstile-310x310.png" />
+<link rel="canonical" href="https://ufile.io/6hngtsxc" />
+<link rel="preconnect dns-prefetch" href="https://www.google-analytics.com" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://www.google.com" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://www.google-analytics.com" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://adservice.google.com" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://client.crisp.chat" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://stats.g.doubleclick.net" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://settings.crisp.chat" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://ad.doubleclick.net" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://image.crisp.chat" crossorigin>
+<link rel="preconnect dns-prefetch" href="https://tpc.googlesyndication.com" crossorigin>
+
+<script data-ad-client="ca-pub-8453236626207385" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/roboto-v20-latin-100.woff2" crossorigin>
+<link rel="preload" as="image" href="/assets/img/backgrounds/29.jpeg">
+<link rel="preload" as="image" href="/assets/img/spacer.png">
+<link rel="preload" href="/assets/js/download.js?v=1563114509" as="script">
+
+<style>
+
+
+      @media all and (max-width:767px){
+        .background-image-holder {
+          background-image: url("/assets/img/backgrounds/mobile/29.jpeg")!important;
+        }
+      }
+
+      @media all and (min-width:768px){
+        .background-image-holder {
+          background-image: url("/assets/img/backgrounds/29.jpeg")!important;
+        }
+      }
+
+    .bar__module .btn {
+          min-width: 125px;
+        margin-bottom: 0;
+    }
+
+
+      :root{--blue:#007bff;--indigo:#6610f2;--purple:#6f42c1;--pink:#e83e8c;--red:#dc3545;--orange:#fd7e14;--yellow:#ffc107;--green:#28a745;--teal:#20c997;--cyan:#17a2b8;--white:#fff;--gray:#6c757d;--gray-dark:#343a40;--primary:#007bff;--secondary:#6c757d;--success:#28a745;--info:#17a2b8;--warning:#ffc107;--danger:#dc3545;--light:#f8f9fa;--dark:#343a40;--breakpoint-xs:0;--breakpoint-sm:576px;--breakpoint-md:768px;--breakpoint-lg:992px;--breakpoint-xl:1200px;}*,::after,::before{box-sizing:border-box}html{}article,aside,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}body{margin:0;line-height:1.5;color:#212529;text-align:left;background-color:#fff}h1,h2,h3,h4,h5,h6{margin-top:0}dl,ol,p,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}b,strong{font-weight:bolder}a{color:#007bff;text-decoration:none;background-color:transparent;-webkit-text-decoration-skip:objects}a:hover{color:#0056b3;text-decoration:underline}a:not([href]):not([tabindex]),a:not([href]):not([tabindex]):focus,a:not([href]):not([tabindex]):hover{color:inherit;text-decoration:none}img{vertical-align:middle;border-style:none}label{display:inline-block;margin-bottom:.5rem}button{border-radius:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,input{overflow:visible}button,select{text-transform:none}[type=reset],[type=submit],button,html [type=button]{-webkit-appearance:button}textarea{overflow:auto;resize:vertical}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}.h1,.h2,.h3,.h4,.h5,.h6,h1,h2,h3,h4,h5,h6{margin-bottom:.5rem;font-family:inherit;font-weight:100;line-height:1.2;color:inherit}.h1,h1{font-size:2.5rem}.h2,h2{font-size:2rem}.h3,h3{font-size:1.75rem}.h4,h4{font-size:1.5rem}.h5,h5{font-size:1.25rem}.lead{font-size:1.25rem;font-weight:100}.list-inline,.list-unstyled{padding-left:0;list-style:none}.list-inline-item{display:inline-block}.list-inline-item:not(:last-child){margin-right:.5rem}.container{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}@media (min-width:576px){.container{max-width:540px}}@media (min-width:768px){.container{max-width:720px}}@media (min-width:992px){.container{max-width:960px}}@media (min-width:1200px){.container{max-width:1140px}}.row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}.col,.col-1,.col-10,.col-11,.col-12,.col-2,.col-3,.col-4,.col-5,.col-6,.col-7,.col-8,.col-9,.col-auto,.col-lg,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-lg-auto,.col-md,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-auto,.col-sm,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-auto,.col-xl,.col-xl-1,.col-xl-10,.col-xl-11,.col-xl-12,.col-xl-2,.col-xl-3,.col-xl-4,.col-xl-5,.col-xl-6,.col-xl-7,.col-xl-8,.col-xl-9,.col-xl-auto{position:relative;width:100%;min-height:1px;padding-right:15px;padding-left:15px}.col-12{flex:0 0 100%;max-width:100%}@media (min-width:576px){.col-sm-2{flex:0 0 16.6666666667%;max-width:16.6666666667%}.col-sm-6{flex:0 0 50%;max-width:50%}.col-sm-12{flex:0 0 100%;max-width:100%}.col-md-3{flex:0 0 25%;max-width:25%}.col-md-4{flex:0 0 33.3333333333%;max-width:33.3333333333%}.col-md-6{flex:0 0 50%;max-width:50%}.col-md-10{flex:0 0 83.3333333333%;max-width:83.3333333333%}.col-md-12{flex:0 0 100%;max-width:100%}.col-lg-3{flex:0 0 25%;max-width:25%}.col-lg-4{flex:0 0 33.3333333333%;max-width:33.3333333333%}.col-lg-5{flex:0 0 41.6666666667%;max-width:41.6666666667%}.col-lg-8{flex:0 0 66.6666666667%;max-width:66.6666666667%}.order-lg-1{order:1}.order-lg-3{order:3}}@media (min-width:768px){.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:left}.col-sm-12{width:100%}.col-sm-6{width:50%}.col-sm-2{width:16.66666667%}}@media (min-width:768px){.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9{float:left}.col-md-12{width:100%}.col-md-10{-ms-flex: 0 0 83.333333%;flex: 0 0 83.333333%;max-width: 83.333333%;}.col-md-6{width:50%}.col-md-4{width:33.33333333%}.col-md-3{width:25%}}@media (min-width:1200px){.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9{float:left}.col-lg-8{width:66.66666667%}.col-lg-5{width:41.66666667%}.col-lg-4{width:33.33333333%}.col-lg-3{width:25%}}.btn{display:inline-block;font-weight:400;text-align:center;white-space:nowrap;vertical-align:middle;user-select:none;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem; line-height: 1.85714286em!important;border-radius:.25rem;transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out}.btn:focus,.btn:hover{text-decoration:none}.btn:not(:disabled):not(.disabled){cursor:pointer}.justify-content-center{justify-content:center!important}.justify-content-around{justify-content:space-around!important}.text-left{text-align:left!important}.text-right{text-align:right!important}.text-center{text-align:center!important}@media (min-width: 768px){.col-md-7 {-ms-flex: 0 0 58.333333%;flex: 0 0 58.333333%;max-width: 58.333333%;}.col-md-5 {-ms-flex: 0 0 41.666667%;flex: 0 0 41.666667%;max-width: 41.666667%;}}
+
+    </style>
+<style>
+
+
+      .adsbygoogle { width: 100%; height: 312px; }
+      @media (min-width:500px) { .adsbygoogle { width: 100%; height: 280px; } }
+      @media (min-width:800px) { .adsbygoogle { width: 100%; height: 280px; } }
+      @media (min-width:1000px) { .adsbygoogle { width: 100%; height: 280px; } }
+
+      .sponsor div {
+        padding: 0!important;
+      }
+
+
+      /* roboto-100 - latin */
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 100;
+        font-display: fallback; /* Define how the browser behaves during download */
+        src: url('/assets/fonts/roboto-v20-latin-100.eot'); /* IE9 Compat Modes */
+        src: local('Roboto Thin'), local('Roboto-Thin'),
+             url('/assets/fonts/roboto-v20-latin-100.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+             url('/assets/fonts/roboto-v20-latin-100.woff2') format('woff2'), /* Super Modern Browsers */
+             url('/assets/fonts/roboto-v20-latin-100.woff') format('woff'), /* Modern Browsers */
+             url('/assets/fonts/roboto-v20-latin-100.ttf') format('truetype'), /* Safari, Android, iOS */
+             url('/assets/fonts/roboto-v20-latin-100.svg#Roboto') format('svg'); /* Legacy iOS */
+      }
+
+
+
+      .hamburger-toggle div {width: 35px;height: 5px;background-color: #fff;margin: 6px 0;}.chevron {border-style: solid;border-width: 0.15em 0.15em 0 0;content: '';display: inline-block;height: 0.35em;left: 0.15em;position: relative;top: .5em;transform: rotate(135deg);vertical-align: top;width: 0.35em;border-color: #fff;}.btn--lg {padding: .58035714em 3.48214286em!important;}*,a,h1,h2,h3,h4,h5,h6,p,ul{margin:0;padding:0}html{font-size:87.5%;-webkit-overflow-scrolling:touch}body{font-size:1em;line-height:1.85714286em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:sans-serif;color:#444;font-weight:100;background:#fff}.h1,.h2,.h3,.h4,.h5,.h6,h1,h2,h3,h4,h5,h6{font-family:sans-serif;!important;color:#252525;font-weight:100;font-variant-ligatures:common-ligatures;margin-top:0;margin-bottom:0}.h1,h1{font-size:2.35714286em;line-height:1.31818182em;letter-spacing:-.01em}.h2,h2{font-size:2.35714286em;line-height:1.36363636em}.cta h2,.cta h2 *{box-sizing:border-box;color:#444;display:inline;font-family:sans-serif;font-size:14px;font-weight:400;height:auto;line-height:26px}.cta h2 a{color:#31639c}.h3,h3{font-size:1.78571429em;line-height:1.5em}.h4,h4{font-size:1.35714286em;line-height:1.36842105em}.h5,h5{font-size:1.5em;line-height:1.85714286em}blockquote,ol,p,pre,table,ul{margin-bottom:1.85714286em}ol,ul{list-style:none;line-height:1.85714286em}a:active,a:focus,a:hover{text-decoration:none;outline:0}.type--uppercase{text-transform:uppercase}.type--fine-print{font-size:.85714286em}.pos-bottom{bottom:0}.pos-right{right:50px}.block{display:block}.height-10,.height-100,.height-20,.height-30,.height-40,.height-50,.height-60,.height-70,.height-80,.height-90{height:auto;padding:5em 0}.height-90{min-height:90vh}img{max-width:100%;margin-bottom:1.85714286em}.dropdown{position:relative}.dropdown .dropdown__container{transition:.3s;-webkit-transition:.3s;-moz-transition:.3s;opacity:0;pointer-events:none;position:absolute;z-index:999;width:auto}.dropdown .dropdown__container li{white-space:nowrap}.dropdown .dropdown__content:not([class*=bg-]){background:#fff}.dropdown .dropdown__trigger{cursor:pointer;user-select:none}@media all and (min-width:991px){.dropdown .dropdown__container:before{height:.92857143em;width:100%;content:'';display:block}}.background-image-holder{position:absolute;height:100%;top:0;left:0;background-size:cover!important;background-position:50% 50%!important;z-index:0;opacity:1;background:#252525}.background-image-holder:not([class*=col-]){width:100%}[data-overlay]{position:relative}[data-overlay]:before{position:absolute;content:'';background:#252525;width:100%;height:100%;top:0;left:0;z-index:1}[data-overlay]:not(.container):not(.background-image-holder){z-index:2}[data-overlay="7"]:before{opacity:.7}.imagebg{position:relative}.imagebg .container{z-index:2}.imagebg .container:not(.pos-absolute){position:relative}.imagebg:not(.image--light) blockquote,.imagebg:not(.image--light) h1,.imagebg:not(.image--light) h2,.imagebg:not(.image--light) h3,.imagebg:not(.image--light) h4,.imagebg:not(.image--light) h5,.imagebg:not(.image--light) h6,.imagebg:not(.image--light) p,.imagebg:not(.image--light) ul,div[data-overlay] h1,div[data-overlay] h2,div[data-overlay] h3,div[data-overlay] h4,div[data-overlay] h5,div[data-overlay] h6,div[data-overlay] p,div[data-overlay] ul{color:#fff}.btn{font-family:sans-serif;transition:.1s linear;-webkit-transition:.1s linear;-moz-transition:.1s linear;border-radius:6px;border:1px solid #252525;font-size:inherit;line-height:1.85714286em!important;padding:.375rem .75rem}.btn .btn__text,.btn i{color:#252525;border-color:#252525}.btn i{color:#fff;margin-right:10px}@media all and (min-width:768px){.btn+.btn{margin-left:.3em!important}}.btn:first-child{margin-left:0}.btn:last-child{margin-right:0}.btn--sm{padding:.30952381em 1.85714286em!important}.btn--primary,.btn--primary:visited{background:#005093;border-color:#005093;color:#fff!important}.btn--primary .btn__text,.btn--primary .btn__text i,.btn--primary:visited .btn__text,.btn--primary:visited .btn__text i{color:#fff}.btn--primary:hover{background:#015aa5}ul:last-child{margin:0}.list-inline li:first-child{padding-left:0}.list-inline li:last-child{padding-right:0}.menu-horizontal>li:not(:hover)>.modal-instance>.modal-trigger,.menu-horizontal>li:not(:hover)>a,.menu-horizontal>li:not(:hover)>span{opacity:1}.menu-horizontal>li>.modal-instance>.modal-trigger,.menu-horizontal>li>a,.menu-horizontal>li>span{transition:.3s;-webkit-transition:.3s;-moz-transition:.3s;color:#252525}@media all and (min-width:990px){.menu-horizontal,.menu-horizontal>li{display:inline-block}.menu-horizontal>li:not(:last-child){margin-right:1em}.menu-vertical{display:inline-block}.menu-vertical .dropdown__container{top:0}.menu-vertical .dropdown__container .dropdown__content:not([class*=bg-]){background:#fff}.menu-vertical .dropdown__container .dropdown__content{transform:translateX(75%)}}form{max-width:100%;width:100%;position:relative}form:after,form:before{content:".";display:block;height:0;overflow:hidden;content:''}form:after{clear:both}label{margin:0;font-weight:400}input[type],select,textarea{-webkit-appearance:none;background:#fcfcfc;padding:.46428571em;border-radius:6px;border:1px solid #ececec}input[type]::-webkit-input-placeholder,select::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:#b3b3b3;font-size:1.14285714em}textarea{display:block;width:100%;max-width:100%}button{background:0 0}.input-icon{position:relative}.input-icon i{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;position:absolute}.input-checkbox,.input-radio,.input-select{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;display:inline-block}.input-checkbox input,.input-radio input,.input-select input{opacity:0!important;height:0!important;width:0!important;position:absolute!important}.input-checkbox label,.input-radio label,.input-select label{display:block!important;cursor:pointer}.input-checkbox{padding:0}.input-checkbox label{width:1.85714286em;height:1.85714286em;border-radius:6px}.input-radio{padding:0}.boxed{position:relative;overflow:hidden;padding:1.85714286em;margin-bottom:30px}.boxed.boxed--lg{padding:2.78571429em}.boxed.boxed--border{border:1px solid #ececec}.modal-container{transition:.2s;-webkit-transition:.2s;-moz-transition:.2s;padding:0;visibility:hidden;opacity:0;z-index:999;position:fixed;width:100%;height:100%;top:0;left:0}.modal-container:before{background:rgba(0,0,0,.85);content:'';position:fixed;width:100%;height:100%;top:0;left:0;z-index:1}.modal-container .modal-content{backface-visibility:hidden;position:fixed;z-index:2;top:50%;left:50%;max-height:100%;overflow-y:scroll;border:none;transform:translate3d(-50%,-50%,0);-webkit-transform:translate3d(-50%,-50%,0);padding:0;border-radius:0;box-shadow:none;-webkit-overflow-scrolling:touch;height:100%}.modal-container .modal-content .modal-close-cross{cursor:pointer;position:absolute;opacity:.5;transition:.1s linear;-webkit-transition:.1s linear;-moz-transition:.1s linear;top:1em;right:1em;z-index:99}.modal-container .modal-content .modal-close-cross:before{content:'\00D7';font-size:2.5em}.modal-container .modal-content iframe{width:100%;outline:0;border:none;height:100%;backface-visibility:hidden}.modal-content.section-modal [class*=col-]{pointer-events:all}.notification{box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);position:fixed;z-index:99;padding:0;opacity:0;transition:.3s linear;-webkit-transition:.3s linear;-moz-transition:.3s linear;display:none}.notification:not([class*=bg-]){background:#fff}.notification[class*=col-]{min-width:400px}.bg--secondary{background:#fafafa}.bg--primary{background:#363e49}.bg--primary a:not(.btn),.bg--primary ul{color:#fff;font-weight:700}.bg--primary h1,.bg--primary h2,.bg--primary h3,.bg--primary h4,.bg--primary h5,.bg--primary h6,.bg--primary i{color:#fff}.switchable{position:relative}.switchable img{padding:0 100px}.switchable div[class*=col-]:first-child{float:left;right:auto}.switchable div[class*=col-]:first-child:not([class*=pull]):not([class*=push]){left:0}.switchable div[class*=col-]:last-child{float:right;left:auto}.switchable div[class*=col-]:last-child:not([class*=pull]):not([class*=push]){right:0}.switchable.switchable--switch div[class*=col-]:first-child{float:right;right:0;left:auto}.switchable.switchable--switch div[class*=col-]:first-child:not([class*=pull]):not([class*=push]){left:auto}.switchable.switchable--switch div[class*=col-]:last-child{float:left;left:0;right:auto}.bar{padding:1.85714286em 0}.bar .menu-horizontal{position:relative;top:0}.bar.bar--sm{padding:.92857143em 0}@media all and (min-width:768px){.bar--transparent:not(.bar--dark){background:0 0}.bar--transparent:not(.bar--dark) .logo-dark{display:none}.bar--transparent:not(.bar--dark) .logo-light{display:inline-block}.bar--transparent:not(.bar--dark):not(.pos-fixed) .menu-horizontal>li>a,.bar--transparent:not(.bar--dark):not(.pos-fixed) .menu-horizontal>li>span{color:#fff}.bar--transparent:not(.bar--dark):not(.pos-fixed) .btn:not([class*=primary]){border-color:rgba(255,255,255,.3)}.bar--transparent:not(.bar--dark):not(.pos-fixed) .btn:not([class*=primary]) .btn__text{color:#fff}.bar--transparent:not(.bar--dark):not(.pos-fixed) .btn:not([class*=primary]):hover{border-color:rgba(255,255,255,.7)}.bar--absolute{position:absolute}.bar--absolute,.pos-fixed{z-index:99;width:100%}.bar.pos-fixed:not([class*=bg-]){background:#fff}.bar.pos-fixed:not([class*=bg-]) .logo-dark{display:inline-block;max-height:4em;position:absolute;top:-10px}.bar.pos-fixed:not([class*=bg-]) .logo-light{display:none}div[class*=col-] .text-block+.text-block{margin-top:3.71428571em}}.bar__module .btn{min-width:125px}footer,section{padding-top:7.42857143em;padding-bottom:7.42857143em}footer.space--xxs,section.space--xxs{padding-top:1.85714286em;padding-bottom:1.85714286em}footer.space--xs,section.space--xs{padding-top:3.71428571em;padding-bottom:3.71428571em}footer li.list-inline-item{margin:0 10px;margin-right:10px!important}.unpad,section.unpad{padding:0}.box-shadow-wide{box-shadow:0 23px 40px rgba(0,0,0,.2)}.container .container{max-width:100%}section:not(.unpad):not(.imagebg):not([class*=bg--]):not(.imageblock):not(.unpad--bottom):not(.border--bottom)+footer:not(.unpad):not(.imagebg):not([class*=bg--]):not(.imageblock):not(.unpad--bottom):not(.border--bottom),section:not(.unpad):not(.imagebg):not([class*=bg--]):not(.imageblock):not(.unpad--bottom):not(.border--bottom):not(.space--xxs)+section:not(.unpad):not(.imagebg):not([class*=bg--]):not(.imageblock):not(.border--bottom):not(.space--xxs){padding-top:0}section.bg--secondary:not(.imagebg)+section:not(.imagebg):not([class*=bg-]),section:not(.imagebg):not([class*=bg-])+section.bg--secondary{border-top:1px solid #ebebeb}section.bg--secondary:not(.unpad):not(.imageblock):not(.unpad--bottom):not(.border--bottom)+section.bg--secondary{padding-top:0}section.unpad{overflow:hidden}section.text-center div[class*=col-]:first-child:last-child{margin:0 auto;float:none}.h1:not(:last-child),h1:not(:last-child){margin-bottom:.59090909090909em}.h2,h2{margin-bottom:.78787878787879em;font-weight:100}.stats h2{font-size:3em;margin-bottom:0}.h3,h3{margin-bottom:1.04em}.h4,h4{margin-bottom:1.36842105263158em;font-weight:400;font-family:sans-serif}.h5,h5{font-weight:100}.h5:not(:last-child),h5:not(:last-child){margin-bottom:1.85714286em}b{font-weight:600}[class*=bg-]:not(.bg--white):not(.bg--secondary) p,[class*=imagebg]:not(.image--light) p{opacity:.9}.lead{font-weight:200;color:#444}.lead:not(:last-child){margin-bottom:1.36842105263158em}p:last-child{margin-bottom:0}.text-block{margin-bottom:1.85714286em}.text-block .h5,.text-block h5{margin:0}.text-block .h4:not(:last-child),.text-block h4:not(:last-child){margin-bottom:.3421052631579em}.text-block .h3,.text-block h3{margin-bottom:.52em}a{color:#005093;font-weight:700}a:hover{color:#2275d7;text-decoration:none}label a,p a,span a{font-size:1em;text-decoration:none;font-weight:400;line-height:1.85714286em}p+a:not(.btn){font-size:.85714286em;line-height:2.16666667em}.imagebg:not(.image--light) a{color:#fff;}ul:not([class*=menu]) li>a{font-weight:400;color:#888}ol{list-style-position:outside;list-style-type:decimal}ol li:not(:last-child){margin-bottom:1.85714286em}.list-inline{margin-left:0;display:inline-block}.list-inline li{margin-left:0;display:inline-block;padding:0}.list-inline li:not(:last-child),.list-inline:not(:last-child){margin-right:1.85714286em}.list--hover li{transition:.2s;-webkit-transition:.2s;-moz-transition:.2s}.list--hover li:not(:hover){opacity:.6}.btn{position:relative;margin-bottom:1.85714286em}.btn:not([class*=primary]){border-color:#d3d3d3}.btn:not([class*=primary]):hover{border-color:#252525}.btn.type--uppercase{letter-spacing:.5px}.btn.type--uppercase .btn__text{letter-spacing:.5px;margin-right:-.5px}.btn:hover{transform:translate3d(0,-2px,0);-webkit-transform:translate3d(0,-2px,0)}.btn--icon{padding-left:4em!important;text-align:left!important}.btn--icon i{position:absolute;height:100%;left:0;top:0;background:rgba(0,0,0,.1);padding:0 13px;border-radius:6px 0 0 6px;font-size:16px;line-height:38px}img:last-child{margin-bottom:0}.imagebg h1,.imagebg h2,.imagebg h3,.imagebg h4,.imagebg h5,.imagebg h6{position:relative;word-break:break}.imagebg:not(.image--light) span{color:#fff}.label{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;color:#fff;text-transform:uppercase;height:26px;min-width:65px;padding:0 10px;text-align:center;border-radius:50px;position:absolute;z-index:3;top:1.23809524em;right:1.23809524em}.label:not([class*=bg--]){background:#31639c}.label.label--inline{position:relative;top:0;right:0}.label.label--inline:not(:last-child){margin-right:.92857143em}.menu-horizontal>li,.menu-vertical>li{font-family:Sans-Serif;font-size:16px}.menu-horizontal>li>.modal-instance>a,.menu-horizontal>li>a{font-weight:100}@media all and (min-width:991px){.dropdown .dropdown__container:before{height:18px}}.visible-lg,.visible-md,.visible-sm,.visible-xs{display:none!important}.logo-wrapper {position: absolute;z-index: 3;left: 15px;width: 45px;padding-top: 12px;}@media (max-width: 767px){.bar.bar--sm {position: absolute;right: 0;z-index: 9;}.visible-xs {display: block!important;}}@media (min-width:1200px){.hidden-lg{display:none!important}}.text-left{text-align:left}.text-right{text-align:right}.text-center,.text-center input{text-align:center}.dropdown .dropdown__content{border-radius:6px;box-shadow:0 0 25px 0 rgba(0,0,0,.08);-webkit-box-shadow:0 0 25px 0 rgba(0,0,0,.08);padding:1.23809524em 1.85714286em}.boxed,.boxed .background-image-holder,.boxed:before{border-radius:6px}.boxed:not(:last-child){margin-bottom:30px}.boxed:not([class*=bg-]){background:#fff}.feature:not(.boxed){margin-bottom:60px}.feature h4{margin-bottom:.342105263157895em}.feature h4+p{max-width:22.28571429em}.feature-1{min-height:11.14285714em}.feature-1 p{margin:0}.feature-3 p{min-height:5.5em}.switchable .switchable__text{margin-top:1.85714286em}@media all and (min-width:768px){.switchable .container>.row{flex-flow:row-reverse}.switchable.switchable--switch .container>.row{flex-flow:row}}.modal-container .modal-content:not(.height--natural){height:95%;width:auto}.modal-instance:not(.block){display:none}.modal-container .modal-content{max-height:95%;transform:translateX(-50%) translateY(-50%);-webkit-transform:translateX(-50%) translateY(-50%)}.modal-container .modal-content .feature:only-child,.modal-container .modal-content .feature:only-child .boxed{margin-bottom:0}.modal-container .modal-content .container{width:100vw}.modal-content{-ms-overflow-style:none}.modal-content::-webkit-scrollbar{display:none}.notification{margin:1.85714286em;box-shadow:none}.notification:not([class*=bg--]){background:0 0}.notification .feature__body,.notification>.feature{margin-bottom:0}.process-3{list-style:none;position:relative}.process-3 li{position:relative;z-index:1;overflow:hidden}.process-3 li .process__number{float:left;width:3.71428571em;height:3.71428571em;border-radius:50%;border:2px solid #005093;background:#fff;text-align:center}.process-3 li .process__number span{font-size:1.35714286em;font-weight:700;color:#005093;position:relative;top:12px}.process-3 li .process__body{width:80%;float:right}.process-3 li .process__body h4{margin-bottom:.342105263157895em}.process-3 li:not(:last-child){margin-bottom:3.71428571em}.process-3:before{content:'';position:absolute;height:100%;width:1px;left:1.85714286em;top:0;border-left:1px dashed #ddd}@media screen and (-webkit-min-device-pixel-ratio:0){input,select,textarea{font-size:16px}}.bg--dark .input-select:after,.bg--dark input,.bg--dark select,.bg--dark textarea,.imagebg:not(.image--light) .input-select:after,.imagebg:not(.image--light) input,.imagebg:not(.image--light) select,.imagebg:not(.image--light) textarea{color:#444}form>.row>div[class*=col-],form>div[class*=col-]{margin-bottom:.92857143em}form+span.type--fine-print{margin-top:1.08333333333334em;display:inline-block}button,input[type=submit]{height:3.25000000000001em}button.btn,input[type=submit].btn{font-size:.85714286em;font-weight:700;padding-left:0;padding-right:0}button.btn.btn--primary,input[type=submit].btn.btn--primary{color:#fff}button.btn.type--uppercase,input[type=submit].btn.type--uppercase{letter-spacing:.5px;margin-right:-.5px}input,select{height:2.78571429em}input[type]+.input-checkbox,input[type]+.input-select,input[type]+button,input[type]+input[type]{margin-top:.92857143em}[class*=input-] label,input,select,textarea{transition:.3s;-webkit-transition:.3s;-moz-transition:.3s}.input-select:not([class*=col-]),button[type=submit]:not([class*=col-]),input:not([class*=col-]),select:not([class*=col-]),textarea:not([class*=col-]){width:100%}input[type],select,textarea{padding-left:.92857143em}label{font-size:.85714286em}.input-icon i{top:8px;left:8px}.input-icon input{padding-left:2.78571429em}.input-icon.input-icon--right i{left:auto;right:8px}.input-icon.input-icon--right input{padding-right:2.78571429em;padding-left:.92857143em}.text-center .input-checkbox label,.text-center .input-radio label{margin:0 auto}.input-checkbox label,.input-radio label{font-size:1em}.input-checkbox{margin-top:.46428571em}.input-checkbox label{background:0 0;border:1px solid #d3d3d3;text-align:center;position:relative}.input-checkbox label:before{content:'';left:0;border-radius:6px;position:absolute;width:100%;height:100%;border:1px solid #005093;opacity:0;transition:.3s;-webkit-transition:.3s;-moz-transition:.3s}.interval-selector{position:relative;width:auto;display:inline-block;margin:0 auto 46px;clear:both}.interval-selector span{display:inline-block;position:relative;bottom:10px;margin-left:.92857143em;margin-right:.92857143em;font-size:.85714286em;white-space:nowrap}.interval-selector span.label{position:absolute;right:-100px;text-transform:capitalize;font-size:10px;top:-13px}.input-checkbox+span{display:inline-block;position:relative;bottom:10px;margin-left:.92857143em;font-size:.85714286em;white-space:nowrap}.input-checkbox.input-checkbox--switch label{width:3.71428571em;border-radius:60px}.input-checkbox.input-checkbox--switch label:before{width:1.5em;height:1.5em;border-radius:50%;border-color:#d3d3d3;opacity:1;left:2px;top:2px}@media all and (min-width:768px){.cover .row .row:last-child{margin-top:5.57142857em}}footer .type--fine-print:not(p){font-size:1em;line-height:50px}footer a{font-weight:400}footer:not(.bg--primary):not(.bg--dark) a{color:#444}footer .logo{max-height:1.67142857em}@media all and (min-width:768px){footer .list-inline+.btn{position:relative;bottom:4px}footer .logo{margin:0}footer.footer-3 .logo+ul{position:relative;top:5px}footer.footer-3 .logo+ul a{color:#252525}footer.footer-3 .social-list{position:relative;top:9px}footer.footer-3 .row:last-child{margin-top:1.85714286em}}.stats.intro span{font-size:42px;font-family: Roboto, sans-serif;margin-bottom:20px;display:block}.stats.intro h2{font-size:14px;font-family:sans-serif;margin-bottom:30px}#uf-uploader form{padding: 35px;clear:both;color:#fff;border:2px dashed #fff;background-color:rgba(255,255,255,.2); margin-bottom: 25px;}.feature img{max-height:100px}.pricing-5{padding:10px}.pricing-5 div[class*=col-]{transition:.2s linear;-webkit-transition:.2s linear;-moz-transition:.2s linear;padding:0}.pricing-5 div[class*=col-].pricing--emphasise{box-shadow:0 0 60px 0 rgba(0,0,0,.07);z-index:2}.pricing-5 div[class*=col-]:not(:first-child) ul li:last-child{height:auto!important}.pricing-5 .pricing__title{min-height:160px;padding:1.625em 0;position:relative}.pricing-5 h3,.pricing-5 h5,.pricing-5 h6,.pricing-5 ul{margin:0}.pricing-5 ul.labels{text-align:left}.pricing-5 li .label{font-size:.5em;padding:0 5px;width:auto;height:auto;min-width:0;min-height:0;line-height:2;right:-35px;top:-2px}.pricing-5 ul.labels li{padding-left:10px}.pricing-5 ul li{padding:15px 0}.pricing-5 ul li.disabled{opacity:1}.pricing-5 ul li img{padding:0;margin:0;width:20px;height:auto}.pricing-5 ul li span{font-size:1em}.pricing-5 ul li span:not(.btn__text){position:relative}.pricing-5 ul li span:not(:first-child){display:inline-block;position:relative}.pricing-5 .tooltipped{padding-right:5px}.pricing-5 ul li span.text{bottom:0}.pricing-5 ul li:nth-child(odd){background:#f7f7f7}.pricing h2{font-size:3.125rem;line-height:4.063rem;margin-bottom:0}.checkmark,.crossmark{width:1.625em;height:1.625em;line-height:1.625em;background:#64b671;border-radius:50%;display:inline-block;position:relative;text-align:center}.checkmark:before,.crossmark:before{content:'\2713';color:#fff;width:100%;opacity:1;font-size:13px}.crossmark{background:#e34747}.crossmark:before{content:'\2715'}.join-modal .most-popular,.packages .most-popular{position:absolute;top:-9px;right:-6px;width:120px;z-index:99999999999}.payment-options{width:500px;max-height:37px;display:block;margin:0 auto}.hide{display:none!important}.price .sign{vertical-align:super;font-size:20px}.price .month{font-size:16px;font-family:sans-serif;font-weight:100}.app-hero{width:100%}.home .app-hero{margin-top:50px;margin-bottom:100px}.app-hero img{max-width:70%;border-radius:6px;padding:0!important}.home .cover.height-90{background-color:#333;}.cover .expiration .row{margin-top:0!important}.upload-link-container{max-width:600px;margin:0 auto 20px}.upload-link-container,.upload-link-container *{font-size:30px!important}.upload-link-container #copylink{padding:15px;height:auto;text-align:center}.home .expiration{margin:0 auto 30px;line-height:24px}.home .expiration .col-sm-2{padding-right:0;padding-left:0;flex:0 0 16.6666666667%;max-width:16.6666666667%;margin-bottom:0px}#copybutton{right:2%;top:18%;cursor:pointer;position:absolute;width:40px;display:block;height:40px}.promo{padding-top:15px}.promo a{text-decoration:none}.sponsor{margin:20px auto;min-height: 90px;}@media all and (min-width:650px) {.cover .sponsor {}.sponsor.horizontal {min-height: 90px;}}.logo-link{display:inline-block;margin-bottom:20px}.g-recaptcha div{margin:0 auto}.justify-content-center input,.justify-content-center textarea{text-align:center}footer .text-right{line-height:40px}.text-center .cta .btn{margin-top:50px}@media all and (min-width:991px){.menu-horizontal li:not(:last-child) {margin-right: 1em;}footer .list-inline{padding-left:40px}}.menu-horizontal.text-left .dropdown .fas{width: 7.5px;display: inline-block;font-size:12px; font-weight: 900!important;}@media all and (min-width:767px){.menu-horizontal.text-left .dropdown .fas{color:#fff}}@media (max-width: 767px) { .hidden-xs {display: none!important;}}.spacer {padding: 50px;}.file-name {word-break: break-all;font-size: 2.5em;}.download-spacer {padding: 10px;}h1.intro {font-size: 40px;line-height: 1.31818182em;letter-spacing: -.01em;}.ufzone .dz-message {text-align: center;margin: 2em 0;}.top-bar {padding: 10px;}.top-bar * {font-size: 13px; line-height: 23.7px; color: #fff!important;font-weight: normal!important;}.trust img {margin: -5px 5px 0 0;}.col-4 {-ms-flex: 0 0 33.333333%;flex: 0 0 33.333333%;max-width: 33.333333%;}.col-8 {-ms-flex: 0 0 66.666667%;flex: 0 0 66.666667%;max-width: 66.666667%;}.bg--primary span.label.label--inline {background: #23292f;}@media (max-width: 650px) {.sponsor {}.logo-link img {width: auto;max-height: 35px;}.logo-link {position: absolute;top: -50px;left: 15px;} }.file-name {font-size: 30px;}@media (max-width: 767px) {.file-details .holder {display: block;margin-bottom: 10px;font-size: 16px;}.file-details .divide {display: none;}}img.custom-logo {max-width: 400px;max-height: 400px;}@media (max-width: 767px) {.stats.intro span {font-size: 30px;}}@media (max-width: 1024px) {html {font-size: 80%;}}@media (max-width: 768px){.stats.intro {margin-top: 5.57142857em;}}@media (max-width: 767px){.lead {font-size: 1.35714286em;line-height: 1.36842105em;}}@media (max-width: 650px){.cover .sponsor {margin: 0 0 20px;}}.file-details {margin-bottom: 20px;color: #fff;display: block;float: left;width: 100%;}.alert{margin-bottom: 1.85714286em;background: #fafcfe;border: 0;border-radius: 6px;position: relative;padding: .92857143em;}.alert.bg--error {background-color: #b72c2c;color: #fff;border: none;}.alert .alert__close {float: right;cursor: pointer;font-size: 1.35714286em;position: absolute;right: 10px;top: 0;}.alert.bg--primary * {color: #005093!important;}@media (min-width: 992px) and (max-width: 1199px).hidden-md {display: none!important;}@media (min-width: 768px) and (max-width: 991px){.hidden-sm {display: none!important;}}@media (min-width: 768px) and (max-width: 1023px){.bar-1 .bar__module, .bar-2 .bar__module {margin-bottom: 1.85714286em;}.bar-1 .menu-horizontal>li, .bar-2 .menu-horizontal>li {display: inline-block;}.bar-1 .menu-horizontal>li:not(:first-child), .bar-2 .menu-horizontal>li:not(:first-child) {margin-left: .92857143em;}}@media (max-width: 767px){footer, footer.space--lg, footer.space--md, section, section.section--even, section.section--even.space--lg, section.section--even.space--md, section.space--lg, section.space--md {padding: 5.57142857em 0;}}.switchable .col-md-6 {display: flex;justify-content: center;align-items: center;min-height: 200px;}
+    </style>
+<link rel="preload" href="/assets/css/bootstrap.css?v=1563114509" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/assets/css/bootstrap.css?v=1563114509"></noscript>
+<link rel="preload" href="/assets/css/theme.css?v=1563114509" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/assets/css/theme.css?v=1563114509"></noscript>
+<link rel="preload" href="/assets/css/utils.css?v=1563114509" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/assets/css/utils.css?v=1563114509"></noscript>
+<script>
+      var reqSRI = false;
+      if(window.XMLHttpRequest) {
+        try {
+          reqSRI = new XMLHttpRequest();
+        }
+        catch(e) {
+          reqSRI = false
+        }
+      }
+      else if(window.ActiveXObject) {
+        try {
+          reqSRI = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch(e) {
+          reqSRI = false;
+        }
+      }
+
+      try {
+        reqSRI.open(
+          "GET",
+          'https://api.ipgeolocation.io/ipgeo?apiKey=033456732d7f4cec9aa2b0c9547ce9e2&fields=country_name',
+          false
+        );
+        reqSRI.send('');
+      }  catch(e) {
+      }
+
+      if (reqSRI.status === 200) {
+        var countrySRI = JSON.parse(reqSRI.responseText);
+
+        if (countrySRI && countrySRI['country_name'] && ['Russia', 'Belarus'].indexOf(countrySRI['country_name']) !== -1) {
+          window.location.href = '/russia-403.html';
+        }
+      }
+
+      // https://api.ipgeolocation.io/ipgeo?apiKey=f1e411291c8c4abf852df2b116f963e3&fields=country_name
+    </script>
+<script async src='/cdn-cgi/bm/cv/669835187/api.js'></script></head>
+<body class="download">
+
+
+<input id="location" type="hidden" value="6" />
+
+<input id="stripe_public_key" type="hidden" value="pk_live_51JAHoQJixYnh87TsWSvdB3Jx36b1DWd2anqNtQ7KmeKHIyfGKLZje5S144Vq2K4hgz03F9oOZGTzhKfzSme4dTdj00iQhfSKVI" />
+
+<input id="csrf_token" type="hidden" value="csrf_test_name" />
+<input id="csrf_hash" type="hidden" value="7e04556dce8c0dff67993689fb4eedbf" />
+
+<a id="start"></a>
+<div class="nav-container ">
+<div class="logo-wrapper visible-xs">
+<a href="/">
+<svg style="vertical-align: middle;" height="34" viewBox="0 0 600 449" width="45" xmlns="http://www.w3.org/2000/svg"><g fill="#fff"><path d="m466.405155 147.588069c.028797 1.229281.095988 2.444268.095988 3.678314 0 32.485416-9.848366 64.18943-27.649336 91.028731 2.721259-.395467 5.471315-.667053 8.278962-.667053 30.97532 0 56.176963 25.019203 56.176963 55.770286 0 30.751082-25.201643 55.770285-56.176963 55.770285-15.727629 0-30.3226-6.308404-41.087652-17.767398l-38.23681-37.998122.0048-.004765h-.0048l-104.948452-104.188708-1.204648-1.153046c-11.537755-10.687121-17.896958-25.171671-17.896958-40.79021 0-30.751082 25.201643-55.7702854 56.176962-55.7702854s56.181761 25.0192034 56.181761 55.7702854c0 15.613773-6.359203 30.103089-17.901757 40.794975l-28.090881 27.858936 67.858699 67.386513 26.377496-26.186542c30.351397-28.459283 47.744418-68.444267 47.744418-109.853882 0-83.2956962-68.261849-151.0633821-152.169736-151.0633821-83.903089 0-152.164937 67.7676859-152.164937 151.0633821 0 41.419145 17.388222 81.404127 47.749218 109.858646l140.96314 139.942678c28.66201 30.131677 68.938563 47.394021 110.650137 47.394021 83.907889 0 152.164937-67.767686 152.164937-151.063381 0-76.815766-58.058326-140.371497-132.890551-149.810278" /><path d="m221.88059 307.508944-26.895831 26.701126-1.156655 1.191164c-10.765051 11.458994-25.360023 17.767398-41.092452 17.767398-30.975319 0-56.176962-25.019203-56.176962-55.770285 0-30.751083 25.201643-55.770286 56.176962-55.770286 2.79325 0 5.528908.266821 8.230969.657523-17.728979-26.748772-27.596543-58.490903-27.596543-91.019201 0-1.234046.067192-2.449033.095988-3.678314-74.8322248 9.438781-132.89535055 72.994512-132.89535055 149.810278 0 83.295695 68.26184805 151.063381 152.16493655 151.063381 41.716374 0 81.988129-17.262344 110.654937-47.394021l26.367896-26.181778z" /><path d="m299.933211.2030009v95.2930967c30.975319 0 56.181761 25.0192034 56.181761 55.7702854 0 15.613773-6.359203 30.103089-17.901757 40.794975l-28.090881 27.858936 67.858699 67.386513 26.377496-26.186542c30.351397-28.459283 47.744418-68.444267 47.744418-109.853882 0-83.2956962-68.261849-151.0633821-152.169736-151.0633821" /></g></svg>
+</a>
+</div>
+<div class="bar bar--sm visible-xs">
+<div class="container">
+<div class="row">
+<div class="col-md-12 text-right">
+<a href="#" name="Open mobile menu" title="Open menu" class="hamburger-toggle" data-toggle-class="#menu2;hidden-xs hidden-sm">
+<div></div>
+<div></div>
+<div></div>
+</a>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<nav id="menu2" class="bar bar-2 hidden-xs bar--transparent bar--absolute">
+<div class="container">
+<div class="row">
+<div class="col-md-7 order-lg-1">
+<div class="bar__module">
+<ul class="menu-horizontal text-left">
+<li class="hidden-xs">
+<a href="/">
+<svg style="vertical-align: middle;" height="34" viewBox="0 0 600 449" width="45" xmlns="http://www.w3.org/2000/svg"><g fill="#fff"><path d="m466.405155 147.588069c.028797 1.229281.095988 2.444268.095988 3.678314 0 32.485416-9.848366 64.18943-27.649336 91.028731 2.721259-.395467 5.471315-.667053 8.278962-.667053 30.97532 0 56.176963 25.019203 56.176963 55.770286 0 30.751082-25.201643 55.770285-56.176963 55.770285-15.727629 0-30.3226-6.308404-41.087652-17.767398l-38.23681-37.998122.0048-.004765h-.0048l-104.948452-104.188708-1.204648-1.153046c-11.537755-10.687121-17.896958-25.171671-17.896958-40.79021 0-30.751082 25.201643-55.7702854 56.176962-55.7702854s56.181761 25.0192034 56.181761 55.7702854c0 15.613773-6.359203 30.103089-17.901757 40.794975l-28.090881 27.858936 67.858699 67.386513 26.377496-26.186542c30.351397-28.459283 47.744418-68.444267 47.744418-109.853882 0-83.2956962-68.261849-151.0633821-152.169736-151.0633821-83.903089 0-152.164937 67.7676859-152.164937 151.0633821 0 41.419145 17.388222 81.404127 47.749218 109.858646l140.96314 139.942678c28.66201 30.131677 68.938563 47.394021 110.650137 47.394021 83.907889 0 152.164937-67.767686 152.164937-151.063381 0-76.815766-58.058326-140.371497-132.890551-149.810278" /><path d="m221.88059 307.508944-26.895831 26.701126-1.156655 1.191164c-10.765051 11.458994-25.360023 17.767398-41.092452 17.767398-30.975319 0-56.176962-25.019203-56.176962-55.770285 0-30.751083 25.201643-55.770286 56.176962-55.770286 2.79325 0 5.528908.266821 8.230969.657523-17.728979-26.748772-27.596543-58.490903-27.596543-91.019201 0-1.234046.067192-2.449033.095988-3.678314-74.8322248 9.438781-132.89535055 72.994512-132.89535055 149.810278 0 83.295695 68.26184805 151.063381 152.16493655 151.063381 41.716374 0 81.988129-17.262344 110.654937-47.394021l26.367896-26.181778z" /><path d="m299.933211.2030009v95.2930967c30.975319 0 56.181761 25.0192034 56.181761 55.7702854 0 15.613773-6.359203 30.103089-17.901757 40.794975l-28.090881 27.858936 67.858699 67.386513 26.377496-26.186542c30.351397-28.459283 47.744418-68.444267 47.744418-109.853882 0-83.2956962-68.261849-151.0633821-152.169736-151.0633821" /></g></svg>
+</a>
+</li>
+<li class="hidden-sm">
+<a href="/">Home</a>
+</li>
+<li class="dropdown dropdown--hover hidden-sm">
+<span class="dropdown__trigger">Tools </span>
+<i class="chevron"></i>
+<div class="dropdown__container">
+<div class="dropdown__content">
+<ul class="">
+<li>
+<a href="/app"><span>Desktop App</span></a>
+</li>
+<li>
+<a href="/file-upload-widget"><span>Upload Widget</span></a>
+</li>
+</ul>
+</div>
+
+</div>
+
+</li>
+<li class="dropdown dropdown--hover">
+<span class="dropdown__trigger">Business</span>
+<i class="chevron"></i>
+<div class="dropdown__container">
+<div class="dropdown__content">
+<ul class="">
+<li>
+<a href="/sell-files-online"><span>Sell Your Files</span></a>
+</li>
+<li>
+<a href="/revenue-share"><span>Revenue Share</span></a>
+</li>
+</ul>
+</div>
+
+</div>
+
+</li>
+<li class="dropdown dropdown--hover">
+<a class="dropdown__trigger" id="features-link" href="/#features">Features</a>
+<i class="chevron"></i>
+<div class="dropdown__container">
+<div class="dropdown__content">
+<ul class="">
+<li>
+<a href="/free-apk-hosting"><span>Free Apk Hosting</span></a>
+</li>
+<li>
+<a href="/free-video-sharing"><span>Free Video Sharing</span></a>
+</li>
+<li>
+<a href="/free-photo-sharing"><span>Free Photo Sharing</span></a>
+</li>
+<li>
+<a href="/free-game-hosting"><span>Free Game Hosting</span></a>
+</li>
+</ul>
+</div>
+
+</div>
+
+</li>
+<li>
+<a href="/pricing">Pricing</a>
+</li>
+<li class="hidden-md">
+<a id="faq-link" href="/#faq">FAQ</a>
+</li>
+<li>
+<a href="/blog">Help</a>
+</li>
+<li class="hidden-sm hidden-md">
+<a href="/blog/?filter=api">API</a>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="col-md-5 text-right text-left-xs text-left-sm order-lg-3">
+<div class="bar__module">
+<a class="btn btn--sm" href="/login">
+<span class="btn__text">
+Login
+</span>
+</a>
+<a class="btn btn--sm btn--primary" href="/pricing">
+<span class="btn__text">
+Register
+</span>
+</a>
+</div>
+
+</div>
+</div>
+
+</div>
+
+</nav>
+
+</div>
+<section class="height-90 imagebg text-center" data-overlay="8">
+<div class="background-image-holder">
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+<div class="spacer download-spacer hidden-xs"></div>
+<div class="row sponsor">
+<div class="col-md-12 col-sm-12 features-left">
+
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8453236626207385" data-ad-slot="9984807553" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+     </script>
+</div>
+</div>
+
+<h2 class="file-name">
+Weekend of 3_26_22 Trailer Testing Rev 1 GUI Config.json </h2>
+<div class="col-md-12">
+<div class="g-recaptcha" data-sitekey="6LeGoQAcAAAAAFSOTDduw6JiL46jzZDEKqTuS6Wi" data-badge="bottomleft" data-callback="onSubmit" data-size="invisible">
+</div>
+<a class="btn btn--lg slow-download-button free-download">
+<span class="btn__text">
+Free Download (1MB/s)
+</span>
+</a>
+<a class="btn btn--lg btn--primary pro-download modal-trigger" data-modal-id="go-pro">
+<span class="btn__text">
+Fast Download (50MB/s)
+</span>
+</a>
+</div>
+<div class="file-details">
+<span class="holder">
+File created:
+<span class="date-created" data-date="1648490865"></span>
+</span>
+<span class="divide">&nbsp; | &nbsp;</span>
+<span class="holder">
+File expires in:
+<span class="date-expired countdown" data-date="1651082865"></span>
+</span>
+<span class="divide">&nbsp; | &nbsp;</span>
+<span class="holder">
+File Size: 39.5 KB
+</span>
+
+<span class="divide">&nbsp; | &nbsp;</span>
+<span class="holder">
+<a class="report-file modal-trigger" href="javascript:void(0);" data-modal-id="report-file">
+<i class="fas fa-warning"></i> Report file for violation
+</a>
+</span>
+
+</div>
+<div class="row sponsor">
+<div class="col-md-12 col-sm-12 features-left">
+
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8453236626207385" data-ad-slot="2601344819" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+     </script>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+<input type="hidden" id="slug" value="6hngtsxc">
+<section class="text-center">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-10 col-lg-8">
+<h2>Upload files for free, without registration</h2>
+ <p class="lead">
+Uploadfiles makes file sharing and storage easy and straightforward.<br> Our encrypted cloud storage uses the latest security techniques to keep your data safe and protected at all times. Create a link to share files for free, or automatically sync with our <a href="/app">desktop app</a> to upload files seamlessly.
+</p>
+</div>
+</div>
+
+</div>
+
+</section>
+<section class="switchable feature-large">
+<div class="container">
+<div class="row">
+<div class="col-md-6">
+<img class="lazyload" alt="Upload any file type" src="/assets/img/spacer.png" data-src="/assets/img/icons/file-types.svg">
+</div>
+<div class="col-md-6 col-lg-5">
+<div class="switchable__text">
+<h2>Upload any file type</h2>
+<p class="lead">
+There are no restrictions on the type of file you can upload to our free filesharing platform. The only limit we put in place is a 5GB max filesize for free users and up to as much as 100GB for business users. <br><br>We put our users in control, which is one of the reasons why Uploadfiles is in the most popular file sharing sites in the world.
+</p>
+<a href="/blog/what-file-types-can-i-upload/" rel="noopener" target="_blank">Learn more about supported file types »</a>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+<section class="switchable switchable--switch feature-large">
+<div class="container">
+<div class="row justify-content-around">
+<div class="col-md-6">
+<img class="lazyload" alt="Upload files globally" src="/assets/img/spacer.png" data-src="/assets/img/icons/global.svg">
+</div>
+<div class="col-md-6 col-lg-5">
+<div class="switchable__text">
+<h2>Share files for free,<br> anywhere in the world</h2>
+<p class="lead">
+Uploadfiles deploys a wide range of <a href="https://status.ufile.io/" target="_blank">data centres</a> located in various regions across the world. This enables us to ensure lightning fast file sharing capabilities to our customers at all times. Whether you have files for download, or just want to upload and share, you can rely on us 24/7, 365 days a year.
+</p>
+<a href="/blog/where-will-my-files-be-hosted/">Learn more about our network »</a>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+<section class="switchable feature-large">
+<div class="container">
+<div class="row">
+<div class="col-md-6">
+<img alt="Upload files securely with end to end encryption" class="lazyload" src="/assets/img/spacer.png" data-src="/assets/img/secure.svg">
+</div>
+<div class="col-md-6 col-lg-5">
+<div class="switchable__text">
+<h2>No pop ups, no malware</h2>
+<p class="lead">
+Fed up of pop-up ads, push notifications, malware, bitcoin miners and ‘quizzes’ that could infect your laptop or desktop with malware? So are we, which is why you will never see any of these on Uploadfiles. Too many file hosting platforms are driven by profit, which means your safety comes a distant second. For us it’s the other way round, giving you the confidence that you can remain safe no matter how long you spend on our file upload site.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+<section class="feature-large">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-12">
+<div class="row sponsor">
+<div class="col-md-12 col-sm-12 features-left">
+
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8453236626207385" data-ad-slot="7662099808" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+     </script>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg--secondary">
+<div class="container" id="faq">
+<div class="row">
+<div class="col-lg-4">
+<div class="text-block">
+<h4>Frequently Asked Questions</h4>
+<a href="/blog/?filter=faq">Find more FAQs in our support portal »</a>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="text-block">
+<h5>How do I upload files?</h5>
+<p>
+You can either drag and drop them into the uploader, or click the upload file box to select the file you want. Once the file upload is complete, we then give you a unique URL which can be shared with anyone else you want to access it.
+</p>
+</div>
+<div class="text-block">
+<h5>How long will my files be online?</h5>
+<p>
+Your files will remain online for 30 days, Pro users can store files <b>forever</b>. You can also upload files and set them to auto expire after 1 hour, 1 day, 7 days, or 30 days, as well as create one time download links.
+</p>
+</div>
+<div class="text-block">
+<h5>What can I upload?</h5>
+<p>
+There is no limitation on the type of files you can upload. Whether you’re an image or video uploader, as long as no laws are being broken, you are free to use the service to upload files of any kind.
+</p>
+</div>
+<div class="text-block">
+<h5>How many downloads are allowed?</h5>
+<p>
+We place <b>no limit</b> on the amount of files that can be downloaded. This means there are no bandwidth restrictions so your file upload can be accessed and downloaded continuously.
+</p>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="text-block">
+<h5>Can I email my file upload?</h5>
+<p>
+Yes, click “share by email” which will enable you to send a downloadable link to up to 5 addresses of your choice, or simply copy the URL and send it in your own email to the recipient.
+</p>
+</div>
+<div class="text-block">
+<h5>Is ufile.io really free?</h5>
+<p>
+Yes, the core file hosting services are completely free to everyone, with no hidden costs involved. If you want to access more advanced features, there are also paid plans available.
+</p>
+</div>
+<div class="text-block">
+<h5>How do I download a file?</h5>
+<p>
+If you have received a unique upload file URL, simply click the “download” button. If you see a message about the file requiring "retrieval", you'll need to be on a paid plan to access it.
+</p>
+</div>
+<div class="text-block">
+<h5>Are there log files or backups?</h5>
+<p>
+When you upload a file it remains anonymous, with our logs cycled continuously. And if you decide to delete something from our file hosting system there is no trace left behind, meaning it is permanently deleted.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+
+</section>
+<section class="space--xs border--bottom">
+<div class="container">
+<div class="cta cta--horizontal text-center-xs row">
+<div class="col-md-4">
+<h4>Ready to go Pro?</h4>
+</div>
+<div class="col-md-5">
+<p class="lead">
+Signup today and unlock all our features
+</p>
+</div>
+<div class="col-md-3 text-right text-center-xs">
+<a href="/pricing" class="btn btn--primary" data-modal-id="go-pro">
+<span class="btn__text">
+Signup and activate
+</span>
+</a>
+</div>
+</div>
+</div>
+
+</section>
+
+<div class="modal-instance">
+<div class="modal-container" data-modal-id="report-file">
+<div class="modal-content section-modal">
+<section class="unpad">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-6 col-12">
+<div class="feature feature-1">
+<div class="feature__body boxed boxed--lg boxed--border text-center">
+<div class="modal-close modal-close-cross"></div>
+<div class="text-block">
+<h3><i class="fas fa-warning"></i> Report File</h3>
+<p>
+Report this file as violating our terms to request a manual review.
+</p>
+</div>
+<form id="report-file">
+<div class="input-select text-center">
+<select id="report-reason">
+<option selected="" value="Default">Select a reason</option>
+<option value="copyright">Privacy, copyright or legal complaints</option>
+<option value="spam">Spam or misleading</option>
+<option value="malware">Malware, virus or malicious content</option>
+<option value="child">Child abuse</option>
+<option value="other">Other</option>
+</select>
+</div>
+<button type="submit" class="btn btn--primary">Submit</button>
+</form>
+<span class="type--fine-print block">
+For official <a title="DMCA requests for uploaded files" href="/dmca">DMCA requests, please see here</a>.
+</span>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+</section>
+</div>
+</div>
+</div>
+
+<div class="modal-instance">
+<div class="modal-container download-started">
+<div class="modal-content section-modal">
+<section class="unpad ">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="boxed boxed--lg bg--white text-center feature">
+<div class="modal-close modal-close-cross"></div>
+<h3>Your download has started</h3>
+<p>
+Not downloading? Click here: <a href="javascript:void(0)" onclick="ga('send', 'event', 'Interaction', 'Download not started clicked');" class="download-button retry-download">here</a> to try again.
+</p>
+
+
+<hr>
+
+
+<div class="signup-step hide">
+<img class="lazyload" alt="Upload any file type" src="/assets/img/spacer.png" data-src="/assets/img/icons/file-types.svg">
+<div class="text-block">
+<h3>Welcome aboard!</h3>
+<p>
+Redirecting you to your dashboard now...
+</p>
+<br><br>
+<i class="fas fa-4x fa-spinner fa-spin"></i>
+</div>
+</div>
+<div class="signup-step">
+<div class="text-block">
+<h3>Ready to create a free account?</h3>
+<p>
+Signup now to manage your uploads and unlock 10GB of permanent storage - for free!
+</p>
+</div>
+<form id="signup-form" class="form--active">
+<input type="hidden" class="csrf_test_name" name="csrf_test_name" value="7e04556dce8c0dff67993689fb4eedbf" />
+<input class="email" id="email" type="email" name="email" placeholder="Email Address" required>
+<input class="password" id="password" type="password" name="password" placeholder="Password" required>
+<div class="input-checkbox">
+<input class="validate-required" type="checkbox" name="register-terms" id="input-assigned-0" required>
+<label for="input-assigned-0"></label>
+</div>
+<span>I have read and agree to the
+<a href="/terms">terms and conditions</a>
+</span>
+<button class="btn btn--lg btn--primary type--uppercase" type="submit">
+<span class="btn__text">
+Register Free
+</span>
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</section>
+</div>
+</div>
+</div>
+
+<div class="modal-instance">
+<div class="modal-container exitintent">
+<div class="modal-content section-modal">
+<section class="unpad ">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="boxed boxed--lg bg--white text-center feature">
+<div class="modal-close modal-close-cross"></div>
+<h3>Refer and earn $5, every month!</h3>
+<p>
+</p>
+
+<hr>
+<div class="signup-step">
+<div class="text-block">
+<p>
+To celebrate Uploadfiles turning 4 years old, we're offering every user the chance to earn $5/month for every paid user they refer.
+</p>
+<h1>$5 every month!</h1>
+<a href="/dashboard/stats#referral-modal" class="btn btn--lg btn--primary" onclick="ga('send', 'event', 'Interaction', 'Exit intent modal refer & earn link clicked');">
+<span class="btn__text">
+Get your referral link
+</span>
+</a>
+<p class="type--fine-print">
+Create a free account or login, and copy your unique referral link. Share it to your social accounts, forums or directly to friends and start earning, every month.
+</p>
+</div>
+<img alt="payment options" class="payment-options lazyload" src="/assets/img/spacer.png" data-src="/assets/img/payment-options.png" />
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</section>
+</div>
+</div>
+</div>
+<div class="modal-instance">
+<div class="modal-container download-offer">
+<div class="modal-content section-modal">
+<section class="unpad ">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-8 col-lg-6">
+<div class="boxed boxed--lg bg--white text-center feature">
+<div class="modal-close modal-close-cross"></div>
+<h3>Before your download starts...</h3>
+<p>
+You have chosen a free download, which will be slower to ensure a fair speed for all free users. Would you like to subscribe to a paid plan and enable <b>super fast</b> download speeds?</p>
+<a href="/pricing" class="btn btn--lg btn--primary" onclick="ga('send', 'event', 'Interaction', 'modal fast download button clicked');" target="_blank">
+<span class="btn__text">
+Fast download (50MB/s) <em class="hidden-sm hidden-xs hide">with 50% off</em>
+</span>
+</a>
+<hr>
+<span class="line-text">or</span>
+<a class="btn btn--lg download-button" onclick="ga('send', 'event', 'Interaction', 'modal slow speed is fine clicked');">
+<span class="btn__text">
+Slow speed (1MB/s) is fine
+</span>
+</a>
+<div style="border: solid 1px rgb(230, 231, 232);">
+<p style="padding: 10px; margin-bottom: 0">
+Or get 1 Day Unlimited Speed by sending <strong>$1</strong> Bitcoin to our wallet below (specify your email in the details)
+<pre>1Pf6ZVJPPJYhzTx7XXBocTt9UTDutD31Ae</pre>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+
+<div class="modal-instance">
+<div class="modal-container" data-modal-id="go-pro">
+<div class="modal-content section-modal pricing-modal">
+<div class="boxed boxed--lg text-center">
+<div class="modal-close modal-close-cross"></div>
+<div class="text-block">
+<h3>Simple Pricing for Everyone</h3>
+<p class="lead">
+Unlock unlimited download speeds and up to 3TB of storage.
+</p>
+<div class="interval-selector">
+<span>Monthly</span>
+<div class="input-checkbox input-checkbox--switch slider">
+<input aria-label="pricing switch" id="pricing-switch" class="pricing-switch" type="checkbox" name="pricing" />
+<label for="pricing-switch"></label>
+</div>
+<span>Yearly</span>
+<span class="label">2 months free!</span>
+</div>
+<img alt="payment options" class="payment-options lazyload" src="/assets/img/spacer.png" data-src="/assets/img/payment-options.png" />
+</div>
+<div class="packages">
+<div class="row">
+<div class="col-sm-12" id="packages">
+<div class="row pricing pricing-5">
+<div class="col-sm-12 col-lg-3 text-center hidden-xs hidden-sm">
+<div class="pricing__title">
+</div>
+<ul class="labels">
+<li>
+<span aria-label="Secure, permanent storage on our globally distributed data centers" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Storage Space</span>
+</li>
+<li>
+<span aria-label="Download speeds for free users are limited to 1MB/s, pro users can download without speed limits, and business users can enjoy unlimited speeds for themselves and others who download their files" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Download Speed</span>
+</li>
+<li>
+<span aria-label="The maximum file size allowed per upload, this may be larger than your storage available, in which case, the file will be hsted for a maximum of 30 days" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Max File Size</span>
+</li>
+<li>
+<span aria-label="Drag & Drop up to 99 files at once into your dashboard" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Simultaneous Uploads</span>
+</li>
+<li>
+<span aria-label="We never limit bandwidth, no matter how popular your files are" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Unlimited Bandwidth</span>
+</li>
+<li>
+<span aria-label="All data is sent securely over HTTPS, with end to end encryption. From browser, to load balancers, to storage servers" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>End to End Encryption</span>
+</li>
+<li>
+<span aria-label="Uploadfiles is powered by adverts for free users, our ads are always non obtrusive, Google Adsense banners" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>No Adverts</span>
+</li>
+<li>
+<span aria-label="Secure your uploads by adding a password, meaning users will only be able to download them if they have both the file URL and the password" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Password Protected Files</span>
+</li>
+<li>
+<span aria-label="Create folders inside your dashboard, add files and share them all at once with a single folder URL" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Share folders by URL</span>
+</li>
+<li>
+<span aria-label="Retrieve files that have previously expired (files remain available for paid users for up to 7 days of no activity after file has expired)" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Access expired files</span>
+</li>
+<li>
+<span aria-label="Customise your file download pages with your own logo, background image, colours, text, subdomain and custom CSS" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Custom Brand &amp; Domain</span>
+</li>
+<li>
+<span aria-label="Allow guest users to upload files directly into your own folder. Each folder has a unique URL that you can share with friends, they can then send you files directly." class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Receive uploads from others</span>
+</li>
+<li>
+<span aria-label="Add our whitelabel upload widget to any website, just copy & paste our code snippet and allow your users to upload files directly to your Uploadfiles storage via your own website" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span><span class="hidden-md">Embeddable</span> Upload Widget <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<span aria-label="Generate file links that automatically expire after they've been downloaded" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>One Time Download Links <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<span aria-label="Allow your files to be downloaded by others directly, bypassing our download pages (max. 1,000 downloads per day, add ons available at $5/month for 1,000 extra daily direct downloads)" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>Direct Download Access <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<span aria-label="Use our REST API to securely upload and download files directly from your CL or within your application" class="tooltipped tooltipped-e tooltipped-multiline">
+<i class="fas fa-info-circle"></i>
+</span>
+<span>API Access <label class="hidden-md label">beta</label></span>
+</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-3 text-center">
+<div class="pricing__title">
+<h3>Free</h3>
+<div class="price">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">0</span>
+<span class="amount switch-data hide">0</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+<a href="/register?pid=1" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</div>
+</div>
+<ul>
+<li>
+<span class="hidden-lg hidden-md">Storage Space</span>
+<span class="text">10GB</span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Download Speed</span>
+<span class="text">1MB/s</span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Max File Size</span>
+<span class="text">5GB</span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Simultaneous Uploads</span>
+<span class="text">10</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Unlimited Bandwidth</span>
+</li>
+ <li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">End to End Encryption</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">No Adverts</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Password Protected Files</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Share folders by URL</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Access expired files</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md"><a href="/branded" target="_blank">Custom Brand &amp; Domain <i class="fas fa-external-link"></i></a></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Receive uploads from others </a></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Embeddable Upload Widget <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">One Time Download Links <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Direct Download Access <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">API Access (Put & Get files) <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<h3>Free</h3>
+<div class="price hidden-sm">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">0</span>
+<span class="amount switch-data hide">0</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+</div>
+<a href="/register?pid=1" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-3 text-center pricing--emphasise">
+<div class="pricing__title">
+<div class="most-popular">
+<img class="lazyload" alt="most popular" src="/assets/img/spacer.png" data-src="/assets/img/banner.svg">
+</div>
+<h3>Pro</h3>
+<div class="price">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">6.99</span>
+<span class="amount switch-data hide">69</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+<a href="/register?pid=11" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</div>
+</div>
+<ul>
+<li>
+<span class="hidden-lg hidden-md">Storage Space</span>
+<span class="text"><b>1TB (1,000GB)</b></span>
+</li>
+<li>
+<span class="text"><b>Unlimited <span class="hidden-md hidden-lg">speeds</span> for you</b></span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Max File Size</span>
+<span class="text">10GB</span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Simultaneous Uploads</span>
+<span class="text">30</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Unlimited Bandwidth</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">End to End Encryption</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">No Adverts</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Password Protected Files</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Share folders by URL</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Access expired files</span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md"><a href="/branded" target="_blank">Custom Brand &amp; Domain <i class="fas fa-external-link"></i></a></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Receive uploads from others </a></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Embeddable Upload Widget <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">One Time Download Links <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">Direct Download Access <label class="hidden-md label">beta</label></span>
+</li>
+<li class="disabled">
+&nbsp;
+<span class="hidden-lg hidden-md">API Access (Put & Get files) <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<h3>Pro</h3>
+<div class="price hidden-sm">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">6.99</span>
+<span class="amount switch-data hide">69</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+</div>
+<a href="/register?pid=11" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-3 text-center">
+<div class="pricing__title">
+<h3>Business</h3>
+<div class="price">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">12</span>
+<span class="amount switch-data hide">120</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+<a href="/register?pid=12" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</div>
+</div>
+<ul>
+<li>
+<span class="hidden-lg hidden-md">Storage Space</span>
+<span class="text"><b>3TB (3,000GB)</b></span>
+</li>
+<li>
+<span class="text"><b>Unlimited <span class="hidden-md hidden-lg">speeds</span> for you</b></span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Max File Size</span>
+<span class="text">100GB</span>
+</li>
+<li>
+<span class="hidden-lg hidden-md">Simultaneous Uploads</span>
+<span class="text">99</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Unlimited Bandwidth</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">End to End Encryption</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">No Adverts</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Password Protected Files</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Share folders by URL</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Access expired files</span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md"><a href="/branded" target="_blank">Custom Brand &amp; Domain <i class="fas fa-external-link"></i></a></span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Receive uploads from others </a></span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Embeddable Upload Widget <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">One Time Download Links <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">Direct Download Access <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<i class="fas fa-check"></i>
+<span class="hidden-lg hidden-md">API Access (Put & Get files) <label class="hidden-md label">beta</label></span>
+</li>
+<li>
+<h3>Business</h3>
+<div class="price hidden-sm">
+<h2>
+<span class="sign">$</span>
+<span class="amount switch-data">12</span>
+<span class="amount switch-data hide">120</span>
+<span class="month switch-data"> /mo</span>
+<span class="month switch-data hide"> /yr</span>
+</h2>
+</div>
+<a href="/register?pid=12" class="btn btn--primary btn--icon">
+<span class="btn__text"><i class="fas fa-user-plus"></i> Signup</span>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<div style="border: solid 1px rgb(230, 231, 232); margin-top: 25px">
+<p style="padding: 10px; margin-bottom: 0">
+Or get 1 Day Unlimited Speed by sending <strong>$1</strong> Bitcoin to our wallet below (specify your email in the details)
+<pre>1Pf6ZVJPPJYhzTx7XXBocTt9UTDutD31Ae</pre>
+</p>
+</div>
+</div> </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-instance">
+<div class="modal-container email-modal" data-modal-id="email-file">
+<div class="modal-content section-modal">
+<section class="unpad">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-6 col-12">
+<div class="feature feature-1">
+<div class="feature__body boxed boxed--lg boxed--border text-center">
+<div class="modal-close modal-close-cross"></div>
+<div class="text-block">
+<h3>Send file by email</h3>
+<p>
+You can send this file to up to 5 friends by email.
+</p>
+</div>
+<form id="email-form">
+<div class="row">
+<div class="col-md-12">
+<input id="recipient-email" name="recipients" class='' type='text' placeholder="Email to (comma seperated)" required />
+</div>
+<div class="col-md-12">
+<input id="your-email" name="sender" class='' type='email' placeholder="Your email" required />
+</div>
+<div class="col-md-12">
+<textarea id="email-message" name="message" class='' placeholder="Message (optional)"></textarea>
+</div>
+<div class="col-md-12">
+
+<div id="g-recaptcha"></div>
+</div>
+<div class="col-md-12">
+<button class="btn btn--primary type--uppercase" type="submit">
+<span class="btn__text">
+Send
+</span>
+</button>
+</div>
+</div>
+
+</form>
+<span class="type--fine-print block">
+By sending a file via email you agree to our
+<a href="/terms">terms of use.</a>
+</span>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+</section>
+</div>
+</div>
+</div>
+<footer class="footer-3 text-center-xs space--xs bg--secondary">
+<div class="loading"></div>
+<div class="container">
+
+<div class="row">
+<div class="col-lg-10 col-md-12">
+<img width="29" height="21" alt="Upload files" class="logo" src="/assets/img/logo-dark.svg">
+<ul class="list-inline list--hover">
+<li class="list-inline-item">
+<a title="About uploadfiles" href="/about">
+<span class="type--fine-print">About</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Upload files for free" href="/upload-files-free">
+<span class="type--fine-print">Upload files free</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Upload files for free" href="/free-apk-hosting">
+<span class="type--fine-print">Free Apk Hosting</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Upload files for free" href="/free-video-sharing">
+<span class="type--fine-print">Free Video sharing</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Upload files for free" href="/free-photo-sharing">
+<span class="type--fine-print">Free Photo Sharing</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Upload files for free" href="/free-game-hosting">
+<span class="type--fine-print">Free Game Hosting</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Terms for uploading files" href="/terms">
+<span class="type--fine-print">Terms</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Privacy polucy for ufile.io" href="/privacy">
+<span class="type--fine-print">Privacy</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="DMCA requests for uploaded files" href="/dmca">
+<span class="type--fine-print">DMCA</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Contact uploadfiles" href="/contact">
+<span class="type--fine-print">Contact</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Advertise with uploadfiles" href="/advertise">
+<span class="type--fine-print">Advertise</span>
+</a>
+</li>
+<li class="list-inline-item">
+<a title="Uploadfiles server status" target="_blank" rel="noopener" href="http://status.ufile.io/">
+<span class="type--fine-print">Status</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="col-lg-2 col-md-12 col-sm-12 text-right text-center-md">
+<span class="type--fine-print">©
+<span class="update-year">©2022</span> ufile.io</span>
+</div>
+</div>
+
+</div>
+
+</footer>
+</div>
+
+
+<script src="/assets/js/jquery.js"></script>
+<script src="/assets/js/utils.js?v=1563114509"></script>
+<script async src="/assets/js/global.js?v=1563114509"></script>
+<script src="/assets/js/download.js?v=1563114509"></script>
+<script>
+        // $("#share-file").on("mouseover", function () {
+        //     if(!at) {
+        //         var addthis_script = document.createElement("script");
+        //         addthis_script.src = "https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-56b61b1b0db9758f";
+        //         document.body.appendChild(addthis_script);
+        //         var at=1;
+        //     }
+        // });
+    </script>
+
+
+
+<script type="text/javascript" src="/assets/js/ab.js"></script>
+<script type="text/javascript">
+  const fallbackHTML = '<div><p>To fully <strong>protect your downloads and activity</strong>, we highly recommended using PrivadoVPN. <br/><a href="https://privadovpn.com/#a_aid=ufile" target="_blank"><u>Sign up for FREE!</u></a></p></div>';
+  justDetectAdblock.detectAnyAdblocker().then(function(detected) {
+
+    if(detected){
+          // console.log("blocked");
+          $(".sponsor").html(fallbackHTML);
+
+          $.ajax({
+            type: "POST",
+            url: "/ajax/ab/",
+            dataType: "json",
+        });
+    }
+  });
+
+//   window.setTimeout(function () {
+//     $("ins[data-ad-status=unfilled][data-ad-slot='9984807553']").each(function () {
+//         $(this).html(fallbackHTML);
+//     });
+//   }, 3000);
+
+</script>
+<script>
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-73416834-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<script>
+  dataLayer = [];
+</script>
+<script type="text/javascript">
+        $(window).on('load', function (e) {
+            window.$crisp=[];window.CRISP_WEBSITE_ID="9891a594-d15f-44d2-ad63-5e086be01a3a";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
+                $crisp.push(["safe", true]);
+        });
+    </script>
+
+<script type="application/ld+json">
+ {
+    "@context": "http://www.schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Uploadfiles",
+    "description": "Upload files up to 100GB for free & share them instantly, without registration.",
+    "applicationCategory": "Productivity",
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "worstRating": "1",
+        "bestRating": "5",
+        "ratingValue": "4.9",
+        "reviewCount": "1150"
+    },
+    "operatingSystem": "Cloud, SaaS, Web",
+    "offers": {
+        "@type": "Offer",
+        "category": "free",
+        "price": 0,
+        "priceCurrency": "USD"
+    }
+ }
+</script>
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "13ce674474944d9bbea73055e297cd10"}'></script>
+<script type="text/javascript">(function(){window['__CF$cv$params']={r:'6f3465f3ad692b20',m:'bKRdd43AvhwRK1qDHhOWw8_wOvQdNVGYS7uccxyMHoo-1648512792-0-AaKakfkIWGDwEDsMV/0DtLXn5V4QEryKMU/MAh9IT6HyoJFKFvMU6lSEENrh4jOPO4+1WToCCM87PP0oRmkIMR/XMkK7fNcHc+e5p6asvHTURuKs+SNKsqb/K5DxmhDZRQ==',s:[0xa2c825a4d7,0xea37fcf7f3],}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v652eace1692a40cfa3763df669d7439c1639079717194" integrity="sha512-Gi7xpJR8tSkrpF7aordPZQlW2DLtzUlZcumS8dMQjwDHEnw9I7ZLyiOj/6tZStRBGtGgN6ceN6cMH8z7etPGlw==" data-cf-beacon='{"rayId":"6f3465f3ad692b20","token":"a7e9cb7ed4454d2093ab7cf6714c52eb","version":"2021.12.0","si":100}' crossorigin="anonymous"></script>
+</body>
+</html>
