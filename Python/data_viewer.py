@@ -204,7 +204,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.slider.setMinimum(0)
         self.slider.setMaximum(1)
         self.slider.setValue(0)
-        self.slider.valueChanged.connect(self.range_update)
+        self.slider.valueChanged.connect(self.range_update, 0)
 
         # add slider
         self.plot_layout.addWidget(self.slider)
@@ -318,9 +318,12 @@ class DataViewer(QtWidgets.QTabWidget):
         Args:
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
         """
-        points = int(self.duration*1000/self.cycle_time)
-        # data = frame.tail(points)
-        data = frame
+        if (frame.size >= Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate):
+            points = int(Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate)
+        else:
+            points = int(self.duration*1000/self.cycle_time)
+        
+        data = frame.tail(points)
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
@@ -330,8 +333,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
     def range_update(self):
         """Updates plot range when slider is moved"""
-
-        self.plot2.setXRange(self.slider.sliderPosition(), self.slider.sliderPosition() + self.duration)
+        self.plot2.setXRange(self.slider.sliderPosition(),  self.slider.sliderPosition() + self.duration)
 
     def sliderChange(self):
         if self.window.checkbox.isChecked():
@@ -483,15 +485,15 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         packet["time"] -= self.starttime  # time to elapsed
         last_frame = pd.DataFrame(packet, index=[0])
         self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
-            int(15*60*1000/self.cycle_time))  # cap data to 15 min
+            int(Constants.dataStorageDuration*60*1000/self.cycle_time))  # cap data to 15 min (stored as constant in constants.py)
 
         # maybe only run if connection established?
         for viewer in self.viewers:
             if viewer.is_active():
                 viewer.update(self.database)
 
-        # check if database has reached 15 minute cap
-        if (not self.database_full and self.database.size >= 15 * 60 * 1000 / dataHandlerUpdateRate):
+        # check if database has reached duration cap
+        if (not self.database_full and self.database[self.database.columns[0]].count() >= Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate):
             self.database_full = True
         
         # when packet is received increase slider size as necessary
@@ -512,10 +514,22 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     # lock range viewed to most recent values if slider was already at max position
                     if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
                         self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
-                elif (self.database[self.database.columns[0]].count() > 0):
-                    # database is full, slider size doesn't increase but decrease slider position by 1 if slider wasn't at max position
-                    if (self.viewers[idx].slider.value() != self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.sliderPosition() - 1)
+                elif (self.database_full and self.database[self.database.columns[0]].count() > 0):
+                    # if here then database is full
+
+                    end = int(self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1])
+                    start = int(self.database["time"].to_numpy().astype(np.float64)[0])
+                    
+                    # slider size doesn't increase but values of min/max increment in order for range_update to work
+                    if (end >= self.viewers[idx].duration):
+                        self.viewers[idx].slider.setMaximum(end - self.viewers[idx].duration)
+                        self.viewers[idx].slider.setMinimum(start)
+
+                    # database is full, and slider was at max position then keep it there
+                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
+                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
+
+                    
 
     def exit(self):
         """Exit application"""
