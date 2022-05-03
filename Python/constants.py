@@ -72,6 +72,7 @@ class Constants:
     campaign_data_dir = "data/campaigns/"
 
     dataHandlerUpdateRate = 200  # ms
+    dataStorageDuration = 1     # minutes
 
     event_lookup = {"0": "QEvent::None",
                     "114": "QEvent::ActionAdded",
