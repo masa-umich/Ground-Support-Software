@@ -322,7 +322,7 @@ class ControlsPanelWidget(QWidget):
         checkBox.setFont(self.default_font)
         checkBox.setText(label_text)
 
-        checkBox.stateChanged.connect(lambda: self.updateEditingObjectFields(checkBox.isChecked(), identifier))
+        checkBox.stateChanged.connect(lambda: self.updateEditingObjectFields(str(checkBox.isChecked()), identifier))
 
         # self.edit_form_layout.addRow(identifier_label, checkBox)
         self.edit_form_layout.addRow(checkBox)
@@ -521,6 +521,12 @@ class ControlsPanelWidget(QWidget):
                         object_.normally_open = False
             
             # Custom Parameters for Tank
+            elif identifier == "Tank Override":
+                for object_ in self.editing_object_list:
+                    if text == "True":
+                        object_.override_indicator = True
+                    else:
+                        object_.override_indicator = False
 
             object_.updateToolTip()
 
