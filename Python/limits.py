@@ -36,27 +36,56 @@ class Limit(QtWidgets.QGroupBox):
         self.layout.addWidget(self.indicator, 0, 0)
 
         # bounds and value
+
         self.low = QtWidgets.QLineEdit()
         self.low.setPlaceholderText("Low")
+        self.low.setFixedWidth(100)
+
+        self.lower_bound_label = QtWidgets.QLabel("Lower Bound")
+        self.lower_bound_label.setFixedWidth(100)
+        self.lower_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+
+        self.lower_bound = QtWidgets.QComboBox(self)
+        self.lower_bound.addItems(["None", "<", "≤"])
+        self.lower_bound.resize(self.lower_bound.sizeHint())
+        # add signal stuff
+
         self.value = QtWidgets.QLabel("Value")
         self.value.setFixedWidth(100)
         self.value.setAlignment(Qt.AlignCenter)
+
+        self.upper_bound_label = QtWidgets.QLabel("Upper Bound")
+        self.upper_bound_label.setFixedWidth(80)
+        self.upper_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+
+        self.upper_bound = QtWidgets.QComboBox(self)
+        self.upper_bound.addItems(["None", ">", "≥"])
+        self.upper_bound.resize(self.upper_bound.sizeHint())
+        # add signal stuff
+
         self.high = QtWidgets.QLineEdit()
         self.high.setPlaceholderText("High")
+        self.high.setFixedWidth(100)
+
         self.layout.addWidget(self.low, 0, 1)
-        self.layout.addWidget(self.value, 0, 2)
-        self.layout.addWidget(self.high, 0, 3)
+        self.layout.addWidget(self.lower_bound_label, 0, 2)
+        self.layout.addWidget(self.lower_bound, 0, 3)
+        self.layout.addWidget(self.value, 0, 4)
+        self.layout.addWidget(self.upper_bound_label, 0, 5)
+        self.layout.addWidget(self.upper_bound, 0, 6)
+        self.layout.addWidget(self.high, 0, 7)
 
         # channel selection
         self.channel = QtWidgets.QLineEdit()
         self.channel.setPlaceholderText("Channel")
         completer = QtWidgets.QCompleter(channels)  # channel autocomplete
         self.channel.setCompleter(completer)
-        self.layout.addWidget(self.channel, 0, 4)
+        self.channel.setFixedWidth(100)
+        self.layout.addWidget(self.channel, 0, 8)
 
         self.delete_button = QtWidgets.QPushButton("x")
         # self.delete_button.setStyleSheet("")
-        self.layout.addWidget(self.delete_button, 0, 5)
+        self.layout.addWidget(self.delete_button, 0, 9)
         self.delete_button.clicked.connect(self.delete)
         # self.delete_button.setIcon(QtGui.QIcon('Python/xicon.jpg'))
         self.delete_button.setFixedSize(QtCore.QSize(30, 30))
@@ -99,6 +128,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.setStyleSheet("")
+        self.setMinimumWidth(800)
 
         self.interface = S2_Interface()
         self.channels = self.interface.channels
