@@ -46,7 +46,7 @@ class Limit(QtWidgets.QGroupBox):
         self.lower_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
         self.lower_bound = QtWidgets.QComboBox(self)
-        self.lower_bound.addItems(["None", "<", "≤"])
+        self.lower_bound.addItems(["min","<", "≤"])
         self.lower_bound.resize(self.lower_bound.sizeHint())
         # add signal stuff
 
@@ -59,7 +59,7 @@ class Limit(QtWidgets.QGroupBox):
         self.upper_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
         self.upper_bound = QtWidgets.QComboBox(self)
-        self.upper_bound.addItems(["None", ">", "≥"])
+        self.upper_bound.addItems(["max","<", "≤"])
         self.upper_bound.resize(self.upper_bound.sizeHint())
         # add signal stuff
 
@@ -102,7 +102,11 @@ class Limit(QtWidgets.QGroupBox):
         self.value.setText(str(val))
         if len(self.high.text()) > 0 and len(self.low.text()) > 0:
             try:
-                if val <= float(self.high.text()) and val >= float(self.low.text()):
+                if (self.lower_bound.currentText() == "<" and val > float(self.low.text()) or \
+                    self.lower_bound.currentText() == "≤" and val >= float(self.low.text()) or \
+                    self.lower_bound.currentText() == "min") and (self.upper_bound.currentText() == "<" \
+                    and val < float(self.high.text()) or self.upper_bound.currentText() == "≤" and \
+                    val <= float(self.high.text()) or self.upper_bound.currentText() == "max"):
                     self.indicator.setChecked(True)
                 else:
                     self.indicator.setChecked(False)
@@ -128,7 +132,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.setStyleSheet("")
-        self.setMinimumWidth(800)
+        self.setMinimumWidth(850)
 
         self.interface = S2_Interface()
         self.channels = self.interface.channels
