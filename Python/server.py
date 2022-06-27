@@ -823,7 +823,7 @@ class Server(QtWidgets.QMainWindow):
                     packet_addr, packet_type = self.interface.parse_serial()  # returns origin address
                     # packet_addr = -1
                     if packet_addr != -1 and packet_addr != -2:
-                        # print("PARSER WORKED")
+                        #print("PARSER WORKED")
                         self.is_actively_receiving = True
                         self.dataframe["error_msg"] = "'Norminal' - Jon Insprucker"
 

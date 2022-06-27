@@ -120,6 +120,7 @@ class S2_Interface:
                 packet = self.ser.read_until(b'\x00')
                 self.last_raw_packet = packet
                 return self.parse_packet(packet)
+               
         except Exception as e:
             #traceback.print_exc()
             pass
@@ -132,9 +133,12 @@ class S2_Interface:
             packet_type = self.get_packet_type_from_packet(packet)
             board_addr = self.get_board_addr_from_packet(packet)
             #print(packet)
+            #print(packet_type)
             try:
                 # Limit valid packet sizes to mitigate data corruption
                 # Flash binary parser packet length is equal to packet_byte_size, telemetry packet length is packet_byte_size+1 
+                #print(self.board_parser[board_addr].packet_byte_size)
+                #print(len(packet))
                 if packet_type == 0 and ((len(packet) == self.board_parser[board_addr].packet_byte_size) or (len(packet) == self.board_parser[board_addr].packet_byte_size + 1)):
                     #print("here")
                     self.board_parser[board_addr].parse_packet(packet)

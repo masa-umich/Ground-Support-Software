@@ -9,7 +9,7 @@ import struct
 class FlightComputer:
 
 	def __init__(self):
-		self.packet_byte_size = 107
+		self.packet_byte_size = 124
 		self.num_items = 51
 		
 		self.dict = {}
