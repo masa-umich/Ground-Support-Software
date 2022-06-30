@@ -37,7 +37,7 @@ class S2_Interface:
         self.ser            = ser
         self.ports_box      = []
         self.serial_name    = ""
-        self.board_parser   = [GSEController(), FlightComputer(), EngineController(), None, None, None] # Maps board to associated packet parser
+        self.board_parser   = [GSEController(), FlightComputer(), EngineController(), FlightComputer(), None, None] # Maps board to associated packet parser
         self.calibration_parser = [GSEControllerCalibrations(), None, EngineControllerCalibrations(), None, None, None]
         self.helper         = _S2_InterfaceAutogen()
         self.last_raw_packet = None
