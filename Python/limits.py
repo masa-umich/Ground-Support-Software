@@ -100,6 +100,16 @@ class Limit(QtWidgets.QGroupBox):
     def update(self, val: float):
         val = float(val)
         self.value.setText(str(val))
+        self.low.setStyleSheet("QLineEdit{background : ;}")
+        self.high.setStyleSheet("QLineEdit{background : ;}")
+        self.low.setEnabled(True)
+        self.high.setEnabled(True)
+        if self.lower_bound.currentText() == "min":
+            self.low.setStyleSheet("QLineEdit{background : grey;}")
+            self.low.setEnabled(False)
+        if self.upper_bound.currentText() == "max":
+            self.high.setStyleSheet("QLineEdit{background : grey;}")
+            self.high.setEnabled(False)
         if self.lower_bound.currentText() == "min" and self.upper_bound.currentText() == "max":
             self.indicator.setChecked(True)
         elif self.lower_bound.currentText() == "min" and len(self.high.text()) > 0:
@@ -122,10 +132,10 @@ class Limit(QtWidgets.QGroupBox):
                 pass
         elif len(self.high.text()) > 0 and len(self.low.text()) > 0:
             try:
-                if (self.lower_bound.currentText() == "<" and val > float(self.low.text()) or \
+                if ((self.lower_bound.currentText() == "<" and val > float(self.low.text()) or \
                     self.lower_bound.currentText() == "≤" and val >= float(self.low.text())) and \
                     (self.upper_bound.currentText() == "<" and val < float(self.high.text()) or \
-                    self.upper_bound.currentText() == "≤" and val <= float(self.high.text())):
+                    self.upper_bound.currentText() == "≤" and val <= float(self.high.text()))):
                     self.indicator.setChecked(True)
                 else:
                     self.indicator.setChecked(False)
