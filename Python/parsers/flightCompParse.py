@@ -6,7 +6,7 @@
 import time
 import struct
 
-class TelemParse:
+class FlightComputer:
 
 	def __init__(self):
 		self.packet_byte_size = 124
@@ -183,7 +183,7 @@ class TelemParse:
 		self.dict[self.items[49]] = float((float(struct.unpack("<h", packet[103:105])[0]))/10)
 		self.dict[self.items[50]] = float((float(struct.unpack("<h", packet[105:107])[0]))/10)
 		self.dict[self.items[51]] = float((float(struct.unpack("<I", packet[107:111])[0]))/10)
-		self.dict[self.items[52]] = float((float(struct.unpack("<i", packet[111:115])[0]))/1)
-		self.dict[self.items[53]] = float((float(struct.unpack("<i", packet[115:119])[0]))/1)
+		self.dict[self.items[52]] = float((float(struct.unpack("<i", packet[111:115])[0]))/10000)
+		self.dict[self.items[53]] = float((float(struct.unpack("<i", packet[115:119])[0]))/10000)
 		self.dict[self.items[54]] = float((float(struct.unpack("<I", packet[119:123])[0]))/1)
 		self.dict[self.items[55]] = int ((float(struct.unpack("<B", packet[123:124])[0]))/1)
