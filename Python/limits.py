@@ -46,7 +46,7 @@ class Limit(QtWidgets.QGroupBox):
         self.lower_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
         self.lower_bound = QtWidgets.QComboBox(self)
-        self.lower_bound.addItems(["min", "<", "≤"])
+        self.lower_bound.addItems(["-∞", "<", "≤"])
         self.lower_bound.resize(self.lower_bound.sizeHint())
         # add signal stuff
 
@@ -59,7 +59,7 @@ class Limit(QtWidgets.QGroupBox):
         self.upper_bound_label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
         self.upper_bound = QtWidgets.QComboBox(self)
-        self.upper_bound.addItems(["max", "<", "≤"])
+        self.upper_bound.addItems(["+∞", "<", "≤"])
         self.upper_bound.resize(self.upper_bound.sizeHint())
         # add signal stuff
 
@@ -104,15 +104,16 @@ class Limit(QtWidgets.QGroupBox):
         self.high.setStyleSheet("QLineEdit{background : ;}")
         self.low.setEnabled(True)
         self.high.setEnabled(True)
-        if self.lower_bound.currentText() == "min":
+        min, max = "-∞", "+∞"
+        if self.lower_bound.currentText() == min:
             self.low.setStyleSheet("QLineEdit{background : grey;}")
             self.low.setEnabled(False)
-        if self.upper_bound.currentText() == "max":
+        if self.upper_bound.currentText() == max:
             self.high.setStyleSheet("QLineEdit{background : grey;}")
             self.high.setEnabled(False)
-        if self.lower_bound.currentText() == "min" and self.upper_bound.currentText() == "max":
+        if self.lower_bound.currentText() == min and self.upper_bound.currentText() == max:
             self.indicator.setChecked(True)
-        elif self.lower_bound.currentText() == "min" and len(self.high.text()) > 0:
+        elif self.lower_bound.currentText() == min and len(self.high.text()) > 0:
             try:
                 if (self.upper_bound.currentText() == "<" and val < float(self.high.text()) or \
                     self.upper_bound.currentText() == "≤" and val <= float(self.high.text())):
@@ -121,7 +122,7 @@ class Limit(QtWidgets.QGroupBox):
                     self.indicator.setChecked(False)
             except:
                 pass
-        elif self.upper_bound.currentText() == "max" and len(self.low.text()) > 0:
+        elif self.upper_bound.currentText() == max and len(self.low.text()) > 0:
             try:
                 if (self.lower_bound.currentText() == "<" and val > float(self.low.text()) or \
                     self.lower_bound.currentText() == "≤" and val >= float(self.low.text())):
