@@ -44,7 +44,7 @@ class ControlsWindow(QMainWindow):
         self.interface = S2_Interface()
         self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
         self.button_box = AbortButton(self.gui)  # .client)
-        self.limits = LimitWindow(10, gui=self.gui)  # .client)
+        #self.limits = LimitWindow(10, gui=self.gui)  # .client)
         self.auto_manager = AutoManager(self.gui) #.client)
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
@@ -57,12 +57,15 @@ class ControlsWindow(QMainWindow):
         else:
             self.setGeometry(0, 0, self.gui.screenResolution[0], self.gui.screenResolution[1] - self.statusBar().height())
 
+
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.flash_dialog = FlashWindow(self.gui)
         self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateFromConnectionStatus)
+
+        self.limits = LimitWindow(10, gui=self.gui, centralWidget = self.centralWidget)
 
         appid = 'MASA.GUI' # arbitrary string
         if os.name == 'nt': # Bypass command because it is not supported on Linux 
@@ -446,6 +449,7 @@ class ControlsWindow(QMainWindow):
             self.exitDebugAct.setEnabled(True)
             self.startRunAct.setEnabled(True)
             self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
+            self.limits.widget.update_channels()
 
     def saveNotes(self, fileName=''):
         """

@@ -207,6 +207,7 @@ class ControlsWidget(QWidget):
         object_.deleteSelf()
 
         self.update()
+        # self.parent.parent.limits.widget.update_channels()
 
     def moveObjectGroup(self, dif):
         """
@@ -425,6 +426,7 @@ class ControlsWidget(QWidget):
                 self.gui.setStatusBarMessage(action.text() + " created")
 
             self.update()
+            # self.parent.parent.limits.widget.update_channels()
 
     def generateSensorMappingsToSend(self):
         """
@@ -711,6 +713,14 @@ class ControlsWidget(QWidget):
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         self.gui.setStatusBarMessage("Configuration opened from " + fileName)
+        # self.parent.parent.limits.widget.update_channels()
+
+    def findLongName(self, channelName):
+        if channelName != "":
+            for object in self.object_list:
+                if object.channel == channelName:
+                    return object.long_name
+            return "no long name"
 
 
 

@@ -93,7 +93,7 @@ class Limit(QtWidgets.QGroupBox):
 
 
 class LimitWidget(QtWidgets.QWidget):
-    def __init__(self, num_channels, *args, **kwargs):
+    def __init__(self, num_channels, centralWidget, *args, **kwargs):
         super(LimitWidget, self).__init__(*args, **kwargs)
 
         self.layout = QtWidgets.QGridLayout()
@@ -114,6 +114,9 @@ class LimitWidget(QtWidgets.QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.limits_box)
         self.layout.addWidget(self.scroll, 0, 0, 1, 2)
+
+        self.centralWidget = centralWidget
+        self.channels_with_long_name = []
 
         self.limits = []
         for i in range(num_channels):
@@ -148,6 +151,13 @@ class LimitWidget(QtWidgets.QWidget):
         self.limits_layout.insertWidget(self.num_channels, self.limits[-1])
         self.num_channels = len(self.limits)
 
+        # print("PARSING")
+        # for channel in self.channels_with_long_name:
+        #     alias_end = channel.find("**")
+        #     if alias_end != -1:
+        #         channel = channel[alias_end + 3:]
+        #     print(channel)
+
     def save(self):
         configs = {"num_channels": self.num_channels,
                    "limit_configs": [limit.save() for limit in self.limits]}
@@ -170,9 +180,31 @@ class LimitWidget(QtWidgets.QWidget):
         if last_packet:
             last_packet["time"] -= self.starttime  # time to elapsed
             for i in range(len(self.limits)):
-                channel = self.limits[i].channel.text()
+                alias_end = self.limits[i].channel.text().find("|")
+                if alias_end == -1: # no alias
+                    channel = self.limits[i].channel.text()
+                else: # reversing the inclusion of alias, parse just the channel name
+                    channel = self.limits[i].channel.text()[alias_end + 2:]
                 if channel in self.channels:
                     self.limits[i].update(last_packet[channel])
+
+    def update_channels(self):
+        # print("")
+        # print("UPDATING CHANNELS FROM LIMITS")
+
+        self.channels_with_long_name.clear()
+        for channel in self.channels:
+            ln = self.centralWidget.controlsWidget.findLongName(channel)
+            if ln != "no long name":
+                self.channels_with_long_name.append(ln + " | " + channel)
+            else:
+                self.channels_with_long_name.append(channel)
+        
+        # print(self.channels_with_long_name)
+
+        for i in range(len(self.limits)):
+            completer = QtWidgets.QCompleter(self.channels_with_long_name)  # update channel autocomplete
+            self.limits[i].channel.setCompleter(completer)
     
     # def cycle(self):
     #     last_packet = self.client_dialog.client.cycle()
@@ -180,7 +212,7 @@ class LimitWidget(QtWidgets.QWidget):
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, gui, singular : bool = False, *args, **kwargs):
+    def __init__(self, num_channels, gui, centralWidget, singular : bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.gui = gui
@@ -188,6 +220,8 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
         self.options_menu = self.main_menu.addMenu('&Options')
+
+        self.centralWidget = centralWidget
 
         # # set up client
         # if client is None:
@@ -204,7 +238,7 @@ class LimitWindow(QtWidgets.QMainWindow):
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         
-        self.widget = LimitWidget(num_channels, *args, **kwargs)
+        self.widget = LimitWidget(num_channels, centralWidget = centralWidget, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
 
