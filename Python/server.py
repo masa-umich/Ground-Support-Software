@@ -266,11 +266,12 @@ class Server(QtWidgets.QMainWindow):
         try:
             port = str(self.ports_box.currentText())
             baud = int(self.baudrate_box.currentText())
+            print(baud)
             if port:
                 self.interface.connect(port, baud, 0.5) # 3913043 or 115200
                 self.interface.parse_serial()
         except:
-            # traceback.print_exc()
+            traceback.print_exc()
             pass
 
         if self.interface.ser.isOpen():
@@ -839,6 +840,8 @@ class Server(QtWidgets.QMainWindow):
 
                         # parse packet and aggregate
 
+                        print("size: " + str(raw_packet_size))
+                        print(packet_addr)
                         # default to board_parser
                         new_data = self.interface.board_parser[packet_addr].dict
 
@@ -888,7 +891,7 @@ class Server(QtWidgets.QMainWindow):
             self.party_parrot.step()
 
         except Exception as e:
-            #traceback.print_exc()
+            traceback.print_exc()
             print("Parser failed with error ", e)
             self.is_actively_receiving = False
             self.packet_size_label.setText("Last Packet Size: %s" % "Exception, check terminal")

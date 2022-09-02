@@ -23,7 +23,7 @@ class ObjectLabel(CustomLabel):
         self.is_vertical = is_vertical
         self.position_string = position_string
         self.local_pos = local_pos
-        self.light = IndicatorLightWidget(widget_parent, "", 5, "Red", 14, 1, 1, 1)
+        self.light = IndicatorLightWidget(widget_parent, self.gui, "", 5, "Red", 14, 1, 1, 1)
         # Have to scale it, not sure if this is best location
         self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
         self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])

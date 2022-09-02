@@ -1,5 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QColor
+from datetime import datetime
 
 """
 Class to hold any constant value that is important to the entire program
@@ -27,6 +28,8 @@ class Constants:
 
     boards = ["Engine Controller", "Flight Computer", "Pressurization Controller",
               "Recovery Controller", "GSE Controller"]
+
+    SERVER_BOARD_DATA_UPDATE_FREQUENCY = 50  # Hz
 
     line_width = 2 # This is actually overiden lol
 
@@ -72,6 +75,26 @@ class Constants:
     campaign_data_dir = "data/campaigns/"
 
     dataHandlerUpdateRate = 200  # ms
+
+    cli_to_ser_cmd_ref = {
+        "Heartbeat": 0,
+        "Request Commander": 1,
+        "Give Commander": 2,
+        "Board Command": 3,
+        "Disconnect": 4,
+        "Dump Flash": 5,
+        "Campaign Logging": 6,
+        "Run Autosequence": 7,
+        "Abort Autosequence": 8,
+        "Write to Campaign Log": 9,
+        "New Test": 10,
+        "Client Connected": 11
+    }
+
+    serial_packet_type_ref = {
+        "Board Data": 0,
+        "Calibration Data": 2
+    }
 
     event_lookup = {"0": "QEvent::None",
                     "114": "QEvent::ActionAdded",
@@ -219,3 +242,14 @@ class Constants:
                     "104": "QEvent::WindowUnblocked",
                     "203": "QEvent::WinIdChange",
                     "126": "QEvent::ZOrderChange", }
+
+    @staticmethod
+    def getCurrentTimestamp():
+        """
+        gets the current timestamp
+        :return: formatted string
+        """
+        time_obj = datetime.now().time()
+        time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
+
+        return time

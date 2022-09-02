@@ -133,23 +133,23 @@ class MissionWidget(QWidget):
         self.titleLabel.show()
 
         # Set all the indicators, move into position
-        self.campaignIndicator = IndicatorLightWidget(self, 'Campaign', 20, "Red", 14, 30, 5, 2)
+        self.campaignIndicator = IndicatorLightWidget(self, self.gui, 'Campaign', 20, "Red", 14, 30, 5, 2)
         self.campaignIndicator.setToolTip("Campaign has not started")
         self.campaignIndicator.move(self.CET_labelRPos, 0)
 
-        self.connectionIndicator = IndicatorLightWidget(self, 'Connection', 20, "Red", 14, 30, 5, 2)
+        self.connectionIndicator = IndicatorLightWidget(self, self.gui, 'Connection', 20, "Red", 14, 30, 5, 2)
         self.connectionIndicator.move(self.campaignIndicator.pos().x() + self.campaignIndicator.width(), 0)
         self.connectionIndicator.setToolTip("No connection")
 
-        self.commandIndicator = IndicatorLightWidget(self, 'Command', 20, "Red", 14, 30, 5, 2)
+        self.commandIndicator = IndicatorLightWidget(self, self.gui, 'Command', 20, "Red", 14, 30, 5, 2)
         self.commandIndicator.move(self.connectionIndicator.pos().x() + self.connectionIndicator.width(), 0)
         self.commandIndicator.setToolTip("In command")
 
-        self.systemIndicator = IndicatorLightWidget(self, 'System', 20, "Green", 14, 30, 5, 1)
+        self.systemIndicator = IndicatorLightWidget(self, self.gui, 'System', 20, "Green", 14, 30, 5, 1)
         self.systemIndicator.move(self.commandIndicator.pos().x() + self.commandIndicator.width(), 0)
         self.systemIndicator.setToolTip("Norminal")
 
-        # self.stateIndicator = IndicatorLightWidget(self, 'State', 20, "Red", 14, 20, 5, 2)
+        # self.stateIndicator = IndicatorLightWidget(self, self.gui, 'State', 20, "Red", 14, 20, 5, 2)
         # self.stateIndicator.move(self.systemIndicator.pos().x() + self.systemIndicator.width(), 0)
         # self.stateIndicator.setToolTip("No state data")
 
@@ -367,6 +367,10 @@ class MissionWidget(QWidget):
         elif status == 3:
             self.connectionIndicator.setIndicatorColor("Red")
             self.connectionIndicator.setToolTip("No Server Connection")
+
+        elif status == 4:
+            self.connectionIndicator.setIndicatorColor("Yellow")
+            self.connectionIndicator.setToolTip("Odd. Packets have no data but data handler insists connection is active")
 
         # commander
         if is_commander:

@@ -89,8 +89,13 @@ class LiveDataHandlerBackgroundThread(QThread):
                     self.lastPacketDataSignal.emit(packet)  # change to packet when ready
 
             else:
-                # Server to GUI connection bad, no info to display at the time
-                self.connectionStatusSignal.emit(3, "", self.dataHandler.getClient().is_commander)
+
+                if self.dataHandler.getClient().is_connected:
+                    # For reasons unknown, it thinks it connected, but getting no packets. Display this
+                    self.connectionStatusSignal.emit(4, "", self.dataHandler.getClient().is_commander)
+                else:
+                    # Server to GUI connection bad, no info to display at the time
+                    self.connectionStatusSignal.emit(3, "", self.dataHandler.getClient().is_commander)
 
             self.updateScreenSignal.emit()
 

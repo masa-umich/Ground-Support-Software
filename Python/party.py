@@ -18,7 +18,6 @@ class PartyParrot(QLabel):
         
         self.setAlignment(Qt.AlignCenter)
         self._set_frame()
-        
 
     def _set_frame(self):
         self.setPixmap(self.frames[self.current_frame])
