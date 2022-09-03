@@ -20,7 +20,7 @@ class PacketLogWidget(QWidget):
         # TODO: This is designed to go in a tab (helps with performance. If this wants to be removed it is easy, just change this to be parent(I think))
         self.tabWidget = tabWidget
         self.interface = interface
-        #data_update_signal.connect(self.updateFromDataPacket)
+        data_update_signal.connect(self.updateFromDataPacket)
 
         # holds the all the widgets
         self.vertLayout = QVBoxLayout()

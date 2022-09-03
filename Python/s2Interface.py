@@ -121,7 +121,6 @@ class S2_Interface:
                 # Blocking
                 # TODO: check if actually blocking
                 packet = self.ser.read_until(b'\x00')
-                print(packet)
                 self.last_raw_packet = packet
                 return self.parse_packet(packet)
         except Exception as e:
@@ -151,8 +150,8 @@ class S2_Interface:
                     #print(str(self.calibration_parser[board_addr].dict))
                 return (board_addr, packet_type)
             except Exception as e:
-                traceback.print_exc()
-                print("Packet lost with error ", e)
+                #traceback.print_exc()
+                print("Packet lost with error: ", e)
         # Return -2 if the packet parse fails
         return (-2, -2)
 
@@ -238,7 +237,6 @@ class S2_Interface:
     """
     def get_board_addr_from_packet(self, packet):
         board_addr = int((float(struct.unpack("<B", packet[1:2])[0]))/1)
-        #print("addr ", board_addr)
         return board_addr
 
     """
@@ -333,7 +331,9 @@ class S2_Interface:
         """
 
         mem_downloaded = 0
-        mem_to_download = self.board_parser[target_board_addr].dict["flash_mem"]
+        mem_to_download = (134086656 - self.board_parser[target_board_addr].dict["flash_mem"])
+
+        print("mem to download: " + str(mem_to_download))
 
         time_file_stamp = time.strftime("%Y_%m_%d_%H-%M-%S")
         if filepath is None:
@@ -341,7 +341,7 @@ class S2_Interface:
             datadir = filepath+"/flash_dump/"+time_file_stamp
             os.makedirs(datadir)
         else:
-            datadir = filepath+"/flash_dump/"
+            datadir = filepath+"flash_dump/"
             if not os.path.exists(datadir):
                 os.makedirs(datadir)
 
@@ -375,6 +375,7 @@ class S2_Interface:
                         binfile.write(bytes(ser_page))  # Log to bin
         except Exception as e:
             print("Error: could not open file to write flash contents because of error ", e)
+            traceback.print_exc()
         telem_info["args"] = [0]
         self.s2_command(telem_info)
         command_log.write(Constants.getCurrentTimestamp() + ",From Board," + str(telem_info) + '\n')

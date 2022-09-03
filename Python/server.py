@@ -840,8 +840,6 @@ class Server(QtWidgets.QMainWindow):
 
                         # parse packet and aggregate
 
-                        print("size: " + str(raw_packet_size))
-                        print(packet_addr)
                         # default to board_parser
                         new_data = self.interface.board_parser[packet_addr].dict
 

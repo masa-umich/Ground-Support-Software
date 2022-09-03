@@ -545,7 +545,6 @@ class Server(QThread):  # See below
             # This is purposely not in the running section of the thread. If this hangs, indicates a problem so good to
             # show that to the user
             self.interface.connect(port, baud, timeout=0.5)
-            self.interface.parse_serial()
 
         if self.interface.ser.isOpen():
             self.logSignal.emit("Server", "Connection established on %s" % port)
@@ -720,8 +719,6 @@ class Server(QThread):  # See below
         :return:
         """
 
-        # TODO: Also add in close for test log
-
         # Check if server log is open, if it is others should also be. Too lazy to check all
         if self.server_log is None:
             return  # Nothing should be open, nothing to close
@@ -772,7 +769,7 @@ class Server(QThread):  # See below
         elif location == "Command":
             self.command_log.write(Constants.getCurrentTimestamp()+"," + msg + "\n")
         elif location == "Serial":
-            self.server_log.write(Constants.getCurrentTimestamp()+"," + msg + "\n")
+            self.serial_log.write(Constants.getCurrentTimestamp()+"," + msg + "\n")
         elif location == "Data":
             self.data_log.write(msg + "\n")  # Timestamp already included in data
 
@@ -977,15 +974,13 @@ class Server(QThread):  # See below
         :return: None
         """
 
-        self.logSignal("Server", "Flash download progress: %s" % str(progress))
+        self.logSignal.emit("Server", "Flash download progress: %s" % str(progress))
 
     def run(self):
 
         # When server is open, should always be attempting this
         while True:
             # Check to see we have good board serial data before sending
-            # TODO: Check what happens if we do not have serial, and we do a ton of commands, and then it connects. May
-            #  need to clear the command_q if serial fails
 
             try:
                 if self.interface.ser.is_open:
@@ -1057,6 +1052,8 @@ class Server(QThread):  # See below
                     # Serial is closed
                     self.is_actively_receiving_data = False
                     self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
+                    with self.command_queue.mutex:
+                        self.command_queue.queue.clear()
 
             except Exception as e:
                 print("Server run loop had an error:  ", e)
@@ -1154,6 +1151,9 @@ class ClientConnectionHandler(QThread):
 
         # TODO: Final note so I don't forget. The serial call used to read serial in s2interface is blocking.
         #  So no matter what the server update freq is, it will wait for that packet. Need to check this tho
+
+        # ^ Last point seems to be the case. We run at freq of data in. At 10hz have to check GSE rate but I think it
+        # is that
 
         self.data_to_client = data_dict
 
