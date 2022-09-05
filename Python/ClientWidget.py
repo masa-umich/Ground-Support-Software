@@ -219,9 +219,10 @@ class ClientWidget(QtWidgets.QWidget):
 
             self.last_packet = packet
             return self.last_packet
-
-        except Exception as e:
-            if not isinstance(e, EOFError):
-                traceback.print_exc()
+        except (EOFError, ConnectionResetError):
             self.soft_disconnect()
+            return None
+        except Exception:
+            self.soft_disconnect()
+            traceback.print_exc()
             return None

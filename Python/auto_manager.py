@@ -414,7 +414,7 @@ class AutoManager(QtWidgets.QMainWindow):
         return msgBox.exec()
 
     def abort(self):
-        self._gui.liveDataHandler(8)
+        self._gui.liveDataHandler.sendCommand(8, None)
 
     def save(self):
         if self.path:

@@ -36,10 +36,22 @@ class ServerGraphics(QMainWindow):
     elsewhere
     """
 
-    def __init__(self):
+    def __init__(self, qapp):
         super().__init__()
 
-        self.setWindowTitle("Server 3")
+        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+
+        if not os.path.isdir(self.LAUNCH_DIRECTORY):
+            os.mkdir(path=self.LAUNCH_DIRECTORY)
+
+        print("MASA GUI Version: " + Constants.GUI_VERSION)
+        print("Python Version: " + str(sys.version_info))
+        print("QT Version: " + QT_VERSION_STR)
+        print("Launch Directory: " + os.path.abspath(self.LAUNCH_DIRECTORY))
+
+        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY + 'Images/logo_server.png'))
+
+        self.setWindowTitle("Server (Updated)")
 
         self.central_widget = QWidget()
 
@@ -152,6 +164,7 @@ class ServerGraphics(QMainWindow):
 
         self.commandline_line_edit = QLineEdit()
         self.commandline_line_edit.installEventFilter(self)
+        self.commandline_line_edit.setStyleSheet("border: 1px solid")
         self.commandline_line_edit.setPlaceholderText("Command line interface. Type \"help\" for info.")
 
         self.commandline_local_commands = ["delay", "set_addr", "help", "auto", "auto_list"]
@@ -265,7 +278,8 @@ class ServerGraphics(QMainWindow):
                 self.commandline_textbox.append("Args: arg(format)\n%s" % (cmd_args))
         else:
             response = self.server.process_command_line(cmd, args, board_addr)
-            self.commandline_textbox.append(response)
+            if response:
+                self.commandline_textbox.append(response)
 
         self.commandline_textbox.scroll(0, 0)  # Not sure why/ how but this scrolls textbox to bottom
 
@@ -349,6 +363,34 @@ class ServerGraphics(QMainWindow):
             return True
 
         return super().eventFilter(source, event)
+
+    @staticmethod
+    def applyDarkTheme(qapp: QApplication):
+        qapp.setStyle("Fusion")
+
+        darkPalette = QPalette()
+        darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.WindowText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
+        darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
+        darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
+        darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+        darkPalette.setColor(QPalette.Text, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
+        darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
+        darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.ButtonText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.BrightText, Qt.red)
+        darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
+        darkPalette.setColor(QPalette.HighlightedText, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
+
+        qapp.setPalette(darkPalette)
 
 
 class Server(QThread):  # See below
@@ -621,7 +663,7 @@ class Server(QThread):  # See below
 
         # Validate then parse command
         if cmd in possible_commands:
-            self.parse_command_from_text(cmd, args, board_addr)
+            return self.parse_command_from_text(cmd, args, board_addr)
 
         # List all files in autosequence folder
         elif cmd == "auto_list":
@@ -645,8 +687,14 @@ class Server(QThread):  # See below
                 with open(path) as f:
                     lines = f.read().splitlines()  # read file
 
+                if not self.interface.ser.is_open:
+                    return "Warning: No connection to serial. Stopping"
+
                 auto_thread = AutosequenceThread(self, lines, False)
                 self.active_autosequence = auto_thread
+
+                return "Autosequence started, check server log and command log for status"
+
             except FileNotFoundError:
                 return "File not found"
             except:
@@ -661,7 +709,7 @@ class Server(QThread):  # See below
         :param cmd: Command name
         :param args: arguments as a list
         :param addr: Board addr command is intended for
-        :return: None
+        :return: Error message if applicable, otherwise none
         """
 
         # Get arguments
@@ -677,14 +725,16 @@ class Server(QThread):  # See below
                     #"args": [float(a) for a in args if a.isnumeric()]
                     "args": [float(a) for a in args]
                 }
-                print(cmd_dict)
 
                 # Add it to command queue
                 self.command_queue.put(cmd_dict)
-
+            else:
+                return "Command does not have enough arguments"
         except Exception as e:
             traceback.print_exc()
-            print("Error: could not send command because of error: ", e)
+            return "Error: could not send command because of error: " + str(e)
+
+        return None
 
     @overrides
     def exit(self):
@@ -1062,13 +1112,15 @@ class Server(QThread):  # See below
             try:
                 if self.interface.ser.is_open:
 
-                    # Most important thing lol
-                    self.partyParrotStepSignal.emit()
+                    if self.is_actively_receiving_data:
+                        # Most important thing lol
+                        self.partyParrotStepSignal.emit()
 
                     # Send commands
                     if not self.command_queue.empty():
                         command_to_send = self.command_queue.get()
                         self.logSignal.emit("Command", "To Board, " + str(command_to_send))
+                        print("To Board:" + str(command_to_send))
                         self.interface.s2_command(command_to_send)
 
                     if self.do_flash_dump:
@@ -1363,7 +1415,7 @@ class ClientConnectionHandler(QThread):
         while self.is_active:
             try:
                 # Receive in command/ data from client
-                msg = self.client_socket.recv(4096 * 8)  # if the data is ever bigger then this so help me
+                msg = self.client_socket.recv(4096 * 8)  # if the data is ever bigger than this so help me
                 if msg == b'':
                     # Remote connection closed
 
@@ -1386,6 +1438,8 @@ class ClientConnectionHandler(QThread):
                 data = pickle.dumps(self.data_to_client)
                 self.client_socket.sendall(data)
 
+            except ConnectionResetError:
+                self.close_connection()
             except Exception as e:
                 traceback.print_exc()
 
@@ -1484,7 +1538,8 @@ if __name__ == '__main__':
     app.setApplicationName("MASA Server")
     app.setApplicationDisplayName("MASA Server")
 
-    server = ServerGraphics()
+    server = ServerGraphics(app)
+    #server.applyDarkTheme(app)
 
     server.show()
     server.exit(app.exec())
