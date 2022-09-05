@@ -266,7 +266,6 @@ class Server(QtWidgets.QMainWindow):
         try:
             port = str(self.ports_box.currentText())
             baud = int(self.baudrate_box.currentText())
-            print(baud)
             if port:
                 self.interface.connect(port, baud, 0.5) # 3913043 or 115200
                 self.interface.parse_serial()
@@ -666,8 +665,7 @@ class Server(QtWidgets.QMainWindow):
                     lines = f.read().splitlines()  # read file
 
                 # create thread to handle auto
-                auto_thread = threading.Thread(target=self.run_auto,
-                                               args=(lines, addr), daemon=True)
+                auto_thread = threading.Thread(target=self.run_auto, args=(lines, addr), daemon=True)
                 auto_thread.start()
             except:
                 pass

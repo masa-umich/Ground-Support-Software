@@ -31,7 +31,7 @@ TOOLTIPS["set_addr"] = "<nobr><b>set_addr</b> target_addr<i>(int)</i></nobr>"
 TOOLTIPS["loop"] = "<nobr><b>loop</b> num_loops<i>(int)</i></nobr>"
 TOOLTIPS["end_loop"] = "<nobr><b>end_loop</b></nobr>"
 TOOLTIPS["auto"] = "<nobr><b>auto</b> auto_name<i>(str)</i></nobr>"
-TOOLTIPS["new_log"] = "<nobr><b>new_log</b> logname<i>(str)</i></nobr>"
+
 
 class DictionaryCompleter(QtGui.QCompleter):
     insertText = QtCore.pyqtSignal(str)

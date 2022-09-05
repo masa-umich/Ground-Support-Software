@@ -31,6 +31,10 @@ threading.stack_size(134217728)
 
 
 class ServerGraphics(QMainWindow):
+    """
+    This class strictly handles drawing and updating graphics for the server. All commands and connections handled
+    elsewhere
+    """
 
     def __init__(self):
         super().__init__()
@@ -150,9 +154,9 @@ class ServerGraphics(QMainWindow):
         self.commandline_line_edit.installEventFilter(self)
         self.commandline_line_edit.setPlaceholderText("Command line interface. Type \"help\" for info.")
 
-        self.commandline_local_commands = ["delay", "set_addr", "help", "auto"]
+        self.commandline_local_commands = ["delay", "set_addr", "help", "auto", "auto_list"]
         possible_commands = self.server.get_command_list() + self.commandline_local_commands
-        possible_commands = possible_commands + ["help " + x for x in self.server.get_command_list()]
+        possible_commands = possible_commands + ["help " + x for x in (self.server.get_command_list() + self.commandline_local_commands)]
         completer = QCompleter(possible_commands)
         self.commandline_line_edit.setCompleter(completer)
         self.commandline_line_edit.returnPressed.connect(self.processCommandLine)
@@ -260,7 +264,8 @@ class ServerGraphics(QMainWindow):
                 #TODO: Improve how this is shown
                 self.commandline_textbox.append("Args: arg(format)\n%s" % (cmd_args))
         else:
-            self.server.process_command_line(cmd, args, board_addr)
+            response = self.server.process_command_line(cmd, args, board_addr)
+            self.commandline_textbox.append(response)
 
         self.commandline_textbox.scroll(0, 0)  # Not sure why/ how but this scrolls textbox to bottom
 
@@ -289,6 +294,7 @@ class ServerGraphics(QMainWindow):
         tooltips["delay"] = "delay time(int, milliseconds)"
         tooltips["set_addr"] = "set_addr target_addr(int)"
         tooltips["auto"] = "auto auto_name(str)"
+        tooltips["auto_list"] = "auto_list"
 
         for local_cmd in self.commandline_local_commands:
             if local_cmd != "help" and local_cmd not in tooltips.keys():
@@ -346,15 +352,17 @@ class ServerGraphics(QMainWindow):
 
 
 class Server(QThread):  # See below
+    """
+    This class handles a majority of the command processing, data processing etc.
+    """
 
-    # TODO: look at server solution that does not depend on Pyqt? Hard to get around singals and QThread nice
     statusBarMessageSignal = pyqtSignal(str, bool)
     logSignal = pyqtSignal(str, str)
     commanderLabelSignal = pyqtSignal(str)
     packetSizeLabelSignal = pyqtSignal(str)
     partyParrotStepSignal = pyqtSignal()
     dataPacketSignal = pyqtSignal(dict)
-    # Doing this because we may want to run this server when no
+    # Doing all this because we may want to run this server when no
     # graphics are present. Don't want to pass in window that may not exist
 
     def __init__(self):
@@ -377,10 +385,14 @@ class Server(QThread):  # See below
         # Hold commands that will go to the board
         self.command_queue = queue.Queue()
 
+        # TODO: Kinda hate that have all these vars. Probs can not have them instance vars
         # Flag and holder for flash dump
         self.do_flash_dump = False
         self.flash_dump_addr: str = None
         self.flash_dump_loc: str = None
+
+        # Holds reference to autosequence thread
+        self.active_autosequence: AutosequenceThread = None
 
         # Holds all the data sent from the boards as a dict. Also contains header that has server connection info
         # For example can call self.data_dict["ec.pressure[0]"] to get the pressure of channel 0 on ec
@@ -607,32 +619,74 @@ class Server(QThread):  # See below
 
         possible_commands = self.get_command_list()
 
-        # Validate command
+        # Validate then parse command
         if cmd in possible_commands:
-            # TODO:
-            pass
-            # self.parse_command(cmd, args, board_addr)
+            self.parse_command_from_text(cmd, args, board_addr)
 
-        # TODO:
+        # List all files in autosequence folder
+        elif cmd == "auto_list":
+
+            return_str = ""
+            for file in os.listdir("autos/"):
+                if file.endswith(".txt"):
+                    return_str += file + ", "
+
+            return return_str
+
         elif cmd == "auto":  # run an auto sequence
-            seq = args[0]
-            path = "autos/" + str(seq) + ".txt"
+            filename = args[0]
+            path = "autos/" + str(filename) + ".txt"
 
+            if self.active_autosequence is not None:
+                return "Active autosequence already running"
+
+            # Open file and call thread
             try:
                 with open(path) as f:
                     lines = f.read().splitlines()  # read file
 
-                # create thread to handle auto
-                # TODO:
-                auto_thread = threading.Thread(target=self.run_auto,
-                                               args=(lines, board_addr), daemon=True)
-                auto_thread.start()
+                auto_thread = AutosequenceThread(self, lines, False)
+                self.active_autosequence = auto_thread
+            except FileNotFoundError:
+                return "File not found"
             except:
-                pass
-
+                traceback.print_exc()
         else:
             return "Command not recognized"
 
+    def parse_command_from_text(self, cmd: str, args: list, addr: int):
+        """
+        Takes a command from text (autosequence or command line) and compiles a command dict that is then added to
+        command queue
+        :param cmd: Command name
+        :param args: arguments as a list
+        :param addr: Board addr command is intended for
+        :return: None
+        """
+
+        # Get arguments
+        cmd_args = self.get_command_args(cmd)
+
+        # Parse and assemble command
+        try:
+            if len(args) == len(cmd_args):
+                cmd_dict = {
+                    "function_name": cmd,
+                    "target_board_addr": int(addr),
+                    "timestamp": int(datetime.now().timestamp()),
+                    #"args": [float(a) for a in args if a.isnumeric()]
+                    "args": [float(a) for a in args]
+                }
+                print(cmd_dict)
+
+                # Add it to command queue
+                self.command_queue.put(cmd_dict)
+
+        except Exception as e:
+            traceback.print_exc()
+            print("Error: could not send command because of error: ", e)
+
+    @overrides
     def exit(self):
         super().exit()
         self.close_logs()
@@ -884,12 +938,11 @@ class Server(QThread):  # See below
             self._num_update_steps = 0
             self._last_update_time = time.time()
 
-    @pyqtSlot(object, dict)
-    def process_client_command(self, client_thread: ClientConnectionHandler, command_dict: dict):
+    @pyqtSlot(dict)
+    def process_client_command(self, command_dict: dict):
         """
         Function for processing any commands from the client. Does not need to be in thread because nothing here should
         be blocking
-        :param client_thread: client thread instance in case it needs to be shutdown or something else
         :param command_dict: command dict to pull command and args from
         :return: None
         """
@@ -932,12 +985,31 @@ class Server(QThread):  # See below
             else:
                 self.update_campaign_logging(*args)
 
-        elif command == Constants.cli_to_ser_cmd_ref["Run Autosequence"]:
-            # TODO:
-            pass
-        elif command == Constants.cli_to_ser_cmd_ref["Abort Autosequence"]:
-            # TODO:
-            pass
+        elif command == Constants.cli_to_ser_cmd_ref["Run Autosequence"] and self.check_commander(clientid):
+            if self.active_autosequence is None:
+                lines = args[0]
+                auto_thread = AutosequenceThread(self, lines, True)
+                self.active_autosequence = auto_thread
+            else:
+                self.logSignal.emit("Server", "Rejected new run autosequence command as another is already running")
+                self.statusBarMessageSignal.emit("Rejected new run autosequence command as another is already running", True)
+
+        elif command == Constants.cli_to_ser_cmd_ref["Abort Autosequence"] and self.check_commander(clientid):
+
+            # If the autosequence is active then clear any commands and kill the thread
+            if self.active_autosequence is not None:
+                self.active_autosequence.set_should_abort()
+
+                # We clear commands here, and also in the thread to catch the case if the thread is on a delay, want
+                # to prevent sending out any more commands
+                with self.command_queue.mutex:
+                    self.command_queue.queue.clear()
+
+                self.active_autosequence = None
+
+                self.logSignal.emit("Server", "Autosequence aborted!")
+                self.statusBarMessageSignal.emit("Autosequence aborted!", False)
+
         elif command == Constants.cli_to_ser_cmd_ref["Write to Campaign Log"]:
             CET = args[0]
             type_ = args[1]
@@ -976,7 +1048,12 @@ class Server(QThread):  # See below
 
         self.logSignal.emit("Server", "Flash download progress: %s" % str(progress))
 
+    @overrides
     def run(self):
+        """
+        Run method for thread
+        :return: None
+        """
 
         # When server is open, should always be attempting this
         while True:
@@ -995,8 +1072,6 @@ class Server(QThread):  # See below
                         self.interface.s2_command(command_to_send)
 
                     if self.do_flash_dump:
-                        # TODO: Is there any reason this can't be in process_commands, I thinknot but then this thread
-                        #  would continue and be bad
                         self.logSignal.emit("Server", "Taking a dump. Be out in just a sec")
                         self.interface.download_flash(self.flash_dump_addr, int(
                             datetime.now().timestamp()), self.command_log, self.flash_dump_loc, self.get_flash_download_progress)
@@ -1057,6 +1132,7 @@ class Server(QThread):  # See below
 
             except Exception as e:
                 print("Server run loop had an error:  ", e)
+                traceback.print_exc()
                 self.is_actively_receiving_data = False
                 self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
                 self.statusBarMessageSignal.emit("Warning: Server run loop error, check terminal", True)
@@ -1085,6 +1161,109 @@ class Server(QThread):  # See below
         return QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
 
 
+class AutosequenceThread(QThread):
+    """
+    Handles running the autosequence that is defined from the server command line or as sent from the client
+    """
+
+    sendToLogSignal = pyqtSignal(str, str)
+    statusBarMessageSignal = pyqtSignal(str, bool)
+
+    def __init__(self, server: Server, lines: list, is_pre_parsed: bool = False):
+        super().__init__()
+
+        self.server = server
+
+        self.sendToLogSignal.connect(self.server.logSignal)
+        self.statusBarMessageSignal.connect(self.server.statusBarMessageSignal)
+
+        self.should_abort = False
+
+        # TODO: Add a filename or some descriptor to this
+        self.sendToLogSignal.emit("Server", "Running Autosequence")
+        self.statusBarMessageSignal.emit("Running Autosequence", False)
+        # If the line are not parses, ie server is opening from file then we need to parse them
+        if not is_pre_parsed:
+            try:
+                command_list = []
+                # For each line, removes left spaces, set to lowercase and then split on spaces
+                for line in lines:
+                    command_list.append(line.lstrip().lower().split(" "))
+
+                # Parses the autosequence and adds in correct commands depending on loop etc
+                (self.constructed, _) = parse_auto.parse_auto(command_list)
+            except:
+                traceback.print_exc()
+                return
+        else:
+            self.constructed = lines
+
+        # Check to make sure actually can run sequence
+        if len(self.constructed) == 0:
+            self.sendToLogSignal.emit("Server", "Error in autosequence or autosequence not found. Stopping")
+            self.statusBarMessageSignal.emit("Error in autosequence or autosequence not found. Stopping", True)
+
+        # Start the thread
+        self.start()
+
+    def set_should_abort(self):
+        """
+        Called when an abort is called, just updates a flag
+        :return: None
+        """
+        self.should_abort = True
+
+    @overrides
+    def run(self):
+        """
+        Main autosequence thread. We only need to use a for loop so this does not stick around. The whole class is gone
+        once this function ends
+        :return:
+        """
+
+        available_commands = self.server.get_command_list()
+        board_addr = -1
+
+        # For each command in the constructed commands
+        for cmd_str in self.constructed:
+
+            # Check if abort called
+            if self.should_abort:
+
+                # You may be wondering why we can change the command queue from this thread, even though it is owned bt
+                # the server thread. Since the queue class has a mutex, we can be surer this update is thread safe
+                with self.server.command_queue.mutex:
+                    self.server.command_queue.queue.clear()
+
+                return
+
+            else:
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
+
+                # Delay time in ms
+                if cmd == "delay":
+                    time.sleep(float(args[0]) / 1000)
+
+                # Set target addr
+                elif cmd == "set_addr":
+                    board_addr = args[0]
+
+                # Handle other commands
+                elif cmd in available_commands:
+                    if board_addr == -1:
+                        self.sendToLogSignal.emit("Sever", "Autosequence rejected because board address never set")
+                        self.statusBarMessageSignal.emit("Autosequence rejected because board address never set", True)
+                    else:
+                        # Another call to server, mutex inside this class ensures we are not double accessing
+                        self.server.parse_command_from_text(cmd, args, board_addr)
+
+        # Set back to none before thread ends
+        self.sendToLogSignal.emit("Server", "Autosequence complete")
+        self.statusBarMessageSignal.emit("Autosequence complete", False)
+        self.server.active_autosequence = None
+
+
 class ClientConnectionHandler(QThread):
     """
     Processes commands and data sent from the client (GUI/ standalone widgets) to the server. Called the client handler
@@ -1093,7 +1272,7 @@ class ClientConnectionHandler(QThread):
 
     sendToLogSignal = pyqtSignal(str, str)
     connectionClosedSignal = pyqtSignal(object)
-    sendProcessCommandSignal = pyqtSignal(object, dict)
+    sendProcessCommandSignal = pyqtSignal(dict)
 
     def __init__(self, clientsocket: socket.socket, addr: str, server: Server):
         super().__init__()
@@ -1107,7 +1286,6 @@ class ClientConnectionHandler(QThread):
         self.sendToLogSignal.connect(self.server.logSignal)
         self.sendProcessCommandSignal.connect(self.server.process_client_command)
         self.connectionClosedSignal.connect(self.server.client_connection_closed)
-        #ConnectionClosedSignal connected in serverHandler class
 
         self.error_counter = 0
 
@@ -1157,6 +1335,7 @@ class ClientConnectionHandler(QThread):
 
         self.data_to_client = data_dict
 
+    @overrides
     def exit(self):
         """
         Called when application exits. Only calls for open connections obviously
@@ -1174,7 +1353,12 @@ class ClientConnectionHandler(QThread):
         # What is happening here is that the above line prevents client_socket.recv from getting any more recv. To
         # terminate it actually sends an empty packet to the recv which we handle by closing the connection.
 
+    @overrides
     def run(self):
+        """
+        Run function for thread
+        :return: None
+        """
 
         while self.is_active:
             try:
@@ -1186,17 +1370,19 @@ class ClientConnectionHandler(QThread):
                     self.close_connection()
                     break
 
+                # Load in the command
                 command_dict = pickle.loads(msg)
                 self.last_uuid = command_dict["clientid"]
-                #print(command_dict)
 
                 # Only want to check for disconnect command here, all else goes to server class for processing
                 if command_dict["command"] == 4:  # Disconnect command:
                     self.close_connection()
                     break
 
-                self.sendProcessCommandSignal.emit(self, command_dict)
+                # Have the server process the commands
+                self.sendProcessCommandSignal.emit(command_dict)
 
+                # Send the current data dict we have to client
                 data = pickle.dumps(self.data_to_client)
                 self.client_socket.sendall(data)
 
@@ -1238,19 +1424,29 @@ class ServerConnectionHandler(QThread):
         self.is_active = True
 
     def shutdown(self):
+        """
+        Shutdown the thread with a flag
+        :return: None
+        """
         self.is_active = False
 
+    @overrides
     def exit(self):
         """
         Called when server exits. Also makes sure all the client sockets are properly closed
-        :return:
+        :return: None
         """
         super().exit()
 
         self.shutdown()
         self.sock.close()
 
+    @overrides
     def run(self):
+        """
+        Update thread
+        :return: None
+        """
         self.sendToLogSignal.emit("Server", "Server initialized. Waiting for clients to connect...")
         self.sendToLogSignal.emit("Command", "Info, Server initialized. Waiting for commands")
         self.sendToLogSignal.emit("Server", "Listening on %s:%s" % (self.host, self.port))
@@ -1265,8 +1461,6 @@ class ServerConnectionHandler(QThread):
             except ConnectionAbortedError as e:
                 # Safe exit out. Need to return to prevent anything else happening below
                 return
-
-            #self.sendToLogSignal.emit("Server", "Opening connection from " + addr[0] + " ...")
 
             # This creates the thread to handle the client. This method differs from the past. We used to have the
             # server handler class (this class) to create the client thread. However we cannot do that any longer if
