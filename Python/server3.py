@@ -729,7 +729,7 @@ class Server(QThread):  # See below
                 # Add it to command queue
                 self.command_queue.put(cmd_dict)
             else:
-                return "Command does not have enough arguments"
+                return "Command does not have correct number of arguments"
         except Exception as e:
             traceback.print_exc()
             return "Error: could not send command because of error: " + str(e)
@@ -1539,6 +1539,7 @@ if __name__ == '__main__':
     app.setApplicationDisplayName("MASA Server")
 
     server = ServerGraphics(app)
+    app.setStyle("Fusion")
     #server.applyDarkTheme(app)
 
     server.show()
