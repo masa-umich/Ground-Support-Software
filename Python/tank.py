@@ -30,9 +30,9 @@ class Tank(AvionicsObject):
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPointF = QPointF(0 , 0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True,
-                 channel: str = 'Undefined', board: str = 'Undefined'):
+                 channel: str = 'Undefined', board: str = 'Undefined', override_indicator: bool = 0):
         """
-        Initializer for Solenoid
+        Initializer for Tank
 
         :param widget_parent: parent widget
         :param position: position of icon on screen
@@ -54,6 +54,7 @@ class Tank(AvionicsObject):
         :param long_name_label_local_pos: local position on where long name label is
         :param long_name_label_font_size: font size of long name label
         :param long_name_label_rows: how many rows long name label should have
+        :param override_indicator: if status of object should be overriden despite undefined channel & board
         """
 
         ## Initialize underlying class
@@ -70,6 +71,8 @@ class Tank(AvionicsObject):
 
         self.window = self.widget_parent.window
 
+        self.override_indicator = override_indicator
+
         # Tracks the percentage of fluid in the tank
         self.fillPercent = 0
         self.pressureSetPoint = None
@@ -84,6 +87,28 @@ class Tank(AvionicsObject):
         #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
+    @overrides
+    @overrides
+    def objectStatusCheck(self):
+        """
+        Override from object class, see there for more details
+        :return: See object class
+        """
+        status = 0
+        text = ""
+
+        if self.long_name == "Test":
+            status = 2
+            text = "Bruhhh"
+
+        if status != 2 and not self.isAvionicsFullyDefined() and not self.override_indicator:
+            status = 1
+            text = self.long_name + "- No board and/or channel defined"
+
+        self.setObjectStatusLight(status, text)
+
+        return status, text
 
     @overrides
     def onClick(self):

@@ -12,11 +12,11 @@ class IndicatorLightWidget(QWidget):
     different colors to display status
     """
 
-    def __init__(self, parent, labelText: str, circleRadius: int, indicatorColor: str, fontSize: int = 14,
-                 Wbuffer: int = 0, Hbuffer: int = 0, LBuffer: int = 0):
+    def __init__(self, parent, gui, labelText: str, circleRadius: int, indicatorColor: str, fontSize: int = 14,
+                 Wbuffer: int = 0, Hbuffer: int = 0, LBuffer: int = 0, darkMode:bool = False):
         """
         Initialize the widget
-        :param parent: parent of this widget, is the missionWidget
+        :param parent: parent of this widget
         :param labelText: the text that will be displayed under the indicator light
         :param circleRadius: the radius of the indicator circle
         :param indicatorColor: the indicator color
@@ -24,24 +24,39 @@ class IndicatorLightWidget(QWidget):
         :param Wbuffer: width buffer on the circle, pixels buffer on one side
         :param Hbuffer: height buffer on the top of the circle, pixels buffer on one side
         :param LBuffer: height buffer between the label and the circle
+        :param darkMode: Display outline and text as dark instead of bright
         """
         super().__init__(parent)
 
         # Basic setup
-        self.missionWidget = parent
-        self.gui = self.missionWidget.gui
+        self.parent = parent
+        self.gui = gui
         self.labelText = labelText
-        self.circle_radius = circleRadius * self.gui.pixel_scale_ratio[0]
         self.fontSize = fontSize
-        self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
-        self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
-        self.lBuffer = LBuffer * self.gui.pixel_scale_ratio[1]
+        self.darkMode = darkMode
+
+        monospace_light_font = QFont()
+
+        # TODO: Local bandaid to big problem
+        if gui is not None:
+            self.circle_radius = circleRadius * self.gui.pixel_scale_ratio[0]
+            self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
+            self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
+            self.lBuffer = LBuffer * self.gui.pixel_scale_ratio[1]
+            monospace_light_font.setPointSize(self.fontSize * self.gui.font_scale_ratio)
+        else:
+            self.circle_radius = circleRadius
+            self.wBuffer = Wbuffer
+            self.hBuffer = Hbuffer
+            self.lBuffer = LBuffer
+            monospace_light_font.setPointSize(self.fontSize)
+
         # Painter controls the drawing of everything on the widget
         self.painter = QPainter()
         self.indicatorColor = indicatorColor
 
         # Define the font for the widget
-        monospace_light_font = QFont()
+
         monospace_light_font.setStyleStrategy(QFont.PreferAntialias)
         monospace_light_font.setFamily(Constants.monospace_font)
         monospace_light_font.setWeight(QFont.Light)
@@ -49,9 +64,11 @@ class IndicatorLightWidget(QWidget):
 
         # Declare the label and set it parameters
         self.label = QLabel(self)
-        monospace_light_font.setPointSize(self.fontSize * self.gui.font_scale_ratio)
         self.label.setFont(monospace_light_font)
-        self.label.setStyleSheet("color: white")
+        if not darkMode:
+            self.label.setStyleSheet("color: white")
+        else:
+            self.label.setStyleSheet("color: black")
         self.label.setText(self.labelText)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.label.adjustSize()
@@ -86,7 +103,10 @@ class IndicatorLightWidget(QWidget):
         # Default pen qualities
         pen = QPen()
         pen.setWidth(Constants.line_width/2)
-        pen.setColor(Constants.MASA_Beige_color)
+        if not self.darkMode:
+            pen.setColor(Constants.MASA_Beige_color)
+        else:
+            pen.setColor(QColor(44, 44, 44))
         self.painter.setPen(pen)
 
         # Set the brush color to the indicator color

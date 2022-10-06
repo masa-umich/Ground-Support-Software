@@ -11,7 +11,7 @@ from controlsPanelWidget import ControlsPanelWidget
 from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
-from ClientWidget import ClientWidget, ClientDialog
+import hashlib
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
 from flash import FlashWindow
@@ -109,7 +109,7 @@ class ControlsWindow(QMainWindow):
         # FILE -> Enter Debug Mode
         self.debugAct = QAction('&Enter Debug Mode', self)
         self.debugAct.setShortcut('Ctrl+D')
-        self.debugAct.triggered.connect(self.enterDebug)
+        self.debugAct.triggered.connect(self.showDebugDialog)
 
         # FILE -> Exit Debug Mode
         self.exitDebugAct = QAction('&Leave Debug Mode', self)
@@ -472,11 +472,81 @@ class ControlsWindow(QMainWindow):
         """
         webbrowser.open('file:///' + os.path.realpath(self.gui.workspace_path))
 
-    def enterDebug(self):
+    def showDebugDialog(self):
+        """
+        Shows a dialog for a password to enter debug mode, mostly a meme because I think I only use this
+        """
+
+        # Create the dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Enter Debug Mode")
+
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(500 * self.gui.pixel_scale_ratio[0], 80 * self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(500 * self.gui.pixel_scale_ratio[0])
+        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        textbox = QLineEdit(dialog)
+        textbox.setFont(font)
+        textbox.setEchoMode(QLineEdit.Password)
+
+        label = QLabel("Password ;)")
+        label.setFont(font)
+        formLayout.addRow(label, textbox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFont(font)
+        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        start_button = QPushButton("Enter")
+        start_button.clicked.connect(lambda: self.enterDebug(dialog, textbox.text()))
+
+        start_button.setDefault(True)
+        start_button.setAutoDefault(False)
+        start_button.setFont(font)
+        start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(start_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+    def enterDebug(self, dialog: QDialog,  password: str):
         """
         Enter debug mode which overrides the gui to attempt to send commands and instead shows what you would see in
-        a test
+        a test, also allows data through when not in campaign
+        :param dialog: dialog associated with entering debug
+        :param password: password needed to start
         """
+        if hashlib.sha256(password.encode('utf-8')).hexdigest() != "0a061c76a77236774fdd5cba18554a443ae979c02f9af60c2654060e4a4e6063":
+            self.gui.setStatusBarMessage("Incorrect Debug Password", True)
+            dialog.done(1)
+            return
+
         self.gui.debug_mode = True
         self.debugAct.setDisabled(True)
         self.exitDebugAct.setEnabled(True)
@@ -485,6 +555,8 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
         self.gui.setStatusBarMessage("Enter Debug Mode")
+
+        dialog.done(2)
 
     def exitDebug(self):
         """

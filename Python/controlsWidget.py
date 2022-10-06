@@ -385,7 +385,7 @@ class ControlsWidget(QWidget):
                     self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=False))
                 elif action.text() == "New Tank":
                     self.object_count["Tank"] = self.object_count["Tank"] + 1
-                    self.object_list.append(Tank(self, position=point, fluid=False))
+                    self.object_list.append(Tank(self, position=point, fluid=False, override_indicator=False))
                 elif action.text() == "New Generic Sensor":
                     self.object_count["Generic Sensor"] = self.object_count["Generic Sensor"] + 1
                     self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=False))

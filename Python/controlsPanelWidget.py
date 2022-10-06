@@ -80,6 +80,7 @@ class ControlsPanelWidget(QWidget):
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
         self.solenoid_NC_NO_combobox = QComboBox()
+        self.tank_override_checkbox = QCheckBox(self)     # should probably come up w a better name for this
         
         # fonts
         title_font = QFont()
@@ -134,12 +135,19 @@ class ControlsPanelWidget(QWidget):
         self.edit_form_layout.addRow(QLabel(""))
         # Row 14
 
-        # Specific Parapemeters
+        # Specific Parameters for Solenoids
         self.component_prop_label = QLabel("Component Properties:                                                                  ")
         self.component_prop_label.setFont(title_font)
         self.component_prop_label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(self.component_prop_label)
         self.createComboBox(self.solenoid_NC_NO_combobox, "Solenoid NOvNC", "Coil Type", ["Normally Closed", "Normally Open"])
+
+        # Specific Parameters for Tanks (allowing press tank without yellow system indicator light)
+        self.tank_override_label = QLabel("Component Properties:                                                                  ")
+        self.tank_override_label.setFont(title_font)
+        self.tank_override_label.setStyleSheet("color: white")
+        self.edit_form_layout.addRow(self.tank_override_label)
+        self.createCheckbox(self.tank_override_checkbox, "Tank Override", "Override Systems Indicator Light")
 
         self.edit_frame.hide()
 
@@ -298,6 +306,27 @@ class ControlsPanelWidget(QWidget):
 
         self.edit_form_layout.addRow(identifier_label, spinBox)
 
+    def createCheckbox(self, checkBox: QCheckBox, identifier: str, label_text: str):
+        """
+        Creates a checkbox
+        :param checkBox: reference to checkbox
+        :param identifier: indentifies checkBox widget, used when checkBox index changes
+        :param label_text: label used for the box
+        """
+
+        # not necessary bc box has it's own text attribute
+        # identifier_label = QLabel(label_text)
+        # identifier_label.setStyleSheet("color: white")
+        # identifier_label.setFont(self.default_font)
+
+        checkBox.setFont(self.default_font)
+        checkBox.setText(label_text)
+
+        checkBox.stateChanged.connect(lambda: self.updateEditingObjectFields(str(checkBox.isChecked()), identifier))
+
+        # self.edit_form_layout.addRow(identifier_label, checkBox)
+        self.edit_form_layout.addRow(checkBox)
+
     def blockAllEditPanelFieldSignals(self):
         """
         Block all signals from being emitted from edit panel fields, useful for making changes with no ripple effects
@@ -359,6 +388,7 @@ class ControlsPanelWidget(QWidget):
             elif object_.object_name == "Tank":
                 self.comboBoxReplaceFields(self.channel_combobox, ["Undefined"] + self.tank_channels)
                 self.channel_combobox.setEditable(False)
+                self.setTankOverridePropertyVisibility(True)
             elif object_.object_name == "Generic Sensor":
                 if board_name in Constants.boards:
                     prefix = self.interface.getPrefix(board_name)
@@ -482,13 +512,21 @@ class ControlsPanelWidget(QWidget):
                     self.window.setStatusBarMessage(
                         object_.object_name + "(" + object_.long_name + ")" + ": serial number font size to " + str(text))
 
-            # Custom Parameters
+            # Custom Parameters for Solenoid
             elif identifier == "Solenoid NOvNC":
                 for object_ in self.editing_object_list:
                     if text == "Normally Open":
                         object_.normally_open = True
                     else:
                         object_.normally_open = False
+            
+            # Custom Parameters for Tank
+            elif identifier == "Tank Override":
+                for object_ in self.editing_object_list:
+                    if text == "True":
+                        object_.override_indicator = True
+                    else:
+                        object_.override_indicator = False
 
             object_.updateToolTip()
 
@@ -565,6 +603,7 @@ class ControlsPanelWidget(QWidget):
         Hides all the component properties
         """
         self.setSolenoidComponentPropertiesVisibility(False)
+        self.setTankOverridePropertyVisibility(False)
 
     def setSolenoidComponentPropertiesVisibility(self, is_vis):
         """
@@ -580,6 +619,21 @@ class ControlsPanelWidget(QWidget):
             self.component_prop_label.hide()
             self.solenoid_NC_NO_combobox.hide()
             self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().hide()
+
+    def setTankOverridePropertyVisibility(self, is_vis):
+        """
+        Shows the tank override for systems light indicator (for tanks that are not connected to a board & channel)
+        :param is_vis:
+        """
+        tank_override_index = self.edit_form_layout.getWidgetPosition(self.tank_override_checkbox)
+        if is_vis:
+            self.tank_override_label.show()
+            self.tank_override_checkbox.show()
+            self.edit_form_layout.itemAt(tank_override_index[0], tank_override_index[1] - 1).widget().show()
+        else:
+            self.tank_override_label.hide()
+            self.tank_override_checkbox.hide()
+            self.edit_form_layout.itemAt(tank_override_index[0], tank_override_index[1] - 1).widget().hide()
 
 
     @overrides

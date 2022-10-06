@@ -76,7 +76,7 @@ class BinaryParser:
                     packet_addr, packet_type = self.interface.parse_packet(packet)
                     #print
                     if packet_addr != -1:
-                        #print(packet_addr)
+                        print(packet_addr)
                         new_data = self.interface.board_parser[packet_addr].dict
                         #print(new_data)
                         prefix = self.interface.getPrefix(

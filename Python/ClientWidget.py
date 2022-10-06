@@ -115,6 +115,7 @@ class ClientWidget(QtWidgets.QWidget):
             if command_dict["command"] == 3:
                 self._gui.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
             else:
+                # TODO: What??
                 self._gui.setStatusBarMessage("Command sent to client: " + str(command_dict))
 
         # add to queue
@@ -131,6 +132,7 @@ class ClientWidget(QtWidgets.QWidget):
                 self.port.text())))  # connect to socket
             self.s.settimeout(None)  #  from https://stackoverflow.com/questions/3432102/python-socket-connection-timeout to prevent blocking
             self.is_connected = True  # update status
+            self.command(11)
             self.gotConnectionToServerSignal.emit()
             print("Connected to server on " + self.host.currentText() + ":" + self.port.text())
             self._gui.setStatusBarMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
@@ -149,11 +151,11 @@ class ClientWidget(QtWidgets.QWidget):
         some client side actions for cleanup
         :return: None
         """
-
-        self.command(4)
-        self.cycle()  # need to get the last command out before saying we are disconnected
-        self.soft_disconnect()
-        self._gui.setStatusBarMessage("Disconnected from server")
+        # Make sure we are actually connected before we try to disconnect
+        if self.is_connected:
+            self.command(4)
+            self.cycle()  # need to get the last command out before saying we are disconnected
+            self.soft_disconnect()
 
     def soft_disconnect(self):
         """
@@ -161,8 +163,11 @@ class ClientWidget(QtWidgets.QWidget):
         to the server that indicate the client is attempting to disconnect. See above disconnect for more
         :return:
         """
+        self.s.close()
         self.is_connected = False
         self.serverDisconnectSignal.emit()  # See gui class for what needs to be done
+        self._gui.setStatusBarMessage("Disconnected from server")
+        print("Disconnected from server")
 
     def command_toggle(self):
         # toggle to take/give up command
@@ -214,9 +219,10 @@ class ClientWidget(QtWidgets.QWidget):
 
             self.last_packet = packet
             return self.last_packet
-
-        except Exception as e:
-            if not isinstance(e, EOFError):
-                traceback.print_exc()
+        except (EOFError, ConnectionResetError):
             self.soft_disconnect()
+            return None
+        except Exception:
+            self.soft_disconnect()
+            traceback.print_exc()
             return None

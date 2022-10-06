@@ -138,7 +138,7 @@ class Board(QWidget):
 
 
         # Connection status indicator light
-        self.connectionIndicator = IndicatorLightWidget(self, '', 10, "Red", 10, 10, 10, 1)
+        self.connectionIndicator = IndicatorLightWidget(self, self.gui, '', 10, "Red", 10, 10, 10, 1)
         self.connectionIndicator.setToolTip("No connection")
         self.connectionIndicator.move(self.width()-self.connectionIndicator.width(), 0)
 

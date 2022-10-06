@@ -1,6 +1,7 @@
 from s2Interface import S2_Interface
 import traceback
 
+
 def parse_auto(command_list: list, i: int = 0):
     """Recursive autosequence parser
 
