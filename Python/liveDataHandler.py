@@ -76,6 +76,8 @@ class LiveDataHandlerBackgroundThread(QThread):
 
             if packet is not None:
                 # All is well
+                self.dataHandler.setSendAndPopulateData(True)
+
                 if self.dataHandler.getClient().is_connected and packet["actively_rx"]:
                     self.connectionStatusSignal.emit(0, packet["error_msg"], self.dataHandler.getClient().is_commander)
                 # Server to GUI connection is good, but data should be coming from board, but it is bad or is delayed

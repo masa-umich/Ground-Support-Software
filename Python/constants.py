@@ -75,6 +75,7 @@ class Constants:
     campaign_data_dir = "data/campaigns/"
 
     dataHandlerUpdateRate = 200  # ms
+    dataStorageDuration = 15     # minutes
 
     cli_to_ser_cmd_ref = {
         "Heartbeat": 0,
