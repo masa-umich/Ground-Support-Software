@@ -1086,7 +1086,7 @@ class Server(QThread):  # See below
 
         if command !=Constants.cli_to_ser_cmd_ref["Heartbeat"]:
             print(command_dict)
-            self.logSignal.emit("Command", "From Client, " + str(command_dict))
+            self.logSignal.emit("Command", "From Client, " + str(self.commander) + str(command_dict))
 
     def get_flash_download_progress(self, progress: float):
         """
@@ -1155,6 +1155,8 @@ class Server(QThread):  # See below
 
                             elif packet_type == Constants.serial_packet_type_ref["Calibration Data"]:
                                 new_data = self.interface.calibration_parser[board_addr].dict
+                            else:
+                                new_data = {}
 
                             # Get board prefix (like gse., ec., fc.) from board name
                             board_prefix = self.interface.getPrefix(self.interface.getName(board_addr))

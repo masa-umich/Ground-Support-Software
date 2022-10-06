@@ -85,8 +85,8 @@ class LiveDataHandlerBackgroundThread(QThread):
                 elif self.dataHandler.getClient().is_connected and not packet["ser_open"]:
                     self.connectionStatusSignal.emit(2, packet["error_msg"], self.dataHandler.getClient().is_commander)
 
-                if self.dataHandler.shouldSendAndPopulateData():
-                    self.lastPacketDataSignal.emit(packet)  # change to packet when ready
+                if self.dataHandler.shouldSendAndPopulateData() or self.dataHandler.getGui().debug_mode:
+                    self.lastPacketDataSignal.emit(packet)
 
             else:
 

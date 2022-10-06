@@ -124,17 +124,16 @@ class S2_Interface:
                 self.last_raw_packet = packet
                 return self.parse_packet(packet)
         except Exception as e:
-            #traceback.print_exc()
+            traceback.print_exc()
             pass
         # Return -1 is the serial parse fails
         return (-1, -1)
 
     def parse_packet(self, packet):
-        if len(packet) > 0:
+        if len(packet) > 1:
             packet = self.unstuff_packet(packet)
             packet_type = self.get_packet_type_from_packet(packet)
             board_addr = self.get_board_addr_from_packet(packet)
-            #print(packet)
             try:
                 # Limit valid packet sizes to mitigate data corruption
                 # Flash binary parser packet length is equal to packet_byte_size, telemetry packet length is packet_byte_size+1 
@@ -149,9 +148,12 @@ class S2_Interface:
                     self.calibration_parser[board_addr].parse_packet(packet)
                     #print(str(self.calibration_parser[board_addr].dict))
                 return (board_addr, packet_type)
-            except Exception as e:
-                #traceback.print_exc()
+            except IndexError as e :
                 print("Packet lost with error: ", e)
+            except Exception as e:
+                traceback.print_exc()
+                print("Packet lost with error: ", e)
+
         # Return -2 if the packet parse fails
         return (-2, -2)
 
