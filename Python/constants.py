@@ -9,7 +9,7 @@ Class to hold any constant value that is important to the entire program
 
 class Constants:
 
-    GUI_VERSION = 'B-v2.0.2'
+    GUI_VERSION = 'B-v2.1.0'
 
     # Dict of fluids. Example call: fluid["HE"] -> Returns 0
     # TODO: I'm picky so change to LOX
