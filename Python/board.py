@@ -514,6 +514,10 @@ class Board(QWidget):
                 elif self.state == self.stateNum["Ignition"]:
                     newState = self.stateNum["Hotfire"]
                     # Anytime can call an abort to abort out
+            elif self.name == "Flight Computer":
+                if self.state == self.stateNum["Armed"]:
+                    newState = self.stateNum["Ascent"] # this might need to be removed idk why we are switching to the next state client side
+                    # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = self.stateNum["Abort"]
         elif identifier == "Continue":
@@ -816,6 +820,49 @@ class Board(QWidget):
                 self.arm_button.setEnabled(False)
                 self.fire_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+
+
+            elif self.state == self.stateNum["Abort"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
+        elif self.name == "Flight Computer":
+            if self.state == self.stateNum["Manual"]:
+                self.manual_button.setText("Manual")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(True)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
+
+            elif self.state == self.stateNum["Armed"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(True)
+                self.abort_button.setEnabled(False)
+
+            elif self.state == self.stateNum["Ascent"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
+
+            elif self.state == self.stateNum["Drogue"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
+
+            elif self.state == self.stateNum["Touchdown"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
 
 
             elif self.state == self.stateNum["Abort"]:
