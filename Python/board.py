@@ -108,6 +108,27 @@ class Board(QWidget):
                 "Abort": 6,
                 "Post": 7,
             }
+        elif self.name == "Flight Computer":
+            self.stateMap = {
+                -1: "",
+                0: "Manual",
+                1: "Armed",
+                2: "Ascent",
+                3: "Drogue",
+                4: "Main",
+                5: "Touchdown",
+                6: "Abort",
+            }
+            self.stateNum = {
+                "": -1,
+                "Manual": 0,
+                "Armed": 1,
+                "Ascent": 2,
+                "Drogue": 3,
+                "Main": 4,
+                "Touchdown": 5,
+                "Abort": 6,
+            }
 
 
             """  TODO fill this out when we figure out other boards' state mappings
@@ -493,6 +514,10 @@ class Board(QWidget):
                 elif self.state == self.stateNum["Ignition"]:
                     newState = self.stateNum["Hotfire"]
                     # Anytime can call an abort to abort out
+            elif self.name == "Flight Computer":
+                if self.state == self.stateNum["Armed"]:
+                    newState = self.stateNum["Ascent"] # this might need to be removed idk why we are switching to the next state client side
+                    # Anytime can call an abort to abort out
         elif identifier == "Abort":
             newState = self.stateNum["Abort"]
         elif identifier == "Continue":
@@ -545,6 +570,8 @@ class Board(QWidget):
         elif self.name == "GSE Controller":
             pass
         elif self.name == "Engine Controller":
+            pass
+        elif self.name == "Flight Computer":
             pass
         else:
             print("Invalid board(" + self.name + ") somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
@@ -801,6 +828,49 @@ class Board(QWidget):
                 self.arm_button.setEnabled(False)
                 self.fire_button.setEnabled(False)
                 self.abort_button.setEnabled(False)
+        elif self.name == "Flight Computer":
+            if self.state == self.stateNum["Manual"]:
+                self.manual_button.setText("Manual")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(True)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
+
+            elif self.state == self.stateNum["Armed"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(True)
+                self.abort_button.setEnabled(False)
+
+            elif self.state == self.stateNum["Ascent"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
+
+            elif self.state == self.stateNum["Drogue"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
+
+            elif self.state == self.stateNum["Touchdown"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(False)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(True)
+
+
+            elif self.state == self.stateNum["Abort"]:
+                self.manual_button.setText("Disarm")
+                self.manual_button.setEnabled(True)
+                self.arm_button.setEnabled(False)
+                self.fire_button.setEnabled(False)
+                self.abort_button.setEnabled(False)
 
 
 
@@ -812,7 +882,7 @@ class Board(QWidget):
         if self.name == "Flight Computer":
             self.update(data_packet[prefix + "e_batt"], 0, data_packet[prefix + "STATE"], False,
                          data_packet[prefix + "timestamp"], data_packet[prefix + "adc_rate"],
-                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt
+                         data_packet[prefix + "telem_rate"], False)  # no flash state yet, no i_batt
         elif self.name == "Black Box":
             self.update(0, 0, data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
                          data_packet[prefix + "adc_rate"],
