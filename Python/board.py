@@ -108,6 +108,27 @@ class Board(QWidget):
                 "Abort": 6,
                 "Post": 7,
             }
+        elif self.name == "Flight Computer":
+            self.stateMap = {
+                -1: "",
+                0: "Manual",
+                1: "Armed",
+                2: "Ascent",
+                3: "Drogue",
+                4: "Main",
+                5: "Touchdown",
+                6: "Abort",
+            }
+            self.stateNum = {
+                "": -1,
+                "Manual": 0,
+                "Armed": 1,
+                "Ascent": 2,
+                "Drogue": 3,
+                "Main": 4,
+                "Touchdown": 5,
+                "Abort": 6,
+            }
 
 
             """  TODO fill this out when we figure out other boards' state mappings
@@ -546,6 +567,8 @@ class Board(QWidget):
             pass
         elif self.name == "Engine Controller":
             pass
+        elif self.name == "Flight Computer":
+            pass
         else:
             print("Invalid board(" + self.name + ") somehow used in Board:setBoardState, it should never get to this point lol. State: " + str(state))
             return
@@ -812,7 +835,7 @@ class Board(QWidget):
         if self.name == "Flight Computer":
             self.update(data_packet[prefix + "e_batt"], 0, data_packet[prefix + "STATE"], False,
                          data_packet[prefix + "timestamp"], data_packet[prefix + "adc_rate"],
-                         data_packet[prefix + "telem_rate"])  # no flash state yet, no i_batt
+                         data_packet[prefix + "telem_rate"], False)  # no flash state yet, no i_batt
         elif self.name == "Black Box":
             self.update(0, 0, data_packet[prefix + "STATE"], False, data_packet[prefix + "timestamp"],
                          data_packet[prefix + "adc_rate"],

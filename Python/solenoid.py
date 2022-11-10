@@ -311,6 +311,6 @@ class Solenoid(AvionicsObject):
             channel_name = board_prefix + "vlv" + str(self.channel)
             state = data_packet[channel_name + ".en"]
             voltage = data_packet[channel_name + ".e"]
-            current = data_packet[channel_name + ".i"]
+            current = data_packet[channel_name + ".i"] if (channel_name + ".i") in data_packet else 0
             self.setState(state, voltage, current)
 
