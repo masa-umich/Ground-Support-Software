@@ -27,7 +27,7 @@ class Solenoid(AvionicsObject):
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
-                 normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True):
+                 normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True, keybind:QKeyEvent = None):
 
         """
         Initializer for Solenoid
@@ -54,6 +54,7 @@ class Solenoid(AvionicsObject):
         :param long_name_label_rows: how many rows long name label should have
         :param channel: the specific channel the device is plugged into
         :param board: the avionics board the device is plugged into
+        :param keybind: keyboard shortcut to toggle solenoid
         """
 
         # TODO: Still bleah, should have a way to rotate or something
@@ -67,7 +68,7 @@ class Solenoid(AvionicsObject):
                          long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows, long_name_visible = long_name_visible,
-                         serial_number_visible = serial_number_visible, board=board, channel=channel)
+                         serial_number_visible = serial_number_visible, board=board, channel=channel, keybind=keybind)
 
 
         # TODO: Grab object scale from widget_parent
