@@ -306,10 +306,12 @@ class ControlsWidget(QWidget):
             if self.controlsPanel.object_editing is not None:
                 self.controlsPanel.object_editing.rotate()
                 self.update()
+        if self.parent.is_editing:
+            print("Key Pressed: " + str(e.key()))
         else:
             for solenoid in self.object_list:
-                if(isinstance(solenoid, Solenoid())):
-                    if(e==solenoid.keybind):
+                if(isinstance(solenoid, Solenoid)):
+                    if(str(e.key())==str(solenoid.keybind)):
                         solenoid.toggle()
 
     @overrides
@@ -560,8 +562,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_local_pos=QPointF(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
                                                  long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
                                                  normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
-                                                 serial_number_visible=sol["serial number label"]["is visible"],
-                                                 keybind=sol["keybind"]))
+                                                 serial_number_visible=sol["serial number label"]["is visible"]))
 
             elif obj_type == "Tank":
                 tnk = data[i]

@@ -27,8 +27,7 @@ class Solenoid(AvionicsObject):
                  serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
                  long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
                  long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
-                 normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True, keybind:QKeyEvent = None):
-
+                 normally_open: bool = 0, long_name_visible:bool = True, serial_number_visible:bool = True):
         """
         Initializer for Solenoid
 
@@ -54,7 +53,6 @@ class Solenoid(AvionicsObject):
         :param long_name_label_rows: how many rows long name label should have
         :param channel: the specific channel the device is plugged into
         :param board: the avionics board the device is plugged into
-        :param keybind: keyboard shortcut to toggle solenoid
         """
 
         # TODO: Still bleah, should have a way to rotate or something
@@ -68,7 +66,7 @@ class Solenoid(AvionicsObject):
                          long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
                          long_name_label_font_size=long_name_label_font_size,
                          long_name_label_rows=long_name_label_rows, long_name_visible = long_name_visible,
-                         serial_number_visible = serial_number_visible, board=board, channel=channel, keybind=keybind)
+                         serial_number_visible = serial_number_visible, board=board, channel=channel)
 
 
         # TODO: Grab object scale from widget_parent
@@ -82,6 +80,8 @@ class Solenoid(AvionicsObject):
         self.updateToolTip()
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
+
+        self.keybind = -1
 
     # TODO: Use this withe new configuration manager
     # @classmethod
@@ -197,23 +197,8 @@ class Solenoid(AvionicsObject):
         super().onClick()
 
         if not self.widget_parent.parent.is_editing:
-
-            if self.gui.debug_mode is False:
-                # Toggle state of solenoid
-                if self.state == 0:
-                    new_state = 1
-                elif self.state == 1:
-                    new_state = 0
-                if self.isAvionicsFullyDefined():
-                    cmd_dict = {
-                        "function_name": "set_vlv",
-                        "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
-                        "timestamp": int(datetime.now().timestamp()),
-                        "args": [int(self.channel), int(new_state)]
-                    }
-                    self.gui.liveDataHandler.sendCommand(3, cmd_dict)
-            else:
-                self.toggle()
+            self.toggle()
+            
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -240,13 +225,31 @@ class Solenoid(AvionicsObject):
         """
         Toggle the state of the solenoid
         """
+        if self.gui.debug_mode is False:
+            # Toggle state of solenoid
 
-        if self.state == 0:
-            self.setState(1, self.voltage, self.current)
-        elif self.state == 1:
-            self.setState(0, self.voltage, self.current)
+            #print("solenoid toggled")
+            #print(self.long_name)
+
+            if self.state == 0:
+                new_state = 1
+            elif self.state == 1:
+                new_state = 0
+            if self.isAvionicsFullyDefined():
+                cmd_dict = {
+                    "function_name": "set_vlv",
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "timestamp": int(datetime.now().timestamp()),
+                    "args": [int(self.channel), int(new_state)]
+                }
+                self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         else:
-            print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
+                if self.state == 0:
+                    self.setState(1, self.voltage, self.current)
+                elif self.state == 1:
+                    self.setState(0, self.voltage, self.current)
+                else:
+                    print("WARNING STATE OF SOLENOID " + str(self._id) + " IS NOT PROPERLY DEFINED")
 
     def setState(self, state: bool, voltage: float, current: float):
         """
