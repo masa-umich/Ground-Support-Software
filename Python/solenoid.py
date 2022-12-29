@@ -299,7 +299,8 @@ class Solenoid(AvionicsObject):
 
         # Extra data the Solenoid contains that needs to be saved
         save_dict = {
-            "normally open": self.normally_open
+            "normally open": self.normally_open,
+            "keybind": self.keybind
         }
 
         # Update the super_dict under the solenoid entry with the solenoid specific data
