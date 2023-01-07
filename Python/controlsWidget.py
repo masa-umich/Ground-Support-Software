@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from constants import Constants
+from object import BaseObject
 from solenoid import Solenoid
 from tank import Tank
 from chamber import Chamber
@@ -65,7 +66,7 @@ class ControlsWidget(QWidget):
                                  ThrottleValve, HeatEx, Regulator, CheckValve]
 
         # Object Tracker
-        self.object_list = []
+        self.object_list: [BaseObject] = []
         self.avionics_mappings = bidict({})
         self.object_count = {}
 
@@ -320,6 +321,33 @@ class ControlsWidget(QWidget):
                     tube.setCurrentPos(e.pos())
                     self.update()
 
+    def checkCursorWithinObject(self, e_pos):
+        """
+        This function determines if the cursor is inside an object. It is intended to be used when objects are set to be
+        mouse transparent so no tooltip checks can be made
+        :param e_pos: Event position of a cursor move event
+        :return: The object that the current cursor position is in
+        """
+
+        largest_obj = None
+        largest_obj_width = 0
+
+        for obj in self.object_list:
+            x1 = obj.position.x()
+            y1 = obj.position.y()
+            x2 = x1 + obj.width
+            y2 = y1 + obj.height
+
+            if x1 <= e_pos.x() <= x2 and y1 <= e_pos.y() <= y2:
+                if largest_obj is None:
+                    largest_obj = obj
+                    largest_obj_width = obj.width
+                elif largest_obj_width < obj.width:
+                    largest_obj = obj
+                    largest_obj_width = obj.width
+
+        return largest_obj
+
     @overrides
     def mouseMoveEvent(self, e:QMouseEvent):
         """"
@@ -333,7 +361,30 @@ class ControlsWidget(QWidget):
         if self.is_drawing:
             for tube in self.tube_list:
                 if tube.is_being_drawn:
+
                     tube.updateCurrentPos(e.pos())
+
+                    # Check what objects the cursor is in and the tube, if they are inside the same object then clip the
+                    # tube to be at the edge of that object.
+                    if len(tube.points) > 0:
+                        last_point = tube.points[-2]
+
+                        curs_obj = self.checkCursorWithinObject(e.pos())
+                        tube_obj = self.checkCursorWithinObject(tube.points[-1])
+
+                        # Tube clip logic check:
+                        if curs_obj is not None and curs_obj == tube_obj:
+                            if tube.draw_direction == "Vertical":
+                                if last_point.y() <= curs_obj.position.y():
+                                    tube.updateCurrentPos(QPointF(last_point.x(), curs_obj.position.y()))
+                                else:
+                                    tube.updateCurrentPos(QPointF(last_point.x(), curs_obj.position.y() + curs_obj.height))
+                            else:
+                                if last_point.x() <= curs_obj.position.x():
+                                    tube.updateCurrentPos(QPointF(curs_obj.position.x(), last_point.y()))
+                                else:
+                                    tube.updateCurrentPos(QPointF(curs_obj.position.x() + curs_obj.width, last_point.y()))
+
                     self.update()
 
     @overrides
