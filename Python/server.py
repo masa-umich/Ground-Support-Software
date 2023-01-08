@@ -25,6 +25,7 @@ from constants import Constants
 from party import PartyParrot
 from s2Interface import S2_Interface
 from packetLogWidget import PacketLogWidget
+from campaign2 import Campaign2
 import parse_auto
 
 threading.stack_size(134217728)
@@ -67,7 +68,7 @@ class ServerGraphics(QMainWindow):
 
         self.server = Server()
 
-        # Setup displat
+        # Setup display
         self.top_grid_layout = QGridLayout()
         self.central_widget.setLayout(self.top_grid_layout)
 
@@ -186,6 +187,39 @@ class ServerGraphics(QMainWindow):
 
         self.info_tab_widget.addTab(commandline_widget, "Command Line")
 
+        campaign_info_widget = QWidget()
+        campaign_info_vert_layout = QVBoxLayout()
+        campaign_info_widget.setLayout(campaign_info_vert_layout)
+
+        campaign_time_label_groupbox = QGroupBox("Elapsed Time")
+        campaign_time_vert_layout = QVBoxLayout()
+        campaign_time_label_groupbox.setLayout(campaign_time_vert_layout)
+
+        clock_font = QFont()
+        clock_font.setFamily(Constants.monospace_font)
+        clock_font.setPointSize(30)
+        self.campaign_time_label = QLabel("CET: 00:00:00  | ")
+        self.campaign_time_label.setFont(clock_font)
+        self.test_time_label = QLabel("TET: 00:00:00")
+        self.test_time_label.setFont(clock_font)
+
+        campaign_time_vert_layout.addWidget(self.campaign_time_label)
+        campaign_time_vert_layout.addWidget(self.test_time_label)
+
+        campaign_time_label_groupbox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        campaign_log_group = QGroupBox("Campaign Log")
+        campaign_log_vert_layout = QVBoxLayout()
+        campaign_log_group.setLayout(campaign_log_vert_layout)
+        self.campaign_log_textbox = QTextEdit()
+        self.campaign_log_textbox.setText("Test")
+        campaign_log_vert_layout.addWidget(self.campaign_log_textbox)
+
+        campaign_info_vert_layout.addWidget(campaign_time_label_groupbox)
+        campaign_info_vert_layout.addWidget(campaign_log_group)
+
+        self.info_tab_widget.addTab(campaign_info_widget, "Campaign")
+
         self.top_grid_layout.addWidget(self.info_tab_widget, 2, 0, 1, 0)
 
         self.command_line_history = []
@@ -197,10 +231,22 @@ class ServerGraphics(QMainWindow):
         self.server.commanderLabelSignal.connect(self.commander_label.setText)
         self.server.packetSizeLabelSignal.connect(self.b_c_packet_label.setText)
         self.server.partyParrotStepSignal.connect(self.party_parrot.step)
+        self.server.campaignActiveSignal.connect(self.startCampaign)
+        self.server.campaignETSignal.connect(self.updateETLabels)
 
         self.server.delayed_init()
 
         self.setStatusBarMessage("Startup Complete")
+
+    def startCampaign(self):
+        self.campaign_log_textbox.setText("Uhh campaign started")
+        self.campaign_time_label.setText("CET: 00:00:01")
+
+    def updateETLabels(self, labelType:str, time: str):
+        if labelType == "Campaign":
+            self.campaign_time_label.setText("CET: " + time)
+        elif labelType == "Test":
+            self.test_time_label.setText("TET: " + time)
 
     def update_b_c_ports_combo(self):
         """
@@ -404,6 +450,8 @@ class Server(QThread):  # See below
     packetSizeLabelSignal = pyqtSignal(str)
     partyParrotStepSignal = pyqtSignal()
     dataPacketSignal = pyqtSignal(dict)
+    campaignActiveSignal = pyqtSignal(bool)
+    campaignETSignal = pyqtSignal(str, str)
     # Doing all this because we may want to run this server when no
     # graphics are present. Don't want to pass in window that may not exist
 
@@ -420,6 +468,8 @@ class Server(QThread):  # See below
         self.is_actively_receiving_data = False
         # Current server error message
         self.current_error_message = "No Board Connection Attempted"
+
+        self.campaign = Campaign2()
 
         # Hold what clients server is connected to
         self.open_client_connections = []
@@ -862,7 +912,7 @@ class Server(QThread):  # See below
     def write_to_log(self, location: str, msg: str):
         """
         This actually also leverages the logSignal that gets emitted to update the server graphics. That way one only
-        one call needs to be made. However is also  directly called
+        one call needs to be made. However, is also  directly called
         :param location: String that is either "Server" or "Command" for server and command log respectively
         :param msg: message to log
         :return: None
@@ -1032,8 +1082,13 @@ class Server(QThread):  # See below
                 self.logSignal.emit("Server", ("Campaign '%s' ended" % self.campaign_location).replace(
                     Constants.campaign_data_dir, '').replace("/", ''))
                 self.update_campaign_logging(None)
+                self.campaign.endCampaign()
             else:
                 self.update_campaign_logging(*args)
+                print("campaign logging started from client")
+
+                self.campaign.startCampaign(*args)
+                self.campaignActiveSignal.emit(True)
 
         elif command == Constants.cli_to_ser_cmd_ref["Run Autosequence"] and self.check_commander(clientid):
             if self.active_autosequence is None:
@@ -1190,6 +1245,10 @@ class Server(QThread):  # See below
                 self.is_actively_receiving_data = False
                 self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
                 self.statusBarMessageSignal.emit("Warning: Server run loop error, check terminal", True)
+
+            # Check if we are in a campaign and if so update that info
+            if self.campaign.isActive:
+                self.campaignETSignal.emit("Campaign", self.campaign.CETasString())
 
             # Make sure data dict headers are updated
             self.update_packet_header()

@@ -139,8 +139,8 @@ class ClientWidget(QtWidgets.QWidget):
 
         except Exception as e:
             print(traceback.format_exc())
-            self._gui.setStatusBarMessage("Error connecting to server, see terminal", True)
             self.soft_disconnect()
+            self._gui.setStatusBarMessage("Error connecting to server, see terminal", True)
         #print(self.is_connected)
 
     def disconnect(self):
@@ -157,7 +157,7 @@ class ClientWidget(QtWidgets.QWidget):
             self.cycle()  # need to get the last command out before saying we are disconnected
             self.soft_disconnect()
 
-    def soft_disconnect(self):
+    def soft_disconnect(self, disconnect_label: str = "Disconnected from server"):
         """
         Performs all the required steps when client and server are disconnected, however it does not send any commands
         to the server that indicate the client is attempting to disconnect. See above disconnect for more
@@ -166,8 +166,8 @@ class ClientWidget(QtWidgets.QWidget):
         self.s.close()
         self.is_connected = False
         self.serverDisconnectSignal.emit()  # See gui class for what needs to be done
-        self._gui.setStatusBarMessage("Disconnected from server")
-        print("Disconnected from server")
+        self._gui.setStatusBarMessage(disconnect_label)
+        print(disconnect_label)
 
     def command_toggle(self):
         # toggle to take/give up command
