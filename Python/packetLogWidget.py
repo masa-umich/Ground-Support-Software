@@ -49,14 +49,14 @@ class PacketLogWidget(QWidget):
 
         # Board filter, tool buttons are a special button that act like menu items
         self.boardFilterButton = QToolButton(self)
-        self.boardFilterButton.setMinimumWidth(self.tabWidget.width() * .25)
+        self.boardFilterButton.setMinimumWidth(int(self.tabWidget.width() * .25))
         self.boardFilterButton.setText("Board Filter")
         self.boardtoolmenu = QMenu(self)
         self.boardFilterList = ["GSE Controller", "Engine Controller"]  # Holds board names that we want to filter by. Defualt some
 
         # type filter, tool buttons are a special button that act like menu items
         self.typeFilterButton = QToolButton(self)
-        self.typeFilterButton.setMinimumWidth(self.tabWidget.width() * .25)
+        self.typeFilterButton.setMinimumWidth(int(self.tabWidget.width() * .25))
         self.typeFilterButton.setText("Type Filter")
         self.typetoolmenu = QMenu(self)
         self.typeFilterList_STATIC = ["other", "pressure", "vlv", "mtr", "STATE", "load", "tc", "rtd", "tnk", "ctrl_press",

@@ -33,12 +33,12 @@ TOOLTIPS["end_loop"] = "<nobr><b>end_loop</b></nobr>"
 TOOLTIPS["auto"] = "<nobr><b>auto</b> auto_name<i>(str)</i></nobr>"
 
 
-class DictionaryCompleter(QtGui.QCompleter):
+class DictionaryCompleter(QtWidgets.QCompleter):
     insertText = QtCore.pyqtSignal(str)
 
     def __init__(self, keywords=None, parent=None):
         keywords = KEYWORDS
-        QtGui.QCompleter.__init__(self, keywords, parent)
+        QtWidgets.QCompleter.__init__(self, keywords, parent)
         self.activated.connect(self.changeCompletion)
 
     def changeCompletion(self, completion):
