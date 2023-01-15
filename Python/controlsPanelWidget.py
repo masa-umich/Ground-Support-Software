@@ -81,6 +81,7 @@ class ControlsPanelWidget(QWidget):
         self.serial_number_visibility_group = QButtonGroup(self)
         self.solenoid_NC_NO_combobox = QComboBox(self)
         self.solenoid_keybind = QLineEdit(self)
+        self.tank_override_checkbox = QCheckBox(self)
         
         # fonts
         title_font = QFont()
