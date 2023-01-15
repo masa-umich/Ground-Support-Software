@@ -1,31 +1,23 @@
-import sys
-import os
-import ctypes
-from datetime import datetime
-import traceback
-
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-import pyqtgraph as pg
 
-from constants import Constants
 from s2Interface import S2_Interface
 
 INTERFACE = S2_Interface()
 CHANNELS = INTERFACE.channels
 
-class QHLine(QtGui.QFrame):
+class QHLine(QtWidgets.QFrame):
     def __init__(self):
         super().__init__()
-        self.setFrameShape(QtGui.QFrame.HLine)
-        self.setFrameShadow(QtGui.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
 
 
-class QVLine(QtGui.QFrame):
+class QVLine(QtWidgets.QFrame):
     def __init__(self):
         super().__init__()
-        self.setFrameShape(QtGui.QFrame.VLine)
-        self.setFrameShadow(QtGui.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.VLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
 
 
 class TankWidget(QtWidgets.QWidget):
@@ -51,7 +43,7 @@ class TankWidget(QtWidgets.QWidget):
         height = self.progress * self.height()
 
         r = QtCore.QRect(0, self.height() - height, self.width(), height)
-        painter.fillRect(r, QtGui.QBrush(QtCore.Qt.blue))
+        painter.fillRect(r, QtGui.QBrush(Qt.blue))
         pen = QtGui.QPen(QtGui.QColor("black"), 4)
         painter.setPen(pen)
         painter.drawRect(self.rect())
@@ -77,7 +69,7 @@ class LevelWidget(QtWidgets.QGroupBox):
 
         completer = QtWidgets.QCompleter(CHANNELS)
         completer.setCaseSensitivity(False)
-        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         
         plabel = QtWidgets.QLabel("Pressure:")
         self.pvalue = QtWidgets.QLabel("XXX.X")

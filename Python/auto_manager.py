@@ -48,10 +48,10 @@ class DictionaryCompleter(QtWidgets.QCompleter):
         self.insertText.emit(completion)
 
 
-class AutoTextEdit(QtGui.QTextEdit):
+class AutoTextEdit(QtWidgets.QTextEdit):
     def __init__(self, *args):
         # *args to set parent
-        QtGui.QLineEdit.__init__(self, *args)
+        QtWidgets.QLineEdit.__init__(self, *args)
         self.completer = None
 
     def setCompleter(self, completer):
@@ -61,7 +61,7 @@ class AutoTextEdit(QtGui.QTextEdit):
             return
 
         completer.setWidget(self)
-        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.completer = completer
         self.completer.insertText.connect(self.insertCompletion)
@@ -348,25 +348,25 @@ class AutoManager(QtWidgets.QMainWindow):
         self.is_master = False
 
         # save menu item
-        save_action = QtGui.QAction("&Save", options_menu)
+        save_action = QtWidgets.QAction("&Save", options_menu)
         save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save)
         options_menu.addAction(save_action)
 
         # save as menu item
-        saveas_action = QtGui.QAction("&Save As", options_menu)
+        saveas_action = QtWidgets.QAction("&Save As", options_menu)
         saveas_action.setShortcut("Ctrl+Shift+S")
         saveas_action.triggered.connect(self.saveas)
         options_menu.addAction(saveas_action)
 
         # load menu item
-        load_action = QtGui.QAction("&Open", options_menu)
+        load_action = QtWidgets.QAction("&Open", options_menu)
         load_action.setShortcut("Ctrl+O")
         load_action.triggered.connect(self.load)
         options_menu.addAction(load_action)
 
         if singular:
-            connect = QtGui.QAction("&Connection", options_menu)
+            connect = QtWidgets.QAction("&Connection", options_menu)
             connect.setShortcut('Alt+C')
             connect.triggered.connect(lambda: self._gui.show_window(self._gui.liveDataHandler.getClient()))
             options_menu.addAction(connect)

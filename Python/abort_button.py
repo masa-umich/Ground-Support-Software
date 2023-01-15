@@ -56,7 +56,7 @@ class AbortButton(QtWidgets.QDialog):
         self.board_selector.addItems(Constants.boards)
 
         # Button enable toggle
-        self.arming_button = QtGui.QPushButton("Enable Hardware Button")
+        self.arming_button = QtWidgets.QPushButton("Enable Hardware Button")
         self.layout.addWidget(self.arming_button)
         self.arming_button.clicked.connect(self.arm_toggle)
 
@@ -67,16 +67,16 @@ class AbortButton(QtWidgets.QDialog):
         self.soft_arming_button.clicked.connect(self.soft_arm_toggle)
 
         # Serial port connection box
-        connection = QtGui.QGroupBox("Button Connection")
+        connection = QtWidgets.QGroupBox("Button Connection")
         self.layout.addWidget(connection)
-        connection_layout = QtGui.QHBoxLayout()
+        connection_layout = QtWidgets.QHBoxLayout()
         connection.setLayout(connection_layout)
-        self.ports_box = QtGui.QComboBox()
+        self.ports_box = QtWidgets.QComboBox()
         connection_layout.addWidget(self.ports_box)
-        scanButton = QtGui.QPushButton("Scan")
+        scanButton = QtWidgets.QPushButton("Scan")
         scanButton.clicked.connect(self.scan)
         connection_layout.addWidget(scanButton)
-        connectButton = QtGui.QPushButton("Connect")
+        connectButton = QtWidgets.QPushButton("Connect")
         connectButton.clicked.connect(self.connect)
         connection_layout.addWidget(connectButton)
         

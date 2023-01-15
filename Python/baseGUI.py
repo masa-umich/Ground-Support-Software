@@ -116,7 +116,7 @@ class BaseGui(QObject):
         :return: None
         """
         self._mainWindow = mainWindow
-        self._mainWindow.statusBar().setFixedHeight(22 * self.pixel_scale_ratio[1])
+        self._mainWindow.statusBar().setFixedHeight(int(22 * self.pixel_scale_ratio[1]))
 
         self._mainWindow.setWindowTitle(self._mainWindow.windowTitle() + " (" + Constants.GUI_VERSION + ")")
 

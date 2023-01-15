@@ -42,14 +42,14 @@ class ControlsWindow(QMainWindow):
         #self.client = ClientWidget(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()
-        self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
+        self.statusBar().setFixedHeight(int(22 * self.gui.pixel_scale_ratio[1]))
         self.button_box = AbortButton(self.gui)  # .client)
         self.limits = LimitWindow(10, gui=self.gui)  # .client)
         self.auto_manager = AutoManager(self.gui) #.client)
         self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
-        self.menuBar().setFixedHeight(32 * self.gui.pixel_scale_ratio[1])
+        self.menuBar().setFixedHeight(int(32 * self.gui.pixel_scale_ratio[1]))
         if self.gui.platform == "Windows":
             # Need to pull out the title bar height, and menu bar height from windows
             # TODO: Move the title bar height adjustment to screen resolution

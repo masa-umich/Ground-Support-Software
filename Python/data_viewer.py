@@ -393,31 +393,31 @@ class DataViewerWindow(QtWidgets.QMainWindow):
             self.options_menu.addAction(self.connect)
 
         # save menu item
-        self.save_action = QtGui.QAction("&Save Config", self.options_menu)
+        self.save_action = QtWidgets.QAction("&Save Config", self.options_menu)
         self.save_action.setShortcut("Ctrl+S")
         self.save_action.triggered.connect(self.save)
         self.options_menu.addAction(self.save_action)
 
         # load menu item
-        self.load_action = QtGui.QAction("&Load Config", self.options_menu)
+        self.load_action = QtWidgets.QAction("&Load Config", self.options_menu)
         self.load_action.setShortcut("Ctrl+O")
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
 
         # Add row of graphs to view
-        self.row_action = QtGui.QAction("&Add Row", self.options_menu)
+        self.row_action = QtWidgets.QAction("&Add Row", self.options_menu)
         self.row_action.setShortcut("Ctrl+R")
         self.row_action.triggered.connect(self.addRow)
         self.options_menu.addAction(self.row_action)
 
         # Add col of graphs to view
-        self.col_action = QtGui.QAction("&Add Column", self.options_menu)
+        self.col_action = QtWidgets.QAction("&Add Column", self.options_menu)
         self.col_action.setShortcut("Ctrl+C")
         self.col_action.triggered.connect(self.addCol)
         self.options_menu.addAction(self.col_action)
 
         # quit application menu item
-        self.quit = QtGui.QAction("&Quit", self.options_menu)
+        self.quit = QtWidgets.QAction("&Quit", self.options_menu)
         self.quit.setShortcut("Ctrl+Q")
         self.quit.triggered.connect(self.exit)
         self.options_menu.addAction(self.quit)

@@ -35,9 +35,9 @@ class PacketLogWidget(QWidget):
         self.packet_log.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         if not autoresize_cols:
-            self.packet_log.setColumnWidth(0, self.tabWidget.width() * .45)
-            self.packet_log.setColumnWidth(1, self.tabWidget.width() * .25)
-            self.packet_log.setColumnWidth(2, self.tabWidget.width() * .18)
+            self.packet_log.setColumnWidth(0, int(self.tabWidget.width() * .45))
+            self.packet_log.setColumnWidth(1, int(self.tabWidget.width() * .25))
+            self.packet_log.setColumnWidth(2, int(self.tabWidget.width() * .18))
         else:
             header = self.packet_log.horizontalHeader()
             header.setSectionResizeMode(0, QHeaderView.Stretch)

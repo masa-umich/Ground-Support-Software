@@ -76,10 +76,10 @@ class IndicatorLightWidget(QWidget):
         self.label.show()
 
         # Resize the widget to fit exactly the circle and the label
-        self.resize(self.circle_radius*2 + 2*self.wBuffer, self.circle_radius*2 + self.hBuffer + self.label.height() + self.lBuffer)
+        self.resize(int(self.circle_radius*2 + 2*self.wBuffer), int(self.circle_radius*2 + self.hBuffer + self.label.height() + self.lBuffer))
 
         # Move the label to be centered on the circle
-        self.label.move(self.circle_radius + self.wBuffer - self.label.width()/2, self.circle_radius*2 + self.hBuffer + self.lBuffer)
+        self.label.move(int(self.circle_radius + self.wBuffer - self.label.width()/2), int(self.circle_radius*2 + self.hBuffer + self.lBuffer))
         self.show()
 
     def setIndicatorColor(self, color: str):
@@ -102,7 +102,7 @@ class IndicatorLightWidget(QWidget):
 
         # Default pen qualities
         pen = QPen()
-        pen.setWidth(Constants.line_width/2)
+        pen.setWidth(int(Constants.line_width/2))
         if not self.darkMode:
             pen.setColor(Constants.MASA_Beige_color)
         else:

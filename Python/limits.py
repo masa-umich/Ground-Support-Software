@@ -273,13 +273,13 @@ class LimitWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.widget)
 
         # save menu item
-        self.save_action = QtGui.QAction("&Save Config", self.options_menu)
+        self.save_action = QtWidgets.QAction("&Save Config", self.options_menu)
         self.save_action.setShortcut("Ctrl+S")
         self.save_action.triggered.connect(self.save)
         self.options_menu.addAction(self.save_action)
 
         # load menu item
-        self.load_action = QtGui.QAction("&Load Config", self.options_menu)
+        self.load_action = QtWidgets.QAction("&Load Config", self.options_menu)
         self.load_action.setShortcut("Ctrl+O")
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)

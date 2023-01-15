@@ -32,7 +32,7 @@ class ControlsSidebarWidget(QWidget):
 
         self.width = self.centralWidget.panel_width
         self.height = self.parent.height
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(int(self.left), int(self.top), int(self.width), int(self.height))
 
         # Sets color of control panel
         self.setAutoFillBackground(True)
@@ -55,10 +55,10 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.setFont(title_font)
         self.title_label.setStyleSheet("color: white")
         self.title_label.setText("Avionics")
-        self.title_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
-        self.title_label.setFixedWidth(self.width)
+        self.title_label.setFixedHeight(int(75 * self.gui.pixel_scale_ratio[1]))
+        self.title_label.setFixedWidth(int(self.width))
         self.title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
+        self.title_label.move(int(10 * self.gui.pixel_scale_ratio[0]), 0)  # Nasty but makes it look more centered
         self.title_label.show()
 
         time_font = QFont()
@@ -78,7 +78,7 @@ class ControlsSidebarWidget(QWidget):
         # self.state_time_label.show()
 
         self.tabWidget = SidebarTabWidget(self)
-        self.tabWidget.move(3, self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1])
+        self.tabWidget.move(3, int(self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1]))
         self.tabWidget.show()
 
         self.board_objects = []  # An empty array to start
@@ -93,8 +93,8 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setWidget(self.scrollAreaLayoutBox)
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.NoFrame)
-        self.scroll.setFixedWidth(self.parent.panel_width - 2)
-        self.scroll.move(2, self.title_label.pos().y() + self.title_label.height() + 15 * self.gui.pixel_scale_ratio[1])
+        self.scroll.setFixedWidth(int(self.parent.panel_width - 2))
+        self.scroll.move(2, int(self.title_label.pos().y() + self.title_label.height() + 15 * self.gui.pixel_scale_ratio[1]))
         self.scroll.setFixedHeight(self.tabWidget.y() - self.scroll.pos().y())
         self.scroll.show()
 
@@ -215,7 +215,7 @@ class SidebarTabWidget(QWidget):
         self.gui = self.controlsSidebarWidget.gui
 
         self.setFixedHeight(int(415 * self.gui.pixel_scale_ratio[1]))
-        self.setFixedWidth(self.controlsSidebarWidget.width)
+        self.setFixedWidth(int(self.controlsSidebarWidget.width))
 
         self.tabWidget = QTabWidget(self)
         self.tabWidget.setFixedWidth(self.width())
@@ -282,7 +282,7 @@ class SidebarNoteWidget(QWidget):
         # This is kinda a mess, need to set the width so things can fit. Can't use all the space because then starts to
         # clip weirdly so this was easiest
         self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * .35))
-        self.noteBox.setColumnWidth(1, math.floor(self.tabWidget.width() * .65)-40*self.gui.pixel_scale_ratio[0])
+        self.noteBox.setColumnWidth(1, int(math.floor(self.tabWidget.width() * .65)-40*self.gui.pixel_scale_ratio[0]))
         self.noteBox.horizontalHeader().hide()
         self.noteBox.verticalHeader().hide()
 

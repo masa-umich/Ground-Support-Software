@@ -50,7 +50,7 @@ class FlashController(QtWidgets.QWidget):
         self._gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
-        self.logo = QtGui.QLabel()
+        self.logo = QtWidgets.QLabel()
         pixmap = QtGui.QPixmap(self._gui.LAUNCH_DIRECTORY+"Images/flash.png")
         #pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
         self.logo.setPixmap(pixmap)

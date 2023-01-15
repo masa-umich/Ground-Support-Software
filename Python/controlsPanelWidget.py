@@ -40,7 +40,7 @@ class ControlsPanelWidget(QWidget):
 
         self.width = self.parent.panel_width
         self.height = self.parent.height
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(int(self.left), int(self.top), int(self.width), int(self.height))
 
         # Sets color of control panel
         self.setAutoFillBackground(True)
@@ -61,7 +61,7 @@ class ControlsPanelWidget(QWidget):
         self.edit_frame = QFrame(self)
         self.edit_form_layout = QFormLayout(self)
         self.edit_form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_frame.resize(300 * self.gui.pixel_scale_ratio[0], self.gui.screenResolution[1])
+        self.edit_frame.resize(int(300 * self.gui.pixel_scale_ratio[0]), int(self.gui.screenResolution[1]))
         self.edit_frame.setLayout(self.edit_form_layout)
 
         # Textboxes, radioButtons, and drop-downs

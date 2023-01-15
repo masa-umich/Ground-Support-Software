@@ -56,7 +56,7 @@ class ControlsWidget(QWidget):
         self.width = self.gui.screenResolution[0] - self.parent.panel_width
         self.height = self.parent.height
 
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(self.left, self.top, int(self.width), self.height)
         self.show()
 
         # Keeps track of all the different object types
@@ -113,11 +113,11 @@ class ControlsWidget(QWidget):
         font.setPointSize(50 * self.gui.font_scale_ratio)
 
         self.main_abort_button.setFont(font)
-        self.main_abort_button.setFixedWidth(200 * self.gui.pixel_scale_ratio[0])
+        self.main_abort_button.setFixedWidth(int(200 * self.gui.pixel_scale_ratio[0]))
         self.main_abort_button.setStyleSheet("background-color : darkred")
         self.main_abort_button.setDisabled(False)
-        self.main_abort_button.setFixedHeight(90 * self.gui.pixel_scale_ratio[1])
-        self.main_abort_button.move(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0], self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1])
+        self.main_abort_button.setFixedHeight(int(90 * self.gui.pixel_scale_ratio[1]))
+        self.main_abort_button.move(int(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0]), int(self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1]))
         self.main_abort_button.show()
 
         self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
@@ -132,17 +132,19 @@ class ControlsWidget(QWidget):
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
         pixmap = QPixmap(self.gui.LAUNCH_DIRECTORY+'Images/masawhiteworm3.png')
-        pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pixmap = pixmap.scaled(int(300 * self.gui.pixel_scale_ratio[0]), int(100 * self.gui.pixel_scale_ratio[1]), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.masa_logo.setPixmap(pixmap)
 
         if self.gui.platform == "OSX":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
-                                       (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
-                                       100 * self.gui.pixel_scale_ratio[1])
+            self.masa_logo.setGeometry(int(10 * self.gui.pixel_scale_ratio[0]),
+                                       int(self.height -100 * self.gui.pixel_scale_ratio[1]),
+                                       int(300 * self.gui.pixel_scale_ratio[0]),
+                                       int(100 * self.gui.pixel_scale_ratio[1]))
         elif self.gui.platform == "Windows":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
-                                   (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
-                                   100 * self.gui.pixel_scale_ratio[1])
+            self.masa_logo.setGeometry(int(10 * self.gui.pixel_scale_ratio[0]),
+                                       int(self.height -(100 * self.gui.pixel_scale_ratio[1])),
+                                       int(300 * self.gui.pixel_scale_ratio[0]),
+                                   int(100 * self.gui.pixel_scale_ratio[1]))
 
     # TODO: Almost anything but this, that being said it works
     def finalizeInit(self):
