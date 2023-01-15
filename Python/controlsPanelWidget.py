@@ -79,8 +79,8 @@ class ControlsPanelWidget(QWidget):
         self.board_combobox = QComboBox(self)
         self.channel_combobox = QComboBox(self)
         self.serial_number_visibility_group = QButtonGroup(self)
-        self.solenoid_NC_NO_combobox = QComboBox()
-        self.tank_override_checkbox = QCheckBox(self)     # should probably come up w a better name for this
+        self.solenoid_NC_NO_combobox = QComboBox(self)
+        self.solenoid_keybind = QLineEdit(self)
         
         # fonts
         title_font = QFont()
@@ -141,6 +141,7 @@ class ControlsPanelWidget(QWidget):
         self.component_prop_label.setStyleSheet("color: white")
         self.edit_form_layout.addRow(self.component_prop_label)
         self.createComboBox(self.solenoid_NC_NO_combobox, "Solenoid NOvNC", "Coil Type", ["Normally Closed", "Normally Open"])
+        self.createLineEdit(self.solenoid_keybind, "Solenoid Keybind", "Keybind:")
 
         # Specific Parameters for Tanks (allowing press tank without yellow system indicator light)
         self.tank_override_label = QLabel("Component Properties:                                                                  ")
@@ -434,6 +435,7 @@ class ControlsPanelWidget(QWidget):
 
         if object_.object_name == "Solenoid" or object_.object_name == "3 Way Valve":
             self.solenoid_NC_NO_combobox.setCurrentIndex(object_.normally_open)
+            self.solenoid_keybind.setText(str(object_.keybind))
 
         self.enableAllEditPanelFieldSignals()
 
@@ -519,7 +521,7 @@ class ControlsPanelWidget(QWidget):
                         object_.normally_open = True
                     else:
                         object_.normally_open = False
-            
+
             # Custom Parameters for Tank
             elif identifier == "Tank Override":
                 for object_ in self.editing_object_list:
@@ -528,6 +530,9 @@ class ControlsPanelWidget(QWidget):
                     else:
                         object_.override_indicator = False
 
+            elif identifier == "Solenoid Keybind":
+                for object_ in self.editing_object_list:
+                    object_.keybind = text
             object_.updateToolTip()
 
     # def doesFormLayoutHaveFocus(self):
@@ -614,10 +619,12 @@ class ControlsPanelWidget(QWidget):
         if is_vis:
             self.component_prop_label.show()
             self.solenoid_NC_NO_combobox.show()
+            self.solenoid_keybind.show()
             self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().show()
         else:
             self.component_prop_label.hide()
             self.solenoid_NC_NO_combobox.hide()
+            self.solenoid_keybind.hide()
             self.edit_form_layout.itemAt(sol_NC_NO_index[0], sol_NC_NO_index[1] - 1).widget().hide()
 
     def setTankOverridePropertyVisibility(self, is_vis):
