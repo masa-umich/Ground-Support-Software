@@ -43,7 +43,7 @@ class AnchorPoint(QPushButton):
         self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2), 2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
         self.show()
 
-        self.middle = QPoint(self.pos().x() + self.size().width()/2, self.pos().y() + self.size().height()/2)
+        self.middle = QPoint(int(self.pos().x() + self.size().width()/2), int(self.pos().y() + self.size().height()/2))
 
         self.updatePosition()
 
@@ -53,8 +53,8 @@ class AnchorPoint(QPushButton):
         """
         Updates the absolute position on the anchor point. Called when object moves
         """
-        self.move(self.local_pos.x() + self.object_.position.x() - (self.width()/2), self.local_pos.y() + self.object_.position.y()-(self.height()/2))
-        self.middle = QPoint(self.pos().x() + self.size().width() / 2, self.pos().y() + self.size().height() / 2)
+        self.move(int(self.local_pos.x() + self.object_.position.x() - (self.width()/2)), int(self.local_pos.y() + self.object_.position.y()-(self.height()/2)))
+        self.middle = QPoint(int(self.pos().x() + self.size().width() / 2), int(self.pos().y() + self.size().height() / 2))
 
     def updateLocalPosition(self, pos: QPoint):
         """

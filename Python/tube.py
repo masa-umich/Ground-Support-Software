@@ -155,7 +155,7 @@ class Tube:
     def draw(self):
         # Default pen qualities
         pen = QPen()
-        pen.setWidth(self.line_width)
+        pen.setWidth(int(self.line_width))
         pen.setColor(Constants.fluidColor[self.fluid])
         self.widget_parent.painter.setPen(pen)
 
@@ -234,10 +234,10 @@ class TubeAnchorPoint(QPushButton):
         self.setStyleSheet("background-color:transparent;border:0;")
 
         # Below makes sure the anchor point size is rounded to the nearest odd number
-        self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2),
-                    2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
+        self.resize(int(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2)),
+                    int(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2)))
 
-        self.move(QPoint(point.x() - self.size().width()/2, point.y() - self.size().height()/2))
+        self.move(QPoint(int(point.x() - self.size().width()/2), int(point.y() - self.size().height()/2)))
 
         self.show()
 

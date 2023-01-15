@@ -93,12 +93,12 @@ class CustomLabel(QLabel):
         if self.is_vertical:
             self.setFixedSize(fixedHeight,self.width())
         else:
-            self.setFixedHeight(self.rows * fixedHeight)
+            self.setFixedHeight(int(self.rows * fixedHeight))
             if self.rows > 1:
                 # TODO: Fix this +40 *blah. Currently addresses the problem that causes the last word to be clipped
-                self.setFixedWidth(fixedWidth + (self.gui.pixel_scale_ratio[0]*(40 * (self.getFontSize()/23)))) # 40 is a lazy mans fix right now
+                self.setFixedWidth(int(fixedWidth + (self.gui.pixel_scale_ratio[0]*(40 * (self.getFontSize()/23))))) # 40 is a lazy mans fix right now
             else:
-                self.setFixedWidth(fixedWidth + 5)  # 5 is a small buffer
+                self.setFixedWidth(int(fixedWidth + 5))  # 5 is a small buffer
 
     def setIsVertical(self, is_vertical):
         """

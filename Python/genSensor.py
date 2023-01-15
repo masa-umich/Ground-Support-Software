@@ -82,8 +82,8 @@ class GenSensor(AvionicsObject):
         """
         Inits the measurement label
         """
-        self.measurement_label.setFixedSize(QSize(self.width, self.height))
-        self.measurement_label.move(self.position.x(), self.position.y())
+        self.measurement_label.setFixedSize(QSize(int(self.width), int(self.height)))
+        self.measurement_label.move(int(self.position.x()), int(self.position.y()))
         self.measurement_label.setText(str(self.measurement) + " " + self.units)
         self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
         self.measurement_label.setStyleSheet('color: white')
@@ -92,7 +92,7 @@ class GenSensor(AvionicsObject):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily("Arial")
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
         self.measurement_label.setFont(font)
 
         self.measurement_label.show()
@@ -174,7 +174,8 @@ class GenSensor(AvionicsObject):
         """
         Draws the Sensor icon on screen
         """
-        self.widget_parent.painter.drawRect(QRect(self.position.x(), self.position.y(), self.width, self.height))
+
+        self.widget_parent.painter.drawRect(QRect(int(self.position.x()), int(self.position.y()), int(self.width), int(self.height)))
         self.widget_parent.painter.setBrush(0)
         
         super().draw()

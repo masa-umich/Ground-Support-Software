@@ -90,29 +90,29 @@ class Motor(AvionicsObject):
 
         # Define the labels that keep track of position and set point
         self.set_pos_title_label = CustomLabel(self.widget_parent, self.gui, text="Set Pos")
-        self.set_pos_title_label.setFixedWidth(self.width)
+        self.set_pos_title_label.setFixedWidth(int(self.width))
         self.set_pos_title_label.lower()
 
         self.set_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.setPoint)+ "°")
-        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.set_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.set_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.set_pos_label.lower()
 
         self.current_pos_title_label = CustomLabel(self.widget_parent,self.gui, text="Curr Pos")
-        self.current_pos_title_label.setFixedWidth(self.width)
+        self.current_pos_title_label.setFixedWidth(int(self.width))
         self.current_pos_title_label.lower()
 
         self.current_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.currentPos)+ "°")
-        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.current_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.current_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.current_pos_label.lower()
 
         self.pot_pos_title_label = CustomLabel(self.widget_parent,self.gui, text="Pot Pos")
-        self.pot_pos_title_label.setFixedWidth(self.width)
+        self.pot_pos_title_label.setFixedWidth(int(self.width))
         self.pot_pos_title_label.lower()
 
         self.pot_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.currentPos)+ "°")
-        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.pot_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.pot_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.pot_pos_label.lower()
 
@@ -135,23 +135,23 @@ class Motor(AvionicsObject):
 
         blankSpaceHeight = (self.height-self.boxHeight*3 - self.set_pos_title_label.height()*3)/4
 
-        self.set_pos_title_label.setFixedWidth(self.width)
-        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1))
+        self.set_pos_title_label.setFixedWidth(int(self.width))
+        self.set_pos_title_label.move(int(self.position.x()), int(self.position.y() + blankSpaceHeight * (1)))
 
-        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
+        self.set_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.set_pos_label.move(int(self.position.x() + (self.width - self.boxWidth)/2), int(self.set_pos_title_label.y() + self.set_pos_title_label.height()))
 
-        self.current_pos_title_label.setFixedWidth(self.width)
-        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2))
+        self.current_pos_title_label.setFixedWidth(int(self.width))
+        self.current_pos_title_label.move(int(self.position.x()), int(self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2)))
 
-        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
+        self.current_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.current_pos_label.move(int(self.position.x() + (self.width - self.boxWidth)/2), int(self.current_pos_title_label.y() + self.current_pos_title_label.height()))
 
-        self.pot_pos_title_label.setFixedWidth(self.width)
-        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3))
+        self.pot_pos_title_label.setFixedWidth(int(self.width))
+        self.pot_pos_title_label.move(int(self.position.x()), int(self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3)))
 
-        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
+        self.pot_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.pot_pos_label.move(int(self.position.x() + (self.width - self.boxWidth)/2), int(self.pot_pos_title_label.y() + self.pot_pos_title_label.height()))
 
     @overrides
     def draw(self):

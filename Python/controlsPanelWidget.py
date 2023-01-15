@@ -86,10 +86,10 @@ class ControlsPanelWidget(QWidget):
         title_font = QFont()
         title_font.setBold(True)
         title_font.setUnderline(True)
-        title_font.setPointSize(13 * self.gui.font_scale_ratio)
+        title_font.setPointSize(int(13 * self.gui.font_scale_ratio))
 
         self.default_font = QFont()
-        self.default_font.setPointSize(13 * self.gui.font_scale_ratio)
+        self.default_font.setPointSize(int(13 * self.gui.font_scale_ratio))
 
         # Component Parameters
         label = QLabel("Component Parameters:                                                                  ") # TODO: jankity jank jank

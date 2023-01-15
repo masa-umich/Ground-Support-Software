@@ -117,9 +117,9 @@ class BaseObject(QObject):
         """
         # Default points are the midpoints of the four sides.
         anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, 0, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width / 2), self.height), self, 1, parent=self.widget_parent),
+                         AnchorPoint(QPoint(int(self.width / 2), int(self.height)), self, 1, parent=self.widget_parent),
                          AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
-                         AnchorPoint(QPoint(self.width, int(self.height / 2)), self, 3, parent=self.widget_parent)
+                         AnchorPoint(QPoint(int(self.width), int(self.height / 2)), self, 3, parent=self.widget_parent)
                          ]
         self.anchor_points = anchor_points
 

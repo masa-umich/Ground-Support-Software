@@ -45,8 +45,8 @@ class ObjectButton(QPushButton):
 
         self.setToolTip("SN: " + self.object_.serial_number)
 
-        self.resize(self.object_.width, self.object_.height)
-        self.move(self.object_.position.x(), self.object_.position.y())
+        self.resize(int(self.object_.width), int(self.object_.height))
+        self.move(int(self.object_.position.x()), int(self.object_.position.y()))
 
         # HMM: I feel strange about the fact the button is connecting to inside the object class
         # Connect click action to onClick function inside object class

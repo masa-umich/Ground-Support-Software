@@ -85,21 +85,21 @@ class ObjectLabel(CustomLabel):
             self.position_string = position_string
 
         if self.position_string == "Top":
-            self.move(self.getXCenterPosition(), self.object_.position.y() - self.height() - 3) # 3 is for better seperation
+            self.move(int(self.getXCenterPosition()), int(self.object_.position.y() - self.height() - 3)) # 3 is for better seperation
         elif self.position_string == "Bottom":
-            self.move(self.getXCenterPosition(), self.object_.position.y() + self.object_.height + 3) # 3 is for better seperation
+            self.move(int(self.getXCenterPosition()), int(self.object_.position.y() + self.object_.height + 3)) # 3 is for better seperation
         elif self.position_string == "Right":
-            self.move(self.object_.position.x() + self.object_.width + 3, self.getYCenterPosition())
+            self.move(int(self.object_.position.x() + self.object_.width + 3), int(self.getYCenterPosition()))
         elif self.position_string == "Left":
-            self.move(self.object_.position.x() - self.width() - 3, self.getYCenterPosition())
+            self.move(int(self.object_.position.x() - self.width() - 3), int(self.getYCenterPosition()))
         elif self.position_string == "Custom":
-            self.move(self.object_.position.x() + self.local_pos.x(), self.object_.position.y() + self.local_pos.y())
+            self.move(int(self.object_.position.x() + self.local_pos.x()), int(self.object_.position.y() + self.local_pos.y()))
 
         # If label on left side, flip flop what side it goes on
         if self.position_string == "Left":
-            self.light.move(self.pos().x() - self.light.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
+            self.light.move(int(self.pos().x() - self.light.width()), int(self.pos().y() + (self.height() / 2) - self.light.circle_radius))
         else:
-            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height()/2) - self.light.circle_radius)
+            self.light.move(int(self.pos().x() + self.width()), int(self.pos().y() + (self.height()/2) - self.light.circle_radius))
         self.setLocalPosition()
 
     def getXCenterPosition(self):
@@ -110,7 +110,7 @@ class ObjectLabel(CustomLabel):
         # if self.light.isVisible():
         #     return self.object_.position.x() + (self.object_.width / 2) - ((self.width() + self.light.width()) / 2)
         # else:
-        return self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2)
+        return int(self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2))
 
     def getYCenterPosition(self):
         """

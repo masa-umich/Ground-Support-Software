@@ -98,14 +98,14 @@ class Solenoid(AvionicsObject):
         if self.is_vertical:
             sol_mid_point = (self.width - coil_height) / 2
             anchor_points = [AnchorPoint(QPoint(int(sol_mid_point) + 1, 0), self, 0, parent=self.widget_parent),
-                             AnchorPoint(QPoint(int(sol_mid_point) + 1, self.height), self, 1, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(sol_mid_point) + 1, int(self.height)), self, 1, parent=self.widget_parent),
                              AnchorPoint(QPoint(int(sol_mid_point) + 1, int(self.height / 2 + 1)), self, 2,
                                          parent=self.widget_parent)
                              ]
         else:
             sol_mid_point = (self.height - coil_height) / 2 + coil_height
             anchor_points = [AnchorPoint(QPoint(0, int(sol_mid_point)), self, 0, parent=self.widget_parent),
-                             AnchorPoint(QPoint(self.width, int(sol_mid_point)), self, 1, parent=self.widget_parent),
+                             AnchorPoint(QPoint(int(self.width), int(sol_mid_point)), self, 1, parent=self.widget_parent),
                              AnchorPoint(QPoint(int(self.width/2 +1), int(sol_mid_point)), self, 2, parent=self.widget_parent)
                              ]
 

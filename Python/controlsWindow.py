@@ -587,9 +587,9 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(500*self.gui.pixel_scale_ratio[0], 80*self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(500*self.gui.pixel_scale_ratio[0])
-        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+        dialog.resize(int(500*self.gui.pixel_scale_ratio[0]), int(80*self.gui.pixel_scale_ratio[1]))
+        dialog.setMinimumWidth(int(500*self.gui.pixel_scale_ratio[0]))
+        dialog.move(int((self.width() - dialog.width()) / 2), int((self.height() - dialog.height()) / 2))
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
@@ -606,7 +606,7 @@ class ControlsWindow(QMainWindow):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Add in the textbox to give run a title
         textbox = QLineEdit(dialog)
@@ -633,7 +633,7 @@ class ControlsWindow(QMainWindow):
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: self.startRunCanceled(dialog))
         cancel_button.setFont(font)
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full width
 
         if is_test:
             start_button = QPushButton("Start Test")
@@ -645,7 +645,7 @@ class ControlsWindow(QMainWindow):
         start_button.setDefault(True)
         start_button.setAutoDefault(False)
         start_button.setFont(font)
-        start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        start_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full width
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(start_button)
@@ -751,10 +751,10 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
-        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+        dialog.resize(int(450*self.gui.pixel_scale_ratio[0]), int(240*self.gui.pixel_scale_ratio[1]))
+        dialog.setMinimumWidth(int(450*self.gui.pixel_scale_ratio[0]))
+        dialog.setMinimumWidth(int(240*self.gui.pixel_scale_ratio[1]))
+        dialog.move(int((self.width() - dialog.width()) / 2), int((self.height() - dialog.height()) / 2))
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
@@ -767,7 +767,7 @@ class ControlsWindow(QMainWindow):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14*self.gui.font_scale_ratio)
+        font.setPointSize(int(14*self.gui.font_scale_ratio))
 
         # Add in all the dropdowns
         dropdown1 = QComboBox(dialog)
@@ -828,14 +828,14 @@ class ControlsWindow(QMainWindow):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Save")
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.avionicsDialogSave(dropdowns, dialog))
-        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+        save_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)

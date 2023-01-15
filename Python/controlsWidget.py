@@ -110,7 +110,7 @@ class ControlsWidget(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.monospace_font)
-        font.setPointSize(50 * self.gui.font_scale_ratio)
+        font.setPointSize(int(50 * self.gui.font_scale_ratio))
 
         self.main_abort_button.setFont(font)
         self.main_abort_button.setFixedWidth(int(200 * self.gui.pixel_scale_ratio[0]))

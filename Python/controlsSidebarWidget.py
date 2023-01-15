@@ -64,7 +64,7 @@ class ControlsSidebarWidget(QWidget):
         time_font = QFont()
         time_font.setStyleStrategy(QFont.PreferAntialias)
         time_font.setFamily(Constants.default_font)
-        time_font.setPointSize(30 * self.gui.font_scale_ratio)
+        time_font.setPointSize(int(30 * self.gui.font_scale_ratio))
 
         # self.state_time_label = QLabel(self)
         # self.state_time_label = QLabel(self)
@@ -272,7 +272,7 @@ class SidebarNoteWidget(QWidget):
 
         # widget where notes are displayed
         self.noteBox = QTableWidget(self)
-        font.setPointSize(12 * self.gui.font_scale_ratio)
+        font.setPointSize(int(12 * self.gui.font_scale_ratio))
 
         self.vlayout.addWidget(self.noteBox)
 

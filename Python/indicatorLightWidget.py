@@ -43,7 +43,7 @@ class IndicatorLightWidget(QWidget):
             self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
             self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
             self.lBuffer = LBuffer * self.gui.pixel_scale_ratio[1]
-            monospace_light_font.setPointSize(self.fontSize * self.gui.font_scale_ratio)
+            monospace_light_font.setPointSize(int(self.fontSize * self.gui.font_scale_ratio))
         else:
             self.circle_radius = circleRadius
             self.wBuffer = Wbuffer

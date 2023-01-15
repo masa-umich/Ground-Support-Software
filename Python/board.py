@@ -30,7 +30,7 @@ class Board(QWidget):
         self.painter = QPainter()
 
         # The height value is updated later
-        self.setGeometry(0, 0, self.controlsSidebarWidget.width - 30, 200*self.gui.pixel_scale_ratio[1])
+        self.setGeometry(0, 0, int(self.controlsSidebarWidget.width - 30), int(200*self.gui.pixel_scale_ratio[1]))
 
         # Set background color to match
         self.setAutoFillBackground(True)
@@ -39,10 +39,10 @@ class Board(QWidget):
         self.setPalette(p)
 
         # Define geometric of board
-        self.board_pos = QPointF(10*self.gui.pixel_scale_ratio[0], 38*self.gui.pixel_scale_ratio[1])
-        self.board_width = 150 * self.gui.pixel_scale_ratio[0]
+        self.board_pos = QPointF(int(10*self.gui.pixel_scale_ratio[0]), int(38*self.gui.pixel_scale_ratio[1]))
+        self.board_width = int(150 * self.gui.pixel_scale_ratio[0])
         # Board height is programmatically set later, initialized here for clarity
-        self.board_height = 0 * self.gui.pixel_scale_ratio[1]
+        self.board_height = int(0 * self.gui.pixel_scale_ratio[1])
 
         # Temp holder values
         self.name = name
@@ -140,24 +140,24 @@ class Board(QWidget):
         # Connection status indicator light
         self.connectionIndicator = IndicatorLightWidget(self, self.gui, '', 10, "Red", 10, 10, 10, 1)
         self.connectionIndicator.setToolTip("No connection")
-        self.connectionIndicator.move(self.width()-self.connectionIndicator.width(), 0)
+        self.connectionIndicator.move(int(self.width()-self.connectionIndicator.width()), 0)
 
         # Board name label
         self.name_label = CustomLabel(self, self.gui, text=self.name)
         self.name_label.setFontSize(16)
         self.name_label.setStyleSheet("color: white")
-        self.name_label.setFixedHeight(self.connectionIndicator.circle_radius*2)
+        self.name_label.setFixedHeight(int(self.connectionIndicator.circle_radius*2))
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.name_label.move(self.board_pos.x(), self.connectionIndicator.pos().y()+self.connectionIndicator.hBuffer)
+        self.name_label.move(int(self.board_pos.x()), int(self.connectionIndicator.pos().y()+self.connectionIndicator.hBuffer))
 
         # Set up the data name label
         self.data_frame = QFrame(self)
         self.data_form_layout = QFormLayout(self)
-        self.data_frame.resize(self.width() - (self.board_pos.x() + self.board_width)+5*self.gui.pixel_scale_ratio[0],
-                                150*self.gui.pixel_scale_ratio[1] - (self.name_label.pos().y() + self.name_label.height()))
+        self.data_frame.resize(int(self.width() - (self.board_pos.x() + self.board_width)+5*self.gui.pixel_scale_ratio[0]),
+                                int(150*self.gui.pixel_scale_ratio[1] - (self.name_label.pos().y() + self.name_label.height())))
         self.data_frame.setLayout(self.data_form_layout)
-        self.data_frame.move((self.board_pos.x() + self.board_width)-5*self.gui.pixel_scale_ratio[0],
-                             (self.name_label.pos().y() + self.name_label.height())-11*self.gui.pixel_scale_ratio[1])
+        self.data_frame.move(int((self.board_pos.x() + self.board_width)-5*self.gui.pixel_scale_ratio[0]),
+                             int((self.name_label.pos().y() + self.name_label.height())-11*self.gui.pixel_scale_ratio[1]))
 
         # Create the labels for the data form
         self.data_form_layout.setLabelAlignment(Qt.AlignLeft)
@@ -207,12 +207,12 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(9 * self.gui.font_scale_ratio)
+        font.setPointSize(int(9 * self.gui.font_scale_ratio))
 
         if self.gui.platform == "OSX":
-            fwidth = self.width()/5 * .85
+            fwidth = int(self.width()/5 * .85)
         else:
-            fwidth = self.width()/5 * .85
+            fwidth = int(self.width()/5 * .85)
 
         # Create the buttons, make sure there is no default option, and connect to functions
         self.manual_button = QPushButton("Manual")
@@ -260,7 +260,7 @@ class Board(QWidget):
             rem_timer_font = QFont()
             rem_timer_font.setStyleStrategy(QFont.PreferAntialias)
             rem_timer_font.setFamily(Constants.monospace_font)
-            rem_timer_font.setPointSizeF(14 * self.gui.font_scale_ratio)
+            rem_timer_font.setPointSizeF(int(14 * self.gui.font_scale_ratio))
             self.rem_timer.setFont(rem_timer_font)
             self.rem_timer.setText("00 s")
             self.rem_timer.setStyleSheet("color: white")
@@ -293,20 +293,20 @@ class Board(QWidget):
         self.setBoardState(self.state)
 
         # Set the board height to be the same size as the text because it looks good
-        self.board_height = self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y()
+        self.board_height = int(self.telemrate_label.pos().y() + self.telemrate_label.height() + self.data_frame.y() - self.board_pos.y())
 
         # Update the frame geometry
-        self.state_frame.setGeometry(0, self.board_height + self.board_pos.y(), self.width(), 60*self.gui.pixel_scale_ratio[1])
+        self.state_frame.setGeometry(0, int(self.board_height + self.board_pos.y()), int(self.width()), int(60*self.gui.pixel_scale_ratio[1]))
         # Make sure the buttons don't clip
         if self.state_frame.height() + self.state_frame.y() > self.height() -state_form_label.height():
-            self.setFixedHeight(self.state_frame.height() + self.state_frame.y()+state_form_label.height())
+            self.setFixedHeight(int(self.state_frame.height() + self.state_frame.y()+state_form_label.height()))
         # Move to position, little dirty atm
-        state_form_label.move(self.board_pos.x(), self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+        state_form_label.move(int(self.board_pos.x()),int(self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1]))
         if self.name == "Pressurization Controller" or self.name == "Engine Controller":
-            self.rem_timer.move(state_form_label.x() + state_form_label.width()+155, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
-        self.state_label.move(state_form_label.x()+state_form_label.width()+3, self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1])
+            self.rem_timer.move(int(state_form_label.x() + state_form_label.width()+155), int(self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1]))
+        self.state_label.move(int(state_form_label.x()+state_form_label.width()+3), int(self.state_frame.y()+self.state_frame.height() + -8 * self.gui.pixel_scale_ratio[1]))
         self.board_background_button = QPushButton(self)
-        self.board_background_button.setGeometry(self.board_pos.x(), self.board_pos.y(), self.board_width,self.board_height)
+        self.board_background_button.setGeometry(int(self.board_pos.x()), int(self.board_pos.y()), int(self.board_width),int(self.board_height))
         self.board_background_button.setStyleSheet("background-color:transparent;border:0;")
         self.board_background_button.clicked.connect(self.onClick)
         self.board_background_button.show()
@@ -334,11 +334,11 @@ class Board(QWidget):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
-        dialog.move((self.window.width() - dialog.width()) / 2,
-                    (self.window.height() - dialog.height()) / 2)
+        dialog.resize(int(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1]))
+        dialog.setMinimumWidth(int(450 * self.gui.pixel_scale_ratio[0]))
+        dialog.setMinimumWidth(int(240 * self.gui.pixel_scale_ratio[1]))
+        dialog.move(int((self.window.width() - dialog.width()) / 2),
+                    int((self.window.height() - dialog.height()) / 2))
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
@@ -351,7 +351,7 @@ class Board(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Create spin boxes
         setPointBox = QDoubleSpinBox()

@@ -52,7 +52,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         if action.text() == "Pressurization Controller":
             self.channel_count = 6
@@ -100,7 +100,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             label1 = QLabel("Lower Voltage")
             label2 = QLabel("Upper Voltage")
             label3 = QLabel("Pressure Range")
-            font.setPointSize(18 * self.gui.font_scale_ratio)
+            font.setPointSize(int(18 * self.gui.font_scale_ratio))
             label.setFont(font)
             label1.setFont(font)
             label2.setFont(font)
@@ -129,8 +129,8 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         self.scrollArea.setWidget(dialog)
 
         # set initial window size
-        self.scrollArea.setMinimumHeight(800 * self.gui.pixel_scale_ratio[0])
-        self.scrollArea.setMinimumWidth(1000 * self.gui.pixel_scale_ratio[0])
+        self.scrollArea.setMinimumHeight(int(800 * self.gui.pixel_scale_ratio[0]))
+        self.scrollArea.setMinimumWidth(int(1000 * self.gui.pixel_scale_ratio[0]))
 
         self.scrollArea.setWidgetResizable(True)
 
@@ -145,23 +145,23 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full width
 
-        font.setPointSize(20 * self.gui.font_scale_ratio)
+        font.setPointSize(int(20 * self.gui.font_scale_ratio))
 
         save_button = QPushButton("Save")
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.send_sensor_calibrations(action.text()))
-        save_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])
+        save_button.setFixedWidth(int(300 * self.gui.pixel_scale_ratio[0]))
 
         refresh_button = QPushButton("Refresh")
         refresh_button.setFont(font)
         refresh_button.setDefault(False)
         refresh_button.setAutoDefault(False)
         refresh_button.clicked.connect(lambda: self.get_calibrate_sensors(action.text()))
-        refresh_button.setFixedWidth(300 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full
+        refresh_button.setFixedWidth(int(300 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full
 
         # buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)
@@ -175,7 +175,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                                + "KNOWN BUG: THIS WINDOW ONLY WORKS ONCE\n" \
                                + "AFTER CLOSING, REBOOT GUI TO USE AGAIN")
 
-        font.setPointSize(20 * self.gui.font_scale_ratio)
+        font.setPointSize(int(20 * self.gui.font_scale_ratio))
         warning_label.setFont(font)
         warningLayout = QtWidgets.QGridLayout()
         warningLayout.addWidget(warning_label)
