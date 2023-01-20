@@ -138,7 +138,7 @@ class GenSensor(AvionicsObject):
         super().move(point)
 
         if self.position_locked == False and self.locked == False:
-            self.measurement_label.move(point.x(), point.y())
+            self.measurement_label.move(int(point.x()), int(point.y()))
 
     @overrides
     def onClick(self):

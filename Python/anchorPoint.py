@@ -84,11 +84,11 @@ class AnchorPoint(QPushButton):
             self.widget.painter.setPen(pen)
 
             if self.x_aligned:
-                self.widget.painter.drawLine(QPoint(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
-                                                    QPoint(self.x(), self.gui.screenResolution[1]))
+                self.widget.painter.drawLine(QPoint(int(self.x() + (5 * self.gui.pixel_scale_ratio[0])), 0),
+                                                    QPoint(int(self.x()), int(self.gui.screenResolution[1])))
             if self.y_aligned:
-                self.widget.painter.drawLine(QPoint(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
-                                                    QPoint(self.gui.screenResolution[0], self.y()))
+                self.widget.painter.drawLine(QPoint(0, int(self.y() + (6 * self.gui.pixel_scale_ratio[1]))),
+                                                    QPoint(int(self.gui.screenResolution[0]), int(self.y())))
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):

@@ -565,7 +565,7 @@ class ControlsWidget(QWidget):
                                                  long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
                                                  normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
                                                  serial_number_visible=sol["serial number label"]["is visible"]))
-                self.object_list[-1].keybind = sol["keybind"]
+                self.object_list[-1].keybind = sol.get("keybind", -1)
 
             elif obj_type == "Tank":
                 tnk = data[i]

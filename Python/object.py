@@ -338,8 +338,8 @@ class BaseObject(QObject):
             if self.is_being_edited:
                 self.highlight(pen)
         else:
-            self.hideAnchorPoints()
-            
+            self.points = self.hideAnchorPoints()
+
     def highlight(self, pen):
         """
         Draws a thin yellow box around selected object
@@ -371,7 +371,7 @@ class BaseObject(QObject):
         :param point: point to move to
         """
 
-        intPoint = QPoint(point.x(),point.y())
+        intPoint = QPoint(int(point.x()),int(point.y()))
 
         # Move the object and all the shit connected to it
         self.button.move(intPoint)
