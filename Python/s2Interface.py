@@ -428,10 +428,11 @@ class S2_Interface:
         return mapping[name]
 
     def get_header(self):
-        header = ""
-        for channel in self.channels:
-            header += "%s (%s)," % (channel, self.units[channel])
-        header += "\n"
-        return header
+        return ",".join(self.get_prefixed_channel_names()) + "\n"
+
+    def get_prefixed_channel_names(self):
+        return [f"{channel} ({self.units[channel]})" for channel in self.channels]
+
+        
 
 

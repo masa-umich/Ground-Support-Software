@@ -23,6 +23,7 @@ from PyQt5.QtCore import *
 
 import pandas as pd
 from synnax.io import DataFrameWriter
+from Python.synnax import SynnaxLog
 
 from constants import Constants
 from party import PartyParrot
@@ -792,6 +793,8 @@ class Server(QThread):  # See below
             self.serial_log.write("Time, Packet\n")
             # Write header
             self.data_log.write("Time," + self.interface.get_header() + "\n")
+
+        self.synnax_log = SynnaxLog(self.interface.get_prefixed_channel_names())
 
     def open_test_log(self, campaign_save_name: str, test_name, is_recovered: bool = False):
         """
