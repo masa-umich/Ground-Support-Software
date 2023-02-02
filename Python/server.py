@@ -21,6 +21,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+import pandas as pd
+from synnax.io import DataFrameWriter
+
 from constants import Constants
 from party import PartyParrot
 from s2Interface import S2_Interface
@@ -397,6 +400,8 @@ class Server(QThread):  # See below
     """
     This class handles a majority of the command processing, data processing etc.
     """
+    
+    synnax_log: DataFrameWriter
 
     statusBarMessageSignal = pyqtSignal(str, bool)
     logSignal = pyqtSignal(str, str)
@@ -840,6 +845,9 @@ class Server(QThread):  # See below
         # Close test logs
         self.close_test_log()
 
+        # Close the Synnax log
+        self.synnax_log.close()
+
         # Close campaign logs
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
@@ -880,6 +888,13 @@ class Server(QThread):  # See below
             # Check if the test log is open (test is running)
             if self.test_data_log is not None:
                 self.test_data_log.write(msg + "\n")
+
+            if self.synnax_log is not None:
+                self.synnax_log.write(self.data_frame(self.data_dict))
+
+    def data_frame(self, data: dict) -> pd.DataFrame:
+        """Converts a data dict to a data frame"""
+        return pd.DataFrame.from_records([data])
 
     def get_data_dict_as_csv_string(self):
         """
