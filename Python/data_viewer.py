@@ -329,7 +329,7 @@ class DataViewer(QtWidgets.QTabWidget):
             channel_name = self.series[i].text()
             if channel_name in self.channels:
                 self.plot2.curves[channel_name].setData(
-                    x=data["time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
+                    x=data["Time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
 
     def range_update(self):
         """Updates plot range when slider is moved"""
@@ -482,7 +482,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """Update application"""
         # super().update()
 
-        packet["time"] -= self.starttime  # time to elapsed
+        packet["Time"] -= self.starttime  # time to elapsed
         last_frame = pd.DataFrame(packet, index=[0])
         self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
             int(Constants.dataStorageDuration*60*1000/self.cycle_time))  # cap data to 15 min (stored as constant in constants.py)
@@ -505,7 +505,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 if (not self.database_full and self.database[self.database.columns[0]].count() > 0):
 
                     # timestamps start when connection established, plot starts when channel name entered
-                    timestamp = self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1]
+                    timestamp = self.database["Time"].to_numpy().astype(np.float64)[self.database["Time"].size - 1]
 
                     # size of database extends beyond range viewed, increase slider size
                     if (timestamp >= self.viewers[idx].duration):
@@ -517,8 +517,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 elif (self.database_full and self.database[self.database.columns[0]].count() > 0):
                     # if here then database is full
 
-                    end = int(self.database["time"].to_numpy().astype(np.float64)[self.database["time"].size - 1])
-                    start = int(self.database["time"].to_numpy().astype(np.float64)[0])
+                    end = int(self.database["Time"].to_numpy().astype(np.float64)[self.database["Time"].size - 1])
+                    start = int(self.database["Time"].to_numpy().astype(np.float64)[0])
                     
                     # slider size doesn't increase but values of min/max increment in order for range_update to work
                     if (end >= self.viewers[idx].duration):

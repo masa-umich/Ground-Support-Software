@@ -22,8 +22,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 import pandas as pd
+from synnax import TimeStamp
 from synnax.io import DataFrameWriter
-from Python.synnax import SynnaxLog
+from synnax_log import SynnaxLog
 
 from constants import Constants
 from party import PartyParrot
@@ -445,7 +446,7 @@ class Server(QThread):  # See below
         # Holds all the data sent from the boards as a dict. Also contains header that has server connection info
         # For example can call self.data_dict["ec.pressure[0]"] to get the pressure of channel 0 on ec
         self.data_dict = dict()
-        self.data_dict["time"] = datetime.now().timestamp()
+        self.data_dict["Time"] = TimeStamp.now()
         self.data_dict["commander"] = self.commander
         self.data_dict["packet_num"] = self.packet_num
         self.data_dict["ser_open"] = self.interface.ser.is_open
@@ -558,7 +559,7 @@ class Server(QThread):  # See below
         self.data_dict["ser_open"] = self.interface.ser.is_open
         self.data_dict["actively_rx"] = self.is_actively_receiving_data
         self.data_dict["error_msg"] = self.current_error_message
-        self.data_dict["time"] = datetime.now().timestamp()
+        self.data_dict["Time"] = TimeStamp.now()
 
     @pyqtSlot(object)
     def client_connection_closed(self, client_handler_thread: ClientConnectionHandler):
@@ -794,7 +795,7 @@ class Server(QThread):  # See below
             # Write header
             self.data_log.write("Time," + self.interface.get_header() + "\n")
 
-        self.synnax_log = SynnaxLog(self.interface.get_prefixed_channel_names())
+        self.synnax_log = SynnaxLog(["Time", *self.interface.get_prefixed_channel_names()])
 
     def open_test_log(self, campaign_save_name: str, test_name, is_recovered: bool = False):
         """
@@ -897,7 +898,7 @@ class Server(QThread):  # See below
 
     def data_frame(self, data: dict) -> pd.DataFrame:
         """Converts a data dict to a data frame"""
-        return pd.DataFrame.from_records([data])
+        return pd.DataFrame.from_records([{"Time": data["Time"], "ec.e_batt (Volts)": data["ec.e_batt"]}])
 
     def get_data_dict_as_csv_string(self):
         """
@@ -906,7 +907,7 @@ class Server(QThread):  # See below
         """
 
         # Get time to start
-        data_dict_string = str(self.data_dict["time"]) + ","
+        data_dict_string = str(self.data_dict["Time"]) + ","
 
         # For all channels (even if not connected), get the data and put it in the string
         for channel in self.interface.channels:
