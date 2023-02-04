@@ -17,15 +17,29 @@ Class to handle all Chamber objects and their functionality
 class CheckValve(BaseObject):
     object_name = "Check Valve"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int = 4, width: float = 20 * 1,
-                 height: float = 20 * 1, name: str = "Check Valve",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Check Valve', is_vertical: bool = True,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int = 4,
+        width: float = 20 * 1,
+        height: float = 20 * 1,
+        name: str = "Check Valve",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Check Valve",
+        is_vertical: bool = True,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+    ):
         """
         Initializer for Solenoid
 
@@ -53,15 +67,28 @@ class CheckValve(BaseObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows)
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+        )
 
         self.setAnchorPoints()
 
@@ -90,12 +117,11 @@ class CheckValve(BaseObject):
         # If ThrottleValve is open color it in
         self.widget_parent.painter.setBrush(Constants.BG_color)
 
-
         if self.is_vertical == 0:  # Draw horizontally
             # Move path to starting position
             path.moveTo(0, 0)
             path.lineTo(0, self.height)
-            path.lineTo(self.width, self.height/2)
+            path.lineTo(self.width, self.height / 2)
             path.lineTo(0, 0)
             path.moveTo(self.width, 0)
             path.lineTo(self.width, self.height)
@@ -103,7 +129,7 @@ class CheckValve(BaseObject):
         else:  # Draw vertically
             path.moveTo(0, 0)
             path.lineTo(self.height, 0)
-            path.lineTo(self.height/2, self.width)
+            path.lineTo(self.height / 2, self.width)
             path.lineTo(0, 0)
             path.moveTo(0, self.width)
             path.lineTo(self.height, self.width)

@@ -12,8 +12,19 @@ class IndicatorLightWidget(QWidget):
     different colors to display status
     """
 
-    def __init__(self, parent, gui, labelText: str, circleRadius: int, indicatorColor: str, fontSize: int = 14,
-                 Wbuffer: int = 0, Hbuffer: int = 0, LBuffer: int = 0, darkMode:bool = False):
+    def __init__(
+        self,
+        parent,
+        gui,
+        labelText: str,
+        circleRadius: int,
+        indicatorColor: str,
+        fontSize: int = 14,
+        Wbuffer: int = 0,
+        Hbuffer: int = 0,
+        LBuffer: int = 0,
+        darkMode: bool = False,
+    ):
         """
         Initialize the widget
         :param parent: parent of this widget
@@ -43,7 +54,9 @@ class IndicatorLightWidget(QWidget):
             self.wBuffer = Wbuffer * self.gui.pixel_scale_ratio[0]
             self.hBuffer = Hbuffer * self.gui.pixel_scale_ratio[1]
             self.lBuffer = LBuffer * self.gui.pixel_scale_ratio[1]
-            monospace_light_font.setPointSize(int(self.fontSize * self.gui.font_scale_ratio))
+            monospace_light_font.setPointSize(
+                int(self.fontSize * self.gui.font_scale_ratio)
+            )
         else:
             self.circle_radius = circleRadius
             self.wBuffer = Wbuffer
@@ -72,14 +85,27 @@ class IndicatorLightWidget(QWidget):
         self.label.setText(self.labelText)
         self.label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.label.adjustSize()
-        self.label.setFixedHeight(self.label.fontMetrics().boundingRect(self.label.text()).height())
+        self.label.setFixedHeight(
+            self.label.fontMetrics().boundingRect(self.label.text()).height()
+        )
         self.label.show()
 
         # Resize the widget to fit exactly the circle and the label
-        self.resize(int(self.circle_radius*2 + 2*self.wBuffer), int(self.circle_radius*2 + self.hBuffer + self.label.height() + self.lBuffer))
+        self.resize(
+            int(self.circle_radius * 2 + 2 * self.wBuffer),
+            int(
+                self.circle_radius * 2
+                + self.hBuffer
+                + self.label.height()
+                + self.lBuffer
+            ),
+        )
 
         # Move the label to be centered on the circle
-        self.label.move(int(self.circle_radius + self.wBuffer - self.label.width()/2), int(self.circle_radius*2 + self.hBuffer + self.lBuffer))
+        self.label.move(
+            int(self.circle_radius + self.wBuffer - self.label.width() / 2),
+            int(self.circle_radius * 2 + self.hBuffer + self.lBuffer),
+        )
         self.show()
 
     def setIndicatorColor(self, color: str):
@@ -102,7 +128,7 @@ class IndicatorLightWidget(QWidget):
 
         # Default pen qualities
         pen = QPen()
-        pen.setWidth(int(Constants.line_width/2))
+        pen.setWidth(int(Constants.line_width / 2))
         if not self.darkMode:
             pen.setColor(Constants.MASA_Beige_color)
         else:
@@ -111,17 +137,28 @@ class IndicatorLightWidget(QWidget):
 
         # Set the brush color to the indicator color
         if self.indicatorColor == "Green":
-            self.painter.setBrush(QBrush(Constants.Indicator_Green_color, Qt.SolidPattern))
+            self.painter.setBrush(
+                QBrush(Constants.Indicator_Green_color, Qt.SolidPattern)
+            )
         elif self.indicatorColor == "Yellow":
-            self.painter.setBrush(QBrush(Constants.Indicator_Yellow_color, Qt.SolidPattern))
+            self.painter.setBrush(
+                QBrush(Constants.Indicator_Yellow_color, Qt.SolidPattern)
+            )
         elif self.indicatorColor == "Red":
-            self.painter.setBrush(QBrush(Constants.Indicator_Red_color, Qt.SolidPattern))
+            self.painter.setBrush(
+                QBrush(Constants.Indicator_Red_color, Qt.SolidPattern)
+            )
         else:
             self.painter.setBrush(Qt.NoBrush)
 
         # Draw the ellipse with a beige border, buffers on width and height
-        self.painter.drawEllipse(QPointF(self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer),
-                                 self.circle_radius, self.circle_radius)
+        self.painter.drawEllipse(
+            QPointF(
+                self.circle_radius + self.wBuffer, self.circle_radius + self.hBuffer
+            ),
+            self.circle_radius,
+            self.circle_radius,
+        )
         self.painter.setBrush(Qt.NoBrush)
 
         self.painter.end()

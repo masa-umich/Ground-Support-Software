@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
 
+
 class Slider(QSlider):
     minimumChanged = pyqtSignal(int)
     maximumChanged = pyqtSignal(int)
@@ -14,6 +15,7 @@ class Slider(QSlider):
     def setMaximum(self, maximum):
         self.maximumChanged.emit(maximum)
         super(Slider, self).setMaximum(maximum)
+
 
 class ConfirmBox(QDialog):
     def __init__(self, sureness=8, minVal=0, maxVal=10):
@@ -49,7 +51,7 @@ class ConfirmBox(QDialog):
         self.layout.addWidget(caption)
         self.layout.addLayout(slider_vbox)
         self.slider.valueChanged.connect(self._update)
-        
+
         self.continueButton = QPushButton("Continue")
         self.cancelButton = QPushButton("Cancel")
         button_hbox = QHBoxLayout()
@@ -58,18 +60,24 @@ class ConfirmBox(QDialog):
         self.layout.addLayout(button_hbox)
 
         self.continueButton.setEnabled(False)
-        
-    
+
     def show(self):
-        ret = QMessageBox.question(self, 'Confirm', "Are you sure?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        ret = QMessageBox.question(
+            self,
+            "Confirm",
+            "Are you sure?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
         if ret == QMessageBox.Yes:
             super().show()
             self.setGeometry(300, 300, 300, 150)
-    
+
     def _update(self, value):
         self.continueButton.setEnabled(value >= self.sureness)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     b = ConfirmBox(9, 0, 10)
     b.show()

@@ -16,15 +16,29 @@ class HeatEx(BaseObject):
 
     object_name = "Heat Exchanger"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 40,
-                 height: float = 18, name: str = "HeatEx",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Heat Exchanger', is_vertical: bool = True,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float = 40,
+        height: float = 18,
+        name: str = "HeatEx",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Heat Exchanger",
+        is_vertical: bool = True,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+    ):
         """
         Initializer for HeatEx
 
@@ -51,15 +65,28 @@ class HeatEx(BaseObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows)
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+        )
 
     @overrides
     def draw(self):
@@ -69,26 +96,26 @@ class HeatEx(BaseObject):
 
         # Draws the HeatEx outline
         path = QPainterPath()
-        
+
         if self.is_vertical == False:
-            path.moveTo(0,self.height/2)
-            path.lineTo(self.width/5,self.height/2)
-            path.lineTo(self.width*2/5,0)
-            path.lineTo(self.width*3/5,self.height)
-            path.lineTo(self.width*4/5,self.height/2)
-            path.lineTo(self.width,self.height/2)
+            path.moveTo(0, self.height / 2)
+            path.lineTo(self.width / 5, self.height / 2)
+            path.lineTo(self.width * 2 / 5, 0)
+            path.lineTo(self.width * 3 / 5, self.height)
+            path.lineTo(self.width * 4 / 5, self.height / 2)
+            path.lineTo(self.width, self.height / 2)
 
         else:
-            path.moveTo(self.width/2,0)
-            path.lineTo(self.width/2,self.height/5)
-            path.lineTo(0,self.height*2/5)
-            path.lineTo(self.width,self.height*3/5)
-            path.lineTo(self.width/2,self.height*4/5)
-            path.lineTo(self.width/2,self.height)
-        
+            path.moveTo(self.width / 2, 0)
+            path.lineTo(self.width / 2, self.height / 5)
+            path.lineTo(0, self.height * 2 / 5)
+            path.lineTo(self.width, self.height * 3 / 5)
+            path.lineTo(self.width / 2, self.height * 4 / 5)
+            path.lineTo(self.width / 2, self.height)
 
-        path.translate(self.position.x(), self.position.y()) # Translate it into position
-        self.widget_parent.painter.drawPath(path) # Draw Path
-        
+        path.translate(
+            self.position.x(), self.position.y()
+        )  # Translate it into position
+        self.widget_parent.painter.drawPath(path)  # Draw Path
 
         super().draw()

@@ -12,16 +12,33 @@ class GenSensor(AvionicsObject):
 
     object_name = "Generic Sensor"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 66,
-                 height: float = 24, name: str = "PT",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Sensor', is_vertical: bool = False,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, channel: str = 'Undefined',
-                 board: str = 'Undefined', long_name_visible:bool = True, serial_number_visible:bool = True):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float = 66,
+        height: float = 24,
+        name: str = "PT",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Sensor",
+        is_vertical: bool = False,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        channel: str = "Undefined",
+        board: str = "Undefined",
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
 
         """
         Initializer for genSensor
@@ -52,16 +69,32 @@ class GenSensor(AvionicsObject):
 
         # Initialize base classes
 
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows,long_name_visible= long_name_visible,
-                         serial_number_visible = serial_number_visible, board=board, channel=channel)
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+            board=board,
+            channel=channel,
+        )
 
         self.widget_parent = widget_parent  # Important for drawing icon
         self.gui = self.widget_parent.gui
@@ -76,7 +109,7 @@ class GenSensor(AvionicsObject):
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
-        #self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
+        # self.measurement_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
     def _initMeasurementLabel(self):
         """
@@ -86,7 +119,7 @@ class GenSensor(AvionicsObject):
         self.measurement_label.move(int(self.position.x()), int(self.position.y()))
         self.measurement_label.setText(str(self.measurement) + " " + self.units)
         self.measurement_label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-        self.measurement_label.setStyleSheet('color: white')
+        self.measurement_label.setStyleSheet("color: white")
 
         # Get font and set it
         font = QFont()
@@ -104,7 +137,7 @@ class GenSensor(AvionicsObject):
         :param measurement: new measurement
         """
         self.measurement = measurement
-        self.measurement_label.setText(str(self.measurement)+ " " + self.units)
+        self.measurement_label.setText(str(self.measurement) + " " + self.units)
 
     def setChannel(self, channel: str):
         """
@@ -114,8 +147,8 @@ class GenSensor(AvionicsObject):
 
         super().setChannel(channel)
         self.setUnits()
-        #self.updateToolTip()
-    
+        # self.updateToolTip()
+
     def setUnits(self):
         """
         Sets units from config
@@ -123,12 +156,12 @@ class GenSensor(AvionicsObject):
         unit_dict = self.interface.units
         if self.channel in self.interface.channels:
             units = unit_dict[self.channel]
-            if units == 'ul':
-                self.units = ''
+            if units == "ul":
+                self.units = ""
             else:
                 self.units = units
             self.measurement_label.setText(str(self.measurement) + " " + self.units)
-            
+
     @overrides
     def move(self, point: QPoint):
         """
@@ -175,9 +208,16 @@ class GenSensor(AvionicsObject):
         Draws the Sensor icon on screen
         """
 
-        self.widget_parent.painter.drawRect(QRect(int(self.position.x()), int(self.position.y()), int(self.width), int(self.height)))
+        self.widget_parent.painter.drawRect(
+            QRect(
+                int(self.position.x()),
+                int(self.position.y()),
+                int(self.width),
+                int(self.height),
+            )
+        )
         self.widget_parent.painter.setBrush(0)
-        
+
         super().draw()
 
     @overrides
@@ -198,8 +238,10 @@ class GenSensor(AvionicsObject):
         """
 
         super().setMouseEventTransparency(should_be_transparent)
-        self.measurement_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        
+        self.measurement_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
+
     @overrides
     def deleteSelf(self):
         """

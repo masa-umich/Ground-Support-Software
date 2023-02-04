@@ -1,4 +1,6 @@
-from __future__ import annotations  # see https://stackoverflow.com/questions/61544854/from-future-import-annotations
+from __future__ import (
+    annotations,
+)  # see https://stackoverflow.com/questions/61544854/from-future-import-annotations
 
 import ctypes
 import os
@@ -44,7 +46,9 @@ class ServerGraphics(QMainWindow):
     def __init__(self, qapp):
         super().__init__()
 
-        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+        self.LAUNCH_DIRECTORY = (
+            QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+        )
 
         if not os.path.isdir(self.LAUNCH_DIRECTORY):
             os.mkdir(path=self.LAUNCH_DIRECTORY)
@@ -54,7 +58,7 @@ class ServerGraphics(QMainWindow):
         print("QT Version: " + QT_VERSION_STR)
         print("Launch Directory: " + os.path.abspath(self.LAUNCH_DIRECTORY))
 
-        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY + 'Images/logo_server.png'))
+        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY + "Images/logo_server.png"))
 
         self.setWindowTitle("Server (Updated)")
 
@@ -77,7 +81,7 @@ class ServerGraphics(QMainWindow):
         self.central_widget.setLayout(self.top_grid_layout)
 
         self.board_connection_group_box = QGroupBox("Board Serial Connection")
-        b_c_group_box_layout = QGridLayout() #b_c = client connection
+        b_c_group_box_layout = QGridLayout()  # b_c = client connection
         self.board_connection_group_box.setLayout(b_c_group_box_layout)
 
         self.b_c_scan_button = QPushButton("Scan Ports:")
@@ -99,8 +103,12 @@ class ServerGraphics(QMainWindow):
         b_c_group_box_layout.addWidget(self.b_c_baudrate_combo_box, 0, 4)
 
         self.b_c_connect_button = QPushButton("Connect")
-        self.b_c_connect_button.clicked.connect(lambda: self.server.connect_to_board(
-            self.b_c_ports_combo_box.currentText(), int(self.b_c_baudrate_combo_box.currentText())))
+        self.b_c_connect_button.clicked.connect(
+            lambda: self.server.connect_to_board(
+                self.b_c_ports_combo_box.currentText(),
+                int(self.b_c_baudrate_combo_box.currentText()),
+            )
+        )
 
         b_c_group_box_layout.addWidget(self.b_c_connect_button, 0, 5)
 
@@ -117,7 +125,9 @@ class ServerGraphics(QMainWindow):
         self.party_parrot.step()
 
         self.top_grid_layout.addWidget(self.board_connection_group_box, 0, 0)
-        self.board_connection_group_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.board_connection_group_box.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Fixed
+        )
         self.top_grid_layout.addWidget(self.party_parrot, 0, 2)
 
         self.commander_group_box = QGroupBox("Commander Status")
@@ -156,9 +166,14 @@ class ServerGraphics(QMainWindow):
         self.packet_log_textedit = QTextEdit("Packet Log disabled until implemented")
         self.packet_log_textedit.setReadOnly(True)
 
-        self.packet_log_table = PacketLogWidget(self.info_tab_widget, self.server.interface, self.server.dataPacketSignal, True)
+        self.packet_log_table = PacketLogWidget(
+            self.info_tab_widget,
+            self.server.interface,
+            self.server.dataPacketSignal,
+            True,
+        )
 
-        #packet_log_hbox_layout.addWidget(self.packet_log_textedit)
+        # packet_log_hbox_layout.addWidget(self.packet_log_textedit)
         packet_log_hbox_layout.addWidget(self.packet_log_table)
 
         self.info_tab_widget.addTab(packet_log_widget, "Packet Log")
@@ -170,11 +185,24 @@ class ServerGraphics(QMainWindow):
         self.commandline_line_edit = QLineEdit()
         self.commandline_line_edit.installEventFilter(self)
         self.commandline_line_edit.setStyleSheet("border: 1px solid")
-        self.commandline_line_edit.setPlaceholderText("Command line interface. Type \"help\" for info.")
+        self.commandline_line_edit.setPlaceholderText(
+            'Command line interface. Type "help" for info.'
+        )
 
-        self.commandline_local_commands = ["delay", "set_addr", "help", "auto", "auto_list"]
-        possible_commands = self.server.get_command_list() + self.commandline_local_commands
-        possible_commands = possible_commands + ["help " + x for x in (self.server.get_command_list() + self.commandline_local_commands)]
+        self.commandline_local_commands = [
+            "delay",
+            "set_addr",
+            "help",
+            "auto",
+            "auto_list",
+        ]
+        possible_commands = (
+            self.server.get_command_list() + self.commandline_local_commands
+        )
+        possible_commands = possible_commands + [
+            "help " + x
+            for x in (self.server.get_command_list() + self.commandline_local_commands)
+        ]
         completer = QCompleter(possible_commands)
         self.commandline_line_edit.setCompleter(completer)
         self.commandline_line_edit.returnPressed.connect(self.processCommandLine)
@@ -246,12 +274,16 @@ class ServerGraphics(QMainWindow):
         commands = self.server.get_command_list()
 
         # Add and reset history
-        self.command_line_history = [self.commandline_line_edit.text()] + self.command_line_history
+        self.command_line_history = [
+            self.commandline_line_edit.text()
+        ] + self.command_line_history
         self.command_line_history_idx = -1
 
         # Get inputted command + board address
         cmd_str = self.commandline_line_edit.text().lower().split(" ")
-        board_addr = self.server.get_board_address(self.commandline_board_dropdown.currentText())
+        board_addr = self.server.get_board_address(
+            self.commandline_board_dropdown.currentText()
+        )
         cmd = cmd_str[0]
         args = cmd_str[1:]
 
@@ -260,7 +292,9 @@ class ServerGraphics(QMainWindow):
 
         self.commandline_textbox.setTextColor(QColor(55, 70, 200))
 
-        self.commandline_textbox.insertPlainText(self.commandline_board_dropdown.currentText())
+        self.commandline_textbox.insertPlainText(
+            self.commandline_board_dropdown.currentText()
+        )
 
         self.commandline_textbox.setTextColor(QColor(0, 0, 0, 255))
 
@@ -275,18 +309,22 @@ class ServerGraphics(QMainWindow):
         if cmd == "help":
             if len(args) == 0:
                 self.commandline_textbox.append(
-                    "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, )
+                    "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n"
+                    % commands,
+                )
             elif args[0] in (self.commandline_local_commands + commands):
                 selected_cmd = args[0]
                 cmd_args = self.getCommandLineHelp(selected_cmd)
-                #TODO: Improve how this is shown
+                # TODO: Improve how this is shown
                 self.commandline_textbox.append("Args: arg(format)\n%s" % (cmd_args))
         else:
             response = self.server.process_command_line(cmd, args, board_addr)
             if response:
                 self.commandline_textbox.append(response)
 
-        self.commandline_textbox.scroll(0, 0)  # Not sure why/ how but this scrolls textbox to bottom
+        self.commandline_textbox.scroll(
+            0, 0
+        )  # Not sure why/ how but this scrolls textbox to bottom
 
         self.commandline_line_edit.clearFocus()
         self.commandline_line_edit.clear()
@@ -317,7 +355,12 @@ class ServerGraphics(QMainWindow):
 
         for local_cmd in self.commandline_local_commands:
             if local_cmd != "help" and local_cmd not in tooltips.keys():
-                print(colored("WARNING: No help text defined for local command " + local_cmd, 'red'))
+                print(
+                    colored(
+                        "WARNING: No help text defined for local command " + local_cmd,
+                        "red",
+                    )
+                )
 
         return tooltips[selected_command]
 
@@ -335,7 +378,12 @@ class ServerGraphics(QMainWindow):
         elif log == "Command":
             self.command_log_textedit.append(Constants.getCurrentTimestamp() + message)
         else:
-            print(colored("WARNING: messageToLog() called with '%s' log identifier that does not exist" % log))
+            print(
+                colored(
+                    "WARNING: messageToLog() called with '%s' log identifier that does not exist"
+                    % log
+                )
+            )
 
     def eventFilter(self, source, event):
         """
@@ -364,7 +412,9 @@ class ServerGraphics(QMainWindow):
             if self.command_line_history_idx == -1:
                 self.commandline_line_edit.setText("")
             else:
-                self.commandline_line_edit.setText(self.command_line_history[self.command_line_history_idx])
+                self.commandline_line_edit.setText(
+                    self.command_line_history[self.command_line_history_idx]
+                )
             return True
 
         return super().eventFilter(source, event)
@@ -376,7 +426,9 @@ class ServerGraphics(QMainWindow):
         darkPalette = QPalette()
         darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
         darkPalette.setColor(QPalette.WindowText, Qt.white)
-        darkPalette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127))
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127)
+        )
         darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
         darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
         darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
@@ -387,13 +439,17 @@ class ServerGraphics(QMainWindow):
         darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
         darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
         darkPalette.setColor(QPalette.ButtonText, Qt.white)
-        darkPalette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127))
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127)
+        )
         darkPalette.setColor(QPalette.BrightText, Qt.red)
         darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
         darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
         darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
         darkPalette.setColor(QPalette.HighlightedText, Qt.white)
-        darkPalette.setColor(QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127))
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127)
+        )
 
         qapp.setPalette(darkPalette)
 
@@ -402,7 +458,7 @@ class Server(QThread):  # See below
     """
     This class handles a majority of the command processing, data processing etc.
     """
-    
+
     synnax_log: DataFrameWriter
 
     statusBarMessageSignal = pyqtSignal(str, bool)
@@ -509,7 +565,9 @@ class Server(QThread):  # See below
         """
 
         self.logSignal.emit("Server", "Commander '%s' cleared" % self.commander)
-        self.statusBarMessageSignal.emit("Commander '%s' cleared" % self.commander, False)
+        self.statusBarMessageSignal.emit(
+            "Commander '%s' cleared" % self.commander, False
+        )
 
         self.commander = None
 
@@ -551,7 +609,9 @@ class Server(QThread):  # See below
             # We are using hash to send out commander so someone else can't spoof it. For example two clients are
             # connected, one is commander. Sending that client UUID to the second client means it could inject that into
             # its packet and then pretend it is commander. Overkill? likely
-            self.data_dict["commander"] = hashlib.sha256(self.commander.encode('utf-8')).hexdigest()
+            self.data_dict["commander"] = hashlib.sha256(
+                self.commander.encode("utf-8")
+            ).hexdigest()
         else:
             self.data_dict["commander"] = None
         self.data_dict["packet_num"] = self.packet_num
@@ -586,12 +646,24 @@ class Server(QThread):  # See below
         """
 
         if self.commander == uuid:
-            self.logSignal.emit("Server", "Lost/ closed commander connection with id (UUID) '%s'" % self.commander)
-            self.statusBarMessageSignal.emit("Lost/ closed commander connection with id (UUID) '%s'" % self.commander, False)
+            self.logSignal.emit(
+                "Server",
+                "Lost/ closed commander connection with id (UUID) '%s'"
+                % self.commander,
+            )
+            self.statusBarMessageSignal.emit(
+                "Lost/ closed commander connection with id (UUID) '%s'"
+                % self.commander,
+                False,
+            )
             self.commander = None
         else:
-            self.logSignal.emit("Server", "Lost/ closed connection to client with id (UUID): %s" % uuid)
-            self.statusBarMessageSignal.emit("Lost/ closed connection to client with id (UUID): %s" % uuid, False)
+            self.logSignal.emit(
+                "Server", "Lost/ closed connection to client with id (UUID): %s" % uuid
+            )
+            self.statusBarMessageSignal.emit(
+                "Lost/ closed connection to client with id (UUID): %s" % uuid, False
+            )
 
     def connect_to_board(self, port: str, baud: int):
         """
@@ -611,14 +683,18 @@ class Server(QThread):  # See below
             self.logSignal.emit("Server", "Connection established on %s" % port)
 
         else:
-            self.logSignal.emit("Server", "Unable to connect to selected port or no ports available")
+            self.logSignal.emit(
+                "Server", "Unable to connect to selected port or no ports available"
+            )
 
     def get_command_list(self):
         """
         Returns a list of all possible commands (commands on board)
         :return: list
         """
-        return list(self.interface.get_cmd_names_dict().keys())  # Get all commands to reference
+        return list(
+            self.interface.get_cmd_names_dict().keys()
+        )  # Get all commands to reference
 
     def get_board_address(self, boardName: str):
         """
@@ -700,7 +776,9 @@ class Server(QThread):  # See below
                 auto_thread = AutosequenceThread(self, lines, False)
                 self.active_autosequence = auto_thread
 
-                return "Autosequence started, check server log and command log for status"
+                return (
+                    "Autosequence started, check server log and command log for status"
+                )
 
             except FileNotFoundError:
                 return "File not found"
@@ -729,8 +807,8 @@ class Server(QThread):  # See below
                     "function_name": cmd,
                     "target_board_addr": int(addr),
                     "timestamp": int(datetime.now().timestamp()),
-                    #"args": [float(a) for a in args if a.isnumeric()]
-                    "args": [float(a) for a in args]
+                    # "args": [float(a) for a in args if a.isnumeric()]
+                    "args": [float(a) for a in args],
                 }
 
                 # Add it to command queue
@@ -790,14 +868,20 @@ class Server(QThread):  # See below
             self.command_log = open(save_location + runname + "_command_log.csv", "w")
 
             # Write in the first lines
-            self.command_log.write("Time, From Client/ To Board/ To Client, Command/info\n")
+            self.command_log.write(
+                "Time, From Client/ To Board/ To Client, Command/info\n"
+            )
             self.serial_log.write("Time, Packet\n")
             # Write header
             self.data_log.write("Time," + self.interface.get_header() + "\n")
 
-        self.synnax_log = SynnaxLog(["Time", *self.interface.get_prefixed_channel_names()])
+        self.synnax_log = SynnaxLog(
+            ["Time", *self.interface.get_prefixed_channel_names()]
+        )
 
-    def open_test_log(self, campaign_save_name: str, test_name, is_recovered: bool = False):
+    def open_test_log(
+        self, campaign_save_name: str, test_name, is_recovered: bool = False
+    ):
         """
         Open logs when a new test is started. We cannot do this with the other base logs because we log those when tests
         are not active
@@ -813,15 +897,36 @@ class Server(QThread):  # See below
 
         # Unlock these files
         if is_recovered:
-            os.chmod(self.campaign_location + "tests/" + campaign_save_name + "__test__" + test_name +
-                     "_data_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                S_IWUSR | S_IREAD,
+            )
 
             # log file init and headers
-            self.test_data_log = open(self.campaign_location + "tests/" + campaign_save_name +
-                                      "__test__" + test_name + "_data_log.csv", "a+")
+            self.test_data_log = open(
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                "a+",
+            )
         else:
             self.test_data_log = open(
-                self.campaign_location + "tests/" + campaign_save_name + "__test__" + test_name + "_data_log.csv", "a+")
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                "a+",
+            )
 
             # Write header
             self.test_data_log.write("Time," + self.interface.get_header() + "\n")
@@ -856,7 +961,7 @@ class Server(QThread):  # See below
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
             self.campaign_location = None
-            os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
+            os.chmod(self.campaign_log.name, S_IREAD | S_IRGRP | S_IROTH)
 
     def close_test_log(self):
         """
@@ -883,9 +988,9 @@ class Server(QThread):  # See below
         if location == "Server":
             self.server_log.write(Constants.getCurrentTimestamp() + msg + "\n")
         elif location == "Command":
-            self.command_log.write(Constants.getCurrentTimestamp()+"," + msg + "\n")
+            self.command_log.write(Constants.getCurrentTimestamp() + "," + msg + "\n")
         elif location == "Serial":
-            self.serial_log.write(Constants.getCurrentTimestamp()+"," + msg + "\n")
+            self.serial_log.write(Constants.getCurrentTimestamp() + "," + msg + "\n")
         elif location == "Data":
             self.data_log.write(msg + "\n")  # Timestamp already included in data
 
@@ -898,7 +1003,9 @@ class Server(QThread):  # See below
 
     def data_frame(self, data: dict) -> pd.DataFrame:
         """Converts a data dict to a data frame"""
-        return pd.DataFrame.from_records([{"Time": data["Time"], "ec.e_batt (Volts)": data["ec.e_batt"]}])
+        return pd.DataFrame.from_records(
+            [{"Time": data["Time"], "ec.e_batt (Volts)": data["ec.e_batt"]}]
+        )
 
     def get_data_dict_as_csv_string(self):
         """
@@ -915,7 +1022,12 @@ class Server(QThread):  # See below
 
         return data_dict_string
 
-    def update_campaign_logging(self, campaign_save_name: str, configuration_data: dict = None, avionics_mappings: dict = None):
+    def update_campaign_logging(
+        self,
+        campaign_save_name: str,
+        configuration_data: dict = None,
+        avionics_mappings: dict = None,
+    ):
         """
         Functions updates (starts/ stops) campaign logging. On start config data and avionics mappings are also sent. If
         filename is passed as None then it stops the campaign and starts general logging. If the filename is not none,
@@ -931,46 +1043,76 @@ class Server(QThread):  # See below
         # No campaign, revert to general logging
         if campaign_save_name is None:
             file_timestamp = self.get_file_timestamp_string()
-            self.open_base_logs(file_timestamp, self.working_directory + file_timestamp + "/", False)
-            self.logSignal.emit("Server", "Raw server logging started under '%s'" % file_timestamp)
+            self.open_base_logs(
+                file_timestamp, self.working_directory + file_timestamp + "/", False
+            )
+            self.logSignal.emit(
+                "Server", "Raw server logging started under '%s'" % file_timestamp
+            )
 
-        elif configuration_data is None and avionics_mappings is None:  # Check if function call matches recovered state
+        elif (
+            configuration_data is None and avionics_mappings is None
+        ):  # Check if function call matches recovered state
 
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_location = (
+                Constants.campaign_data_dir + campaign_save_name + "/"
+            )
 
             # If this exists then we know we are properly recoverable, otherwise something bad happened
             campaign_dir_exists = os.path.isdir(self.campaign_location)
 
             if not campaign_dir_exists:
-                print(colored("WARNING: Recovered state requested, directory not found"), 'red')
-                self.statusBarMessageSignal.emit("Campaign recovery failed. See terminal", True)
+                print(
+                    colored("WARNING: Recovered state requested, directory not found"),
+                    "red",
+                )
+                self.statusBarMessageSignal.emit(
+                    "Campaign recovery failed. See terminal", True
+                )
                 # Restart logging before exiting
                 self.update_campaign_logging(None)
                 return
 
             # Re-open base logs with recovered flag
-            self.open_base_logs(campaign_save_name, self.campaign_location, is_recovered=True)
+            self.open_base_logs(
+                campaign_save_name, self.campaign_location, is_recovered=True
+            )
 
             # Re-open campaign log
             os.chmod(self.campaign_location + "campaign_log.txt", S_IWUSR | S_IREAD)
             self.campaign_log = open(self.campaign_location + "campaign_log.txt", "a+")
-            self.logSignal.emit("Server", "Campaign '%s' recovered" % campaign_save_name)
-            self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
+            self.logSignal.emit(
+                "Server", "Campaign '%s' recovered" % campaign_save_name
+            )
+            self.campaign_log.write(
+                "Campaign %s recovered during new server connection\n"
+                % campaign_save_name
+            )
 
-        elif campaign_save_name is not None and configuration_data is not None and avionics_mappings is not None:
+        elif (
+            campaign_save_name is not None
+            and configuration_data is not None
+            and avionics_mappings is not None
+        ):
             # Create new campaign logging stuff
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
+            self.campaign_location = (
+                Constants.campaign_data_dir + campaign_save_name + "/"
+            )
 
             # Create test folder
             if not os.path.isdir(self.campaign_location + "tests/"):
                 os.makedirs(self.campaign_location + "tests/")
 
             # Open base logs
-            self.open_base_logs(campaign_save_name, self.campaign_location, is_recovered=False)
+            self.open_base_logs(
+                campaign_save_name, self.campaign_location, is_recovered=False
+            )
 
             # Open log and write a few things
             self.campaign_log = open(self.campaign_location + "campaign_log.txt", "w")
-            self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
+            self.campaign_log.write(
+                "Campaign started with save name: " + campaign_save_name + "\n"
+            )
             self.logSignal.emit("Server", "Campaign '%s' started" % campaign_save_name)
 
             # Write configuration to file
@@ -979,17 +1121,32 @@ class Server(QThread):  # See below
                 os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
 
             # Write avionics mappings to file
-            with open(self.campaign_location + "avionicsMappings.csv", "w") as write_file:
+            with open(
+                self.campaign_location + "avionicsMappings.csv", "w"
+            ) as write_file:
                 write_file.write("Channel,Name\n")
                 for key in avionics_mappings:
-                    if key != "Boards":  # currently don't list the boards the user has added
-                        write_file.write(avionics_mappings[key][1] + "," + avionics_mappings[key][
-                            0] + "\n")  # key is not useful, first index is name, second is channel
+                    if (
+                        key != "Boards"
+                    ):  # currently don't list the boards the user has added
+                        write_file.write(
+                            avionics_mappings[key][1]
+                            + ","
+                            + avionics_mappings[key][0]
+                            + "\n"
+                        )  # key is not useful, first index is name, second is channel
                 os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
 
         else:
-            print(colored("WARNING: Got a call to update_campaign_logging() that should not occur"), 'red')
-            self.statusBarMessageSignal.emit("Logging command failed. See terminal", True)
+            print(
+                colored(
+                    "WARNING: Got a call to update_campaign_logging() that should not occur"
+                ),
+                "red",
+            )
+            self.statusBarMessageSignal.emit(
+                "Logging command failed. See terminal", True
+            )
             # Restart logging
             self.update_campaign_logging(None)
 
@@ -1002,8 +1159,10 @@ class Server(QThread):  # See below
 
         self._num_update_steps += 1
         if self._num_update_steps == Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY:
-            self._averaged_update_freq = self._num_update_steps / (time.time() - self._last_update_time)
-            #print("Server Run Freq: " + str(self._averaged_update_freq))
+            self._averaged_update_freq = self._num_update_steps / (
+                time.time() - self._last_update_time
+            )
+            # print("Server Run Freq: " + str(self._averaged_update_freq))
             self._num_update_steps = 0
             self._last_update_time = time.time()
 
@@ -1020,21 +1179,36 @@ class Server(QThread):  # See below
         clientid = command_dict["clientid"]
         args = command_dict["args"]
 
-        if command == Constants.cli_to_ser_cmd_ref["Heartbeat"]:  # Heartbeat, do nothing
+        if (
+            command == Constants.cli_to_ser_cmd_ref["Heartbeat"]
+        ):  # Heartbeat, do nothing
             pass
 
-        elif command == Constants.cli_to_ser_cmd_ref["Request Commander"] and self.commander is None:
+        elif (
+            command == Constants.cli_to_ser_cmd_ref["Request Commander"]
+            and self.commander is None
+        ):
             self.commander = clientid
-            self.logSignal.emit("Server","New commander with UUID: %s" % self.commander)
-            self.statusBarMessageSignal.emit("New commander with UUID: %s" % self.commander, False)
+            self.logSignal.emit(
+                "Server", "New commander with UUID: %s" % self.commander
+            )
+            self.statusBarMessageSignal.emit(
+                "New commander with UUID: %s" % self.commander, False
+            )
 
-        elif command == Constants.cli_to_ser_cmd_ref["Give Commander"] and self.check_commander(clientid):
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Give Commander"
+        ] and self.check_commander(clientid):
             self.override_commander()
 
-        elif command == Constants.cli_to_ser_cmd_ref["Board Command"] and self.check_commander(clientid):
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Board Command"
+        ] and self.check_commander(clientid):
             self.command_queue.put(args)
 
-        elif command == Constants.cli_to_ser_cmd_ref["Dump Flash"] and self.check_commander(clientid):
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Dump Flash"
+        ] and self.check_commander(clientid):
             self.do_flash_dump = True
             self.flash_dump_addr = args
 
@@ -1048,22 +1222,36 @@ class Server(QThread):  # See below
             # expands it as an iterable so you can use a list to call a function. Pretty cool, from here:
             # https://stackoverflow.com/questions/3941517/converting-list-to-args-when-calling-function
             if args is None:
-                self.logSignal.emit("Server", ("Campaign '%s' ended" % self.campaign_location).replace(
-                    Constants.campaign_data_dir, '').replace("/", ''))
+                self.logSignal.emit(
+                    "Server",
+                    ("Campaign '%s' ended" % self.campaign_location)
+                    .replace(Constants.campaign_data_dir, "")
+                    .replace("/", ""),
+                )
                 self.update_campaign_logging(None)
             else:
                 self.update_campaign_logging(*args)
 
-        elif command == Constants.cli_to_ser_cmd_ref["Run Autosequence"] and self.check_commander(clientid):
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Run Autosequence"
+        ] and self.check_commander(clientid):
             if self.active_autosequence is None:
                 lines = args[0]
                 auto_thread = AutosequenceThread(self, lines, True)
                 self.active_autosequence = auto_thread
             else:
-                self.logSignal.emit("Server", "Rejected new run autosequence command as another is already running")
-                self.statusBarMessageSignal.emit("Rejected new run autosequence command as another is already running", True)
+                self.logSignal.emit(
+                    "Server",
+                    "Rejected new run autosequence command as another is already running",
+                )
+                self.statusBarMessageSignal.emit(
+                    "Rejected new run autosequence command as another is already running",
+                    True,
+                )
 
-        elif command == Constants.cli_to_ser_cmd_ref["Abort Autosequence"] and self.check_commander(clientid):
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Abort Autosequence"
+        ] and self.check_commander(clientid):
 
             # If the autosequence is active then clear any commands and kill the thread
             if self.active_autosequence is not None:
@@ -1097,15 +1285,27 @@ class Server(QThread):  # See below
                 self.close_test_log()
 
         elif command == 11:
-            self.logSignal.emit("Server", "Connection established with client id (UUID): %s" % clientid)
+            self.logSignal.emit(
+                "Server", "Connection established with client id (UUID): %s" % clientid
+            )
 
         elif command not in Constants.cli_to_ser_cmd_ref.values():
-            self.statusBarMessageSignal.emit("Warning, Unhandled command from client", True)
-            print(colored("WARNING: Recieved command %s from the client which current has no mapping" % str(command),'red'))
+            self.statusBarMessageSignal.emit(
+                "Warning, Unhandled command from client", True
+            )
+            print(
+                colored(
+                    "WARNING: Recieved command %s from the client which current has no mapping"
+                    % str(command),
+                    "red",
+                )
+            )
 
-        if command !=Constants.cli_to_ser_cmd_ref["Heartbeat"]:
+        if command != Constants.cli_to_ser_cmd_ref["Heartbeat"]:
             print(command_dict)
-            self.logSignal.emit("Command", "From Client, " + str(self.commander) + str(command_dict))
+            self.logSignal.emit(
+                "Command", "From Client, " + str(self.commander) + str(command_dict)
+            )
 
     def get_flash_download_progress(self, progress: float):
         """
@@ -1138,19 +1338,32 @@ class Server(QThread):  # See below
                     # Send commands
                     if not self.command_queue.empty():
                         command_to_send = self.command_queue.get()
-                        self.logSignal.emit("Command", "To Board, " + str(command_to_send))
+                        self.logSignal.emit(
+                            "Command", "To Board, " + str(command_to_send)
+                        )
                         print("To Board:" + str(command_to_send))
                         self.interface.s2_command(command_to_send)
 
                     if self.do_flash_dump:
-                        self.logSignal.emit("Server", "Taking a dump. Be out in just a sec")
-                        self.interface.download_flash(self.flash_dump_addr, int(
-                            datetime.now().timestamp()), self.command_log, self.flash_dump_loc, self.get_flash_download_progress)
+                        self.logSignal.emit(
+                            "Server", "Taking a dump. Be out in just a sec"
+                        )
+                        self.interface.download_flash(
+                            self.flash_dump_addr,
+                            int(datetime.now().timestamp()),
+                            self.command_log,
+                            self.flash_dump_loc,
+                            self.get_flash_download_progress,
+                        )
                         self.do_flash_dump = False
                         self.flash_dump_loc = None
                         self.flash_dump_addr = None
-                        self.logSignal.emit("Server", "Dump Complete. See terminal for more info")
-                        self.statusBarMessageSignal.emit("Flash download completed", False)
+                        self.logSignal.emit(
+                            "Server", "Dump Complete. See terminal for more info"
+                        )
+                        self.statusBarMessageSignal.emit(
+                            "Flash download completed", False
+                        )
 
                     else:
                         # Parse serial, return the board addr the packet originated from & type of packet (data vs cal)
@@ -1165,20 +1378,35 @@ class Server(QThread):  # See below
                             self.current_error_message = "'Norminal' - Jon Insprucker"
 
                             # Log and update serial packet length
-                            self.write_to_log("Serial", str(self.interface.last_raw_packet))
-                            self.packetSizeLabelSignal.emit("Last Packet Size: %s" % len(self.interface.last_raw_packet))
+                            self.write_to_log(
+                                "Serial", str(self.interface.last_raw_packet)
+                            )
+                            self.packetSizeLabelSignal.emit(
+                                "Last Packet Size: %s"
+                                % len(self.interface.last_raw_packet)
+                            )
 
                             # Gets new data from the corresponding parser dict
-                            if packet_type == Constants.serial_packet_type_ref["Board Data"]:
+                            if (
+                                packet_type
+                                == Constants.serial_packet_type_ref["Board Data"]
+                            ):
                                 new_data = self.interface.board_parser[board_addr].dict
 
-                            elif packet_type == Constants.serial_packet_type_ref["Calibration Data"]:
-                                new_data = self.interface.calibration_parser[board_addr].dict
+                            elif (
+                                packet_type
+                                == Constants.serial_packet_type_ref["Calibration Data"]
+                            ):
+                                new_data = self.interface.calibration_parser[
+                                    board_addr
+                                ].dict
                             else:
                                 new_data = {}
 
                             # Get board prefix (like gse., ec., fc.) from board name
-                            board_prefix = self.interface.getPrefix(self.interface.getName(board_addr))
+                            board_prefix = self.interface.getPrefix(
+                                self.interface.getName(board_addr)
+                            )
 
                             # Update data dict. Take the prefix + key to build a string that is key for data
                             for key in new_data.keys():
@@ -1194,7 +1422,9 @@ class Server(QThread):  # See below
                             elif board_addr == -2:
                                 self.current_error_message = "Packet Parse Failed"
 
-                            self.packetSizeLabelSignal.emit("Last Packet Size: %s" % self.current_error_message)
+                            self.packetSizeLabelSignal.emit(
+                                "Last Packet Size: %s" % self.current_error_message
+                            )
 
                 else:
                     # Serial is closed
@@ -1208,7 +1438,9 @@ class Server(QThread):  # See below
                 traceback.print_exc()
                 self.is_actively_receiving_data = False
                 self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
-                self.statusBarMessageSignal.emit("Warning: Server run loop error, check terminal", True)
+                self.statusBarMessageSignal.emit(
+                    "Warning: Server run loop error, check terminal", True
+                )
 
             # Make sure data dict headers are updated
             self.update_packet_header()
@@ -1223,7 +1455,7 @@ class Server(QThread):  # See below
 
             # Calc running freq and sleep till next cycle
             self._calc_server_thread_update_freq()
-            time.sleep(1/Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY)
+            time.sleep(1 / Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY)
 
     @staticmethod
     def get_file_timestamp_string():
@@ -1231,7 +1463,11 @@ class Server(QThread):  # See below
         Simply returns current time formatted for filename string
         :return: filename timestamp string
         """
-        return QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
+        return (
+            QDateTime.currentDateTime().date().toString("yyyy-MM-dd")
+            + "-T"
+            + QDateTime.currentDateTime().time().toString("hhmmss")
+        )
 
 
 class AutosequenceThread(QThread):
@@ -1273,8 +1509,12 @@ class AutosequenceThread(QThread):
 
         # Check to make sure actually can run sequence
         if len(self.constructed) == 0:
-            self.sendToLogSignal.emit("Server", "Error in autosequence or autosequence not found. Stopping")
-            self.statusBarMessageSignal.emit("Error in autosequence or autosequence not found. Stopping", True)
+            self.sendToLogSignal.emit(
+                "Server", "Error in autosequence or autosequence not found. Stopping"
+            )
+            self.statusBarMessageSignal.emit(
+                "Error in autosequence or autosequence not found. Stopping", True
+            )
 
         # Start the thread
         self.start()
@@ -1325,8 +1565,14 @@ class AutosequenceThread(QThread):
                 # Handle other commands
                 elif cmd in available_commands:
                     if board_addr == -1:
-                        self.sendToLogSignal.emit("Sever", "Autosequence rejected because board address never set")
-                        self.statusBarMessageSignal.emit("Autosequence rejected because board address never set", True)
+                        self.sendToLogSignal.emit(
+                            "Sever",
+                            "Autosequence rejected because board address never set",
+                        )
+                        self.statusBarMessageSignal.emit(
+                            "Autosequence rejected because board address never set",
+                            True,
+                        )
                     else:
                         # Another call to server, mutex inside this class ensures we are not double accessing
                         self.server.parse_command_from_text(cmd, args, board_addr)
@@ -1436,8 +1682,10 @@ class ClientConnectionHandler(QThread):
         while self.is_active:
             try:
                 # Receive in command/ data from client
-                msg = self.client_socket.recv(4096 * 8)  # if the data is ever bigger than this so help me
-                if msg == b'':
+                msg = self.client_socket.recv(
+                    4096 * 8
+                )  # if the data is ever bigger than this so help me
+                if msg == b"":
                     # Remote connection closed
 
                     self.close_connection()
@@ -1492,7 +1740,9 @@ class ServerConnectionHandler(QThread):
         self.sock.bind((self.host, self.port))
 
         self.sendToLogSignal.connect(self.server.logSignal)
-        self.sendOpenClientConnectionSignal.connect(self.server.create_new_client_connection)
+        self.sendOpenClientConnectionSignal.connect(
+            self.server.create_new_client_connection
+        )
 
         self.sock.listen(5)  # TODO: What does this do?
 
@@ -1522,9 +1772,15 @@ class ServerConnectionHandler(QThread):
         Update thread
         :return: None
         """
-        self.sendToLogSignal.emit("Server", "Server initialized. Waiting for clients to connect...")
-        self.sendToLogSignal.emit("Command", "Info, Server initialized. Waiting for commands")
-        self.sendToLogSignal.emit("Server", "Listening on %s:%s" % (self.host, self.port))
+        self.sendToLogSignal.emit(
+            "Server", "Server initialized. Waiting for clients to connect..."
+        )
+        self.sendToLogSignal.emit(
+            "Command", "Info, Server initialized. Waiting for commands"
+        )
+        self.sendToLogSignal.emit(
+            "Server", "Listening on %s:%s" % (self.host, self.port)
+        )
 
         while self.is_active:
 
@@ -1549,19 +1805,21 @@ class ServerConnectionHandler(QThread):
         self.sock.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
-    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(
+        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+    )
     app = QApplication(sys.argv)
     app.setApplicationName("MASA Server")
     app.setApplicationDisplayName("MASA Server")
 
     server = ServerGraphics(app)
     app.setStyle("Fusion")
-    #server.applyDarkTheme(app)
+    # server.applyDarkTheme(app)
 
     server.show()
     server.exit(app.exec())

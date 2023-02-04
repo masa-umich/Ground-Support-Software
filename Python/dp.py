@@ -6,6 +6,7 @@ from s2Interface import S2_Interface
 INTERFACE = S2_Interface()
 CHANNELS = INTERFACE.channels
 
+
 class QHLine(QtWidgets.QFrame):
     def __init__(self):
         super().__init__()
@@ -55,7 +56,7 @@ class TankWidget(QtWidgets.QWidget):
 class LevelWidget(QtWidgets.QGroupBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         layout = QtWidgets.QHBoxLayout()
         self.setLayout(layout)
         left_layout = QtWidgets.QGridLayout()
@@ -63,20 +64,20 @@ class LevelWidget(QtWidgets.QGroupBox):
         layout.addWidget(QVLine())
         right_layout = QtWidgets.QVBoxLayout()
         layout.addLayout(right_layout)
-        
+
         self.tank = TankWidget()
         right_layout.addWidget(self.tank)
 
         completer = QtWidgets.QCompleter(CHANNELS)
         completer.setCaseSensitivity(False)
         completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
-        
+
         plabel = QtWidgets.QLabel("Pressure:")
         self.pvalue = QtWidgets.QLabel("XXX.X")
         punit = QtWidgets.QLabel("PSIG")
         self.pchannel = QtWidgets.QComboBox()
         self.pchannel.setEditable(True)
-        self.pchannel.addItems([""]+CHANNELS)
+        self.pchannel.addItems([""] + CHANNELS)
         self.pchannel.setCompleter(completer)
         self.pchannel.lineEdit().setAlignment(Qt.AlignBottom)
         left_layout.addWidget(plabel, 0, 0)
@@ -89,7 +90,7 @@ class LevelWidget(QtWidgets.QGroupBox):
         tunit = QtWidgets.QLabel("PSIG")
         self.tchannel = QtWidgets.QComboBox()
         self.tchannel.setEditable(True)
-        self.tchannel.addItems([""]+CHANNELS)
+        self.tchannel.addItems([""] + CHANNELS)
         self.tchannel.setCompleter(completer)
         self.tchannel.lineEdit().setAlignment(Qt.AlignBottom)
         left_layout.addWidget(tlabel, 1, 0)
@@ -102,7 +103,7 @@ class LevelWidget(QtWidgets.QGroupBox):
         dpunit = QtWidgets.QLabel("PSIG")
         self.dpchannel = QtWidgets.QComboBox()
         self.dpchannel.setEditable(True)
-        self.dpchannel.addItems([""]+CHANNELS)
+        self.dpchannel.addItems([""] + CHANNELS)
         self.dpchannel.setCompleter(completer)
         self.dpchannel.lineEdit().setAlignment(Qt.AlignBottom)
         left_layout.addWidget(dplabel, 2, 0)
@@ -117,7 +118,9 @@ class LevelWidget(QtWidgets.QGroupBox):
         left_layout.addWidget(self.htvalue, 3, 1)
         left_layout.addWidget(htunit, 3, 2)
 
-        self.isobar_check = QtWidgets.QCheckBox("Isobaric Density",)
+        self.isobar_check = QtWidgets.QCheckBox(
+            "Isobaric Density",
+        )
         self.isobar_check.setChecked(True)
         self.isobar_check.setEnabled(False)
         left_layout.addWidget(self.isobar_check, 4, 0, 1, 4)
@@ -150,7 +153,7 @@ class LevelWidget(QtWidgets.QGroupBox):
             self.pvalue.setText(str(p))
         else:
             p = None
-        
+
         tc = self.tchannel.currentText()
         if tc in CHANNELS:
             t = last_packet[tc]
@@ -164,24 +167,24 @@ class LevelWidget(QtWidgets.QGroupBox):
             self.dpvalue.setText(str(dp))
         else:
             dp = None
-        
-        #if p and t and dpc:
+
+        # if p and t and dpc:
         if t != None and dp != None:
             # calculate level
-            d = -0.0169*t**2 - 1.9296*t + 1056.7 # density in kg/m^3 from refprop
-            h = (dp*6894.757/(d*9.81))*39.37 # height in inches
+            d = -0.0169 * t**2 - 1.9296 * t + 1056.7  # density in kg/m^3 from refprop
+            h = (dp * 6894.757 / (d * 9.81)) * 39.37  # height in inches
             self.dvalue.setText(str(d))
             self.hvalue.setText(str(h))
 
-            try: # try and update tank level indicator
+            try:  # try and update tank level indicator
                 ht = float(self.htvalue.text())
-                ff = h/ht
+                ff = h / ht
                 self.tank.progress = ff
             except:
-                #traceback.print_exc()
+                # traceback.print_exc()
                 pass
 
-            
+
 class TankLevelDialog(QtWidgets.QDialog):
     def __init__(self, dual=False, gui=None):
         super().__init__()
@@ -193,8 +196,8 @@ class TankLevelDialog(QtWidgets.QDialog):
 
         self.setWindowTitle("Tank Level Calculator")
         layout = QtWidgets.QVBoxLayout()
-        self.setLayout(layout)   
-        
+        self.setLayout(layout)
+
         self.level0 = LevelWidget()
         self.level0.setTitle("Tank 0")
         layout.addWidget(self.level0)
@@ -204,18 +207,18 @@ class TankLevelDialog(QtWidgets.QDialog):
             self.level1 = LevelWidget()
             self.level1.setTitle("Tank 1")
             layout.addWidget(self.level1)
-            #self.setStyleSheet("QGroupBox {  border: 0.5px solid black;}")
-    
+            # self.setStyleSheet("QGroupBox {  border: 0.5px solid black;}")
+
     def update_values(self, last_packet):
         self.level0.update_values(last_packet)
-        
+
         if self._dual:
             self.level1.update_values(last_packet)
 
     @QtCore.pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
         self.update_values(data_packet)
-  
+
 
 # if __name__ == "__main__":
 #     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)

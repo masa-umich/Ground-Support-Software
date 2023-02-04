@@ -3,8 +3,9 @@ import csv
 """
 Helper class for reading, writing, and editing csv files
 """
-class CsvHelper:
 
+
+class CsvHelper:
     @staticmethod
     def loadCsv(filename):
         """
@@ -14,7 +15,7 @@ class CsvHelper:
         """
 
         # TODO: Switch returned array to col based format instead of row based format
-        with open(filename, 'r') as f:
+        with open(filename, "r") as f:
             reader = csv.reader(f)
             csv_list = list(reader)
         csvDataArr = [len(csv_list), len(csv_list[1]), csv_list]

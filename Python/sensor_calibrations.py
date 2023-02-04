@@ -42,7 +42,11 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         self.channel_count = 0
 
     def calibrateSensorsWindow(self, action: QAction):
-        channel_settings = ["pt_cal_lower_voltage", "pt_cal_upper_voltage", "pt_cal_upper_pressure"]
+        channel_settings = [
+            "pt_cal_lower_voltage",
+            "pt_cal_upper_voltage",
+            "pt_cal_upper_pressure",
+        ]
 
         dialog = QDialog(self)
 
@@ -145,7 +149,9 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(
+            int(125 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full width
 
         font.setPointSize(int(20 * self.gui.font_scale_ratio))
 
@@ -153,15 +159,21 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
-        save_button.clicked.connect(lambda: self.send_sensor_calibrations(action.text()))
+        save_button.clicked.connect(
+            lambda: self.send_sensor_calibrations(action.text())
+        )
         save_button.setFixedWidth(int(300 * self.gui.pixel_scale_ratio[0]))
 
         refresh_button = QPushButton("Refresh")
         refresh_button.setFont(font)
         refresh_button.setDefault(False)
         refresh_button.setAutoDefault(False)
-        refresh_button.clicked.connect(lambda: self.get_calibrate_sensors(action.text()))
-        refresh_button.setFixedWidth(int(300 * self.gui.pixel_scale_ratio[0]))  # Lazy way to make buttons not full
+        refresh_button.clicked.connect(
+            lambda: self.get_calibrate_sensors(action.text())
+        )
+        refresh_button.setFixedWidth(
+            int(300 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full
 
         # buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)
@@ -169,11 +181,13 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
 
         verticalLayout.addLayout(buttonLayout, 1, 0)
 
-        warning_label = QLabel("YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n" \
-                               + "CALS TAKE A LONG TIME TO SAVE\n" \
-                               + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n" \
-                               + "KNOWN BUG: THIS WINDOW ONLY WORKS ONCE\n" \
-                               + "AFTER CLOSING, REBOOT GUI TO USE AGAIN")
+        warning_label = QLabel(
+            "YOU MUST CLICK REFRESH TO MANUALLY REQUEST THE CURRENT CALS\n"
+            + "CALS TAKE A LONG TIME TO SAVE\n"
+            + "AFTER SAVING, KEEP CLICKING REFRESH UNTIL THE CORRECT VALUES APPEAR\n\n"
+            + "KNOWN BUG: THIS WINDOW ONLY WORKS ONCE\n"
+            + "AFTER CLOSING, REBOOT GUI TO USE AGAIN"
+        )
 
         font.setPointSize(int(20 * self.gui.font_scale_ratio))
         warning_label.setFont(font)
@@ -186,10 +200,10 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         self.scrollArea.show()
         # sys.exit(app.exec_())
         # self.show_window(scrollArea)
-        
-    '''
+
+    """
     don't think the code below works!
-    '''
+    """
 
     def get_calibrate_sensors(self, board_name):
         packet = None
@@ -199,7 +213,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             "function_name": "refresh_calibrations",
             "target_board_addr": self.interface.getBoardAddr(board_name),
             "timestamp": int(datetime.now().timestamp()),
-            "args": []
+            "args": [],
         }
         # self.client_dialog.client.command(3, cmd_dict)
         # while True:
@@ -208,9 +222,15 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
         time.sleep(timeout)  # Wait for the refresh to finish
         self.cal_packet = self.last_packet
         for x in range(self.channel_count):
-            self.lower_voltage[x].setValue(self.last_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"])
-            self.upper_voltage[x].setValue(self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"])
-            self.upper_pressure[x].setValue(self.last_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"])
+            self.lower_voltage[x].setValue(
+                self.last_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"]
+            )
+            self.upper_voltage[x].setValue(
+                self.last_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"]
+            )
+            self.upper_pressure[x].setValue(
+                self.last_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"]
+            )
 
     def send_sensor_calibrations(self, board_name):
         timeout = 0.5
@@ -221,15 +241,21 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
             update_upper_voltage = True
             update_upper_pressure = True
 
-            if (self.cal_packet != None):
-                if (self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"] == self.lower_voltage[
-                    x].value()):
+            if self.cal_packet != None:
+                if (
+                    self.cal_packet[prefix + "pt_cal_lower_voltage[" + str(x) + "]"]
+                    == self.lower_voltage[x].value()
+                ):
                     update_lower_voltage = False
-                if (self.cal_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"] == self.upper_voltage[
-                    x].value()):
+                if (
+                    self.cal_packet[prefix + "pt_cal_upper_voltage[" + str(x) + "]"]
+                    == self.upper_voltage[x].value()
+                ):
                     update_upper_voltage = False
-                if (self.cal_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"] == self.upper_pressure[
-                    x].value()):
+                if (
+                    self.cal_packet[prefix + "pt_cal_upper_pressure[" + str(x) + "]"]
+                    == self.upper_pressure[x].value()
+                ):
                     update_upper_pressure = False
 
             if update_lower_voltage:
@@ -237,7 +263,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     "function_name": "set_pt_lower_voltage",
                     "target_board_addr": self.interface.getBoardAddr(board_name),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [x, self.lower_voltage[x].value()]
+                    "args": [x, self.lower_voltage[x].value()],
                 }
                 # self.client_dialog.client.command(3, cmd_dict)
 
@@ -246,7 +272,7 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     "function_name": "set_pt_upper_voltage",
                     "target_board_addr": self.interface.getBoardAddr(board_name),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [x, self.upper_voltage[x].value()]
+                    "args": [x, self.upper_voltage[x].value()],
                 }
                 # self.client_dialog.client.command(3, cmd_dict)
             if update_upper_pressure:
@@ -254,6 +280,6 @@ class SensorCalibrationDialog(QtWidgets.QDialog):
                     "function_name": "set_pt_upper_pressure",
                     "target_board_addr": self.interface.getBoardAddr(board_name),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [x, self.upper_pressure[x].value()]
+                    "args": [x, self.upper_pressure[x].value()],
                 }
                 # self.client_dialog.client.command(3, cmd_dict)

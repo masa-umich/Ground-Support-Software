@@ -21,13 +21,12 @@ Program start point. This class handles all child windows of the gui
 
 
 class GUI(BaseGui):  # Inherits QObject just so signals can be used
-
     def __init__(self, qapp: QApplication):
         super().__init__(qapp)  # This calls above BaseGui __init__
 
         # This variable holds the current Run class that is being used to conduct the test
         self.campaign = Campaign(self)
-        #self.configuration = ConfigurationManager(self)
+        # self.configuration = ConfigurationManager(self)
 
         # If in debug mode the gui overrides the command sending and instead shows what would happen if successful
         self.debug_mode = False
@@ -58,7 +57,9 @@ class GUI(BaseGui):  # Inherits QObject just so signals can be used
         else:
             self.liveDataHandler.sendCommand(6, [str(self.campaign.saveName)])
             if self.campaign.isTestActive:
-                self.liveDataHandler.sendCommand(10, [self.campaign.saveName, self.campaign.currentTestName, True])
+                self.liveDataHandler.sendCommand(
+                    10, [self.campaign.saveName, self.campaign.currentTestName, True]
+                )
 
             self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
 
@@ -70,10 +71,12 @@ class GUI(BaseGui):  # Inherits QObject just so signals can be used
         """
         super().serverDisconnect()
         self.controlsWindow.startRunAct.setDisabled(True)
-        self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.disableNoteCreation(True)
+        self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.disableNoteCreation(
+            True
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     currentExitCode = GUI.EXIT_CODE_REBOOT
     while currentExitCode == GUI.EXIT_CODE_REBOOT:
@@ -81,16 +84,20 @@ if __name__ == '__main__':
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
         os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
-        QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+        QApplication.setHighDpiScaleFactorRoundingPolicy(
+            Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+        )
         app = QApplication(sys.argv)
         app.setApplicationName("MASA GUI")
         app.setApplicationDisplayName("MASA GUI")
 
         gui = GUI(app)
 
-        QTimer.singleShot(100, gui.postInit)  # Need to call this after exec_ for proper screen placement
+        QTimer.singleShot(
+            100, gui.postInit
+        )  # Need to call this after exec_ for proper screen placement
         currentExitCode = app.exec_()
         gui.savePreferences()
         app = None
 
-#https://stackoverflow.com/questions/8356336/how-to-capture-output-of-pythons-interpreter-and-show-in-a-text-widget
+# https://stackoverflow.com/questions/8356336/how-to-capture-output-of-pythons-interpreter-and-show-in-a-text-widget

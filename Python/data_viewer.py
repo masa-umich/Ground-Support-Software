@@ -26,13 +26,19 @@ class DataViewerDialog(QtWidgets.QDialog):
     def __init__(self, gui):
 
         super().__init__()
-        pg.setConfigOption('background', (67,67,67))
+        pg.setConfigOption("background", (67, 67, 67))
         pg.setConfigOptions(antialias=True)
 
         print("pyqtgraph Version: " + pg.__version__)
 
         self.gui = gui
-        self.data_viewer = DataViewerWindow(gui, num_channels=4, rows=1, cols=1, cycle_time=Constants.dataHandlerUpdateRate)
+        self.data_viewer = DataViewerWindow(
+            gui,
+            num_channels=4,
+            rows=1,
+            cols=1,
+            cycle_time=Constants.dataHandlerUpdateRate,
+        )
         self.setWindowTitle("Data Viewer")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.data_viewer)
@@ -44,7 +50,16 @@ class DataViewer(QtWidgets.QTabWidget):
     Custom QtWidget to plot data
     """
 
-    def __init__(self, gui, viewer_window, channels: list, cycle_time: int, num_channels: int = 4, *args, **kwargs):
+    def __init__(
+        self,
+        gui,
+        viewer_window,
+        channels: list,
+        cycle_time: int,
+        num_channels: int = 4,
+        *args,
+        **kwargs
+    ):
         """Initializes DataViewer object.
 
         Args:
@@ -60,8 +75,18 @@ class DataViewer(QtWidgets.QTabWidget):
         self.channels = channels  # list of channel names
         self.num_channels = num_channels  # number of data channels in plot
         self.cycle_time = cycle_time  # cycle time of application in ms
-        self.default_colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-                               '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']  # stolen from matplotlib
+        self.default_colors = [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#d62728",
+            "#9467bd",
+            "#8c564b",
+            "#e377c2",
+            "#7f7f7f",
+            "#bcbd22",
+            "#17becf",
+        ]  # stolen from matplotlib
 
         # Some support if the gui is not attached
         self.font_scale_ratio = self.gui.font_scale_ratio
@@ -119,8 +144,7 @@ class DataViewer(QtWidgets.QTabWidget):
 
             # Left/ right axis switch
             self.switches.append(Switch())
-            self.switches[i].clicked.connect(
-                lambda state: self.redraw_curves())
+            self.switches[i].clicked.connect(lambda state: self.redraw_curves())
             self.config_layout.addWidget(self.switches[i], i + 1, 0)
 
             # Attach a curve
@@ -135,8 +159,8 @@ class DataViewer(QtWidgets.QTabWidget):
             channel_dropdown.setPlaceholderText("Channel Name")
             channel_dropdown.editingFinished.connect(lambda: self.redraw_curves())
             self.series.append(channel_dropdown)
-            self.config_layout.addWidget(self.series[i], i+1, 1)
-            
+            self.config_layout.addWidget(self.series[i], i + 1, 1)
+
             # Alias dropdown
             alias_dropdown = QtWidgets.QLineEdit()
             font = alias_dropdown.font()
@@ -149,16 +173,15 @@ class DataViewer(QtWidgets.QTabWidget):
             self.config_layout.addWidget(self.aliases[i], i + 1, 2)
 
             # Color picker
-            self.colors.append(ColorButton(
-                default_color=self.default_colors[i]))
+            self.colors.append(ColorButton(default_color=self.default_colors[i]))
             self.colors[i].colorChanged.connect(lambda: self.redraw_curves())
-            self.config_layout.addWidget(self.colors[i], i+1, 3)
+            self.config_layout.addWidget(self.colors[i], i + 1, 3)
 
         # setup duration field
         self.duration_edit = QtWidgets.QLineEdit("30")
         self.duration_label = QtWidgets.QLabel("Seconds")
-        self.config_layout.addWidget(self.duration_edit, num_channels+1, 0)
-        self.config_layout.addWidget(self.duration_label, num_channels+1, 1)
+        self.config_layout.addWidget(self.duration_edit, num_channels + 1, 0)
+        self.config_layout.addWidget(self.duration_label, num_channels + 1, 1)
         self.duration_edit.editingFinished.connect(self.duration_update)
         self.duration_update()
 
@@ -169,7 +192,9 @@ class DataViewer(QtWidgets.QTabWidget):
         self.plot2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.plot2.setAxisLabel("left", " ")
-        self.plot2.setAxisLabelColor("bottom", "#FFF")  # who the fuck knows why this has to be hex
+        self.plot2.setAxisLabelColor(
+            "bottom", "#FFF"
+        )  # who the fuck knows why this has to be hex
         self.plot2.setAxisLabelColor("right", "#FFF")
         self.plot2.setAxisLabelColor("left", "#FFF")
 
@@ -190,11 +215,14 @@ class DataViewer(QtWidgets.QTabWidget):
 
         self.plot2.setMouseEnabled(False, False)
 
-        #self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
+        # self.plot2.addInfiniteLineCurve("Teset", QColor(255,255,0), 0.4, 0, "left")
 
-        self.plot2.addCurve("Garbage", self.colors[0].color(), axis = "left")
+        self.plot2.addCurve("Garbage", self.colors[0].color(), axis="left")
         self.plot2.addCurveLabelAlias("Garbage", "Aliased Name")
-        self.plot2.curves["Garbage"].setData(x = np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]), y = np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]))
+        self.plot2.curves["Garbage"].setData(
+            x=np.array([0, 1, 5, 10, 12, 20, 24, 27, 30]),
+            y=np.array([0, 15, 20, 21, 22, 21, 28, 26, 32]),
+        )
 
         self.plot2.showLegend()
 
@@ -220,7 +248,7 @@ class DataViewer(QtWidgets.QTabWidget):
         self.duration_edit.setText(config[1])
         self.duration_update()
         for i in range(self.num_channels):
-            curve_config = config[i+2]
+            curve_config = config[i + 2]
             self.switches[i].setChecked(bool(curve_config[0]))
             self.series[i].setText(curve_config[1])
             self.colors[i].setColor(curve_config[2])
@@ -234,16 +262,22 @@ class DataViewer(QtWidgets.QTabWidget):
         """
         config = [self.title_edit.text(), self.duration_edit.text()]
         for i in range(self.num_channels):
-            config.append([self.switches[i].isChecked(),
-                           self.series[i].text(), self.colors[i].color()])
+            config.append(
+                [
+                    self.switches[i].isChecked(),
+                    self.series[i].text(),
+                    self.colors[i].color(),
+                ]
+            )
         return config
 
     def print_curves(self):
         """Debug function to dump children of plots to console"""
-        print("right: " +
-              str([dataobj for dataobj in self.right.allChildren()]))
+        print("right: " + str([dataobj for dataobj in self.right.allChildren()]))
         print(
-            "left: " + str([dataobj for dataobj in self.left.getViewBox().allChildren()]))
+            "left: "
+            + str([dataobj for dataobj in self.left.getViewBox().allChildren()])
+        )
 
     def redraw_curves(self):
         """Redraws plot anytime paramaters are changed"""
@@ -262,7 +296,6 @@ class DataViewer(QtWidgets.QTabWidget):
                 if self.plot2.right_view_box is None:
                     self.plot2.addRightAxis()
 
-
             # Get the color of the line
             color = QColor(255, 255, 255)  # defualt
             if self.colors[idx].color():
@@ -270,16 +303,22 @@ class DataViewer(QtWidgets.QTabWidget):
 
             # Add curves back in
             # TODO: Add in alias junk here
-            parsed = self.series[idx].text().split("=")  # Parse for line=xx to see if that was inputted
+            parsed = (
+                self.series[idx].text().split("=")
+            )  # Parse for line=xx to see if that was inputted
             if len(parsed[0]) > 0:
                 # If the parse finds nothing then parsed[0] will be the uncut string
                 if parsed[0] == "line" and len(parsed) == 2:
-                    self.curves[idx] = self.plot2.addInfiniteLineCurve(self.series[idx].text(), color, parsed[1], 0, axis = axis)
+                    self.curves[idx] = self.plot2.addInfiniteLineCurve(
+                        self.series[idx].text(), color, parsed[1], 0, axis=axis
+                    )
 
                 else:
-                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis = axis)
+                    self.curves[idx] = self.plot2.addCurve(parsed[0], color, axis=axis)
                     if self.aliases[idx].text() != "":
-                        self.plot2.addCurveLabelAlias(parsed[0], self.aliases[idx].text())
+                        self.plot2.addCurveLabelAlias(
+                            parsed[0], self.aliases[idx].text()
+                        )
 
         if not hasRight and self.plot2.right_view_box is not None:
             self.plot2.hideRightAxis()
@@ -309,7 +348,9 @@ class DataViewer(QtWidgets.QTabWidget):
     def duration_update(self):
         """Updates plot duration on field edit"""
         self.duration = int(self.duration_edit.text())
-        self.plot2.setAxisLabel("bottom", "Time: -" + self.duration_edit.text() + " seconds")
+        self.plot2.setAxisLabel(
+            "bottom", "Time: -" + self.duration_edit.text() + " seconds"
+        )
         self.plot2.setXRange(0, self.duration)
 
     def update(self, frame: pd.DataFrame):
@@ -318,28 +359,43 @@ class DataViewer(QtWidgets.QTabWidget):
         Args:
             frame (pandas.DataFrame): Pandas DataFrame of telemetry data
         """
-        if (frame.size >= Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate):
-            points = int(Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate)
+        if (
+            frame.size
+            >= Constants.dataStorageDuration
+            * 60
+            * 1000
+            / Constants.dataHandlerUpdateRate
+        ):
+            points = int(
+                Constants.dataStorageDuration
+                * 60
+                * 1000
+                / Constants.dataHandlerUpdateRate
+            )
         else:
-            points = int(self.duration*1000/self.cycle_time)
-        
+            points = int(self.duration * 1000 / self.cycle_time)
+
         data = frame.tail(points)
         for i in range(self.num_channels):
             # get channel name
             channel_name = self.series[i].text()
             if channel_name in self.channels:
                 self.plot2.curves[channel_name].setData(
-                    x=data["Time"].to_numpy().astype(np.float64), y=data[channel_name].to_numpy().astype(np.float64))
+                    x=data["Time"].to_numpy().astype(np.float64),
+                    y=data[channel_name].to_numpy().astype(np.float64),
+                )
 
     def range_update(self):
         """Updates plot range when slider is moved"""
-        self.plot2.setXRange(self.slider.sliderPosition(),  self.slider.sliderPosition() + self.duration)
+        self.plot2.setXRange(
+            self.slider.sliderPosition(), self.slider.sliderPosition() + self.duration
+        )
 
     def sliderChange(self):
         if self.window.checkbox.isChecked():
             self.window.sliderUpdateSignal.emit(self.slider.value())
 
-    def quietUpdateSlider(self, newvalue:int):
+    def quietUpdateSlider(self, newvalue: int):
 
         self.slider.blockSignals(True)
         self.slider.setValue(newvalue)
@@ -354,7 +410,17 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
     sliderUpdateSignal = pyqtSignal(int)
 
-    def __init__(self, gui, num_channels: int = 4, rows: int = 3, cols: int = 3, cycle_time: int = 250, singular:bool = False, *args, **kwargs):
+    def __init__(
+        self,
+        gui,
+        num_channels: int = 4,
+        rows: int = 3,
+        cols: int = 3,
+        cycle_time: int = 250,
+        singular: bool = False,
+        *args,
+        **kwargs
+    ):
         """Initializes window
 
         Args:
@@ -383,13 +449,15 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
-        self.options_menu = self.main_menu.addMenu('&Options')
+        self.options_menu = self.main_menu.addMenu("&Options")
 
         # connection menu item
         if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
             # self.quit.setShortcut("Ctrl+K")
-            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.connect.triggered.connect(
+                lambda: self.gui.show_window(self.gui.liveDataHandler.getClient())
+            )
             self.options_menu.addAction(self.connect)
 
         # save menu item
@@ -425,7 +493,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         # set up environment and database
         self.interface = S2_Interface()
         self.channels = self.interface.channels
-        self.header = ['time', 'packet_num', 'commander'] + self.channels
+        self.header = ["time", "packet_num", "commander"] + self.channels
         self.database = pd.DataFrame(columns=self.header)
         self.database_full = False
 
@@ -433,14 +501,20 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.checkbox.setText("Lock")
 
         # init viewers
-        self.viewers = [DataViewer(
-            self.gui, self, self.channels, cycle_time, num_channels=num_channels) for i in range(rows*cols)]
+        self.viewers = [
+            DataViewer(
+                self.gui, self, self.channels, cycle_time, num_channels=num_channels
+            )
+            for i in range(rows * cols)
+        ]
 
         for i in range(rows):
             for j in range(cols):
-                idx = i*cols+j
+                idx = i * cols + j
                 self.top_layout.addWidget(self.viewers[idx], i, j)
-                self.viewers[idx].slider.valueChanged.connect(self.viewers[-1].sliderChange)
+                self.viewers[idx].slider.valueChanged.connect(
+                    self.viewers[-1].sliderChange
+                )
 
         self.starttime = datetime.now().timestamp()
         self.cycle_time = cycle_time
@@ -451,7 +525,15 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         for i in range(self.cols):
             idx = self.rows * self.cols + i
-            self.viewers.append(DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels))
+            self.viewers.append(
+                DataViewer(
+                    self.gui,
+                    self,
+                    self.channels,
+                    cycle_time=self.cycle_time,
+                    num_channels=self.num_channels,
+                )
+            )
             self.top_layout.addWidget(self.viewers[-1], self.rows, i)
             self.viewers[-1].slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
@@ -462,11 +544,17 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         self.gui.setStatusBarMessage("Added Row")
 
     def addCol(self):
-        
+
         for i in range(self.rows):
             idx = self.rows * self.cols + i
 
-            dv = DataViewer(self.gui, self, self.channels, cycle_time=self.cycle_time, num_channels=self.num_channels)
+            dv = DataViewer(
+                self.gui,
+                self,
+                self.channels,
+                cycle_time=self.cycle_time,
+                num_channels=self.num_channels,
+            )
             self.viewers.append(dv)
             dv.slider.valueChanged.connect(self.viewers[-1].sliderChange)
 
@@ -484,8 +572,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         packet["Time"] -= self.starttime  # time to elapsed
         last_frame = pd.DataFrame(packet, index=[0])
-        self.database = pd.concat([self.database, last_frame], axis=0, ignore_index=True).tail(
-            int(Constants.dataStorageDuration*60*1000/self.cycle_time))  # cap data to 15 min (stored as constant in constants.py)
+        self.database = pd.concat(
+            [self.database, last_frame], axis=0, ignore_index=True
+        ).tail(
+            int(Constants.dataStorageDuration * 60 * 1000 / self.cycle_time)
+        )  # cap data to 15 min (stored as constant in constants.py)
 
         # maybe only run if connection established?
         for viewer in self.viewers:
@@ -493,43 +584,76 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                 viewer.update(self.database)
 
         # check if database has reached duration cap
-        if (not self.database_full and self.database[self.database.columns[0]].count() >= Constants.dataStorageDuration * 60 * 1000 / Constants.dataHandlerUpdateRate):
+        if (
+            not self.database_full
+            and self.database[self.database.columns[0]].count()
+            >= Constants.dataStorageDuration
+            * 60
+            * 1000
+            / Constants.dataHandlerUpdateRate
+        ):
             self.database_full = True
-        
+
         # when packet is received increase slider size as necessary
         for i in range(self.rows):
             for j in range(self.cols):
 
                 idx = i * self.cols + j
 
-                if (not self.database_full and self.database[self.database.columns[0]].count() > 0):
+                if (
+                    not self.database_full
+                    and self.database[self.database.columns[0]].count() > 0
+                ):
 
                     # timestamps start when connection established, plot starts when channel name entered
-                    timestamp = self.database["Time"].to_numpy().astype(np.float64)[self.database["Time"].size - 1]
+                    timestamp = (
+                        self.database["Time"]
+                        .to_numpy()
+                        .astype(np.float64)[self.database["Time"].size - 1]
+                    )
 
                     # size of database extends beyond range viewed, increase slider size
-                    if (timestamp >= self.viewers[idx].duration):
-                        self.viewers[idx].slider.setMaximum(int(timestamp) - self.viewers[idx].duration)
+                    if timestamp >= self.viewers[idx].duration:
+                        self.viewers[idx].slider.setMaximum(
+                            int(timestamp) - self.viewers[idx].duration
+                        )
 
                     # lock range viewed to most recent values if slider was already at max position
-                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
-                elif (self.database_full and self.database[self.database.columns[0]].count() > 0):
+                    if (
+                        self.viewers[idx].slider.value()
+                        == self.viewers[idx].slider.maximum() - 1
+                    ):
+                        self.viewers[idx].slider.setValue(
+                            self.viewers[idx].slider.maximum()
+                        )
+                elif (
+                    self.database_full
+                    and self.database[self.database.columns[0]].count() > 0
+                ):
                     # if here then database is full
 
-                    end = int(self.database["Time"].to_numpy().astype(np.float64)[self.database["Time"].size - 1])
+                    end = int(
+                        self.database["Time"]
+                        .to_numpy()
+                        .astype(np.float64)[self.database["Time"].size - 1]
+                    )
                     start = int(self.database["Time"].to_numpy().astype(np.float64)[0])
-                    
+
                     # slider size doesn't increase but values of min/max increment in order for range_update to work
-                    if (end >= self.viewers[idx].duration):
-                        self.viewers[idx].slider.setMaximum(end - self.viewers[idx].duration)
+                    if end >= self.viewers[idx].duration:
+                        self.viewers[idx].slider.setMaximum(
+                            end - self.viewers[idx].duration
+                        )
                         self.viewers[idx].slider.setMinimum(start)
 
                     # database is full, and slider was at max position then keep it there
-                    if (self.viewers[idx].slider.value() == self.viewers[idx].slider.maximum() - 1):
-                        self.viewers[idx].slider.setValue(self.viewers[idx].slider.maximum())
-
-                    
+                    if (
+                        self.viewers[idx].slider.value()
+                        == self.viewers[idx].slider.maximum() - 1
+                    ):
+                        self.viewers[idx].slider.setValue(
+                            self.viewers[idx].slider.maximum()
+                        )
 
     def exit(self):
         """Exit application"""
@@ -544,7 +668,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
     def load(self):
         """Load config file"""
         loadname = QtGui.QFileDialog.getOpenFileName(
-            self, "Load Config", "", "Config (*.cfg)")[0]
+            self, "Load Config", "", "Config (*.cfg)"
+        )[0]
         with open(loadname, "r") as file:
             configs = json.load(file)
         for i in range(len(self.viewers)):
@@ -554,7 +679,8 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """Saves config to a file"""
         configs = [viewer.save_config() for viewer in self.viewers]
         savename = QtGui.QFileDialog.getSaveFileName(
-            self, 'Save Config', 'dataviewer.cfg', "Config (*.cfg)")[0]
+            self, "Save Config", "dataviewer.cfg", "Config (*.cfg)"
+        )[0]
         with open(savename, "w") as file:
             json.dump(configs, file)
 
@@ -570,15 +696,15 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication.instance()
 
     # This has to be done early on, dark mode rn
-    pg.setConfigOption('background', (67, 67, 67))
+    pg.setConfigOption("background", (67, 67, 67))
     pg.setConfigOptions(antialias=True)
 
     # initialize application
-    APPID = 'MASA.DataViewer'  # arbitrary string
+    APPID = "MASA.DataViewer"  # arbitrary string
     app.setApplicationName("MASA GUI")
     app.setApplicationDisplayName("MASA GUI (Singular) - Data Viewer")
 
-    if os.name == 'nt':  # Bypass command because it is not supported on Linux
+    if os.name == "nt":  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
     else:
         pass
@@ -587,11 +713,11 @@ if __name__ == "__main__":
     # init window
     lwgui = BaseGui(app)
     CYCLE_TIME = Constants.dataHandlerUpdateRate  # in ms
-    window = DataViewerWindow(lwgui, num_channels=4, rows=1,
-                              cols=1, cycle_time=CYCLE_TIME, singular=True)
+    window = DataViewerWindow(
+        lwgui, num_channels=4, rows=1, cols=1, cycle_time=CYCLE_TIME, singular=True
+    )
     lwgui.setMainWindow(window)
 
     # run
     window.show()
     sys.exit(app.exec())
-

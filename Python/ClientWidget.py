@@ -21,7 +21,7 @@ class ClientDialog(QtWidgets.QDialog):
         if client is not None:
             self.client = client
         else:
-            self.client = ClientWidget(commandable=False, gui=gui) # this needs a gui
+            self.client = ClientWidget(commandable=False, gui=gui)  # this needs a gui
         self.setWindowTitle("Connection")
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.client)
@@ -33,11 +33,11 @@ class ClientWidget(QtWidgets.QWidget):
     gotConnectionToServerSignal = pyqtSignal()
     serverDisconnectSignal = pyqtSignal()
 
-    def __init__(self, commandable: bool=True, gui = None, *args, **kwargs):
+    def __init__(self, commandable: bool = True, gui=None, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
         self.clientid = uuid.uuid4().hex
-        #self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.command_queue = queue.Queue()
         self.is_commander = False
         self.is_connected = False
@@ -53,8 +53,13 @@ class ClientWidget(QtWidgets.QWidget):
         self.connection_layout = QtWidgets.QGridLayout()
         self.connection_widget.setLayout(self.connection_layout)
         self.host = QtWidgets.QComboBox()
-        self.host.addItems([socket.gethostbyname(
-            socket.gethostname()), '192.168.50.79', 'masadataserver'])
+        self.host.addItems(
+            [
+                socket.gethostbyname(socket.gethostname()),
+                "192.168.50.79",
+                "masadataserver",
+            ]
+        )
         self.host.setEditable(True)
         self.connection_layout.addWidget(self.host, 0, 0)
         self.port = QtWidgets.QLineEdit()
@@ -99,13 +104,9 @@ class ClientWidget(QtWidgets.QWidget):
         # self.host.setText(socket.gethostbyname(socket.gethostname()))
         self.port.setText(str(6969))
 
-    def command(self, command: int, args: tuple=()):
+    def command(self, command: int, args: tuple = ()):
         # build and add command to queue
-        command_dict = {
-            "clientid": self.clientid,
-            "command": command,
-            "args": args
-        }
+        command_dict = {"clientid": self.clientid, "command": command, "args": args}
 
         msg = pickle.dumps(command_dict)
         # print(msg)
@@ -113,10 +114,14 @@ class ClientWidget(QtWidgets.QWidget):
         if command != 0:
             print(command_dict)
             if command_dict["command"] == 3:
-                self._gui.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
+                self._gui.setStatusBarMessage(
+                    "Command sent to server: " + str(command_dict["args"])
+                )
             else:
                 # TODO: What??
-                self._gui.setStatusBarMessage("Command sent to client: " + str(command_dict))
+                self._gui.setStatusBarMessage(
+                    "Command sent to client: " + str(command_dict)
+                )
 
         # add to queue
         if self.is_connected:
@@ -128,20 +133,35 @@ class ClientWidget(QtWidgets.QWidget):
             # setup socket interface
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.settimeout(1)
-            self.s.connect((self.host.currentText(), int(
-                self.port.text())))  # connect to socket
-            self.s.settimeout(None)  #  from https://stackoverflow.com/questions/3432102/python-socket-connection-timeout to prevent blocking
+            self.s.connect(
+                (self.host.currentText(), int(self.port.text()))
+            )  # connect to socket
+            self.s.settimeout(
+                None
+            )  #  from https://stackoverflow.com/questions/3432102/python-socket-connection-timeout to prevent blocking
             self.is_connected = True  # update status
             self.command(11)
             self.gotConnectionToServerSignal.emit()
-            print("Connected to server on " + self.host.currentText() + ":" + self.port.text())
-            self._gui.setStatusBarMessage("Connected to server on " + self.host.currentText() + ":" + self.port.text())
+            print(
+                "Connected to server on "
+                + self.host.currentText()
+                + ":"
+                + self.port.text()
+            )
+            self._gui.setStatusBarMessage(
+                "Connected to server on "
+                + self.host.currentText()
+                + ":"
+                + self.port.text()
+            )
 
         except Exception as e:
             print(traceback.format_exc())
-            self._gui.setStatusBarMessage("Error connecting to server, see terminal", True)
+            self._gui.setStatusBarMessage(
+                "Error connecting to server, see terminal", True
+            )
             self.soft_disconnect()
-        #print(self.is_connected)
+        # print(self.is_connected)
 
     def disconnect(self):
         """
@@ -201,7 +221,7 @@ class ClientWidget(QtWidgets.QWidget):
                 self.s.sendall(data)
 
                 # get data
-                data = self.s.recv(4096*4)
+                data = self.s.recv(4096 * 4)
                 packet = pickle.loads(data)
             else:
                 packet = None
@@ -211,7 +231,10 @@ class ClientWidget(QtWidgets.QWidget):
                 self.is_commander = False
             elif packet["commander"] is None:
                 self.is_commander = False
-            elif packet["commander"] == hashlib.sha256(self.clientid.encode('utf-8')).hexdigest():
+            elif (
+                packet["commander"]
+                == hashlib.sha256(self.clientid.encode("utf-8")).hexdigest()
+            ):
                 self.is_commander = True
             else:
                 self.is_commander = False

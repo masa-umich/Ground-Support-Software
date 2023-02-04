@@ -21,16 +21,34 @@ class Tank(AvionicsObject):
 
     object_name = "Tank"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 88*1,
-                 height: float = 170*1, name: str = "Tank",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Tank', is_vertical: bool = True,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0 , 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True,
-                 channel: str = 'Undefined', board: str = 'Undefined', override_indicator: bool = 0):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float = 88 * 1,
+        height: float = 170 * 1,
+        name: str = "Tank",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Tank",
+        is_vertical: bool = True,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+        channel: str = "Undefined",
+        board: str = "Undefined",
+        override_indicator: bool = 0,
+    ):
         """
         Initializer for Tank
 
@@ -58,16 +76,32 @@ class Tank(AvionicsObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible, board=board, channel=channel)
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+            board=board,
+            channel=channel,
+        )
 
         self.window = self.widget_parent.window
 
@@ -84,7 +118,7 @@ class Tank(AvionicsObject):
         self.runContextMenuItems.append("Set Pressure Config")
         self.run_context_menu.addAction("Set Pressure Config")
 
-        #self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
+        # self.long_name_label.setStyleSheet("background-color:" + Constants.MASA_Blue_color.name() + "; border: none")
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
@@ -102,7 +136,11 @@ class Tank(AvionicsObject):
             status = 2
             text = "Bruhhh"
 
-        if status != 2 and not self.isAvionicsFullyDefined() and not self.override_indicator:
+        if (
+            status != 2
+            and not self.isAvionicsFullyDefined()
+            and not self.override_indicator
+        ):
             status = 1
             text = self.long_name + "- No board and/or channel defined"
 
@@ -121,7 +159,7 @@ class Tank(AvionicsObject):
 
         if not self.widget_parent.parent.is_editing and self.gui.debug_mode:
             # This is for testing and will normally be used with capacitive level sensor
-            self.fillPercent += .05
+            self.fillPercent += 0.05
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -152,23 +190,38 @@ class Tank(AvionicsObject):
         # Draws the tank outline
         path = QPainterPath()
         if self.is_vertical:
-            path.moveTo(0,arcHeight)
+            path.moveTo(0, arcHeight)
             path.arcTo(QRectF(0, 0, self.width, arcHeight * 2), 180, -180)
-            path.lineTo(self.width, self.height - 2 * arcHeight) 
-            path.arcTo(QRectF(self.width, path.currentPosition().y(), - self.width, arcHeight * 2), 180, 180)
+            path.lineTo(self.width, self.height - 2 * arcHeight)
+            path.arcTo(
+                QRectF(
+                    self.width, path.currentPosition().y(), -self.width, arcHeight * 2
+                ),
+                180,
+                180,
+            )
             path.lineTo(0, arcHeight)
         else:
-            path.moveTo(arcHeight,0)
-            path.arcTo(QRectF(0, 0,  arcHeight * 2, self.height), 90, 180) 
-            path.lineTo(self.width - arcHeight, self.height) 
-            path.arcTo(path.currentPosition().x()-arcHeight, 0 ,arcHeight*2,self.height, -90, 180)
+            path.moveTo(arcHeight, 0)
+            path.arcTo(QRectF(0, 0, arcHeight * 2, self.height), 90, 180)
+            path.lineTo(self.width - arcHeight, self.height)
+            path.arcTo(
+                path.currentPosition().x() - arcHeight,
+                0,
+                arcHeight * 2,
+                self.height,
+                -90,
+                180,
+            )
             path.lineTo(arcHeight, 0)
-            
-        path.translate(self.position.x(), self.position.y()) # Translate it into position
-        self.widget_parent.painter.drawPath(path) # Draw Path
+
+        path.translate(
+            self.position.x(), self.position.y()
+        )  # Translate it into position
+        self.widget_parent.painter.drawPath(path)  # Draw Path
 
         # Debug randomness
-        #self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y(), 10, 10), Constants.fluidColor[self.fluid])
+        # self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y(), 10, 10), Constants.fluidColor[self.fluid])
 
         # End tank outline draw
 
@@ -179,16 +232,35 @@ class Tank(AvionicsObject):
         self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
 
         # Maps the fill percentage of the tank to an angle to fill the bottom arc
-        bottomArcFillAngle = MathHelper.mapValue(self.fillPercent, 0, arcHeight / self.height, 0, 90)
+        bottomArcFillAngle = MathHelper.mapValue(
+            self.fillPercent, 0, arcHeight / self.height, 0, 90
+        )
 
         path.moveTo(self.position.x() + self.width / 2, self.position.y() + self.height)
-        path.arcTo(QRectF(self.position.x(), self.position.y() + self.height - 2 * arcHeight, self.width, arcHeight * 2), 270, bottomArcFillAngle)
+        path.arcTo(
+            QRectF(
+                self.position.x(),
+                self.position.y() + self.height - 2 * arcHeight,
+                self.width,
+                arcHeight * 2,
+            ),
+            270,
+            bottomArcFillAngle,
+        )
         path.lineTo(self.position.x() + self.width / 2, path.currentPosition().y())
         path.lineTo(self.position.x() + self.width / 2, self.position.y() + self.height)
 
         path.moveTo(self.position.x() + self.width / 2, self.position.y() + self.height)
-        path.arcTo(QRectF(self.position.x(), self.position.y() + self.height - 2 * arcHeight, self.width, 2 * arcHeight), 270,
-                   -bottomArcFillAngle)
+        path.arcTo(
+            QRectF(
+                self.position.x(),
+                self.position.y() + self.height - 2 * arcHeight,
+                self.width,
+                2 * arcHeight,
+            ),
+            270,
+            -bottomArcFillAngle,
+        )
         path.lineTo(self.position.x() + self.width / 2, path.currentPosition().y())
         path.lineTo(self.position.x() + self.width / 2, self.position.y() + self.height)
 
@@ -197,10 +269,23 @@ class Tank(AvionicsObject):
 
         # Fill in tank body
         # Maps fill percentage to the height of the body to fill
-        bodyFillHeight = MathHelper.mapValue(self.fillPercent, arcHeight / self.height, 1 - arcHeight / self.height, 0,
-                                       self.height - 2 * arcHeight +1)
+        bodyFillHeight = MathHelper.mapValue(
+            self.fillPercent,
+            arcHeight / self.height,
+            1 - arcHeight / self.height,
+            0,
+            self.height - 2 * arcHeight + 1,
+        )
 
-        self.widget_parent.painter.fillRect(QRectF(self.position.x(), self.position.y() - arcHeight + self.height - bodyFillHeight, self.width, bodyFillHeight), Constants.fluidColor[self.fluid])
+        self.widget_parent.painter.fillRect(
+            QRectF(
+                self.position.x(),
+                self.position.y() - arcHeight + self.height - bodyFillHeight,
+                self.width,
+                bodyFillHeight,
+            ),
+            Constants.fluidColor[self.fluid],
+        )
         # End fill in tank body
 
         # Fill in top arc
@@ -208,19 +293,33 @@ class Tank(AvionicsObject):
         self.widget_parent.painter.setPen(Constants.fluidColor[self.fluid])
         self.widget_parent.painter.setBrush(Constants.fluidColor[self.fluid])
 
-        topArcFillAngle = MathHelper.mapValue(self.fillPercent, 1 - (arcHeight / self.height), 1, 0, 90)
+        topArcFillAngle = MathHelper.mapValue(
+            self.fillPercent, 1 - (arcHeight / self.height), 1, 0, 90
+        )
 
         path.moveTo(self.position.x() + self.width, self.position.y() + arcHeight)
-        path.arcTo(QRectF(self.position.x(), self.position.y(), self.width, arcHeight * 2), 0, topArcFillAngle)
+        path.arcTo(
+            QRectF(self.position.x(), self.position.y(), self.width, arcHeight * 2),
+            0,
+            topArcFillAngle,
+        )
         if topArcFillAngle > 0:
             path.lineTo(self.position.x() + self.width / 2, path.currentPosition().y())
-            path.lineTo(self.position.x() + self.width / 2, self.position.y() + arcHeight)
+            path.lineTo(
+                self.position.x() + self.width / 2, self.position.y() + arcHeight
+            )
 
         path.moveTo(self.position.x(), self.position.y() + arcHeight)
-        path.arcTo(QRectF(self.position.x(), self.position.y(), self.width, arcHeight * 2), 180, -topArcFillAngle)
+        path.arcTo(
+            QRectF(self.position.x(), self.position.y(), self.width, arcHeight * 2),
+            180,
+            -topArcFillAngle,
+        )
         if topArcFillAngle > 0:
             path.lineTo(self.position.x() + self.width / 2, path.currentPosition().y())
-            path.lineTo(self.position.x() + self.width / 2, self.position.y() + arcHeight)
+            path.lineTo(
+                self.position.x() + self.width / 2, self.position.y() + arcHeight
+            )
 
         self.widget_parent.painter.drawPath(path)
 
@@ -276,11 +375,15 @@ class Tank(AvionicsObject):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
+        dialog.resize(
+            450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1]
+        )
         dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
         dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
-        dialog.move((self.window.width() - dialog.width()) / 2,
-                    (self.window.height() - dialog.height()) / 2)
+        dialog.move(
+            (self.window.width() - dialog.width()) / 2,
+            (self.window.height() - dialog.height()) / 2,
+        )
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
@@ -309,7 +412,8 @@ class Tank(AvionicsObject):
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
         formLayout.setFieldGrowthPolicy(
-            QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+            QFormLayout.AllNonFixedFieldsGrow
+        )  # This is properly resize textbox on OSX
         verticalLayout.addLayout(formLayout)
 
         # Create spin boxes
@@ -317,22 +421,34 @@ class Tank(AvionicsObject):
         setPointBox.setDecimals(1)
         setPointBox.setMinimum(0)
         setPointBox.setMaximum(1001)
-        setPointBox.setValue(0) if self.pressureSetPoint is None else setPointBox.setValue(self.pressureSetPoint)
+        setPointBox.setValue(
+            0
+        ) if self.pressureSetPoint is None else setPointBox.setValue(
+            self.pressureSetPoint
+        )
         setPointBox.setSuffix("psi")
         setPointBox.setFont(font)
 
         lowBoundBox = QDoubleSpinBox()
         lowBoundBox.setMaximum(1001)
         lowBoundBox.setMinimum(0)
-        lowBoundBox.setValue(0) if self.pressureLowerBounds is None else lowBoundBox.setValue(self.pressureLowerBounds)
+        lowBoundBox.setValue(
+            0
+        ) if self.pressureLowerBounds is None else lowBoundBox.setValue(
+            self.pressureLowerBounds
+        )
         lowBoundBox.setSuffix("psi")
         lowBoundBox.setDecimals(1)
         lowBoundBox.setFont(font)
-        
+
         highBoundBox = QDoubleSpinBox()
         highBoundBox.setMaximum(1001)
         highBoundBox.setMinimum(0)
-        highBoundBox.setValue(0) if self.pressureUpperBounds is None else highBoundBox.setValue(self.pressureUpperBounds)
+        highBoundBox.setValue(
+            0
+        ) if self.pressureUpperBounds is None else highBoundBox.setValue(
+            self.pressureUpperBounds
+        )
         highBoundBox.setSuffix("psi")
         highBoundBox.setDecimals(1)
         highBoundBox.setFont(font)
@@ -360,7 +476,8 @@ class Tank(AvionicsObject):
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
         cancel_button.setFixedWidth(
-            125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+            125 * self.gui.pixel_scale_ratio[0]
+        )  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Save")
         save_button.setFont(font)
@@ -387,34 +504,40 @@ class Tank(AvionicsObject):
         upbound = spinBoxes[2].value()
 
         if self.gui.debug_mode:
-            self.updateValues(setpoint,lowbound,upbound)
+            self.updateValues(setpoint, lowbound, upbound)
         else:
             if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_control_target_pressure",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(setpoint)]
+                    "args": [int(self.channel), float(setpoint)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_low_toggle_percent",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(lowbound/setpoint)]
+                    "args": [int(self.channel), float(lowbound / setpoint)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_high_toggle_percent",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(upbound/setpoint)]
+                    "args": [int(self.channel), float(upbound / setpoint)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
-    
+
     def setTankStatus(self, status):
         """
         Saves the new motor values and sends the commands to the board
@@ -424,9 +547,11 @@ class Tank(AvionicsObject):
         if self.isAvionicsFullyDefined():
             cmd_dict = {
                 "function_name": "set_presstank_status",
-                "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                    self.avionics_board
+                ),
                 "timestamp": int(datetime.now().timestamp()),
-                "args": [int(self.channel),int(status)]
+                "args": [int(self.channel), int(status)],
             }
             self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
@@ -434,7 +559,9 @@ class Tank(AvionicsObject):
     def updateFromDataPacket(self, data_packet: dict):
 
         if self.isAvionicsFullyDefined():
-            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(
+                self.avionics_board
+            )
             channel_name = board_prefix + "tnk" + str(self.channel)
 
             setPoint = data_packet[channel_name + ".target_pres"]

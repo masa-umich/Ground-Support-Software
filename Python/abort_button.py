@@ -16,8 +16,7 @@ import time
 
 
 class AbortButtonWindow(QMainWindow):
-
-    def __init__(self, gui, singular : bool = False):
+    def __init__(self, gui, singular: bool = False):
         super().__init__()
 
         self.abortButton = AbortButton(gui=gui, singular=singular)
@@ -30,7 +29,7 @@ class AbortButton(QtWidgets.QDialog):
     softwareAbortSoftArmedSignal = pyqtSignal(bool)
     cycleSignal = pyqtSignal()
 
-    def __init__(self, gui, singular : bool = False):
+    def __init__(self, gui, singular: bool = False):
         super().__init__()
         self.setWindowTitle("Abort Button Settings")
         self.layout = QtWidgets.QVBoxLayout()
@@ -46,7 +45,7 @@ class AbortButton(QtWidgets.QDialog):
         self.port = None
         self.is_armed = False
         self.is_soft_armed = False
-        self.state = False # True is abort, False is no abort
+        self.state = False  # True is abort, False is no abort
         self.last_state = False
         self.last_abort_time = datetime.now().timestamp()
 
@@ -79,7 +78,7 @@ class AbortButton(QtWidgets.QDialog):
         connectButton = QtWidgets.QPushButton("Connect")
         connectButton.clicked.connect(self.connect)
         connection_layout.addWidget(connectButton)
-        
+
         # Button state indicator light
         self.indicator = LedIndicator(self)
         self.indicator.setDisabled(True)  # Make the led non-clickable
@@ -89,7 +88,7 @@ class AbortButton(QtWidgets.QDialog):
         self.indicator.off_color_1 = QColor(28, 0, 0)
         self.indicator.off_color_2 = QColor(156, 0, 0)
         connection_layout.addWidget(self.indicator)
-        
+
         # Scan for devices
         self.scan()
 
@@ -112,26 +111,25 @@ class AbortButton(QtWidgets.QDialog):
         self.ports = self.interface.scan()
         self.ports_box.clear()
         self.ports_box.addItems(self.ports)
-    
+
     def get_addr(self):
         # function to get user selected board and retrieve address
         name = self.board_selector.currentText()
         return self.interface.getBoardAddr(name)
-    
+
     def abort(self):
         # abort handler function
         cmd_dict = {
             "function_name": "set_state",
             "target_board_addr": self.get_addr(),
             "timestamp": int(datetime.now().timestamp()),
-            "args": [6]
+            "args": [6],
         }
         # if self.client:
         self._gui.liveDataHandler.sendCommand(3, cmd_dict)
-    
+
     def soft_arm_toggle(self):
-        """Enables the software abort button that appears in the lower right corner of the sidebar
-        """
+        """Enables the software abort button that appears in the lower right corner of the sidebar"""
         if not self.is_soft_armed:
             self.is_soft_armed = True
             self.softwareAbortSoftArmedSignal.emit(True)
@@ -144,36 +142,36 @@ class AbortButton(QtWidgets.QDialog):
             self.soft_arming_button.setText("Enable Software Button")
 
     def arm_toggle(self):
-        # toggle to enable use of button 
+        # toggle to enable use of button
         # (mainly if you want to test if button works without calling an abort)
         if self.is_armed == False:
             self.is_armed = True
-            #self.last_state = False # to ensure abort triggers if button already depressed
-            #self.state = False
+            # self.last_state = False # to ensure abort triggers if button already depressed
+            # self.state = False
             self._gui.setStatusBarMessage("Hardware Button Enabled")
             self.arming_button.setText("Disable Hardware Button")
         else:
             self.is_armed = False
             self._gui.setStatusBarMessage("Hardware Button Disabled")
             self.arming_button.setText("Enable Hardware Button")
-    
+
     def cycle(self):
         # Update function for button object
-        if self.ser.isOpen(): # if button is connected
-            try: # parse button state
-                self.ser.reset_input_buffer() # flush buffer b/c button sends update faster than GUI reads it
+        if self.ser.isOpen():  # if button is connected
+            try:  # parse button state
+                self.ser.reset_input_buffer()  # flush buffer b/c button sends update faster than GUI reads it
                 val = self.ser.readline().decode("utf-8")
                 self.last_state = self.state
                 self.state = bool(int(val[0]))
             except:
                 pass
-        
-        self.indicator.setChecked(self.state) # update state indicator
 
-        if self.is_armed: # TODO: tune lockout time or come up with better method
-            if not self.last_state and self.state: # edge trigger
+        self.indicator.setChecked(self.state)  # update state indicator
+
+        if self.is_armed:  # TODO: tune lockout time or come up with better method
+            if not self.last_state and self.state:  # edge trigger
                 print("Manual Abort Triggered!")
-                self.abort() # trigger abort
+                self.abort()  # trigger abort
             # if (datetime.now().timestamp() - self.last_abort_time < 2) and self.state: # periodic lockout
             #     print("Manual Abort Triggered!")
             #     self.abort() # trigger abort
@@ -191,7 +189,7 @@ class AbortButtonBackgroundThread(QThread):
 
     def run(self):
         while True:
-            time.sleep(.2)
+            time.sleep(0.2)
             self.abort_button.cycleSignal.emit()
 
 
@@ -207,12 +205,10 @@ if __name__ == "__main__":
     lwgui = BaseGui(app)
     controller = AbortButtonWindow(gui=lwgui, singular=True)
     lwgui.setMainWindow(controller)
-    
+
     # timer = QtCore.QTimer()
     # timer.timeout.connect(controller.cycle)
     # timer.start(50) # in ms, 20hz
-    
+
     controller.show()
     sys.exit(app.exec())
-
-        

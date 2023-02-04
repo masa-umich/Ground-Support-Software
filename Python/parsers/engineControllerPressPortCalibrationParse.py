@@ -6,76 +6,102 @@
 import time
 import struct
 
+
 class PressurizationControllerCalibrations:
+    def __init__(self):
+        self.packet_byte_size = 48
+        self.num_items = 20
 
-	def __init__(self):
-		self.packet_byte_size = 48
-		self.num_items = 20
-		
-		self.dict = {}
-		self.units = {}
-		
-		self.items = [''] * self.num_items
-		self.items[0] = 'packet_type'
-		self.items[1] = 'origin_addr'
-		self.items[2] = 'target_addr'
-		self.items[3] = 'priority'
-		self.items[4] = 'num_packets'
-		self.items[5] = 'do_cobbs'
-		self.items[6] = 'checksum'
-		self.items[7] = 'timestamp'
-		self.items[8] = 'pt_cal_slope[0]' 
-		self.items[9] = 'pt_cal_slope[1]' 
-		self.items[10] = 'pt_cal_slope[2]' 
-		self.items[11] = 'pt_cal_slope[3]' 
-		self.items[12] = 'pt_cal_slope[4]' 
-		self.items[13] = 'pt_cal_slope[5]' 
-		self.items[14] = 'pt_cal_offset[0]' 
-		self.items[15] = 'pt_cal_offset[1]' 
-		self.items[16] = 'pt_cal_offset[2]' 
-		self.items[17] = 'pt_cal_offset[3]' 
-		self.items[18] = 'pt_cal_offset[4]' 
-		self.items[19] = 'pt_cal_offset[5]' 
+        self.dict = {}
+        self.units = {}
 
-		self.units[self.items[0]] = "ul"
-		self.units[self.items[1]] = "ul"
-		self.units[self.items[2]] = "ul"
-		self.units[self.items[3]] = "ul"
-		self.units[self.items[4]] = "ul"
-		self.units[self.items[5]] = "ul"
-		self.units[self.items[6]] = "ul"
-		self.units[self.items[7]] = "ul"
-		self.units[self.items[8]] = "mV/psi"
-		self.units[self.items[9]] = "mV/psi"
-		self.units[self.items[10]] = "mV/psi"
-		self.units[self.items[11]] = "mV/psi"
-		self.units[self.items[12]] = "mV/psi"
-		self.units[self.items[13]] = "mV/psi"
-		self.units[self.items[14]] = "mV"
-		self.units[self.items[15]] = "mV"
-		self.units[self.items[16]] = "mV"
-		self.units[self.items[17]] = "mV"
-		self.units[self.items[18]] = "mV"
-		self.units[self.items[19]] = "mV"
+        self.items = [""] * self.num_items
+        self.items[0] = "packet_type"
+        self.items[1] = "origin_addr"
+        self.items[2] = "target_addr"
+        self.items[3] = "priority"
+        self.items[4] = "num_packets"
+        self.items[5] = "do_cobbs"
+        self.items[6] = "checksum"
+        self.items[7] = "timestamp"
+        self.items[8] = "pt_cal_slope[0]"
+        self.items[9] = "pt_cal_slope[1]"
+        self.items[10] = "pt_cal_slope[2]"
+        self.items[11] = "pt_cal_slope[3]"
+        self.items[12] = "pt_cal_slope[4]"
+        self.items[13] = "pt_cal_slope[5]"
+        self.items[14] = "pt_cal_offset[0]"
+        self.items[15] = "pt_cal_offset[1]"
+        self.items[16] = "pt_cal_offset[2]"
+        self.items[17] = "pt_cal_offset[3]"
+        self.items[18] = "pt_cal_offset[4]"
+        self.items[19] = "pt_cal_offset[5]"
 
-	def parse_packet(self, packet):
-		self.dict[self.items[0]] = int((float(struct.unpack("<B", packet[0:1])[0]))/1)
-		self.dict[self.items[1]] = int((float(struct.unpack("<B", packet[1:2])[0]))/1)
-		self.dict[self.items[2]] = int((float(struct.unpack("<B", packet[2:3])[0]))/1)
-		self.dict[self.items[3]] = int((float(struct.unpack("<B", packet[3:4])[0]))/1)
-		self.dict[self.items[4]] = int((float(struct.unpack("<B", packet[4:5])[0]))/1)
-		self.dict[self.items[5]] = int((float(struct.unpack("<B", packet[5:6])[0]))/1)
-		self.dict[self.items[6]] = int((float(struct.unpack("<H", packet[6:8])[0]))/1)
-		self.dict[self.items[7]] = int((float(struct.unpack("<I", packet[8:12])[0]))/1)
-		self.dict[self.items[8]] = float((float(struct.unpack("<i", packet[12:16])[0]))/10000)
-		self.dict[self.items[9]] = float((float(struct.unpack("<i", packet[16:20])[0]))/10000)
-		self.dict[self.items[10]] = float((float(struct.unpack("<i", packet[20:24])[0]))/10000)
-		self.dict[self.items[11]] = float((float(struct.unpack("<i", packet[24:28])[0]))/10000)
-		self.dict[self.items[12]] = float((float(struct.unpack("<i", packet[28:32])[0]))/10000)
-		self.dict[self.items[13]] = float((float(struct.unpack("<i", packet[32:36])[0]))/10000)
-		self.dict[self.items[14]] = float((float(struct.unpack("<h", packet[36:38])[0]))/1)
-		self.dict[self.items[15]] = float((float(struct.unpack("<h", packet[38:40])[0]))/1)
-		self.dict[self.items[16]] = float((float(struct.unpack("<h", packet[40:42])[0]))/1)
-		self.dict[self.items[17]] = float((float(struct.unpack("<h", packet[42:44])[0]))/1)
-		self.dict[self.items[18]] = float((float(struct.unpack("<h", packet[44:46])[0]))/1)
-		self.dict[self.items[19]] = float((float(struct.unpack("<h", packet[46:48])[0]))/1)
+        self.units[self.items[0]] = "ul"
+        self.units[self.items[1]] = "ul"
+        self.units[self.items[2]] = "ul"
+        self.units[self.items[3]] = "ul"
+        self.units[self.items[4]] = "ul"
+        self.units[self.items[5]] = "ul"
+        self.units[self.items[6]] = "ul"
+        self.units[self.items[7]] = "ul"
+        self.units[self.items[8]] = "mV/psi"
+        self.units[self.items[9]] = "mV/psi"
+        self.units[self.items[10]] = "mV/psi"
+        self.units[self.items[11]] = "mV/psi"
+        self.units[self.items[12]] = "mV/psi"
+        self.units[self.items[13]] = "mV/psi"
+        self.units[self.items[14]] = "mV"
+        self.units[self.items[15]] = "mV"
+        self.units[self.items[16]] = "mV"
+        self.units[self.items[17]] = "mV"
+        self.units[self.items[18]] = "mV"
+        self.units[self.items[19]] = "mV"
+
+    def parse_packet(self, packet):
+        self.dict[self.items[0]] = int((float(struct.unpack("<B", packet[0:1])[0])) / 1)
+        self.dict[self.items[1]] = int((float(struct.unpack("<B", packet[1:2])[0])) / 1)
+        self.dict[self.items[2]] = int((float(struct.unpack("<B", packet[2:3])[0])) / 1)
+        self.dict[self.items[3]] = int((float(struct.unpack("<B", packet[3:4])[0])) / 1)
+        self.dict[self.items[4]] = int((float(struct.unpack("<B", packet[4:5])[0])) / 1)
+        self.dict[self.items[5]] = int((float(struct.unpack("<B", packet[5:6])[0])) / 1)
+        self.dict[self.items[6]] = int((float(struct.unpack("<H", packet[6:8])[0])) / 1)
+        self.dict[self.items[7]] = int(
+            (float(struct.unpack("<I", packet[8:12])[0])) / 1
+        )
+        self.dict[self.items[8]] = float(
+            (float(struct.unpack("<i", packet[12:16])[0])) / 10000
+        )
+        self.dict[self.items[9]] = float(
+            (float(struct.unpack("<i", packet[16:20])[0])) / 10000
+        )
+        self.dict[self.items[10]] = float(
+            (float(struct.unpack("<i", packet[20:24])[0])) / 10000
+        )
+        self.dict[self.items[11]] = float(
+            (float(struct.unpack("<i", packet[24:28])[0])) / 10000
+        )
+        self.dict[self.items[12]] = float(
+            (float(struct.unpack("<i", packet[28:32])[0])) / 10000
+        )
+        self.dict[self.items[13]] = float(
+            (float(struct.unpack("<i", packet[32:36])[0])) / 10000
+        )
+        self.dict[self.items[14]] = float(
+            (float(struct.unpack("<h", packet[36:38])[0])) / 1
+        )
+        self.dict[self.items[15]] = float(
+            (float(struct.unpack("<h", packet[38:40])[0])) / 1
+        )
+        self.dict[self.items[16]] = float(
+            (float(struct.unpack("<h", packet[40:42])[0])) / 1
+        )
+        self.dict[self.items[17]] = float(
+            (float(struct.unpack("<h", packet[42:44])[0])) / 1
+        )
+        self.dict[self.items[18]] = float(
+            (float(struct.unpack("<h", packet[44:46])[0])) / 1
+        )
+        self.dict[self.items[19]] = float(
+            (float(struct.unpack("<h", packet[46:48])[0])) / 1
+        )

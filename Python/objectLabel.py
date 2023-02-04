@@ -12,10 +12,20 @@ Provides custom functionality for labels specific to objects
 
 # TODO: Somehow make it that you just create and pass in a custom label but too lazy to do that now
 class ObjectLabel(CustomLabel):
-
-    def __init__(self, widget_parent, gui, object_, position_string: str = "Top", is_vertical: bool = False,
-                 local_pos: QPointF = QPointF(0, 0), rows: int = 1, font_size: float = 12, text: str = "Name",
-                 is_visible: bool = True, show_staus_light:bool = False):
+    def __init__(
+        self,
+        widget_parent,
+        gui,
+        object_,
+        position_string: str = "Top",
+        is_vertical: bool = False,
+        local_pos: QPointF = QPointF(0, 0),
+        rows: int = 1,
+        font_size: float = 12,
+        text: str = "Name",
+        is_visible: bool = True,
+        show_staus_light: bool = False,
+    ):
 
         self.widget = widget_parent
         self.gui = gui
@@ -23,7 +33,9 @@ class ObjectLabel(CustomLabel):
         self.is_vertical = is_vertical
         self.position_string = position_string
         self.local_pos = local_pos
-        self.light = IndicatorLightWidget(widget_parent, self.gui, "", 5, "Red", 14, 1, 1, 1)
+        self.light = IndicatorLightWidget(
+            widget_parent, self.gui, "", 5, "Red", 14, 1, 1, 1
+        )
         # Have to scale it, not sure if this is best location
         self.local_pos.setX(self.local_pos.x() * self.gui.pixel_scale_ratio[0])
         self.local_pos.setY(self.local_pos.y() * self.gui.pixel_scale_ratio[1])
@@ -85,21 +97,42 @@ class ObjectLabel(CustomLabel):
             self.position_string = position_string
 
         if self.position_string == "Top":
-            self.move(int(self.getXCenterPosition()), int(self.object_.position.y() - self.height() - 3)) # 3 is for better seperation
+            self.move(
+                int(self.getXCenterPosition()),
+                int(self.object_.position.y() - self.height() - 3),
+            )  # 3 is for better seperation
         elif self.position_string == "Bottom":
-            self.move(int(self.getXCenterPosition()), int(self.object_.position.y() + self.object_.height + 3)) # 3 is for better seperation
+            self.move(
+                int(self.getXCenterPosition()),
+                int(self.object_.position.y() + self.object_.height + 3),
+            )  # 3 is for better seperation
         elif self.position_string == "Right":
-            self.move(int(self.object_.position.x() + self.object_.width + 3), int(self.getYCenterPosition()))
+            self.move(
+                int(self.object_.position.x() + self.object_.width + 3),
+                int(self.getYCenterPosition()),
+            )
         elif self.position_string == "Left":
-            self.move(int(self.object_.position.x() - self.width() - 3), int(self.getYCenterPosition()))
+            self.move(
+                int(self.object_.position.x() - self.width() - 3),
+                int(self.getYCenterPosition()),
+            )
         elif self.position_string == "Custom":
-            self.move(int(self.object_.position.x() + self.local_pos.x()), int(self.object_.position.y() + self.local_pos.y()))
+            self.move(
+                int(self.object_.position.x() + self.local_pos.x()),
+                int(self.object_.position.y() + self.local_pos.y()),
+            )
 
         # If label on left side, flip flop what side it goes on
         if self.position_string == "Left":
-            self.light.move(int(self.pos().x() - self.light.width()), int(self.pos().y() + (self.height() / 2) - self.light.circle_radius))
+            self.light.move(
+                int(self.pos().x() - self.light.width()),
+                int(self.pos().y() + (self.height() / 2) - self.light.circle_radius),
+            )
         else:
-            self.light.move(int(self.pos().x() + self.width()), int(self.pos().y() + (self.height()/2) - self.light.circle_radius))
+            self.light.move(
+                int(self.pos().x() + self.width()),
+                int(self.pos().y() + (self.height() / 2) - self.light.circle_radius),
+            )
         self.setLocalPosition()
 
     def getXCenterPosition(self):
@@ -110,14 +143,21 @@ class ObjectLabel(CustomLabel):
         # if self.light.isVisible():
         #     return self.object_.position.x() + (self.object_.width / 2) - ((self.width() + self.light.width()) / 2)
         # else:
-        return int(self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2))
+        return int(
+            self.object_.position.x() + (self.object_.width / 2) - (self.width() / 2)
+        )
 
     def getYCenterPosition(self):
         """
         Gets what y position the label needs to be placed at to be centered on its base object
         """
         # Not sure why the -2 is needed but may have to due with extra space above text
-        return self.object_.position.y() + (self.object_.height / 2) - (self.height() / 2) - 2
+        return (
+            self.object_.position.y()
+            + (self.object_.height / 2)
+            - (self.height() / 2)
+            - 2
+        )
 
     def setLocalPosition(self):
         """
@@ -125,7 +165,7 @@ class ObjectLabel(CustomLabel):
         """
         self.local_pos = self.pos() - self.object_.position
 
-    def showStatusIndicator(self, show:  bool):
+    def showStatusIndicator(self, show: bool):
         """
         Hides/ shows status indicator
         :param show: true to show, false to hide
@@ -190,17 +230,30 @@ class ObjectLabel(CustomLabel):
             # If the gui is in full screen on mac don't apply the extra offset
             if self.gui.platform == "OSX" and self.gui.controlsWindow.isFullScreen():
                 window_pos = self.gui.controlsWindow.pos()
-            elif self.gui.platform == "Windows" and self.gui.controlsWindow.isFullScreen():
-                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset - self.gui.controlsWindow.central_widget.pos()
+            elif (
+                self.gui.platform == "Windows"
+                and self.gui.controlsWindow.isFullScreen()
+            ):
+                window_pos = (
+                    self.gui.controlsWindow.pos()
+                    + self.gui.controlsWindow.central_widget_offset
+                    - self.gui.controlsWindow.central_widget.pos()
+                )
             else:
-                window_pos = self.gui.controlsWindow.pos() + self.gui.controlsWindow.central_widget_offset
+                window_pos = (
+                    self.gui.controlsWindow.pos()
+                    + self.gui.controlsWindow.central_widget_offset
+                )
 
             # Move the button into place on screen
             pos = event.globalPos() - window_pos - self.drag_start_pos
 
             # Moves the object into its new position
             self.move(pos.x(), pos.y())
-            self.light.move(self.pos().x() + self.width(), self.pos().y() + (self.height() / 2) - self.light.circle_radius)
+            self.light.move(
+                self.pos().x() + self.width(),
+                self.pos().y() + (self.height() / 2) - self.light.circle_radius,
+            )
 
             # Updates the new local position
             # HMM: May want to move this call to an overridden move() function
@@ -217,7 +270,11 @@ class ObjectLabel(CustomLabel):
         """
 
         # Checks if the label is currently being dragged
-        if event.button() == Qt.LeftButton and self.object_.is_being_edited and self.object_.is_being_dragged:
+        if (
+            event.button() == Qt.LeftButton
+            and self.object_.is_being_edited
+            and self.object_.is_being_dragged
+        ):
             # Does background stuff when object is released
             super().mouseReleaseEvent(event)
 
@@ -229,10 +286,13 @@ class ObjectLabel(CustomLabel):
     def generateSaveDict(self):
         save_dict = {
             "pos string": self.position_string,
-            "local pos": {"x": self.local_pos.x()/self.gui.pixel_scale_ratio[0], "y": self.local_pos.y()/self.gui.pixel_scale_ratio[1]},
+            "local pos": {
+                "x": self.local_pos.x() / self.gui.pixel_scale_ratio[0],
+                "y": self.local_pos.y() / self.gui.pixel_scale_ratio[1],
+            },
             "rows": self.rows,
             "font size": self.getFontSize(),
-            "is visible": self.isVisible()
+            "is visible": self.isVisible(),
         }
         return save_dict
 

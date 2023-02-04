@@ -14,7 +14,15 @@ class AnchorPoint(QPushButton):
     """
 
     # TODO: The parent system here seems messed up
-    def __init__(self, local_pos: QPoint, object_, local_id: int, x_aligned: bool = False, y_aligned: bool = False, parent=None):
+    def __init__(
+        self,
+        local_pos: QPoint,
+        object_,
+        local_id: int,
+        x_aligned: bool = False,
+        y_aligned: bool = False,
+        parent=None,
+    ):
         """
         Init for the AnchorPoint
 
@@ -37,13 +45,18 @@ class AnchorPoint(QPushButton):
         self.y_aligned = y_aligned
         self.tube = None
 
-
         self.setStyleSheet("background-color:transparent;border:0;")
         # Below makes sure the anchor point size is rounded to the nearest odd number
-        self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2), 2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
+        self.resize(
+            2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2),
+            2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2),
+        )
         self.show()
 
-        self.middle = QPoint(int(self.pos().x() + self.size().width()/2), int(self.pos().y() + self.size().height()/2))
+        self.middle = QPoint(
+            int(self.pos().x() + self.size().width() / 2),
+            int(self.pos().y() + self.size().height() / 2),
+        )
 
         self.updatePosition()
 
@@ -53,8 +66,14 @@ class AnchorPoint(QPushButton):
         """
         Updates the absolute position on the anchor point. Called when object moves
         """
-        self.move(int(self.local_pos.x() + self.object_.position.x() - (self.width()/2)), int(self.local_pos.y() + self.object_.position.y()-(self.height()/2)))
-        self.middle = QPoint(int(self.pos().x() + self.size().width() / 2), int(self.pos().y() + self.size().height() / 2))
+        self.move(
+            int(self.local_pos.x() + self.object_.position.x() - (self.width() / 2)),
+            int(self.local_pos.y() + self.object_.position.y() - (self.height() / 2)),
+        )
+        self.middle = QPoint(
+            int(self.pos().x() + self.size().width() / 2),
+            int(self.pos().y() + self.size().height() / 2),
+        )
 
     def updateLocalPosition(self, pos: QPoint):
         """
@@ -69,8 +88,12 @@ class AnchorPoint(QPushButton):
         Draws the anchor point on the screen, also draws the alignment lines
         """
         # Draws the box
-        self.widget.painter.drawRect(QRectF(self.x(), self.y(), self.width(), self.height()))
-        self.widget.painter.eraseRect(QRectF(self.x(), self.y(), self.width(), self.height()))
+        self.widget.painter.drawRect(
+            QRectF(self.x(), self.y(), self.width(), self.height())
+        )
+        self.widget.painter.eraseRect(
+            QRectF(self.x(), self.y(), self.width(), self.height())
+        )
 
         # Draws the yellow dashed alignment lines when dragging the ap's object or drawing the ap's tube
         if self.object_.is_being_dragged or self.widget.is_drawing:
@@ -84,11 +107,15 @@ class AnchorPoint(QPushButton):
             self.widget.painter.setPen(pen)
 
             if self.x_aligned:
-                self.widget.painter.drawLine(QPoint(int(self.x() + (5 * self.gui.pixel_scale_ratio[0])), 0),
-                                                    QPoint(int(self.x()), int(self.gui.screenResolution[1])))
+                self.widget.painter.drawLine(
+                    QPoint(int(self.x() + (5 * self.gui.pixel_scale_ratio[0])), 0),
+                    QPoint(int(self.x()), int(self.gui.screenResolution[1])),
+                )
             if self.y_aligned:
-                self.widget.painter.drawLine(QPoint(0, int(self.y() + (6 * self.gui.pixel_scale_ratio[1]))),
-                                                    QPoint(int(self.gui.screenResolution[0]), int(self.y())))
+                self.widget.painter.drawLine(
+                    QPoint(0, int(self.y() + (6 * self.gui.pixel_scale_ratio[1]))),
+                    QPoint(int(self.gui.screenResolution[0]), int(self.y())),
+                )
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
@@ -102,8 +129,10 @@ class AnchorPoint(QPushButton):
             # Set drag start position
             if self.tube is not None:
                 self.tube.deleteTube()
-                
-            self.tube = Tube(self.widget, [self.middle, self.middle],self.object_.fluid, [self])
+
+            self.tube = Tube(
+                self.widget, [self.middle, self.middle], self.object_.fluid, [self]
+            )
             self.tube.is_being_drawn = True
             self.widget.is_drawing = True
             self.widget.setMouseTracking(True)
@@ -115,10 +144,14 @@ class AnchorPoint(QPushButton):
             for tube in self.parent.tube_list:
                 if tube.is_being_drawn:
                     if tube.draw_direction == "Vertical":
-                        tube.setCurrentPos(QPoint(tube.points[-1].x(), self.middle.y()), True)
+                        tube.setCurrentPos(
+                            QPoint(tube.points[-1].x(), self.middle.y()), True
+                        )
                         tube.setCurrentPos(self.middle)
                     else:
-                        tube.setCurrentPos(QPoint(self.middle.x(), tube.points[-1].y()), True)
+                        tube.setCurrentPos(
+                            QPoint(self.middle.x(), tube.points[-1].y()), True
+                        )
                         tube.setCurrentPos(self.middle)
 
                     tube.completeTube(False)

@@ -20,14 +20,34 @@ class BaseObject(QObject):
     INIT SECTION 
     ----------------------------------------------------------------------------------------------------------------"""
 
-    def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float, height: float, name: str,
-                 scale: float = 1, serial_number: str = 'untitled', safety_status: int = -1,
-                 long_name: str = 'untitled', is_vertical: bool = False, is_being_edited: bool = False,
-                 is_being_dragged: bool = False, locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPoint = QPoint(0,0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPoint = QPoint(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, long_name_visible: bool = True, serial_number_visible: bool = True):
+    def __init__(
+        self,
+        parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float,
+        height: float,
+        name: str,
+        scale: float = 1,
+        serial_number: str = "untitled",
+        safety_status: int = -1,
+        long_name: str = "untitled",
+        is_vertical: bool = False,
+        is_being_edited: bool = False,
+        is_being_dragged: bool = False,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPoint = QPoint(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPoint = QPoint(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
         """
         Initializer for Solenoid
 
@@ -61,7 +81,9 @@ class BaseObject(QObject):
         # Very important! DO NOT CHANGE FROM WHAT PROGRAM SET
         if _id is not None:
             self._id = _id
-            self.widget_parent.last_object_id = max(self.widget_parent.last_object_id, self._id)
+            self.widget_parent.last_object_id = max(
+                self.widget_parent.last_object_id, self._id
+            )
         else:
             self._id = self.widget_parent.last_object_id + 1
             self.widget_parent.last_object_id = self._id
@@ -78,34 +100,56 @@ class BaseObject(QObject):
         self.serial_number = serial_number
         self.safety_status = safety_status
 
-        if _id is None:  # use this to check if the object was created from file or clicking
-            self.long_name = long_name + " " + str(self.widget_parent.object_count[self.object_name])
+        if (
+            _id is None
+        ):  # use this to check if the object was created from file or clicking
+            self.long_name = (
+                long_name + " " + str(self.widget_parent.object_count[self.object_name])
+            )
         else:
             self.long_name = long_name
 
-        self.is_vertical = is_vertical # HMM: Why is this here and is it needed anymore?
+        self.is_vertical = (
+            is_vertical  # HMM: Why is this here and is it needed anymore?
+        )
         self.is_being_edited = is_being_edited
         self.is_being_dragged = is_being_dragged
         self.locked = locked
         self.position_locked = position_locked
         self.edit_context_menu = QMenu(self.widget_parent)
         self.run_context_menu = QMenu(self.widget_parent)
-        self.button = ObjectButton(self.serial_number, self, 'data.csv', 'Pressure', self.widget_parent)
-        self.long_name_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
-                                           is_vertical=False, font_size=long_name_label_font_size,
-                                           text=self.long_name, local_pos=long_name_label_local_pos,
-                                           position_string=long_name_label_pos, rows=long_name_label_rows,
-                                           is_visible=long_name_visible)
+        self.button = ObjectButton(
+            self.serial_number, self, "data.csv", "Pressure", self.widget_parent
+        )
+        self.long_name_label = ObjectLabel(
+            widget_parent=self.widget_parent,
+            gui=self.gui,
+            object_=self,
+            is_vertical=False,
+            font_size=long_name_label_font_size,
+            text=self.long_name,
+            local_pos=long_name_label_local_pos,
+            position_string=long_name_label_pos,
+            rows=long_name_label_rows,
+            is_visible=long_name_visible,
+        )
 
-        self.serial_number_label = ObjectLabel(widget_parent=self.widget_parent, gui=self.gui, object_=self,
-                                            is_vertical=False, font_size=serial_number_label_font_size,
-                                            text=self.serial_number, local_pos=serial_number_label_local_pos,
-                                            position_string=serial_number_label_pos,is_visible=serial_number_visible)
+        self.serial_number_label = ObjectLabel(
+            widget_parent=self.widget_parent,
+            gui=self.gui,
+            object_=self,
+            is_vertical=False,
+            font_size=serial_number_label_font_size,
+            text=self.serial_number,
+            local_pos=serial_number_label_local_pos,
+            position_string=serial_number_label_pos,
+            is_visible=serial_number_visible,
+        )
 
         self.anchor_points = []
 
         self._initAnchorPoints()
-        self.editContextMenuItems = ["Lower Object", "Raise Object","Delete Object"]
+        self.editContextMenuItems = ["Lower Object", "Raise Object", "Delete Object"]
         self.runContextMenuItems = []
         self._initContextMenu()
         self._initToolTip()
@@ -116,11 +160,26 @@ class BaseObject(QObject):
         Should only be called from __init__
         """
         # Default points are the midpoints of the four sides.
-        anchor_points = [AnchorPoint(QPoint(int(self.width / 2), 0), self, 0, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width / 2), int(self.height)), self, 1, parent=self.widget_parent),
-                         AnchorPoint(QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent),
-                         AnchorPoint(QPoint(int(self.width), int(self.height / 2)), self, 3, parent=self.widget_parent)
-                         ]
+        anchor_points = [
+            AnchorPoint(
+                QPoint(int(self.width / 2), 0), self, 0, parent=self.widget_parent
+            ),
+            AnchorPoint(
+                QPoint(int(self.width / 2), int(self.height)),
+                self,
+                1,
+                parent=self.widget_parent,
+            ),
+            AnchorPoint(
+                QPoint(0, int(self.height / 2)), self, 2, parent=self.widget_parent
+            ),
+            AnchorPoint(
+                QPoint(int(self.width), int(self.height / 2)),
+                self,
+                3,
+                parent=self.widget_parent,
+            ),
+        ]
         self.anchor_points = anchor_points
 
     def _initContextMenu(self):
@@ -134,7 +193,9 @@ class BaseObject(QObject):
             self.run_context_menu.addAction(action)
 
         # Connect Context menu to button right click
-        self.button.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
+        self.button.customContextMenuRequested.connect(
+            lambda *args: self.contextMenuEvent_(*args)
+        )
 
     def _initToolTip(self):
         """
@@ -176,7 +237,9 @@ class BaseObject(QObject):
         self.long_name = name
         self.long_name_label.setText(name)
 
-        self.gui.setStatusBarMessage(self.object_name + " component name changed to " + name)
+        self.gui.setStatusBarMessage(
+            self.object_name + " component name changed to " + name
+        )
 
     def setShortName(self, name):
         """
@@ -189,7 +252,14 @@ class BaseObject(QObject):
         # Moves the label to keep it in the center if it changes length
         self.serial_number_label.moveToPosition()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": serial number set to " + name)
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": serial number set to "
+            + name
+        )
 
     def setScale(self, scale):
         """
@@ -205,13 +275,18 @@ class BaseObject(QObject):
         # The origin of objects is the top left corner, but to maintain alignment should be scaled from the center.
         # To achieve this, the old center and new center are calculated and the origin is offset to make sure the
         # center position always remains constant
-        center_position = self.position + QPoint(int(self.width/2), int(self.height/2))
-        scaled_center_position = self.position + QPoint(int((self.width*(self.scale/old_scale) / 2)), int((self.height*(self.scale/old_scale))/2))
+        center_position = self.position + QPoint(
+            int(self.width / 2), int(self.height / 2)
+        )
+        scaled_center_position = self.position + QPoint(
+            int((self.width * (self.scale / old_scale) / 2)),
+            int((self.height * (self.scale / old_scale)) / 2),
+        )
         center_offset = scaled_center_position - center_position
 
         # Update object values accordingly
-        self.width = self.width * (self.scale/old_scale)
-        self.height = self.height * (self.scale/old_scale)
+        self.width = self.width * (self.scale / old_scale)
+        self.height = self.height * (self.scale / old_scale)
         self.button.resize(self.width, self.height)
 
         # Move things into the correct location
@@ -220,7 +295,15 @@ class BaseObject(QObject):
         # Update some other dependent values
         self.setAnchorPoints()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": scale set to " + str(round(scale,3)) + "x")
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": scale set to "
+            + str(round(scale, 3))
+            + "x"
+        )
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -232,7 +315,14 @@ class BaseObject(QObject):
         """
         self.fluid = Constants.fluid[fluid]
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": fluid set to " + str(fluid))
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": fluid set to "
+            + str(fluid)
+        )
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -243,7 +333,14 @@ class BaseObject(QObject):
         :param is_locked: is the position locked
         """
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": position lock " + str(is_locked))
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": position lock "
+            + str(is_locked)
+        )
 
         self.position_locked = is_locked
 
@@ -251,10 +348,14 @@ class BaseObject(QObject):
         """
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
-        self.anchor_points[0].updateLocalPosition(QPoint(int(self.width/2) , 0                  ))
-        self.anchor_points[1].updateLocalPosition(QPoint(int(self.width/2) , self.height        ))
-        self.anchor_points[2].updateLocalPosition(QPoint(0                 , int(self.height/2) ))
-        self.anchor_points[3].updateLocalPosition(QPoint(self.width        , int(self.height/2) ))
+        self.anchor_points[0].updateLocalPosition(QPoint(int(self.width / 2), 0))
+        self.anchor_points[1].updateLocalPosition(
+            QPoint(int(self.width / 2), self.height)
+        )
+        self.anchor_points[2].updateLocalPosition(QPoint(0, int(self.height / 2)))
+        self.anchor_points[3].updateLocalPosition(
+            QPoint(self.width, int(self.height / 2))
+        )
 
     """----------------------------------------------------------------------------------------------------------------
     OBJECT ACTIONS 
@@ -297,7 +398,9 @@ class BaseObject(QObject):
                 if mod == Qt.ShiftModifier:
                     self.central_widget.controlsPanelWidget.setEditingObjectFocus(self)
                 else:
-                    self.central_widget.controlsPanelWidget.removeOtherEditingObjects(self)
+                    self.central_widget.controlsPanelWidget.removeOtherEditingObjects(
+                        self
+                    )
             else:
                 self.central_widget.controlsPanelWidget.addEditingObject(self)
 
@@ -311,8 +414,12 @@ class BaseObject(QObject):
         :param should_be_transparent: should the mouse be transparent to the object
         """
         self.button.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.long_name_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.serial_number_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.long_name_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
+        self.serial_number_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
         # Right now does not set ap points as transparent to allow for them to be clicked on
         # for ap in self.anchor_points:
         #     ap.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
@@ -346,12 +453,14 @@ class BaseObject(QObject):
         :param pen: Pen that will be used to draw
         """
 
-        wbuffer = 10 * self.gui.pixel_scale_ratio[0]  # Space between the object and the highlight line
+        wbuffer = (
+            10 * self.gui.pixel_scale_ratio[0]
+        )  # Space between the object and the highlight line
         hbuffer = 10 * self.gui.pixel_scale_ratio[1]
 
         # Draw a thin dotted line
         pen.setStyle(Qt.DotLine)
-        pen.setWidth(Constants.line_width-1)
+        pen.setWidth(Constants.line_width - 1)
 
         # If the object has focus, draw a orange line, otherwise draw a yellow one
         if self.doesObjectHaveFocus():
@@ -359,8 +468,15 @@ class BaseObject(QObject):
         else:
             pen.setColor(QColor(255, 255, 0))
         self.widget_parent.painter.setPen(pen)
-        self.widget_parent.painter.drawRect(QRectF(self.position.x()-wbuffer/2, self.position.y()-hbuffer/2, self.width+wbuffer, self.height+hbuffer))
-        
+        self.widget_parent.painter.drawRect(
+            QRectF(
+                self.position.x() - wbuffer / 2,
+                self.position.y() - hbuffer / 2,
+                self.width + wbuffer,
+                self.height + hbuffer,
+            )
+        )
+
     def move(self, point: QPointF):
         """
         Move object to a new position. This function does not handle the dragging and dropping of objects directly.
@@ -371,7 +487,7 @@ class BaseObject(QObject):
         :param point: point to move to
         """
 
-        intPoint = QPoint(int(point.x()),int(point.y()))
+        intPoint = QPoint(int(point.x()), int(point.y()))
 
         # Move the object and all the shit connected to it
         self.button.move(intPoint)
@@ -383,11 +499,22 @@ class BaseObject(QObject):
         self.serial_number_label.moveToPosition()
         self.deleteConnectedTubes()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": moved to " + "("+str(self.position.x())+", "+str(self.position.y())+")")
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": moved to "
+            + "("
+            + str(self.position.x())
+            + ", "
+            + str(self.position.y())
+            + ")"
+        )
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-    
+
     def rotate(self):
         """
         Rotate objects. Updates anchor points, geometry, and drawing
@@ -396,11 +523,15 @@ class BaseObject(QObject):
         # Switch the height and width dimensions, also move to rotate about center
         oldWidth = self.width
         oldHeight = self.height
-        old_center_position = self.position + QPoint(int(oldWidth / 2), int(oldHeight / 2))
+        old_center_position = self.position + QPoint(
+            int(oldWidth / 2), int(oldHeight / 2)
+        )
 
         self.width = oldHeight
         self.height = oldWidth
-        new_center_position = self.position + QPoint(int(self.width / 2), int(self.height / 2))
+        new_center_position = self.position + QPoint(
+            int(self.width / 2), int(self.height / 2)
+        )
 
         # Get the center offset and move it to the correct position to rotate about the center
         center_offset = new_center_position - old_center_position
@@ -413,7 +544,9 @@ class BaseObject(QObject):
         self.long_name_label.moveToPosition()
         self.serial_number_label.moveToPosition()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": rotated")
+        self.gui.setStatusBarMessage(
+            self.object_name + "(" + self.long_name + ")" + ": rotated"
+        )
 
         # Tells widget painter to update screen
         self.widget_parent.update()
@@ -457,27 +590,39 @@ class BaseObject(QObject):
             anchor_point.x_aligned = False
             anchor_point.y_aligned = False
             for obj in self.widget_parent.object_list:
-                if obj is not self and obj not in self.central_widget.controlsPanelWidget.editing_object_list:
+                if (
+                    obj is not self
+                    and obj
+                    not in self.central_widget.controlsPanelWidget.editing_object_list
+                ):
                     for obj_ap in obj.anchor_points:
-                        if obj_ap.x() - 2 < anchor_point.x() < obj_ap.x() + 2 and abs(
-                                pos.x() - self.position.x()) < 2:
+                        if (
+                            obj_ap.x() - 2 < anchor_point.x() < obj_ap.x() + 2
+                            and abs(pos.x() - self.position.x()) < 2
+                        ):
 
                             x_aligned_aps.append(anchor_point)
                             x_aligned_dif.append(abs(anchor_point.x() - obj_ap.x()))
-                            x_aligned_snap.append(obj_ap.x() + (self.position.x() - anchor_point.x()))
+                            x_aligned_snap.append(
+                                obj_ap.x() + (self.position.x() - anchor_point.x())
+                            )
 
-                        if obj_ap.y() - 2 < anchor_point.y() < obj_ap.y() + 2 and abs(
-                                pos.y() - self.position.y()) < 2:
+                        if (
+                            obj_ap.y() - 2 < anchor_point.y() < obj_ap.y() + 2
+                            and abs(pos.y() - self.position.y()) < 2
+                        ):
 
                             y_aligned_aps.append(anchor_point)
                             y_aligned_dif.append(abs(anchor_point.y() - obj_ap.y()))
-                            y_aligned_snap.append(obj_ap.y() + (self.position.y() - anchor_point.y()))
+                            y_aligned_snap.append(
+                                obj_ap.y() + (self.position.y() - anchor_point.y())
+                            )
 
         # After finding all the aps that meet the above conditions, determine which ones are the closest match to snap
         # to. This is to essentially present from many lines occurring, and the object snapping to an ap point that is
         # farther than others,
         if y_aligned_dif:
-            miny = (min(y_aligned_dif))
+            miny = min(y_aligned_dif)
             for i, dif in enumerate(y_aligned_dif):
                 # If this ap distance to the object is or equal to the minimum distance draw it and snap it
                 if dif == miny:
@@ -485,7 +630,7 @@ class BaseObject(QObject):
                     snap_pos.setY(y_aligned_snap[i])
 
         if x_aligned_dif:
-            minx = (min(x_aligned_dif))
+            minx = min(x_aligned_dif)
             for i, dif in enumerate(x_aligned_dif):
                 # If this ap distance to the object is or equal to the minimum distance draw it and snap it
                 if dif == minx:
@@ -503,7 +648,9 @@ class BaseObject(QObject):
         """
         self.button.lower()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": lowered")
+        self.gui.setStatusBarMessage(
+            self.object_name + "(" + self.long_name + ")" + ": lowered"
+        )
 
     def raiseObject(self):
         """
@@ -512,14 +659,19 @@ class BaseObject(QObject):
         """
         self.button.raise_()
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": raised")
+        self.gui.setStatusBarMessage(
+            self.object_name + "(" + self.long_name + ")" + ": raised"
+        )
 
     def doesObjectHaveFocus(self):
         """
         Checks to see if the object has focus, or if the object menu does
         """
 
-        if self.button.hasFocus() or self.central_widget.controlsPanelWidget.object_editing is self:
+        if (
+            self.button.hasFocus()
+            or self.central_widget.controlsPanelWidget.object_editing is self
+        ):
             return True
         else:
             return False
@@ -557,7 +709,9 @@ class BaseObject(QObject):
         # TODO: Honestly the face we are iterating over obects inside the object class feels wrong. Figure out a cleaner solution
         if action is not None:
             if action.text() == "Delete Object":
-                for obj in reversed(self.central_widget.controlsPanelWidget.editing_object_list):
+                for obj in reversed(
+                    self.central_widget.controlsPanelWidget.editing_object_list
+                ):
                     self.widget_parent.deleteObject(obj)
             elif action.text() == "Lower Object":
                 for obj in self.central_widget.controlsPanelWidget.editing_object_list:
@@ -582,7 +736,6 @@ class BaseObject(QObject):
 
         return action
 
-
     """----------------------------------------------------------------------------------------------------------------
    File save and Loading
    ----------------------------------------------------------------------------------------------------------------"""
@@ -594,12 +747,17 @@ class BaseObject(QObject):
         pulled from the load function. It has the benefit of being easily readable though
         """
         save_dict = {
-            self.object_name + " " + str(self._id): {
+            self.object_name
+            + " "
+            + str(self._id): {
                 "id": self._id,
-                "pos": {"x": self.position.x()/self.gui.pixel_scale_ratio[0], "y": self.position.y()/self.gui.pixel_scale_ratio[1]},
+                "pos": {
+                    "x": self.position.x() / self.gui.pixel_scale_ratio[0],
+                    "y": self.position.y() / self.gui.pixel_scale_ratio[1],
+                },
                 "fluid": self.fluid,
-                "width": self.width/self.gui.pixel_scale_ratio[0],
-                "height": self.height/self.gui.pixel_scale_ratio[0],
+                "width": self.width / self.gui.pixel_scale_ratio[0],
+                "height": self.height / self.gui.pixel_scale_ratio[0],
                 "name": self.name,
                 "scale": self.scale,
                 "serial number": self.serial_number,
@@ -608,7 +766,7 @@ class BaseObject(QObject):
                 "is locked": self.locked,
                 "is pos locked": self.position_locked,
                 "serial number label": self.serial_number_label.generateSaveDict(),
-                "long name label": self.long_name_label.generateSaveDict()
+                "long name label": self.long_name_label.generateSaveDict(),
             }
         }
 
@@ -623,7 +781,9 @@ class BaseObject(QObject):
         Called for object to delete itself
         """
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": deleted")
+        self.gui.setStatusBarMessage(
+            self.object_name + "(" + self.long_name + ")" + ": deleted"
+        )
 
         self.button.deleteLater()
         del self.button
@@ -648,7 +808,6 @@ class BaseObject(QObject):
 
         self.widget_parent.update()
 
-
     def link_plot(self, plot, button):
         """
         Link a Plot object to a given data file
@@ -657,5 +816,3 @@ class BaseObject(QObject):
         :return:
         """
         plot.link_data(button)
-
-

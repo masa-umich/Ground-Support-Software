@@ -12,9 +12,15 @@ Provides custom functionality for labels
 
 # TODO: Add alignment lines to these too HMM: Is that really worth it though
 class CustomLabel(QLabel):
-
-    def __init__(self, widget_parent, gui, is_vertical: bool = False, rows: int = 1, font_size: float = 12,
-                 text: str = "Name"):
+    def __init__(
+        self,
+        widget_parent,
+        gui,
+        is_vertical: bool = False,
+        rows: int = 1,
+        font_size: float = 12,
+        text: str = "Name",
+    ):
         super().__init__(widget_parent)
         self.widget = widget_parent
         self.gui = gui
@@ -31,7 +37,7 @@ class CustomLabel(QLabel):
             self.show()
 
     @overrides
-    def setText(self, p_str, updateSize:bool = True):
+    def setText(self, p_str, updateSize: bool = True):
         """
         Overrides the default function to provide some more functionality
         :param p_str: string to set text to
@@ -85,18 +91,26 @@ class CustomLabel(QLabel):
                 maxWordWidth = wordWidth
 
         # See if any one word is longer than the fixed width
-        fixedWidth = textWidth/self.rows
+        fixedWidth = textWidth / self.rows
         if fixedWidth < maxWordWidth:
             fixedWidth = maxWordWidth
 
         # Sets the fixed size
         if self.is_vertical:
-            self.setFixedSize(fixedHeight,self.width())
+            self.setFixedSize(fixedHeight, self.width())
         else:
             self.setFixedHeight(int(self.rows * fixedHeight))
             if self.rows > 1:
                 # TODO: Fix this +40 *blah. Currently addresses the problem that causes the last word to be clipped
-                self.setFixedWidth(int(fixedWidth + (self.gui.pixel_scale_ratio[0]*(40 * (self.getFontSize()/23))))) # 40 is a lazy mans fix right now
+                self.setFixedWidth(
+                    int(
+                        fixedWidth
+                        + (
+                            self.gui.pixel_scale_ratio[0]
+                            * (40 * (self.getFontSize() / 23))
+                        )
+                    )
+                )  # 40 is a lazy mans fix right now
             else:
                 self.setFixedWidth(int(fixedWidth + 5))  # 5 is a small buffer
 
@@ -126,7 +140,7 @@ class CustomLabel(QLabel):
         """
         Returns the size current font size
         """
-        return self.font().pointSizeF()/self.gui.font_scale_ratio
+        return self.font().pointSizeF() / self.gui.font_scale_ratio
 
     # @overrides
     # def paintEvent(self, event):

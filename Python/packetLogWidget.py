@@ -13,7 +13,13 @@ class PacketLogWidget(QWidget):
     This packet log has the advantage of being filterable so users can quickly find what they are looking for
     """
 
-    def __init__(self, tabWidget, interface, data_update_signal: pyqtSignal, autoresize_cols:bool = False):
+    def __init__(
+        self,
+        tabWidget,
+        interface,
+        data_update_signal: pyqtSignal,
+        autoresize_cols: bool = False,
+    ):
 
         super().__init__()
 
@@ -35,9 +41,9 @@ class PacketLogWidget(QWidget):
         self.packet_log.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         if not autoresize_cols:
-            self.packet_log.setColumnWidth(0, int(self.tabWidget.width() * .45))
-            self.packet_log.setColumnWidth(1, int(self.tabWidget.width() * .25))
-            self.packet_log.setColumnWidth(2, int(self.tabWidget.width() * .18))
+            self.packet_log.setColumnWidth(0, int(self.tabWidget.width() * 0.45))
+            self.packet_log.setColumnWidth(1, int(self.tabWidget.width() * 0.25))
+            self.packet_log.setColumnWidth(2, int(self.tabWidget.width() * 0.18))
         else:
             header = self.packet_log.horizontalHeader()
             header.setSectionResizeMode(0, QHeaderView.Stretch)
@@ -49,19 +55,37 @@ class PacketLogWidget(QWidget):
 
         # Board filter, tool buttons are a special button that act like menu items
         self.boardFilterButton = QToolButton(self)
-        self.boardFilterButton.setMinimumWidth(int(self.tabWidget.width() * .25))
+        self.boardFilterButton.setMinimumWidth(int(self.tabWidget.width() * 0.25))
         self.boardFilterButton.setText("Board Filter")
         self.boardtoolmenu = QMenu(self)
-        self.boardFilterList = ["GSE Controller", "Engine Controller"]  # Holds board names that we want to filter by. Defualt some
+        self.boardFilterList = [
+            "GSE Controller",
+            "Engine Controller",
+        ]  # Holds board names that we want to filter by. Defualt some
 
         # type filter, tool buttons are a special button that act like menu items
         self.typeFilterButton = QToolButton(self)
-        self.typeFilterButton.setMinimumWidth(int(self.tabWidget.width() * .25))
+        self.typeFilterButton.setMinimumWidth(int(self.tabWidget.width() * 0.25))
         self.typeFilterButton.setText("Type Filter")
         self.typetoolmenu = QMenu(self)
-        self.typeFilterList_STATIC = ["other", "pressure", "vlv", "mtr", "STATE", "load", "tc", "rtd", "tnk", "ctrl_press",
-                               "cal"] # will always have this values, below list changes with user selection
-        self.typeFilterList = ["pressure", "vlv", "STATE"]  # Holds type names that we want to filter by. Defualt some
+        self.typeFilterList_STATIC = [
+            "other",
+            "pressure",
+            "vlv",
+            "mtr",
+            "STATE",
+            "load",
+            "tc",
+            "rtd",
+            "tnk",
+            "ctrl_press",
+            "cal",
+        ]  # will always have this values, below list changes with user selection
+        self.typeFilterList = [
+            "pressure",
+            "vlv",
+            "STATE",
+        ]  # Holds type names that we want to filter by. Defualt some
 
         self.filteredChannels = []  # populated later
 
@@ -109,7 +133,9 @@ class PacketLogWidget(QWidget):
         :param event: the event triggered
         :return: True for preventing the event to handled again later downstream
         """
-        if (source is self.typeFilterButton or source is self.boardFilterButton) and event.type() == QEvent.StatusTip:
+        if (
+            source is self.typeFilterButton or source is self.boardFilterButton
+        ) and event.type() == QEvent.StatusTip:
             return True  # Returning true will prevent this event from being processed again down the line
 
         return super().eventFilter(source, event)
@@ -152,17 +178,25 @@ class PacketLogWidget(QWidget):
 
         # Get all the channels and then first filter by board
         allChannels = self.interface.channels
-        boardfilteredChannels = [x for x in allChannels if any(y in x for y in self.boardFilterList)]
+        boardfilteredChannels = [
+            x for x in allChannels if any(y in x for y in self.boardFilterList)
+        ]
 
         # Other is used to represent items that don't fit into the filter. Other channels need to be filtered
         # alone because the other filters will always remove them
         if "other" in self.typeFilterList:
-            otherChannels = [x for x in boardfilteredChannels if all(y not in x for y in self.typeFilterList_STATIC)]
+            otherChannels = [
+                x
+                for x in boardfilteredChannels
+                if all(y not in x for y in self.typeFilterList_STATIC)
+            ]
         else:
             otherChannels = []
 
         # from the board filtered list, then filter by the type filters
-        filteredChannels = [x for x in boardfilteredChannels if any(y in x for y in self.typeFilterList)]
+        filteredChannels = [
+            x for x in boardfilteredChannels if any(y in x for y in self.typeFilterList)
+        ]
 
         # TODO: Try to preserve the given order, not just thrown at the end
         self.filteredChannels = filteredChannels + otherChannels
@@ -172,13 +206,13 @@ class PacketLogWidget(QWidget):
         self.packet_log.setRowCount(len(self.filteredChannels))
         for n in range(len(self.filteredChannels)):
             item = QTableWidgetItem(self.filteredChannels[n])
-            self.packet_log.setItem(
-                n, 0, item)
+            self.packet_log.setItem(n, 0, item)
             item = QTableWidgetItem("", 1)
             item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
             self.packet_log.setItem(n, 1, item)
-            self.packet_log.setItem(n, 2, QTableWidgetItem(
-                self.interface.units[self.filteredChannels[n]]))
+            self.packet_log.setItem(
+                n, 2, QTableWidgetItem(self.interface.units[self.filteredChannels[n]])
+            )
 
         self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
 

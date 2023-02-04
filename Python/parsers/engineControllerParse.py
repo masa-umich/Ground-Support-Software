@@ -8,7 +8,6 @@ import struct
 
 
 class EngineController:
-
     def __init__(self):
         self.packet_byte_size = 252
         self.num_items = 120
@@ -16,127 +15,127 @@ class EngineController:
         self.dict = {}
         self.units = {}
 
-        self.items = [''] * self.num_items
-        self.items[0] = 'packet_type'
-        self.items[1] = 'origin_addr'
-        self.items[2] = 'target_addr'
-        self.items[3] = 'priority'
-        self.items[4] = 'num_packets'
-        self.items[5] = 'do_cobbs'
-        self.items[6] = 'checksum'
-        self.items[7] = 'timestamp'
-        self.items[8] = 'STATE'
-        self.items[9] = 'e_batt'
-        self.items[10] = 'i_batt'
-        self.items[11] = 'valve_states'
-        self.items[12] = 'e3v'
-        self.items[13] = 'e5v'
-        self.items[14] = 'i5v'
-        self.items[15] = 'i3v'
-        self.items[16] = 'last_command_id'
-        self.items[17] = 'pressure[0]'
-        self.items[18] = 'pressure[1]'
-        self.items[19] = 'pressure[2]'
-        self.items[20] = 'pressure[3]'
-        self.items[21] = 'pressure[4]'
-        self.items[22] = 'pressure[5]'
-        self.items[23] = 'pressure[6]'
-        self.items[24] = 'pressure[7]'
-        self.items[25] = 'pressure[8]'
-        self.items[26] = 'pressure[9]'
-        self.items[27] = 'pressure[10]'
-        self.items[28] = 'pressure[11]'
-        self.items[29] = 'pressure[12]'
-        self.items[30] = 'pressure[13]'
-        self.items[31] = 'pressure[14]'
-        self.items[32] = 'pressure[15]'
-        self.items[33] = 'pressure[16]'
-        self.items[34] = 'pressure[17]'
-        self.items[35] = 'pressure[18]'
-        self.items[36] = 'pressure[19]'
-        self.items[37] = 'vlv0.i'
-        self.items[38] = 'vlv1.i'
-        self.items[39] = 'vlv2.i'
-        self.items[40] = 'vlv3.i'
-        self.items[41] = 'vlv4.i'
-        self.items[42] = 'vlv5.i'
-        self.items[43] = 'vlv6.i'
-        self.items[44] = 'vlv7.i'
-        self.items[45] = 'vlv8.i'
-        self.items[46] = 'vlv9.i'
-        self.items[47] = 'vlv10.i'
-        self.items[48] = 'vlv11.i'
-        self.items[49] = 'vlv12.i'
-        self.items[50] = 'vlv13.i'
-        self.items[51] = 'vlv0.e'
-        self.items[52] = 'vlv1.e'
-        self.items[53] = 'vlv2.e'
-        self.items[54] = 'vlv3.e'
-        self.items[55] = 'vlv4.e'
-        self.items[56] = 'vlv5.e'
-        self.items[57] = 'vlv6.e'
-        self.items[58] = 'vlv7.e'
-        self.items[59] = 'vlv8.e'
-        self.items[60] = 'vlv9.e'
-        self.items[61] = 'vlv10.e'
-        self.items[62] = 'vlv11.e'
-        self.items[63] = 'vlv12.e'
-        self.items[64] = 'vlv13.e'
-        self.items[65] = 'tc[0]'
-        self.items[66] = 'tc[1]'
-        self.items[67] = 'tc[2]'
-        self.items[68] = 'tc[3]'
-        self.items[69] = 'tc[4]'
-        self.items[70] = 'tc[5]'
-        self.items[71] = 'tc[6]'
-        self.items[72] = 'tc[7]'
-        self.items[73] = 'tc[8]'
-        self.items[74] = 'tc[9]'
-        self.items[75] = 'tc[10]'
-        self.items[76] = 'tc[11]'
-        self.items[77] = 'mtr0.pos'
-        self.items[78] = 'mtr1.pos'
-        self.items[79] = 'mtr0.vel'
-        self.items[80] = 'mtr1.vel'
-        self.items[81] = 'mtr0.set'
-        self.items[82] = 'mtr1.set'
-        self.items[83] = 'mtr0.kp'
-        self.items[84] = 'mtr1.kp'
-        self.items[85] = 'mtr0.ki'
-        self.items[86] = 'mtr1.ki'
-        self.items[87] = 'mtr0.kd'
-        self.items[88] = 'mtr1.kd'
-        self.items[89] = 'mtr0.kp_err'
-        self.items[90] = 'mtr1.kp_err'
-        self.items[91] = 'mtr0.ki_err'
-        self.items[92] = 'mtr1.ki_err'
-        self.items[93] = 'mtr0.kd_err'
-        self.items[94] = 'mtr1.kd_err'
-        self.items[95] = 'tnk0.target_pres'
-        self.items[96] = 'tnk1.target_pres'
-        self.items[97] = 'tnk0.high_pres'
-        self.items[98] = 'tnk1.high_pres'
-        self.items[99] = 'tnk0.low_pres'
-        self.items[100] = 'tnk1.low_pres'
-        self.items[101] = 'pot0.e'
-        self.items[102] = 'pot1.e'
-        self.items[103] = 'tnk0.en'
-        self.items[104] = 'tnk1.en'
-        self.items[105] = 'tnk0.pid.en'
-        self.items[106] = 'tnk1.pid.en'
-        self.items[107] = 'ignition_ignitor_on_delay_ms'
-        self.items[108] = 'ignition_ignitor_high_duration_ms'
-        self.items[109] = 'hotfire_fuel_mpv_delay_ms'
-        self.items[110] = 'hotfire_lox_mpv_delay_ms'
-        self.items[111] = 'hotfire_pid_start_delay_ms'
-        self.items[112] = 'hotfire_test_duration_ms'
-        self.items[113] = 'deg_corr_factor'
-        self.items[114] = 'state_rem_duration'
-        self.items[115] = 'telem_rate'
-        self.items[116] = 'adc_rate'
-        self.items[117] = 'flash_mem'
-        self.items[118] = 'LOGGING_ACTIVE'
-        self.items[119] = 'autosequence.post_tank_vent_enable'
+        self.items = [""] * self.num_items
+        self.items[0] = "packet_type"
+        self.items[1] = "origin_addr"
+        self.items[2] = "target_addr"
+        self.items[3] = "priority"
+        self.items[4] = "num_packets"
+        self.items[5] = "do_cobbs"
+        self.items[6] = "checksum"
+        self.items[7] = "timestamp"
+        self.items[8] = "STATE"
+        self.items[9] = "e_batt"
+        self.items[10] = "i_batt"
+        self.items[11] = "valve_states"
+        self.items[12] = "e3v"
+        self.items[13] = "e5v"
+        self.items[14] = "i5v"
+        self.items[15] = "i3v"
+        self.items[16] = "last_command_id"
+        self.items[17] = "pressure[0]"
+        self.items[18] = "pressure[1]"
+        self.items[19] = "pressure[2]"
+        self.items[20] = "pressure[3]"
+        self.items[21] = "pressure[4]"
+        self.items[22] = "pressure[5]"
+        self.items[23] = "pressure[6]"
+        self.items[24] = "pressure[7]"
+        self.items[25] = "pressure[8]"
+        self.items[26] = "pressure[9]"
+        self.items[27] = "pressure[10]"
+        self.items[28] = "pressure[11]"
+        self.items[29] = "pressure[12]"
+        self.items[30] = "pressure[13]"
+        self.items[31] = "pressure[14]"
+        self.items[32] = "pressure[15]"
+        self.items[33] = "pressure[16]"
+        self.items[34] = "pressure[17]"
+        self.items[35] = "pressure[18]"
+        self.items[36] = "pressure[19]"
+        self.items[37] = "vlv0.i"
+        self.items[38] = "vlv1.i"
+        self.items[39] = "vlv2.i"
+        self.items[40] = "vlv3.i"
+        self.items[41] = "vlv4.i"
+        self.items[42] = "vlv5.i"
+        self.items[43] = "vlv6.i"
+        self.items[44] = "vlv7.i"
+        self.items[45] = "vlv8.i"
+        self.items[46] = "vlv9.i"
+        self.items[47] = "vlv10.i"
+        self.items[48] = "vlv11.i"
+        self.items[49] = "vlv12.i"
+        self.items[50] = "vlv13.i"
+        self.items[51] = "vlv0.e"
+        self.items[52] = "vlv1.e"
+        self.items[53] = "vlv2.e"
+        self.items[54] = "vlv3.e"
+        self.items[55] = "vlv4.e"
+        self.items[56] = "vlv5.e"
+        self.items[57] = "vlv6.e"
+        self.items[58] = "vlv7.e"
+        self.items[59] = "vlv8.e"
+        self.items[60] = "vlv9.e"
+        self.items[61] = "vlv10.e"
+        self.items[62] = "vlv11.e"
+        self.items[63] = "vlv12.e"
+        self.items[64] = "vlv13.e"
+        self.items[65] = "tc[0]"
+        self.items[66] = "tc[1]"
+        self.items[67] = "tc[2]"
+        self.items[68] = "tc[3]"
+        self.items[69] = "tc[4]"
+        self.items[70] = "tc[5]"
+        self.items[71] = "tc[6]"
+        self.items[72] = "tc[7]"
+        self.items[73] = "tc[8]"
+        self.items[74] = "tc[9]"
+        self.items[75] = "tc[10]"
+        self.items[76] = "tc[11]"
+        self.items[77] = "mtr0.pos"
+        self.items[78] = "mtr1.pos"
+        self.items[79] = "mtr0.vel"
+        self.items[80] = "mtr1.vel"
+        self.items[81] = "mtr0.set"
+        self.items[82] = "mtr1.set"
+        self.items[83] = "mtr0.kp"
+        self.items[84] = "mtr1.kp"
+        self.items[85] = "mtr0.ki"
+        self.items[86] = "mtr1.ki"
+        self.items[87] = "mtr0.kd"
+        self.items[88] = "mtr1.kd"
+        self.items[89] = "mtr0.kp_err"
+        self.items[90] = "mtr1.kp_err"
+        self.items[91] = "mtr0.ki_err"
+        self.items[92] = "mtr1.ki_err"
+        self.items[93] = "mtr0.kd_err"
+        self.items[94] = "mtr1.kd_err"
+        self.items[95] = "tnk0.target_pres"
+        self.items[96] = "tnk1.target_pres"
+        self.items[97] = "tnk0.high_pres"
+        self.items[98] = "tnk1.high_pres"
+        self.items[99] = "tnk0.low_pres"
+        self.items[100] = "tnk1.low_pres"
+        self.items[101] = "pot0.e"
+        self.items[102] = "pot1.e"
+        self.items[103] = "tnk0.en"
+        self.items[104] = "tnk1.en"
+        self.items[105] = "tnk0.pid.en"
+        self.items[106] = "tnk1.pid.en"
+        self.items[107] = "ignition_ignitor_on_delay_ms"
+        self.items[108] = "ignition_ignitor_high_duration_ms"
+        self.items[109] = "hotfire_fuel_mpv_delay_ms"
+        self.items[110] = "hotfire_lox_mpv_delay_ms"
+        self.items[111] = "hotfire_pid_start_delay_ms"
+        self.items[112] = "hotfire_test_duration_ms"
+        self.items[113] = "deg_corr_factor"
+        self.items[114] = "state_rem_duration"
+        self.items[115] = "telem_rate"
+        self.items[116] = "adc_rate"
+        self.items[117] = "flash_mem"
+        self.items[118] = "LOGGING_ACTIVE"
+        self.items[119] = "autosequence.post_tank_vent_enable"
 
         self.units[self.items[0]] = "ul"
         self.units[self.items[1]] = "ul"
@@ -267,116 +266,342 @@ class EngineController:
         self.dict[self.items[4]] = int((float(struct.unpack("<B", packet[4:5])[0])) / 1)
         self.dict[self.items[5]] = int((float(struct.unpack("<B", packet[5:6])[0])) / 1)
         self.dict[self.items[6]] = int((float(struct.unpack("<H", packet[6:8])[0])) / 1)
-        self.dict[self.items[7]] = int((float(struct.unpack("<I", packet[8:12])[0])) / 1)
-        self.dict[self.items[8]] = int((float(struct.unpack("<B", packet[12:13])[0])) / 1)
-        self.dict[self.items[9]] = float((float(struct.unpack("<h", packet[13:15])[0])) / 100)
-        self.dict[self.items[10]] = float((float(struct.unpack("<h", packet[15:17])[0])) / 100)
-        self.dict[self.items[11]] = int((float(struct.unpack("<H", packet[17:19])[0])) / 1)
-        self.dict[self.items[12]] = float((float(struct.unpack("<h", packet[19:21])[0])) / 100)
-        self.dict[self.items[13]] = float((float(struct.unpack("<h", packet[21:23])[0])) / 100)
-        self.dict[self.items[14]] = float((float(struct.unpack("<B", packet[23:24])[0])) / 100)
-        self.dict[self.items[15]] = float((float(struct.unpack("<B", packet[24:25])[0])) / 100)
-        self.dict[self.items[16]] = int((float(struct.unpack("<B", packet[25:26])[0])) / 1)
-        self.dict[self.items[17]] = float((float(struct.unpack("<i", packet[26:30])[0])) / 10)
-        self.dict[self.items[18]] = float((float(struct.unpack("<i", packet[30:34])[0])) / 10)
-        self.dict[self.items[19]] = float((float(struct.unpack("<i", packet[34:38])[0])) / 10)
-        self.dict[self.items[20]] = float((float(struct.unpack("<i", packet[38:42])[0])) / 10)
-        self.dict[self.items[21]] = float((float(struct.unpack("<i", packet[42:46])[0])) / 10)
-        self.dict[self.items[22]] = float((float(struct.unpack("<i", packet[46:50])[0])) / 10)
-        self.dict[self.items[23]] = float((float(struct.unpack("<i", packet[50:54])[0])) / 10)
-        self.dict[self.items[24]] = float((float(struct.unpack("<i", packet[54:58])[0])) / 10)
-        self.dict[self.items[25]] = float((float(struct.unpack("<i", packet[58:62])[0])) / 10)
-        self.dict[self.items[26]] = float((float(struct.unpack("<i", packet[62:66])[0])) / 10)
-        self.dict[self.items[27]] = float((float(struct.unpack("<i", packet[66:70])[0])) / 10)
-        self.dict[self.items[28]] = float((float(struct.unpack("<i", packet[70:74])[0])) / 10)
-        self.dict[self.items[29]] = float((float(struct.unpack("<i", packet[74:78])[0])) / 10)
-        self.dict[self.items[30]] = float((float(struct.unpack("<i", packet[78:82])[0])) / 10)
-        self.dict[self.items[31]] = float((float(struct.unpack("<i", packet[82:86])[0])) / 10)
-        self.dict[self.items[32]] = float((float(struct.unpack("<i", packet[86:90])[0])) / 10)
-        self.dict[self.items[33]] = float((float(struct.unpack("<i", packet[90:94])[0])) / 10)
-        self.dict[self.items[34]] = float((float(struct.unpack("<i", packet[94:98])[0])) / 10)
-        self.dict[self.items[35]] = float((float(struct.unpack("<i", packet[98:102])[0])) / 10)
-        self.dict[self.items[36]] = float((float(struct.unpack("<i", packet[102:106])[0])) / 10)
-        self.dict[self.items[37]] = float((float(struct.unpack("<B", packet[106:107])[0])) / 10)
-        self.dict[self.items[38]] = float((float(struct.unpack("<B", packet[107:108])[0])) / 10)
-        self.dict[self.items[39]] = float((float(struct.unpack("<B", packet[108:109])[0])) / 10)
-        self.dict[self.items[40]] = float((float(struct.unpack("<B", packet[109:110])[0])) / 10)
-        self.dict[self.items[41]] = float((float(struct.unpack("<B", packet[110:111])[0])) / 10)
-        self.dict[self.items[42]] = float((float(struct.unpack("<B", packet[111:112])[0])) / 10)
-        self.dict[self.items[43]] = float((float(struct.unpack("<B", packet[112:113])[0])) / 10)
-        self.dict[self.items[44]] = float((float(struct.unpack("<B", packet[113:114])[0])) / 10)
-        self.dict[self.items[45]] = float((float(struct.unpack("<B", packet[114:115])[0])) / 10)
-        self.dict[self.items[46]] = float((float(struct.unpack("<B", packet[115:116])[0])) / 10)
-        self.dict[self.items[47]] = float((float(struct.unpack("<B", packet[116:117])[0])) / 10)
-        self.dict[self.items[48]] = float((float(struct.unpack("<B", packet[117:118])[0])) / 10)
-        self.dict[self.items[49]] = float((float(struct.unpack("<B", packet[118:119])[0])) / 10)
-        self.dict[self.items[50]] = float((float(struct.unpack("<B", packet[119:120])[0])) / 10)
-        self.dict[self.items[51]] = float((float(struct.unpack("<B", packet[120:121])[0])) / 10)
-        self.dict[self.items[52]] = float((float(struct.unpack("<B", packet[121:122])[0])) / 10)
-        self.dict[self.items[53]] = float((float(struct.unpack("<B", packet[122:123])[0])) / 10)
-        self.dict[self.items[54]] = float((float(struct.unpack("<B", packet[123:124])[0])) / 10)
-        self.dict[self.items[55]] = float((float(struct.unpack("<B", packet[124:125])[0])) / 10)
-        self.dict[self.items[56]] = float((float(struct.unpack("<B", packet[125:126])[0])) / 10)
-        self.dict[self.items[57]] = float((float(struct.unpack("<B", packet[126:127])[0])) / 10)
-        self.dict[self.items[58]] = float((float(struct.unpack("<B", packet[127:128])[0])) / 10)
-        self.dict[self.items[59]] = float((float(struct.unpack("<B", packet[128:129])[0])) / 10)
-        self.dict[self.items[60]] = float((float(struct.unpack("<B", packet[129:130])[0])) / 10)
-        self.dict[self.items[61]] = float((float(struct.unpack("<B", packet[130:131])[0])) / 10)
-        self.dict[self.items[62]] = float((float(struct.unpack("<B", packet[131:132])[0])) / 10)
-        self.dict[self.items[63]] = float((float(struct.unpack("<B", packet[132:133])[0])) / 10)
-        self.dict[self.items[64]] = float((float(struct.unpack("<B", packet[133:134])[0])) / 10)
-        self.dict[self.items[65]] = float((float(struct.unpack("<H", packet[134:136])[0])) / 100)
-        self.dict[self.items[66]] = float((float(struct.unpack("<H", packet[136:138])[0])) / 100)
-        self.dict[self.items[67]] = float((float(struct.unpack("<H", packet[138:140])[0])) / 100)
-        self.dict[self.items[68]] = float((float(struct.unpack("<H", packet[140:142])[0])) / 100)
-        self.dict[self.items[69]] = float((float(struct.unpack("<H", packet[142:144])[0])) / 100)
-        self.dict[self.items[70]] = float((float(struct.unpack("<H", packet[144:146])[0])) / 100)
-        self.dict[self.items[71]] = float((float(struct.unpack("<H", packet[146:148])[0])) / 100)
-        self.dict[self.items[72]] = float((float(struct.unpack("<H", packet[148:150])[0])) / 100)
-        self.dict[self.items[73]] = float((float(struct.unpack("<H", packet[150:152])[0])) / 100)
-        self.dict[self.items[74]] = float((float(struct.unpack("<H", packet[152:154])[0])) / 100)
-        self.dict[self.items[75]] = float((float(struct.unpack("<H", packet[154:156])[0])) / 100)
-        self.dict[self.items[76]] = float((float(struct.unpack("<H", packet[156:158])[0])) / 100)
-        self.dict[self.items[77]] = float((float(struct.unpack("<h", packet[158:160])[0])) / 10)
-        self.dict[self.items[78]] = float((float(struct.unpack("<h", packet[160:162])[0])) / 10)
-        self.dict[self.items[79]] = int((float(struct.unpack("<h", packet[162:164])[0])) / 1)
-        self.dict[self.items[80]] = int((float(struct.unpack("<h", packet[164:166])[0])) / 1)
-        self.dict[self.items[81]] = float((float(struct.unpack("<h", packet[166:168])[0])) / 10)
-        self.dict[self.items[82]] = float((float(struct.unpack("<h", packet[168:170])[0])) / 10)
-        self.dict[self.items[83]] = float((float(struct.unpack("<H", packet[170:172])[0])) / 100)
-        self.dict[self.items[84]] = float((float(struct.unpack("<H", packet[172:174])[0])) / 100)
-        self.dict[self.items[85]] = float((float(struct.unpack("<H", packet[174:176])[0])) / 100)
-        self.dict[self.items[86]] = float((float(struct.unpack("<H", packet[176:178])[0])) / 100)
-        self.dict[self.items[87]] = float((float(struct.unpack("<H", packet[178:180])[0])) / 100)
-        self.dict[self.items[88]] = float((float(struct.unpack("<H", packet[180:182])[0])) / 100)
-        self.dict[self.items[89]] = float((float(struct.unpack("<h", packet[182:184])[0])) / 10)
-        self.dict[self.items[90]] = float((float(struct.unpack("<h", packet[184:186])[0])) / 10)
-        self.dict[self.items[91]] = float((float(struct.unpack("<h", packet[186:188])[0])) / 10)
-        self.dict[self.items[92]] = float((float(struct.unpack("<h", packet[188:190])[0])) / 10)
-        self.dict[self.items[93]] = float((float(struct.unpack("<h", packet[190:192])[0])) / 10)
-        self.dict[self.items[94]] = float((float(struct.unpack("<h", packet[192:194])[0])) / 10)
-        self.dict[self.items[95]] = float((float(struct.unpack("<i", packet[194:198])[0])) / 100)
-        self.dict[self.items[96]] = float((float(struct.unpack("<i", packet[198:202])[0])) / 100)
-        self.dict[self.items[97]] = float((float(struct.unpack("<h", packet[202:204])[0])) / 10)
-        self.dict[self.items[98]] = float((float(struct.unpack("<h", packet[204:206])[0])) / 10)
-        self.dict[self.items[99]] = float((float(struct.unpack("<h", packet[206:208])[0])) / 10)
-        self.dict[self.items[100]] = float((float(struct.unpack("<h", packet[208:210])[0])) / 10)
-        self.dict[self.items[101]] = float((float(struct.unpack("<i", packet[210:214])[0])) / 10)
-        self.dict[self.items[102]] = float((float(struct.unpack("<i", packet[214:218])[0])) / 10)
-        self.dict[self.items[103]] = int((float(struct.unpack("<B", packet[218:219])[0])) / 1)
-        self.dict[self.items[104]] = int((float(struct.unpack("<B", packet[219:220])[0])) / 1)
-        self.dict[self.items[105]] = int((float(struct.unpack("<B", packet[220:221])[0])) / 1)
-        self.dict[self.items[106]] = int((float(struct.unpack("<B", packet[221:222])[0])) / 1)
-        self.dict[self.items[107]] = int((float(struct.unpack("<H", packet[222:224])[0])) / 1)
-        self.dict[self.items[108]] = int((float(struct.unpack("<H", packet[224:226])[0])) / 1)
-        self.dict[self.items[109]] = int((float(struct.unpack("<H", packet[226:228])[0])) / 1)
-        self.dict[self.items[110]] = int((float(struct.unpack("<H", packet[228:230])[0])) / 1)
-        self.dict[self.items[111]] = int((float(struct.unpack("<H", packet[230:232])[0])) / 1)
-        self.dict[self.items[112]] = int((float(struct.unpack("<I", packet[232:236])[0])) / 1)
-        self.dict[self.items[113]] = float((float(struct.unpack("<i", packet[236:240])[0])) / 10000)
-        self.dict[self.items[114]] = int((float(struct.unpack("<i", packet[240:244])[0])) / 1)
-        self.dict[self.items[115]] = int((float(struct.unpack("<B", packet[244:245])[0])) / 1)
-        self.dict[self.items[116]] = int((float(struct.unpack("<B", packet[245:246])[0])) / 1)
-        self.dict[self.items[117]] = int((float(struct.unpack("<I", packet[246:250])[0])) / 1)
-        self.dict[self.items[118]] = int((float(struct.unpack("<B", packet[250:251])[0])) / 1)
-        self.dict[self.items[119]] = int((float(struct.unpack("<B", packet[251:252])[0])) / 1)
+        self.dict[self.items[7]] = int(
+            (float(struct.unpack("<I", packet[8:12])[0])) / 1
+        )
+        self.dict[self.items[8]] = int(
+            (float(struct.unpack("<B", packet[12:13])[0])) / 1
+        )
+        self.dict[self.items[9]] = float(
+            (float(struct.unpack("<h", packet[13:15])[0])) / 100
+        )
+        self.dict[self.items[10]] = float(
+            (float(struct.unpack("<h", packet[15:17])[0])) / 100
+        )
+        self.dict[self.items[11]] = int(
+            (float(struct.unpack("<H", packet[17:19])[0])) / 1
+        )
+        self.dict[self.items[12]] = float(
+            (float(struct.unpack("<h", packet[19:21])[0])) / 100
+        )
+        self.dict[self.items[13]] = float(
+            (float(struct.unpack("<h", packet[21:23])[0])) / 100
+        )
+        self.dict[self.items[14]] = float(
+            (float(struct.unpack("<B", packet[23:24])[0])) / 100
+        )
+        self.dict[self.items[15]] = float(
+            (float(struct.unpack("<B", packet[24:25])[0])) / 100
+        )
+        self.dict[self.items[16]] = int(
+            (float(struct.unpack("<B", packet[25:26])[0])) / 1
+        )
+        self.dict[self.items[17]] = float(
+            (float(struct.unpack("<i", packet[26:30])[0])) / 10
+        )
+        self.dict[self.items[18]] = float(
+            (float(struct.unpack("<i", packet[30:34])[0])) / 10
+        )
+        self.dict[self.items[19]] = float(
+            (float(struct.unpack("<i", packet[34:38])[0])) / 10
+        )
+        self.dict[self.items[20]] = float(
+            (float(struct.unpack("<i", packet[38:42])[0])) / 10
+        )
+        self.dict[self.items[21]] = float(
+            (float(struct.unpack("<i", packet[42:46])[0])) / 10
+        )
+        self.dict[self.items[22]] = float(
+            (float(struct.unpack("<i", packet[46:50])[0])) / 10
+        )
+        self.dict[self.items[23]] = float(
+            (float(struct.unpack("<i", packet[50:54])[0])) / 10
+        )
+        self.dict[self.items[24]] = float(
+            (float(struct.unpack("<i", packet[54:58])[0])) / 10
+        )
+        self.dict[self.items[25]] = float(
+            (float(struct.unpack("<i", packet[58:62])[0])) / 10
+        )
+        self.dict[self.items[26]] = float(
+            (float(struct.unpack("<i", packet[62:66])[0])) / 10
+        )
+        self.dict[self.items[27]] = float(
+            (float(struct.unpack("<i", packet[66:70])[0])) / 10
+        )
+        self.dict[self.items[28]] = float(
+            (float(struct.unpack("<i", packet[70:74])[0])) / 10
+        )
+        self.dict[self.items[29]] = float(
+            (float(struct.unpack("<i", packet[74:78])[0])) / 10
+        )
+        self.dict[self.items[30]] = float(
+            (float(struct.unpack("<i", packet[78:82])[0])) / 10
+        )
+        self.dict[self.items[31]] = float(
+            (float(struct.unpack("<i", packet[82:86])[0])) / 10
+        )
+        self.dict[self.items[32]] = float(
+            (float(struct.unpack("<i", packet[86:90])[0])) / 10
+        )
+        self.dict[self.items[33]] = float(
+            (float(struct.unpack("<i", packet[90:94])[0])) / 10
+        )
+        self.dict[self.items[34]] = float(
+            (float(struct.unpack("<i", packet[94:98])[0])) / 10
+        )
+        self.dict[self.items[35]] = float(
+            (float(struct.unpack("<i", packet[98:102])[0])) / 10
+        )
+        self.dict[self.items[36]] = float(
+            (float(struct.unpack("<i", packet[102:106])[0])) / 10
+        )
+        self.dict[self.items[37]] = float(
+            (float(struct.unpack("<B", packet[106:107])[0])) / 10
+        )
+        self.dict[self.items[38]] = float(
+            (float(struct.unpack("<B", packet[107:108])[0])) / 10
+        )
+        self.dict[self.items[39]] = float(
+            (float(struct.unpack("<B", packet[108:109])[0])) / 10
+        )
+        self.dict[self.items[40]] = float(
+            (float(struct.unpack("<B", packet[109:110])[0])) / 10
+        )
+        self.dict[self.items[41]] = float(
+            (float(struct.unpack("<B", packet[110:111])[0])) / 10
+        )
+        self.dict[self.items[42]] = float(
+            (float(struct.unpack("<B", packet[111:112])[0])) / 10
+        )
+        self.dict[self.items[43]] = float(
+            (float(struct.unpack("<B", packet[112:113])[0])) / 10
+        )
+        self.dict[self.items[44]] = float(
+            (float(struct.unpack("<B", packet[113:114])[0])) / 10
+        )
+        self.dict[self.items[45]] = float(
+            (float(struct.unpack("<B", packet[114:115])[0])) / 10
+        )
+        self.dict[self.items[46]] = float(
+            (float(struct.unpack("<B", packet[115:116])[0])) / 10
+        )
+        self.dict[self.items[47]] = float(
+            (float(struct.unpack("<B", packet[116:117])[0])) / 10
+        )
+        self.dict[self.items[48]] = float(
+            (float(struct.unpack("<B", packet[117:118])[0])) / 10
+        )
+        self.dict[self.items[49]] = float(
+            (float(struct.unpack("<B", packet[118:119])[0])) / 10
+        )
+        self.dict[self.items[50]] = float(
+            (float(struct.unpack("<B", packet[119:120])[0])) / 10
+        )
+        self.dict[self.items[51]] = float(
+            (float(struct.unpack("<B", packet[120:121])[0])) / 10
+        )
+        self.dict[self.items[52]] = float(
+            (float(struct.unpack("<B", packet[121:122])[0])) / 10
+        )
+        self.dict[self.items[53]] = float(
+            (float(struct.unpack("<B", packet[122:123])[0])) / 10
+        )
+        self.dict[self.items[54]] = float(
+            (float(struct.unpack("<B", packet[123:124])[0])) / 10
+        )
+        self.dict[self.items[55]] = float(
+            (float(struct.unpack("<B", packet[124:125])[0])) / 10
+        )
+        self.dict[self.items[56]] = float(
+            (float(struct.unpack("<B", packet[125:126])[0])) / 10
+        )
+        self.dict[self.items[57]] = float(
+            (float(struct.unpack("<B", packet[126:127])[0])) / 10
+        )
+        self.dict[self.items[58]] = float(
+            (float(struct.unpack("<B", packet[127:128])[0])) / 10
+        )
+        self.dict[self.items[59]] = float(
+            (float(struct.unpack("<B", packet[128:129])[0])) / 10
+        )
+        self.dict[self.items[60]] = float(
+            (float(struct.unpack("<B", packet[129:130])[0])) / 10
+        )
+        self.dict[self.items[61]] = float(
+            (float(struct.unpack("<B", packet[130:131])[0])) / 10
+        )
+        self.dict[self.items[62]] = float(
+            (float(struct.unpack("<B", packet[131:132])[0])) / 10
+        )
+        self.dict[self.items[63]] = float(
+            (float(struct.unpack("<B", packet[132:133])[0])) / 10
+        )
+        self.dict[self.items[64]] = float(
+            (float(struct.unpack("<B", packet[133:134])[0])) / 10
+        )
+        self.dict[self.items[65]] = float(
+            (float(struct.unpack("<H", packet[134:136])[0])) / 100
+        )
+        self.dict[self.items[66]] = float(
+            (float(struct.unpack("<H", packet[136:138])[0])) / 100
+        )
+        self.dict[self.items[67]] = float(
+            (float(struct.unpack("<H", packet[138:140])[0])) / 100
+        )
+        self.dict[self.items[68]] = float(
+            (float(struct.unpack("<H", packet[140:142])[0])) / 100
+        )
+        self.dict[self.items[69]] = float(
+            (float(struct.unpack("<H", packet[142:144])[0])) / 100
+        )
+        self.dict[self.items[70]] = float(
+            (float(struct.unpack("<H", packet[144:146])[0])) / 100
+        )
+        self.dict[self.items[71]] = float(
+            (float(struct.unpack("<H", packet[146:148])[0])) / 100
+        )
+        self.dict[self.items[72]] = float(
+            (float(struct.unpack("<H", packet[148:150])[0])) / 100
+        )
+        self.dict[self.items[73]] = float(
+            (float(struct.unpack("<H", packet[150:152])[0])) / 100
+        )
+        self.dict[self.items[74]] = float(
+            (float(struct.unpack("<H", packet[152:154])[0])) / 100
+        )
+        self.dict[self.items[75]] = float(
+            (float(struct.unpack("<H", packet[154:156])[0])) / 100
+        )
+        self.dict[self.items[76]] = float(
+            (float(struct.unpack("<H", packet[156:158])[0])) / 100
+        )
+        self.dict[self.items[77]] = float(
+            (float(struct.unpack("<h", packet[158:160])[0])) / 10
+        )
+        self.dict[self.items[78]] = float(
+            (float(struct.unpack("<h", packet[160:162])[0])) / 10
+        )
+        self.dict[self.items[79]] = int(
+            (float(struct.unpack("<h", packet[162:164])[0])) / 1
+        )
+        self.dict[self.items[80]] = int(
+            (float(struct.unpack("<h", packet[164:166])[0])) / 1
+        )
+        self.dict[self.items[81]] = float(
+            (float(struct.unpack("<h", packet[166:168])[0])) / 10
+        )
+        self.dict[self.items[82]] = float(
+            (float(struct.unpack("<h", packet[168:170])[0])) / 10
+        )
+        self.dict[self.items[83]] = float(
+            (float(struct.unpack("<H", packet[170:172])[0])) / 100
+        )
+        self.dict[self.items[84]] = float(
+            (float(struct.unpack("<H", packet[172:174])[0])) / 100
+        )
+        self.dict[self.items[85]] = float(
+            (float(struct.unpack("<H", packet[174:176])[0])) / 100
+        )
+        self.dict[self.items[86]] = float(
+            (float(struct.unpack("<H", packet[176:178])[0])) / 100
+        )
+        self.dict[self.items[87]] = float(
+            (float(struct.unpack("<H", packet[178:180])[0])) / 100
+        )
+        self.dict[self.items[88]] = float(
+            (float(struct.unpack("<H", packet[180:182])[0])) / 100
+        )
+        self.dict[self.items[89]] = float(
+            (float(struct.unpack("<h", packet[182:184])[0])) / 10
+        )
+        self.dict[self.items[90]] = float(
+            (float(struct.unpack("<h", packet[184:186])[0])) / 10
+        )
+        self.dict[self.items[91]] = float(
+            (float(struct.unpack("<h", packet[186:188])[0])) / 10
+        )
+        self.dict[self.items[92]] = float(
+            (float(struct.unpack("<h", packet[188:190])[0])) / 10
+        )
+        self.dict[self.items[93]] = float(
+            (float(struct.unpack("<h", packet[190:192])[0])) / 10
+        )
+        self.dict[self.items[94]] = float(
+            (float(struct.unpack("<h", packet[192:194])[0])) / 10
+        )
+        self.dict[self.items[95]] = float(
+            (float(struct.unpack("<i", packet[194:198])[0])) / 100
+        )
+        self.dict[self.items[96]] = float(
+            (float(struct.unpack("<i", packet[198:202])[0])) / 100
+        )
+        self.dict[self.items[97]] = float(
+            (float(struct.unpack("<h", packet[202:204])[0])) / 10
+        )
+        self.dict[self.items[98]] = float(
+            (float(struct.unpack("<h", packet[204:206])[0])) / 10
+        )
+        self.dict[self.items[99]] = float(
+            (float(struct.unpack("<h", packet[206:208])[0])) / 10
+        )
+        self.dict[self.items[100]] = float(
+            (float(struct.unpack("<h", packet[208:210])[0])) / 10
+        )
+        self.dict[self.items[101]] = float(
+            (float(struct.unpack("<i", packet[210:214])[0])) / 10
+        )
+        self.dict[self.items[102]] = float(
+            (float(struct.unpack("<i", packet[214:218])[0])) / 10
+        )
+        self.dict[self.items[103]] = int(
+            (float(struct.unpack("<B", packet[218:219])[0])) / 1
+        )
+        self.dict[self.items[104]] = int(
+            (float(struct.unpack("<B", packet[219:220])[0])) / 1
+        )
+        self.dict[self.items[105]] = int(
+            (float(struct.unpack("<B", packet[220:221])[0])) / 1
+        )
+        self.dict[self.items[106]] = int(
+            (float(struct.unpack("<B", packet[221:222])[0])) / 1
+        )
+        self.dict[self.items[107]] = int(
+            (float(struct.unpack("<H", packet[222:224])[0])) / 1
+        )
+        self.dict[self.items[108]] = int(
+            (float(struct.unpack("<H", packet[224:226])[0])) / 1
+        )
+        self.dict[self.items[109]] = int(
+            (float(struct.unpack("<H", packet[226:228])[0])) / 1
+        )
+        self.dict[self.items[110]] = int(
+            (float(struct.unpack("<H", packet[228:230])[0])) / 1
+        )
+        self.dict[self.items[111]] = int(
+            (float(struct.unpack("<H", packet[230:232])[0])) / 1
+        )
+        self.dict[self.items[112]] = int(
+            (float(struct.unpack("<I", packet[232:236])[0])) / 1
+        )
+        self.dict[self.items[113]] = float(
+            (float(struct.unpack("<i", packet[236:240])[0])) / 10000
+        )
+        self.dict[self.items[114]] = int(
+            (float(struct.unpack("<i", packet[240:244])[0])) / 1
+        )
+        self.dict[self.items[115]] = int(
+            (float(struct.unpack("<B", packet[244:245])[0])) / 1
+        )
+        self.dict[self.items[116]] = int(
+            (float(struct.unpack("<B", packet[245:246])[0])) / 1
+        )
+        self.dict[self.items[117]] = int(
+            (float(struct.unpack("<I", packet[246:250])[0])) / 1
+        )
+        self.dict[self.items[118]] = int(
+            (float(struct.unpack("<B", packet[250:251])[0])) / 1
+        )
+        self.dict[self.items[119]] = int(
+            (float(struct.unpack("<B", packet[251:252])[0])) / 1
+        )

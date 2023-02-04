@@ -32,7 +32,9 @@ class ControlsSidebarWidget(QWidget):
 
         self.width = self.centralWidget.panel_width
         self.height = self.parent.height
-        self.setGeometry(int(self.left), int(self.top), int(self.width), int(self.height))
+        self.setGeometry(
+            int(self.left), int(self.top), int(self.width), int(self.height)
+        )
 
         # Sets color of control panel
         self.setAutoFillBackground(True)
@@ -58,7 +60,9 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.setFixedHeight(int(75 * self.gui.pixel_scale_ratio[1]))
         self.title_label.setFixedWidth(int(self.width))
         self.title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.title_label.move(int(10 * self.gui.pixel_scale_ratio[0]), 0)  # Nasty but makes it look more centered
+        self.title_label.move(
+            int(10 * self.gui.pixel_scale_ratio[0]), 0
+        )  # Nasty but makes it look more centered
         self.title_label.show()
 
         time_font = QFont()
@@ -78,7 +82,14 @@ class ControlsSidebarWidget(QWidget):
         # self.state_time_label.show()
 
         self.tabWidget = SidebarTabWidget(self)
-        self.tabWidget.move(3, int(self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1]))
+        self.tabWidget.move(
+            3,
+            int(
+                self.height
+                - self.tabWidget.height()
+                + 3 * self.gui.pixel_scale_ratio[1]
+            ),
+        )
         self.tabWidget.show()
 
         self.board_objects = []  # An empty array to start
@@ -94,11 +105,18 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.NoFrame)
         self.scroll.setFixedWidth(int(self.parent.panel_width - 2))
-        self.scroll.move(2, int(self.title_label.pos().y() + self.title_label.height() + 15 * self.gui.pixel_scale_ratio[1]))
+        self.scroll.move(
+            2,
+            int(
+                self.title_label.pos().y()
+                + self.title_label.height()
+                + 15 * self.gui.pixel_scale_ratio[1]
+            ),
+        )
         self.scroll.setFixedHeight(self.tabWidget.y() - self.scroll.pos().y())
         self.scroll.show()
 
-    def addBoardsToScrollWidget(self, boardNames: [], silent = False):
+    def addBoardsToScrollWidget(self, boardNames: [], silent=False):
         """
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
@@ -151,12 +169,14 @@ class ControlsSidebarWidget(QWidget):
         self.window.setStatusBarMessage("Boards: " + str(boardNames) + " added")'''
 
     def abort_init(self):
-        """Changes the state of each board. 
-        """
+        """Changes the state of each board."""
         self.gui.setStatusBarMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
-                if board.name == "Pressurization Controller" or board.name == "Engine Controller":
+                if (
+                    board.name == "Pressurization Controller"
+                    or board.name == "Engine Controller"
+                ):
                     board.sendBoardState("Abort")
 
     @overrides
@@ -183,8 +203,8 @@ class ControlsSidebarWidget(QWidget):
 
         path.moveTo(1, 0)
         path.lineTo(1, self.height)
-        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1]-1)
-        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1]-1)
+        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1] - 1)
+        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1] - 1)
 
         self.painter.drawPath(path)
 
@@ -197,7 +217,7 @@ class ControlsSidebarWidget(QWidget):
         """
         save_dict = {}
         for i, board in enumerate(self.board_objects):
-            save_dict["Board "+str(i)] = board.name
+            save_dict["Board " + str(i)] = board.name
 
         return save_dict
 
@@ -223,7 +243,11 @@ class SidebarTabWidget(QWidget):
 
         # create widgets
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
-        self.packetLogWidget = PacketLogWidget(self.tabWidget, self.controlsSidebarWidget.window.interface, self.gui.liveDataHandler.dataPacketSignal)
+        self.packetLogWidget = PacketLogWidget(
+            self.tabWidget,
+            self.controlsSidebarWidget.window.interface,
+            self.gui.liveDataHandler.dataPacketSignal,
+        )
         # SidebarPacketLogWidget(self.tabWidget, self.controlsSidebarWidget)
 
         self.tab3 = QWidget()
@@ -250,7 +274,7 @@ class SidebarNoteWidget(QWidget):
     easily be used as its own widget
     """
 
-    def __init__(self, tabWidget,  sideBar):
+    def __init__(self, tabWidget, sideBar):
 
         super().__init__()
 
@@ -281,8 +305,14 @@ class SidebarNoteWidget(QWidget):
         self.noteBox.setRowCount(0)
         # This is kinda a mess, need to set the width so things can fit. Can't use all the space because then starts to
         # clip weirdly so this was easiest
-        self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * .35))
-        self.noteBox.setColumnWidth(1, int(math.floor(self.tabWidget.width() * .65)-40*self.gui.pixel_scale_ratio[0]))
+        self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * 0.35))
+        self.noteBox.setColumnWidth(
+            1,
+            int(
+                math.floor(self.tabWidget.width() * 0.65)
+                - 40 * self.gui.pixel_scale_ratio[0]
+            ),
+        )
         self.noteBox.horizontalHeader().hide()
         self.noteBox.verticalHeader().hide()
 
@@ -319,27 +349,33 @@ class SidebarNoteWidget(QWidget):
             return
 
         # add row for note to be displayed
-        self.noteBox.setRowCount(self.noteBox.rowCount()+1)
+        self.noteBox.setRowCount(self.noteBox.rowCount() + 1)
 
-        cetString = self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(self.gui.campaign.CET)
+        cetString = (
+            self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(
+                self.gui.campaign.CET
+            )
+        )
 
         # add in both items to the table. Need to use the below class, the flags prevent them from being edited.
         item = QTableWidgetItem(cetString)
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
-        self.noteBox.setItem(self.noteBox.rowCount()-1, 0, item)
+        self.noteBox.setItem(self.noteBox.rowCount() - 1, 0, item)
 
         item = QTableWidgetItem(self.lineEdit.text())
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
-        self.noteBox.setItem(self.noteBox.rowCount()-1, 1, item)
+        self.noteBox.setItem(self.noteBox.rowCount() - 1, 1, item)
 
         self.noteBox.resizeRowsToContents()
 
         self.noteBox.scrollToBottom()
 
         # send command to server
-        self.gui.liveDataHandler.sendCommand(9, [cetString,  "NOTE", self.lineEdit.text()])
+        self.gui.liveDataHandler.sendCommand(
+            9, [cetString, "NOTE", self.lineEdit.text()]
+        )
 
         self.clearFocus()
 
@@ -354,7 +390,7 @@ class SidebarNoteWidget(QWidget):
         self.lineEdit.setEnabled(True)
         self.lineEdit.setPlaceholderText("Enter note here")
 
-    def disableNoteCreation(self, noServer:bool = False):
+    def disableNoteCreation(self, noServer: bool = False):
         """
         Function that is connected to the campaignEndSignal. Can be called directly when server connection is lost to
         display that no server is connected

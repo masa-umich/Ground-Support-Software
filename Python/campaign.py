@@ -62,10 +62,30 @@ class Campaign(QObject):
         self.startDateTime = QDateTime.currentDateTime()
         self.CET = 0
         # ISO 8601 format
-        self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
+        self.saveName = (
+            self.startDateTime.date().toString("yyyy-MM-dd")
+            + "-T"
+            + self.startDateTime.time().toString("hhmmss")
+            + "__"
+            + self.title.replace(" ", "_")
+        )
         self.gui.liveDataHandler.setSendAndPopulateData(True)
-        self.gui.liveDataHandler.sendCommand(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData(), self.gui.controlsWindow.centralWidget.controlsWidget.generateSensorMappingsToSend()])
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "LOG", "GUI Version: " + Constants.GUI_VERSION])
+        self.gui.liveDataHandler.sendCommand(
+            6,
+            [
+                str(self.saveName),
+                self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData(),
+                self.gui.controlsWindow.centralWidget.controlsWidget.generateSensorMappingsToSend(),
+            ],
+        )
+        self.gui.liveDataHandler.sendCommand(
+            9,
+            [
+                "CET-" + self.CETasString(),
+                "LOG",
+                "GUI Version: " + Constants.GUI_VERSION,
+            ],
+        )
         self.is_active = True
         self.campaignStartSignal.emit()
 
@@ -82,7 +102,10 @@ class Campaign(QObject):
         if self.isTestActive:
             self.endTest()  # end any tests that need to be
 
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "LOG", "Campaign '" + self.title + "' ended"])
+        self.gui.liveDataHandler.sendCommand(
+            9,
+            ["CET-" + self.CETasString(), "LOG", "Campaign '" + self.title + "' ended"],
+        )
 
         self.campaignEndSignal.emit()
         self.gui.liveDataHandler.sendCommand(6, None)
@@ -98,8 +121,12 @@ class Campaign(QObject):
         self.isTestActive = True
         self.testStartSignal.emit(name)
 
-        self.gui.liveDataHandler.sendCommand(10, [self.saveName, self.currentTestName, False])
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "TEST", "Test '" + name + "' started"])
+        self.gui.liveDataHandler.sendCommand(
+            10, [self.saveName, self.currentTestName, False]
+        )
+        self.gui.liveDataHandler.sendCommand(
+            9, ["CET-" + self.CETasString(), "TEST", "Test '" + name + "' started"]
+        )
 
     def endTest(self):
         """
@@ -108,11 +135,20 @@ class Campaign(QObject):
         """
         self.isTestActive = False
         self.updateCET()
-        self.testDict[self.currentTestName]["Duration"] = self.CET - self.testDict[self.currentTestName]["CET"]
+        self.testDict[self.currentTestName]["Duration"] = (
+            self.CET - self.testDict[self.currentTestName]["CET"]
+        )
         self.testEndSignal.emit()
 
         self.gui.liveDataHandler.sendCommand(10, [self.saveName, None])
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "TEST", "Test '" + self.currentTestName + "' ended"])
+        self.gui.liveDataHandler.sendCommand(
+            9,
+            [
+                "CET-" + self.CETasString(),
+                "TEST",
+                "Test '" + self.currentTestName + "' ended",
+            ],
+        )
 
     def updateCET(self):
         """
@@ -124,7 +160,9 @@ class Campaign(QObject):
             self.CET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
             # Emit the signal that will allow other parts of the GUI to update with this data
             if self.isTestActive:
-                self.updateCETSignal.emit(self.CET, self.testDict[self.currentTestName]["CET"])
+                self.updateCETSignal.emit(
+                    self.CET, self.testDict[self.currentTestName]["CET"]
+                )
             else:
                 self.updateCETSignal.emit(self.CET, None)
 
@@ -140,7 +178,3 @@ class Campaign(QObject):
 
     def setClient(self, client):
         self.client = client
-
-
-
-
