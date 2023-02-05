@@ -5,6 +5,7 @@ import ntpath
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCursor
 from overrides import overrides
 from constants import Constants
 
@@ -69,20 +70,20 @@ class AutoTextEdit(QtWidgets.QTextEdit):
     def insertCompletion(self, completion):
         tc = self.textCursor()
         extra = len(completion) - len(self.completer.completionPrefix())
-        tc.movePosition(QtGui.QTextCursor.Left)
-        tc.movePosition(QtGui.QTextCursor.EndOfWord)
+        tc.movePosition(Qt.QTextCursor.Left)
+        tc.movePosition(Qt.QTextCursor.EndOfWord)
         tc.insertText(completion[-extra:])
         self.setTextCursor(tc)
 
     def textUnderCursor(self):
         tc = self.textCursor()
-        tc.select(QtGui.QTextCursor.WordUnderCursor)
+        tc.select(QTextCursor.WordUnderCursor)
         return tc.selectedText()
 
     def textUnderMouse(self):
         oldCur = self.textCursor()
         textCursor = self.cursorForPosition(self.mapFromGlobal(QtGui.QCursor().pos()))
-        textCursor.select(QtGui.QTextCursor.WordUnderCursor)
+        textCursor.select(QTextCursor.WordUnderCursor)
         self.setTextCursor(textCursor)
         word = self.textCursor().selectedText()
         self.setTextCursor(oldCur)
@@ -92,7 +93,7 @@ class AutoTextEdit(QtWidgets.QTextEdit):
     def focusInEvent(self, event):
         if self.completer:
             self.completer.setWidget(self)
-        QtGui.QTextEdit.focusInEvent(self, event)
+        QtWidgets.QTextEdit.focusInEvent(self, event)
 
     @overrides
     def keyPressEvent(self, event):
@@ -146,7 +147,7 @@ class AutoTextEdit(QtWidgets.QTextEdit):
             return
         if not self.completer or not isShortcut:
             pass
-            QtGui.QTextEdit.keyPressEvent(self, event)
+            QtWidgets.QTextEdit.keyPressEvent(self, event)
         ctrlOrShift = event.modifiers() in (
             QtCore.Qt.ControlModifier,
             QtCore.Qt.ShiftModifier,

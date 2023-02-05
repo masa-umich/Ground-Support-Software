@@ -570,7 +570,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
         """Update application"""
         # super().update()
 
-        packet["Time"] -= self.starttime  # time to elapsed
+        # packet["Time"] -= int(self.starttime) # time to elapsed
         last_frame = pd.DataFrame(packet, index=[0])
         self.database = pd.concat(
             [self.database, last_frame], axis=0, ignore_index=True

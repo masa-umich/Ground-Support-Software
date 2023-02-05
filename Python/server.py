@@ -875,9 +875,7 @@ class Server(QThread):  # See below
             # Write header
             self.data_log.write("Time," + self.interface.get_header() + "\n")
 
-        self.synnax_log = SynnaxLog(
-            ["Time", *self.interface.get_prefixed_channel_names()]
-        )
+        self.synnax_log = SynnaxLog()
 
     def open_test_log(
         self, campaign_save_name: str, test_name, is_recovered: bool = False
@@ -1004,7 +1002,7 @@ class Server(QThread):  # See below
     def data_frame(self, data: dict) -> pd.DataFrame:
         """Converts a data dict to a data frame"""
         return pd.DataFrame.from_records(
-            [{"Time": data["Time"], "ec.e_batt (Volts)": data["ec.e_batt"]}]
+            [data]
         )
 
     def get_data_dict_as_csv_string(self):
