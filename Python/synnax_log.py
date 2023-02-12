@@ -17,12 +17,17 @@ from synnax import io
 
 def _synnax_shield(func):
     """Shields a function from crashing the server"""
+    backoff = False
 
     def wrapper(*args, **kwargs):
+        nonlocal backoff
         try:
-            return func(*args, **kwargs)
+            if not backoff:
+                return func(*args, **kwargs)
         except Exception as e:
-            return warn(f"Synnax - Unexpected error: {e}")
+            warn(f"Synnax - Unexpected error: {e}, backing off")
+            if not backoff:
+                backoff = True
 
     return wrapper
 
@@ -56,6 +61,7 @@ class SynnaxLog(io.DataFrameWriter):
                 port=9090,
                 username="synnax",
                 password="seldon",
+                secure=False,
             )
         except Exception as e:
             self._client = None
