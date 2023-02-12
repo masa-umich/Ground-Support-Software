@@ -176,6 +176,8 @@ class S2_Interface:
                 ):
                     # print("here")
                     self.board_parser[board_addr].parse_packet(packet)
+                    # if self.board_parser == 0:
+                        # self.account_for_negatives(self.board_parser[board_addr])
                     self.unpack_valves(board_addr)
                     # print(self.parser.dict)
                 elif packet_type == 2 and (
@@ -227,6 +229,15 @@ class S2_Interface:
                     self.board_parser[board_addr].items.append(valve_name)
                     self.board_parser[board_addr].units[valve_name] = "ul"
         # print(self.num_valves)
+
+    def account_for_negatives(board):
+        OFFSET = 32500
+        THRESHOLD = -10000
+        for k, v in board.dict.entries():
+            if v < -THRESHOLD:
+                v = OFFSET + OFFSET + v
+            board.dict[k] = v / 10
+            
 
     def init_motors(self):
         for board_addr in range(len(self.board_parser)):
