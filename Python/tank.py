@@ -376,19 +376,19 @@ class Tank(AvionicsObject):
 
         # Set dialog size and place in middle of window
         dialog.resize(
-            450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1]
+            int(450 * self.gui.pixel_scale_ratio[0]), int(240 * self.gui.pixel_scale_ratio[1])
         )
-        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
+        dialog.setMinimumWidth(int(450 * self.gui.pixel_scale_ratio[0]))
+        dialog.setMinimumWidth(int(240 * self.gui.pixel_scale_ratio[1]))
         dialog.move(
-            (self.window.width() - dialog.width()) / 2,
-            (self.window.height() - dialog.height()) / 2,
+            int((self.window.width() - dialog.width()) / 2),
+            int((self.window.height() - dialog.height()) / 2),
         )
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
@@ -476,7 +476,7 @@ class Tank(AvionicsObject):
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
         cancel_button.setFixedWidth(
-            125 * self.gui.pixel_scale_ratio[0]
+            int(125 * self.gui.pixel_scale_ratio[0])
         )  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Save")
@@ -484,7 +484,7 @@ class Tank(AvionicsObject):
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.tankDialogSave(spinBoxes, dialog))
-        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+        save_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)

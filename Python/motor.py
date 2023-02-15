@@ -347,7 +347,7 @@ class Motor(AvionicsObject):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Create spin boxes
         setPointBox = QDoubleSpinBox()

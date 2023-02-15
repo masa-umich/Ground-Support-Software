@@ -41,7 +41,7 @@ class SynnaxLog(io.DataFrameWriter):
     DEFAULT_SIZE_THRESHOLD = (
             400 * 500
     )  # buffer size of 20 seconds with 20hz sampling rate,
-    DEFAULT_TIME_THRESHOLD = TimeSpan.SECOND * 10
+    DEFAULT_TIME_THRESHOLD = TimeSpan.SECOND * 2
 
     _client: Synnax
     _wrapped: io.DataFrameWriter | None = None
