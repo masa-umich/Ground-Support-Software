@@ -281,7 +281,7 @@ class Solenoid(AvionicsObject):
             sol_mid_point = (self.width - coil_height) / 2
             self.anchor_points[0].updateLocalPosition(QPoint(int(sol_mid_point) + 1, 0))
             self.anchor_points[1].updateLocalPosition(
-                QPoint(int(sol_mid_point) + 1, self.height)
+                QPoint(int(sol_mid_point) + 1, int(self.height))
             )
             self.anchor_points[2].updateLocalPosition(
                 QPoint(int(sol_mid_point) + 1, int(self.height / 2 + 1))
@@ -290,7 +290,7 @@ class Solenoid(AvionicsObject):
             sol_mid_point = (self.height - coil_height) / 2 + coil_height
             self.anchor_points[0].updateLocalPosition(QPoint(0, int(sol_mid_point)))
             self.anchor_points[1].updateLocalPosition(
-                QPoint(self.width, int(sol_mid_point))
+                QPoint(int(self.width), int(sol_mid_point))
             )
             self.anchor_points[2].updateLocalPosition(
                 QPoint(int(self.width / 2 + 1), int(sol_mid_point))
