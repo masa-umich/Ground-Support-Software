@@ -350,7 +350,7 @@ class BaseObject(QObject):
         """
         self.anchor_points[0].updateLocalPosition(QPoint(int(self.width / 2), 0))
         self.anchor_points[1].updateLocalPosition(
-            QPoint(int(self.width / 2), self.height)
+            QPoint(int(self.width / 2), int(self.height))
         )
         self.anchor_points[2].updateLocalPosition(QPoint(0, int(self.height / 2)))
         self.anchor_points[3].updateLocalPosition(
