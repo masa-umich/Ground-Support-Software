@@ -145,12 +145,12 @@ class AnchorPoint(QPushButton):
                 if tube.is_being_drawn:
                     if tube.draw_direction == "Vertical":
                         tube.setCurrentPos(
-                            QPoint(tube.points[-1].x(), self.middle.y()), True
+                            QPoint(int(tube.points[-1].x()), int(self.middle.y())), True
                         )
                         tube.setCurrentPos(self.middle)
                     else:
                         tube.setCurrentPos(
-                            QPoint(self.middle.x(), tube.points[-1].y()), True
+                            QPoint(int(self.middle.x()), int(tube.points[-1].y())), True
                         )
                         tube.setCurrentPos(self.middle)
 
