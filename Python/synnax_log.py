@@ -43,7 +43,7 @@ class SynnaxLog(io.DataFrameWriter):
     )  # buffer size of 20 seconds with 20hz sampling rate,
     DEFAULT_TIME_THRESHOLD = TimeSpan.SECOND * 2
 
-    _client: Synnax
+    _client: Synnax | None = None
     _wrapped: io.DataFrameWriter | None = None
     _started: bool = False
     _size_threshold: int
@@ -74,6 +74,8 @@ class SynnaxLog(io.DataFrameWriter):
             self,
             df: DataFrame,
     ):
+        if self._client is None:
+            return
         if not self._started:
             self._new_writer(df)
             self._started = True

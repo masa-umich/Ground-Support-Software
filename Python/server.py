@@ -996,8 +996,7 @@ class Server(QThread):  # See below
             if self.test_data_log is not None:
                 self.test_data_log.write(msg + "\n")
 
-            if self.synnax_log is not None:
-                self.synnax_log.write(self.data_frame(self.data_dict))
+            self.synnax_log.write(self.data_frame(self.data_dict))
 
     def data_frame(self, data: dict) -> pd.DataFrame:
         """Converts a data dict to a data frame"""
