@@ -40,55 +40,56 @@ class Campaign(QObject):
         # All of these are set to none to make sure if someone access before it is created it fails
         self.gui = gui
         self.title = None
-        self.startDateTime = None
-        self.CET = None
-        self.saveName = None
         self.is_active = False
         self.client = self.gui.liveDataHandler.getClient()
         self.numTests = 0
         self.isTestActive = False
         self.currentTestName = None  # not reset back to none after test, holds previous test name till new test created
+        self.startDateTime = None
         self.testDict = {}
+        self.configurationData: dict = None
 
-        self.gui.guiExitSignal.connect(self.endRun)
+    def updateFromData(self, campaign_data: dict):
 
-    def startRun(self, title: str):
-        """
-        Start the run, this just populates the pre-initialized variables
-        :param title: the title for this test
-        :return:
-        """
-        self.title = title
-        self.startDateTime = QDateTime.currentDateTime()
-        self.CET = 0
-        # ISO 8601 format
-        self.saveName = self.startDateTime.date().toString("yyyy-MM-dd") + "-T" + self.startDateTime.time().toString("hhmmss") + "__" + self.title.replace(" ", "_")
-        self.gui.liveDataHandler.setSendAndPopulateData(True)
-        self.gui.liveDataHandler.sendCommand(6, [str(self.saveName), self.gui.controlsWindow.centralWidget.controlsWidget.generateConfigurationSaveData(), self.gui.controlsWindow.centralWidget.controlsWidget.generateSensorMappingsToSend()])
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "LOG", "GUI Version: " + Constants.GUI_VERSION])
-        self.is_active = True
-        self.campaignStartSignal.emit()
+        self.title = campaign_data["title_label"]
+        self.startDateTime = campaign_data["start_time"]
+        self.testDict = campaign_data["test_dict"]
 
-    def endRun(self):
-        """
-        End the current run
-        """
-        if not self.is_active:
-            return
+        #self.gui.guiExitSignal.connect(self.endRun)
 
-        # Want to update CET one last time to get final CET before run ends
-        self.updateCET()
+    # def startRun(self, title: str):
+    #     """
+    #     Start the run, this just populates the pre-initialized variables
+    #     :param title: the title for this test
+    #     :return:
+    #     """
+    #     self.title = title
+    #     self.CET = 0
+    #     # ISO 8601 format
+    #
+    #
+    #     self.is_active = True
+    #     self.campaignStartSignal.emit()
 
-        if self.isTestActive:
-            self.endTest()  # end any tests that need to be
-
-        self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "LOG", "Campaign '" + self.title + "' ended"])
-
-        self.campaignEndSignal.emit()
-        self.gui.liveDataHandler.sendCommand(6, None)
-        self.is_active = False
-        self.gui.liveDataHandler.setSendAndPopulateData(False)
-        self.CET = None
+    # def endRun(self):
+    #     """
+    #     End the current run
+    #     """
+    #     if not self.is_active:
+    #         return
+    #
+    #     # Want to update CET one last time to get final CET before run ends
+    #     self.updateCET()
+    #
+    #     if self.isTestActive:
+    #         self.endTest()  # end any tests that need to be
+    #
+    #     self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "LOG", "Campaign '" + self.title + "' ended"])
+    #
+    #     self.campaignEndSignal.emit()
+    #     self.gui.liveDataHandler.sendCommand(6, None)
+    #     self.is_active = False
+    #     self.gui.liveDataHandler.setSendAndPopulateData(False)
 
     def startTest(self, name: str):
         self.currentTestName = name
@@ -114,19 +115,19 @@ class Campaign(QObject):
         self.gui.liveDataHandler.sendCommand(10, [self.saveName, None])
         self.gui.liveDataHandler.sendCommand(9, ["CET-" + self.CETasString(), "TEST", "Test '" + self.currentTestName + "' ended"])
 
-    def updateCET(self):
-        """
-        This function updates the CET time for the run. Should be called whenever the CET being accurate is critical
-        """
-        # Have to double check this here because thread is still in loop when run ends and one last CET update occurs
-        if self.is_active:
-            # Set the CET, note the msecTo function returns negative for times in the past
-            self.CET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
-            # Emit the signal that will allow other parts of the GUI to update with this data
-            if self.isTestActive:
-                self.updateCETSignal.emit(self.CET, self.testDict[self.currentTestName]["CET"])
-            else:
-                self.updateCETSignal.emit(self.CET, None)
+    # def updateCET(self):
+    #     """
+    #     This function updates the CET time for the run. Should be called whenever the CET being accurate is critical
+    #     """
+    #     # Have to double check this here because thread is still in loop when run ends and one last CET update occurs
+    #     if self.is_active:
+    #         # Set the CET, note the msecTo function returns negative for times in the past
+    #         self.CET = -1 * QDateTime.currentDateTime().msecsTo(self.startDateTime)
+    #         # Emit the signal that will allow other parts of the GUI to update with this data
+    #         if self.isTestActive:
+    #             self.updateCETSignal.emit(self.CET, self.testDict[self.currentTestName]["CET"])
+    #         else:
+    #             self.updateCETSignal.emit(self.CET, None)
 
     def CETasString(self):
         """

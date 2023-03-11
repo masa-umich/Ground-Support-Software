@@ -45,7 +45,7 @@ class LiveDataHandler:
         self.thread.start()
 
 
-# TODO: Still don't like orginization of this ahhh, feels like this is just a background server handler basically
+# TODO: Still don't like orginization of this ahhh, feels like this is just a background server handler basicallmy
 class LiveDataHandlerBackgroundThread(QThread):
     """
     Class that handles background threading for the run class, this is to prevent the GUI from hanging
@@ -70,11 +70,12 @@ class LiveDataHandlerBackgroundThread(QThread):
 
         # While the run is active keep the thread alive, will cleanly exit when run stops
         while True:
-            # Check for data ever 200ms
-            time.sleep(Constants.dataHandlerUpdateRate/1000)  # convert to seconds
+
+            time.sleep(Constants.dataHandlerUpdateRate / 1000)  # convert to seconds
             packet = self.dataHandler.getClient().cycle()
 
             if packet is not None:
+
                 # All is well
                 self.dataHandler.setSendAndPopulateData(True)
 

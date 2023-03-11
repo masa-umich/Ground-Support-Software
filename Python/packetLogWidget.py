@@ -152,6 +152,7 @@ class PacketLogWidget(QWidget):
 
         # Get all the channels and then first filter by board
         allChannels = self.interface.channels
+        print(allChannels)
         boardfilteredChannels = [x for x in allChannels if any(y in x for y in self.boardFilterList)]
 
         # Other is used to represent items that don't fit into the filter. Other channels need to be filtered

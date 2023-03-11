@@ -108,6 +108,13 @@ class BaseGui(QObject):
 
         self._mainWindow = mainWindow
 
+    def isCommander(self):
+        """
+        Returns true if this GUI is currently the commander
+        :return:
+        """
+        return self.liveDataHandler._client.is_commander
+
     def setMainWindow(self, mainWindow: QMainWindow):
         """
         All GUI applications created with BaseGUI class need to call this function to allow the window to actually be

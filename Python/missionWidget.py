@@ -55,6 +55,7 @@ class MissionWidget(QWidget):
         self.mainBarWBuffer = 10 * self.gui.pixel_scale_ratio[0]
 
         self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateConnectionStatus)
+        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
         # TODO: Currently one of these in the controlsWidget class so maybe combine
         self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
 
@@ -97,7 +98,7 @@ class MissionWidget(QWidget):
         self.CET_labelRPos = self.CET_label.width() + self.mainBarWBuffer
 
         # Connect the CET label to the Run CET update function
-        self.gui.campaign.updateCETSignal.connect(self.updateCETLabel)
+        #self.gui.campaign.updateCETSignal.connect(self.updateCETLabel)
 
         # Light mono space font to use
         monospace_light_font = QFont()
@@ -164,11 +165,12 @@ class MissionWidget(QWidget):
         self.status_label.move(self.systemIndicator.pos().x() + self.systemIndicator.width() + self.mainBarWBuffer, 0 - 4 * self.gui.pixel_scale_ratio[1])  # Nasty but makes it look more centered
         self.status_label.show()
 
+        # CAMPAIGN TODO
         # Connect the start of the run to function to allow updating
-        self.gui.campaign.campaignStartSignal.connect(self.updateWidgetOnCampaignStart)
-        self.gui.campaign.campaignEndSignal.connect(self.updateWidgetOnCampaignEnd)
-        self.gui.campaign.testStartSignal.connect(self.updateWidgetOnTestStart)
-        self.gui.campaign.testEndSignal.connect(self.updateWidgetOnTestEnd)
+        #self.gui.campaign.campaignStartSignal.connect(self.updateWidgetOnCampaignStart)
+        #self.gui.campaign.campaignEndSignal.connect(self.updateWidgetOnCampaignEnd)
+        #self.gui.campaign.testStartSignal.connect(self.updateWidgetOnTestStart)
+        #self.gui.campaign.testEndSignal.connect(self.updateWidgetOnTestEnd)
 
         self.show()
 
@@ -187,6 +189,8 @@ class MissionWidget(QWidget):
         if test_start_time is not None:
             qtime = qtime.addSecs(math.floor((CET_time-test_start_time) / 1000.0))
             return "TET-" + qtime.toString("hh:mm:ss")
+        elif CET_time is None:
+            return "CET-" + qtime.toString("hh:mm:ss")
         else:
             qtime = qtime.addSecs(math.floor(CET_time / 1000.0))
             return "CET-" + qtime.toString("hh:mm:ss")
@@ -201,12 +205,13 @@ class MissionWidget(QWidget):
         # Updating Label text
         self.CET_label.setText(self.generateCETAsText(CET_time, test_start_time))
 
-        if self.gui.campaign.isTestActive:
-            self.CET_label.setToolTip("Current " + self.generateCETAsText(self.gui.campaign.CET) + "\n" + self.CET_static_tooltip)
-            self.CET_label.liveUpdateText()
-        else:
-            self.CET_label.setToolTip(self.CET_static_tooltip)
-            self.CET_label.liveUpdateText()
+        # campaign TODO
+        # if self.gui.campaign.isTestActive:
+        #     self.CET_label.setToolTip("Current " + self.generateCETAsText(self.gui.campaign.CET) + "\n" + self.CET_static_tooltip)
+        #     self.CET_label.liveUpdateText()
+        # else:
+        #     self.CET_label.setToolTip(self.CET_static_tooltip)
+        #     self.CET_label.liveUpdateText()
 
     def updateStatusLabel(self, status: str, is_warning: bool = False):
         """
@@ -247,6 +252,14 @@ class MissionWidget(QWidget):
         dateTimeString = currentDateTime.toString("MMMM dd") + dayString + currentDateTime.toString("yyyy, hh:mmap")
         self.dateTimeLabel.setText(dateTimeString)
 
+    @pyqtSlot(object)
+    def updateFromDataPacket(self, data_packet: dict):
+        """Update the CET, TET from the data packet header"""
+
+        CET = data_packet["CET"]
+
+        self.updateCETLabel(CET, None)
+
     @pyqtSlot(str)
     def updateWidgetOnTestStart(self, test_name: str):
         self.titleLabel.setText(self.gui.campaign.title + ': ' + test_name)
@@ -266,6 +279,11 @@ class MissionWidget(QWidget):
 
         self.update()
 
+    # TODO: This is where things become nightmare-ish, need to either always send the full test history log, nuke
+    #  these functions and always update, or on connecting, send a one time packet the campaign history. That is likely
+    #  the better solution because then we can also send over the campaign file the server has for the commander which
+    #  could be nice
+
     def updateWidgetOnCampaignStart(self):
         """
         Function that is called when a run is started to populate the widget with updated values
@@ -279,6 +297,20 @@ class MissionWidget(QWidget):
         # Set run indicator to green
         self.campaignIndicator.setIndicatorColor("Green")
         self.campaignIndicator.setToolTip("Campaign is Active")
+
+        self.update()
+
+    def updateCampaignVisuals(self, campaign_data: dict):
+
+        self.titleLabel.setText(campaign_data["title_label"])
+        self.titleLabel.adjustSize()
+
+        if not self.gui.campaign.is_active:
+            self.CET_label.setToolTip("")
+            self.CET_static_tooltip = ""
+
+            self.campaignIndicator.setIndicatorColor("Red")
+            self.campaignIndicator.setToolTip("Campaign has not started")
 
         self.update()
 
@@ -450,8 +482,8 @@ class MissionWidgetBackgroundThread(QThread):
             tooltip = tooltip.rstrip('\r\n')
             self.updateStatusIndicatorSignal.emit(max_status, tooltip)
 
-            if self.missionWidget.gui.campaign.is_active:
-                self.missionWidget.gui.campaign.updateCET()
+            #if self.missionWidget.gui.campaign.is_active:
+                #self.missionWidget.gui.campaign.updateCET()
 
 
 class CustomCETLabel(QLabel):

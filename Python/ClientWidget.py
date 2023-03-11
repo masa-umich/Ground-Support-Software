@@ -32,6 +32,7 @@ class ClientWidget(QtWidgets.QWidget):
 
     gotConnectionToServerSignal = pyqtSignal()
     serverDisconnectSignal = pyqtSignal()
+    processCommandFromServerSignal = pyqtSignal(dict)
 
     def __init__(self, commandable: bool=True, gui = None, *args, **kwargs):
 
@@ -99,6 +100,8 @@ class ClientWidget(QtWidgets.QWidget):
         # self.host.setText(socket.gethostbyname(socket.gethostname()))
         self.port.setText(str(6969))
 
+        self.processCommandFromServerSignal.connect(self.processCommandFromServer)
+
     def command(self, command: int, args: tuple=()):
         # build and add command to queue
         command_dict = {
@@ -111,7 +114,7 @@ class ClientWidget(QtWidgets.QWidget):
         # print(msg)
 
         if command != 0:
-            print(command_dict)
+            print("Sent to Server:", command_dict)
             if command_dict["command"] == 3:
                 self._gui.setStatusBarMessage("Command sent to server: " + str(command_dict["args"]))
             else:
@@ -166,6 +169,9 @@ class ClientWidget(QtWidgets.QWidget):
         self.s.close()
         self.is_connected = False
         self.serverDisconnectSignal.emit()  # See gui class for what needs to be done
+
+
+
         self._gui.setStatusBarMessage(disconnect_label)
         print(disconnect_label)
 
@@ -189,6 +195,45 @@ class ClientWidget(QtWidgets.QWidget):
         while not self.command_queue.empty():
             self.cycle()
 
+    @staticmethod
+    def getPacketType(packet):
+        """Checks if the packet received by the server is a data packet or a command packet
+        :return string that says what type of packet it is. Lazy but works
+        """
+        # TODO: This may be better if commands were handled on a separate socket but that is a pain
+        if packet is None:
+            return ""
+
+        if "command" in packet.keys():
+            return "command"
+
+        return "data"
+
+    @pyqtSlot(dict)
+    def processCommandFromServer(self, packet: dict):
+        print("tots", packet)
+
+        command = packet["command"]
+        args = packet["args"]
+
+        print("Why", args)
+
+        # Campaign Info
+        if command == 0:
+            if args["title_label"] is not None and not self._gui.campaign.is_active:
+                self._gui.controlsWindow.enterRun()
+                self._gui.campaign.updateFromData(args)
+                self._gui.controlsWindow.centralWidget.missionWidget.updateWidgetOnCampaignStart()
+            else:
+                self._gui.campaign.updateFromData(args)
+                self._gui.controlsWindow.centralWidget.missionWidget.updateCampaignVisuals(args)
+
+                self._gui.campaign.configurationData = None
+
+        elif command == 1:
+            if self._gui.campaign.is_active:
+                self._gui.campaign.configurationData = args
+
     def cycle(self):
         try:
             # send do nothing if no command queued
@@ -206,6 +251,13 @@ class ClientWidget(QtWidgets.QWidget):
             else:
                 packet = None
 
+            packetType = self.getPacketType(packet)
+
+            if packetType == "command":
+                # Need a signal because this is being called from the non-main thread
+                self.processCommandFromServerSignal.emit(packet)
+                return
+
             # update command status
             if packet is None:
                 self.is_commander = False
@@ -215,7 +267,13 @@ class ClientWidget(QtWidgets.QWidget):
                 self.is_commander = True
             else:
                 self.is_commander = False
+
             self.led.setChecked(self.is_commander)
+
+            if self.is_commander:
+                self._gui.controlsWindow.loadCampaignConfigAct.setDisabled(True)
+            elif not self.is_commander and self._gui.campaign.is_active:
+                self._gui.controlsWindow.loadCampaignConfigAct.setEnabled(True)
 
             self.last_packet = packet
             return self.last_packet

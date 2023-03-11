@@ -259,9 +259,10 @@ class SidebarNoteWidget(QWidget):
 
         self.gui = self.controlsSidebarWidget.gui
 
+        # CAMPAIGN TODO
         # Only want notes to be allowed when connected with the server
-        self.gui.campaign.campaignStartSignal.connect(self.enableNoteCreation)
-        self.gui.campaign.campaignEndSignal.connect(self.disableNoteCreation)
+        #self.gui.campaign.campaignStartSignal.connect(self.enableNoteCreation)
+        #self.gui.campaign.campaignEndSignal.connect(self.disableNoteCreation)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)

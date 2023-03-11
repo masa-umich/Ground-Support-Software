@@ -206,6 +206,11 @@ class ControlsWindow(QMainWindow):
         self.openConfigurationDir = QAction('Open Configuration Folder', self)
         self.openConfigurationDir.triggered.connect(self.openConfigurationFolder)
 
+        # Campaign -> Load Current Campaign Configuration
+        self.loadCampaignConfigAct = QAction('Load Campaign Configuration', self)
+        self.loadCampaignConfigAct.triggered.connect(self.loadCampaignConfiguration)
+        self.loadCampaignConfigAct.setDisabled(True)
+
         # Avionics -> Connection Settings
         self.connect = QAction("&Connection", self)
         self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
@@ -279,6 +284,7 @@ class ControlsWindow(QMainWindow):
         campaign_menu.addAction(self.zeroTimeAct)
         campaign_menu.addSeparator()
         campaign_menu.addAction(self.openConfigurationDir)
+        campaign_menu.addAction(self.loadCampaignConfigAct)
 
         # If the gui is being run on windows, dont use the menu bar
         if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
@@ -472,6 +478,14 @@ class ControlsWindow(QMainWindow):
         """
         webbrowser.open('file:///' + os.path.realpath(self.gui.workspace_path))
 
+    def loadCampaignConfiguration(self):
+        """
+        The campaign configuration on the server is loaded into the GUI. If a different GUI joins the campaign it can
+        load the configuration
+        """
+
+        self.centralWidget.controlsWidget.loadData(fileName=None, dict_data=self.gui.campaign.configurationData)
+
     def showDebugDialog(self):
         """
         Shows a dialog for a password to enter debug mode, mostly a meme because I think I only use this
@@ -657,14 +671,19 @@ class ControlsWindow(QMainWindow):
     @pyqtSlot(int, str, bool)
     def updateFromConnectionStatus(self, status: int, error_string: str, is_commander: bool):
         """
-        Just disables the campaign if the server connection is dropped
+        Enables starting a campaign if commander
         :param status: connection status, 3 is server dropped
         :param error_string: not used
-        :param is_commander: not used
+        :param is_commander: bool if is or is not a commander
         """
-        if status == 3:
+        if is_commander:
+            self.startRunAct.setEnabled(True)
+        else:
             self.startRunAct.setDisabled(True)
 
+   # TODO: If you are commander it makes sense to disable everything below, but if you are not then it doesn't really
+    #  make sense. As a result need to make it where if server loses commander during a campaign it ends the campaign?
+    # Startgs to get a bit nasty
     def startRun(self, dialog, run_name):
         """
         Start a new run from menu bar and pass in the user inputted name from dialog
@@ -672,6 +691,20 @@ class ControlsWindow(QMainWindow):
         if len(run_name) == 0:
             return
 
+        self.gui.liveDataHandler.sendCommand(6, [str(run_name),
+                                                 self.centralWidget.controlsWidget.generateConfigurationSaveData(),
+                                                 self.centralWidget.controlsWidget.generateSensorMappingsToSend()])
+
+        self.gui.liveDataHandler.sendCommand(9, ["CET-00:00:00", "LOG",
+                                                 "GUI Version: " + Constants.GUI_VERSION])
+
+        dialog.done(2)  # This 2 is arbitrary expect it differs from the canceled
+        self.gui.setStatusBarMessage("Campaign '" + run_name + "' started")
+
+    def enterRun(self):
+        """Above function just sends command to start the campaign on the server. This is called when we actually
+        see that it has started
+        """
         # When a test is being run we don't want use to be able to edit anything or enter another run
         # Also once a run starts then we want them to have the option to end it
         self.enterEditAct.setDisabled(True)
@@ -683,9 +716,13 @@ class ControlsWindow(QMainWindow):
         self.startTestAct.setEnabled(True)
         self.addAvionicsAct.setDisabled(True)
 
-        self.gui.campaign.startRun(run_name)
-        dialog.done(2)  # This 2 is arbitrary expect it differs from the the canceled
-        self.gui.setStatusBarMessage("Campaign '" + run_name + "' started")
+        # If you are commander then campaign came from you
+        if not self.gui.isCommander():
+            self.loadCampaignConfigAct.setEnabled(True)
+
+        self.gui.liveDataHandler.setSendAndPopulateData(True)
+
+        self.gui.campaign.is_active = True
 
     def endRun(self):
         """
@@ -693,7 +730,9 @@ class ControlsWindow(QMainWindow):
         """
         # Must ensure that the run is active
         if self.gui.campaign.is_active:
-            self.gui.campaign.endRun()
+            self.gui.liveDataHandler.sendCommand(6, None)
+            self.gui.campaign.is_active = False
+            self.gui.liveDataHandler.setSendAndPopulateData(False)
 
         # Allow editing to happen when run is not active
         self.enterEditAct.setEnabled(True)
@@ -705,7 +744,8 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.addAvionicsAct.setEnabled(True)
         self.debugAct.setEnabled(True)
-        self.gui.setStatusBarMessage("Campaign '" + self.gui.campaign.title + "' ended")
+        self.loadCampaignConfigAct.setDisabled(True)
+        self.gui.setStatusBarMessage("Campaign ended")
 
     def startTest(self, dialog: QDialog, test_name: str):
         """

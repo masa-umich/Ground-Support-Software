@@ -519,14 +519,24 @@ class ControlsWidget(QWidget):
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
-    def loadData(self, fileName="data_file.json"):
+    def loadData(self, fileName, dict_data: dict = None):
         """
         Loads data from a json file and populates the widget with all the saved objects
+        :param fileName: Name of the file you are loading
+        :param dict_data: Instead of from file can load from dict. Normally used to load campaign from server
         """
 
-        # Open and read the loaded json file
-        with open(fileName, "r") as read_file:
-            data = json.load(read_file)
+        # Both parameters should not be used at once. If they are exit and warn
+        if fileName is not None and dict_data is not None:
+            print(colored("Load data got both a file name and a dictionary of data. Please resolve", 'red'))
+            return
+
+        if fileName is not None:
+            # Open and read the loaded json file
+            with open(fileName, "r") as read_file:
+                data = json.load(read_file)
+        else:
+            data = dict_data
 
         boards = []
 
@@ -710,7 +720,11 @@ class ControlsWidget(QWidget):
                 boards.append(data[i])
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
-        self.gui.setStatusBarMessage("Configuration opened from " + fileName)
+
+        if fileName is not None:
+            self.gui.setStatusBarMessage("Configuration opened from " + fileName)
+        else:
+            self.gui.setStatusBarMessage("Configuration opened from campaign (server)")
 
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations  # see https://stackoverflow.com/questions/61544854/from-future-import-annotations
 
+import copy
 import ctypes
 import os
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
@@ -149,7 +150,7 @@ class ServerGraphics(QMainWindow):
         packet_log_widget = QWidget()
         packet_log_hbox_layout = QHBoxLayout()
         packet_log_widget.setLayout(packet_log_hbox_layout)
-        self.packet_log_textedit = QTextEdit("Packet Log disabled until implemented")
+        self.packet_log_textedit = QTextEdit("")
         self.packet_log_textedit.setReadOnly(True)
 
         self.packet_log_table = PacketLogWidget(self.info_tab_widget, self.server.interface, self.server.dataPacketSignal, True)
@@ -450,6 +451,7 @@ class Server(QThread):  # See below
     packetSizeLabelSignal = pyqtSignal(str)
     partyParrotStepSignal = pyqtSignal()
     dataPacketSignal = pyqtSignal(dict)
+    clientCommandSignal = pyqtSignal(dict)
     campaignActiveSignal = pyqtSignal(bool)
     campaignETSignal = pyqtSignal(str, str)
     # Doing all this because we may want to run this server when no
@@ -469,7 +471,7 @@ class Server(QThread):  # See below
         # Current server error message
         self.current_error_message = "No Board Connection Attempted"
 
-        self.campaign = Campaign2()
+        self.campaign = Campaign2(self)
 
         # Hold what clients server is connected to
         self.open_client_connections = []
@@ -495,6 +497,10 @@ class Server(QThread):  # See below
         self.data_dict["ser_open"] = self.interface.ser.is_open
         self.data_dict["actively_rx"] = self.is_actively_receiving_data
         self.data_dict["error_msg"] = self.current_error_message
+        self.data_dict["campaign_name"] = self.campaign.title
+        #self.data_dict["test_name"] = self.campaign
+        self.data_dict["CET"] = self.campaign.CET
+        self.data_dict["TET"] = self.campaign.TET
 
         # Add  all possible channels to the data dict. Best to do it this way because we know everything is there
         # and don't know what we will get in the future
@@ -513,8 +519,6 @@ class Server(QThread):  # See below
         self.data_log: TextIO = None
         self.test_data_log: TextIO = None
         self.command_log: TextIO = None
-        self.campaign_log: TextIO = None
-        self.campaign_location: str = None
 
         self._averaged_update_freq = -1
         self._num_update_steps = 0
@@ -531,7 +535,7 @@ class Server(QThread):  # See below
         """
 
         # Start logging
-        self.update_campaign_logging(None)
+        self.open_base_logs(None, self.working_directory)
         # Have to do this after we start logging obv
         self.logSignal.connect(self.write_to_log)
 
@@ -604,6 +608,11 @@ class Server(QThread):  # See below
         self.data_dict["error_msg"] = self.current_error_message
         self.data_dict["time"] = datetime.now().timestamp()
 
+        self.data_dict["campaign_name"] = self.campaign.title
+        #self.data_dict["test_name"] = self.campaign
+        self.data_dict["CET"] = self.campaign.CET
+        self.data_dict["TET"] = self.campaign.TET
+
     @pyqtSlot(object)
     def client_connection_closed(self, client_handler_thread: ClientConnectionHandler):
         """
@@ -613,10 +622,6 @@ class Server(QThread):  # See below
         :return: None
         """
         self.update_commander_from_lost_connection(client_handler_thread.last_uuid)
-
-        # Stop campaign logging if active
-        if self.campaign_location is not None:
-            self.update_campaign_logging(None)
 
         if client_handler_thread in self.open_client_connections:
             self.open_client_connections.remove(client_handler_thread)
@@ -684,6 +689,15 @@ class Server(QThread):  # See below
 
         return cmd_args
 
+    def clientCommand(self, command: int, args: dict = None, targetClient: ClientConnectionHandler = None):
+        command_dict = {
+            "targetClient": targetClient,
+            "command": command,
+            "args": args
+        }
+
+        self.clientCommandSignal.emit(command_dict)
+
     @pyqtSlot(socket.socket, tuple)
     def create_new_client_connection(self, client_socket: socket.socket, addr: tuple):
         """
@@ -696,9 +710,14 @@ class Server(QThread):  # See below
 
         client = ClientConnectionHandler(client_socket, addr, self)
         self.dataPacketSignal.connect(client.get_new_data_for_client)
+        self.clientCommandSignal.connect(client.add_client_command)
 
         self.open_client_connections.append(client)
         client.start()
+
+        args = self.campaign.getCampaignDictionary()
+        self.clientCommand(0, args=args, targetClient=client)
+        self.clientCommand(1, args=self.campaign.configurationData, targetClient=client)
 
     def process_command_line(self, cmd: str, args: list, board_addr: int):
         """
@@ -799,44 +818,48 @@ class Server(QThread):  # See below
         """
         self.is_active = False
 
-    def open_base_logs(self, runname: str, save_location: str, is_recovered: bool):
+    def open_base_logs(self, runname: str, save_location: str):
         """
-        Opens all logs (except test log because that isn't created until a test is created). Can re-open logs that were
-        previously closed due to gui crashing
+        Opens all logs that aren't tied to campaign
         :param runname: name attached to files, is either the campaign or if no campaign the timestamp
         :param save_location: location files are saved in
-        :param is_recovered: if the files should be recovered (re-opened)
         :return: None
         """
+
+        file_timestamp = Constants.get_file_timestamp_string()
+
+        # If no run-name then it is not a campaign and need to adjust location
+        if runname is None:
+            runname = file_timestamp
+            save_location = save_location + file_timestamp + "/"
 
         # make data folder if it does not exist
         if not os.path.exists(save_location):
             os.makedirs(save_location)
 
         # Un lock these files
-        if is_recovered:
-            os.chmod(save_location + runname + "_server_log.txt", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "_data_log.csv", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "_command_log.csv", S_IWUSR | S_IREAD)
-            # log file init and headers
-            self.server_log = open(save_location + runname + "_server_log.txt", "a+")
-            self.serial_log = open(save_location + runname + "_serial_log.csv", "a+")
-            self.data_log = open(save_location + runname + "_data_log.csv", "a+")
-            self.command_log = open(save_location + runname + "_command_log.csv", "a+")
-        else:
+        # if is_recovered:
+        #     os.chmod(save_location + runname + "_server_log.txt", S_IWUSR | S_IREAD)
+        #     os.chmod(save_location + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
+        #     os.chmod(save_location + runname + "_data_log.csv", S_IWUSR | S_IREAD)
+        #     os.chmod(save_location + runname + "_command_log.csv", S_IWUSR | S_IREAD)
+        #     # log file init and headers
+        #     self.server_log = open(save_location + runname + "_server_log.txt", "a+")
+        #     self.serial_log = open(save_location + runname + "_serial_log.csv", "a+")
+        #     self.data_log = open(save_location + runname + "_data_log.csv", "a+")
+        #     self.command_log = open(save_location + runname + "_command_log.csv", "a+")
 
-            # log file init and headers
-            self.server_log = open(save_location + runname + "_server_log.txt", "w")
-            self.serial_log = open(save_location + runname + "_serial_log.csv", "w")
-            self.data_log = open(save_location + runname + "_data_log.csv", "w")
-            self.command_log = open(save_location + runname + "_command_log.csv", "w")
+        # log file init and headers
+        self.server_log = open(save_location + runname + "_server_log.txt", "w")
+        self.serial_log = open(save_location + runname + "_serial_log.csv", "w")
+        self.data_log = open(save_location + runname + "_data_log.csv", "w")
+        self.command_log = open(save_location + runname + "_command_log.csv", "w")
 
-            # Write in the first lines
-            self.command_log.write("Time, From Client/ To Board/ To Client, Command/info\n")
-            self.serial_log.write("Time, Packet\n")
-            # Write header
-            self.data_log.write("Time," + self.interface.get_header() + "\n")
+        # Write in the first lines
+        self.command_log.write("Time, From Client/ To Board/ To Client, Command/info\n")
+        self.serial_log.write("Time, Packet\n")
+        # Write header
+        self.data_log.write("Time," + self.interface.get_header() + "\n")
 
     def open_test_log(self, campaign_save_name: str, test_name, is_recovered: bool = False):
         """
@@ -887,15 +910,6 @@ class Server(QThread):  # See below
         self.data_log.close()
         os.chmod(self.data_log.name, S_IREAD | S_IRGRP | S_IROTH)
 
-        # Close test logs
-        self.close_test_log()
-
-        # Close campaign logs
-        if self.campaign_log is not None and not self.campaign_log.closed:
-            self.campaign_log.close()
-            self.campaign_location = None
-            os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
-
     def close_test_log(self):
         """
         Closes test log. Can't have this as a part of the above close_logs function because it sometimes needs to
@@ -928,8 +942,8 @@ class Server(QThread):  # See below
             self.data_log.write(msg + "\n")  # Timestamp already included in data
 
             # Check if the test log is open (test is running)
-            if self.test_data_log is not None:
-                self.test_data_log.write(msg + "\n")
+            if self.campaign.testLog is not None:
+                self.campaign.testLog.write(msg + "\n")
 
     def get_data_dict_as_csv_string(self):
         """
@@ -945,84 +959,6 @@ class Server(QThread):  # See below
             data_dict_string += "%s," % (self.data_dict[channel])
 
         return data_dict_string
-
-    def update_campaign_logging(self, campaign_save_name: str, configuration_data: dict = None, avionics_mappings: dict = None):
-        """
-        Functions updates (starts/ stops) campaign logging. On start config data and avionics mappings are also sent. If
-        filename is passed as None then it stops the campaign and starts general logging. If the filename is not none,
-        but the configuration data and avionics mappings are, that means the server should recover the campaign
-        :param campaign_save_name: save name of campaign
-        :param configuration_data: dict of configuration data
-        :param avionics_mappings: dict of avionics mappings
-        :return: None
-        """
-
-        self.close_logs()
-
-        # No campaign, revert to general logging
-        if campaign_save_name is None:
-            file_timestamp = self.get_file_timestamp_string()
-            self.open_base_logs(file_timestamp, self.working_directory + file_timestamp + "/", False)
-            self.logSignal.emit("Server", "Raw server logging started under '%s'" % file_timestamp)
-
-        elif configuration_data is None and avionics_mappings is None:  # Check if function call matches recovered state
-
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
-
-            # If this exists then we know we are properly recoverable, otherwise something bad happened
-            campaign_dir_exists = os.path.isdir(self.campaign_location)
-
-            if not campaign_dir_exists:
-                print(colored("WARNING: Recovered state requested, directory not found"), 'red')
-                self.statusBarMessageSignal.emit("Campaign recovery failed. See terminal", True)
-                # Restart logging before exiting
-                self.update_campaign_logging(None)
-                return
-
-            # Re-open base logs with recovered flag
-            self.open_base_logs(campaign_save_name, self.campaign_location, is_recovered=True)
-
-            # Re-open campaign log
-            os.chmod(self.campaign_location + "campaign_log.txt", S_IWUSR | S_IREAD)
-            self.campaign_log = open(self.campaign_location + "campaign_log.txt", "a+")
-            self.logSignal.emit("Server", "Campaign '%s' recovered" % campaign_save_name)
-            self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
-
-        elif campaign_save_name is not None and configuration_data is not None and avionics_mappings is not None:
-            # Create new campaign logging stuff
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
-
-            # Create test folder
-            if not os.path.isdir(self.campaign_location + "tests/"):
-                os.makedirs(self.campaign_location + "tests/")
-
-            # Open base logs
-            self.open_base_logs(campaign_save_name, self.campaign_location, is_recovered=False)
-
-            # Open log and write a few things
-            self.campaign_log = open(self.campaign_location + "campaign_log.txt", "w")
-            self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
-            self.logSignal.emit("Server", "Campaign '%s' started" % campaign_save_name)
-
-            # Write configuration to file
-            with open(self.campaign_location + "configuration.json", "w") as write_file:
-                json.dump(configuration_data, write_file, indent="\t")
-                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
-
-            # Write avionics mappings to file
-            with open(self.campaign_location + "avionicsMappings.csv", "w") as write_file:
-                write_file.write("Channel,Name\n")
-                for key in avionics_mappings:
-                    if key != "Boards":  # currently don't list the boards the user has added
-                        write_file.write(avionics_mappings[key][1] + "," + avionics_mappings[key][
-                            0] + "\n")  # key is not useful, first index is name, second is channel
-                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
-
-        else:
-            print(colored("WARNING: Got a call to update_campaign_logging() that should not occur"), 'red')
-            self.statusBarMessageSignal.emit("Logging command failed. See terminal", True)
-            # Restart logging
-            self.update_campaign_logging(None)
 
     def _calc_server_thread_update_freq(self):
         """
@@ -1079,16 +1015,18 @@ class Server(QThread):  # See below
             # expands it as an iterable so you can use a list to call a function. Pretty cool, from here:
             # https://stackoverflow.com/questions/3941517/converting-list-to-args-when-calling-function
             if args is None:
-                self.logSignal.emit("Server", ("Campaign '%s' ended" % self.campaign_location).replace(
-                    Constants.campaign_data_dir, '').replace("/", ''))
-                self.update_campaign_logging(None)
+                self.logSignal.emit("Server", ("Campaign '%s' ended" % self.campaign.title))
                 self.campaign.endCampaign()
+                self.close_logs()
+                self.open_base_logs(None, self.working_directory)
             else:
-                self.update_campaign_logging(*args)
-                print("campaign logging started from client")
-
                 self.campaign.startCampaign(*args)
                 self.campaignActiveSignal.emit(True)
+                self.logSignal.emit("Server", ("Campaign '%s' started" % self.campaign.title))
+
+            args = self.campaign.getCampaignDictionary()
+            self.clientCommand(0, args=args, targetClient=None)
+            self.clientCommand(1, args=self.campaign.configurationData, targetClient=None)
 
         elif command == Constants.cli_to_ser_cmd_ref["Run Autosequence"] and self.check_commander(clientid):
             if self.active_autosequence is None:
@@ -1120,7 +1058,7 @@ class Server(QThread):  # See below
             type_ = args[1]
             text = args[2]
 
-            self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
+            self.campaign.writeToCampaignLog(CET, type_, text)
 
         elif command == Constants.cli_to_ser_cmd_ref["New Test"]:
             campaign_name = args[0]
@@ -1140,7 +1078,7 @@ class Server(QThread):  # See below
             print(colored("WARNING: Recieved command %s from the client which current has no mapping" % str(command),'red'))
 
         if command !=Constants.cli_to_ser_cmd_ref["Heartbeat"]:
-            print(command_dict)
+            print("From Client: ", command_dict)
             self.logSignal.emit("Command", "From Client, " + str(self.commander) + str(command_dict))
 
     def get_flash_download_progress(self, progress: float):
@@ -1265,14 +1203,6 @@ class Server(QThread):  # See below
             self._calc_server_thread_update_freq()
             time.sleep(1/Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY)
 
-    @staticmethod
-    def get_file_timestamp_string():
-        """
-        Simply returns current time formatted for filename string
-        :return: filename timestamp string
-        """
-        return QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
-
 
 class AutosequenceThread(QThread):
     """
@@ -1394,6 +1324,8 @@ class ClientConnectionHandler(QThread):
         self.address = addr
         self.server = server
 
+        self.client_command_queue = queue.Queue()
+
         self.data_to_client = None
 
         self.sendToLogSignal.connect(self.server.logSignal)
@@ -1404,7 +1336,7 @@ class ClientConnectionHandler(QThread):
 
         # This is called 'last' but shouldn't actually change. It is updated every cycle when a command is received
         # from the client but since this class only controls one client (multiple clients = multiple instances) then
-        # the uuid should never change. However going to leave it as last_uuid to communicate that it is updated
+        # the uuid should never change. However, going to leave it as last_uuid to communicate that it is updated
         self.last_uuid = None
 
         self.is_active = True
@@ -1447,6 +1379,16 @@ class ClientConnectionHandler(QThread):
         # is that
 
         self.data_to_client = data_dict
+
+    @pyqtSlot(dict)
+    def add_client_command(self, command: dict):
+        target_client = command["targetClient"]
+        if target_client == self or target_client is None:
+            # This fucked me up. Signals use pass by reference afaik. So if you emit a signal going to two slots, if
+            #  the first one mutates it, then the second one won't see the original data
+            personal_command = copy.copy(command)
+            del personal_command["targetClient"]
+            self.client_command_queue.put(personal_command)
 
     @overrides
     def exit(self):
@@ -1495,9 +1437,16 @@ class ClientConnectionHandler(QThread):
                 # Have the server process the commands
                 self.sendProcessCommandSignal.emit(command_dict)
 
-                # Send the current data dict we have to client
-                data = pickle.dumps(self.data_to_client)
-                self.client_socket.sendall(data)
+                if not self.client_command_queue.empty():
+
+                    client_command = self.client_command_queue.get()
+
+                    data = pickle.dumps(client_command)
+                    self.client_socket.sendall(data)
+                else:
+                    # Send the current data dict we have to client
+                    data = pickle.dumps(self.data_to_client)
+                    self.client_socket.sendall(data)
 
             except ConnectionResetError:
                 self.close_connection()
@@ -1524,6 +1473,7 @@ class ServerConnectionHandler(QThread):
         # initialize socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = socket.gethostbyname(socket.gethostname())
+        #self.host = '10.0.0.118'
         self.port = 6969
         # The below line may be my favorite line in the whole server. Found from below link, previously restarting
         # the server quickly after closing it would throw a address in use error, now with this line it does not

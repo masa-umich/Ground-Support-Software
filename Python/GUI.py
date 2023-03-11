@@ -53,14 +53,15 @@ class GUI(BaseGui):  # Inherits QObject just so signals can be used
         super().gotConnectionToServer()
         # When new connection, check if in campaign or not. If not then enable campaign to be started, otherwise send a
         # a command to restart old campaign
-        if not self.campaign.is_active:
-            self.controlsWindow.startRunAct.setEnabled(True)
-        else:
-            self.liveDataHandler.sendCommand(6, [str(self.campaign.saveName)])
-            if self.campaign.isTestActive:
-                self.liveDataHandler.sendCommand(10, [self.campaign.saveName, self.campaign.currentTestName, True])
-
-            self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
+        # campaign TODO
+        # if not self.campaign.is_active:
+        #     self.controlsWindow.startRunAct.setEnabled(True)
+        # else:
+        #     self.liveDataHandler.sendCommand(6, [str(self.campaign.saveName)])
+        #     if self.campaign.isTestActive:
+        #         self.liveDataHandler.sendCommand(10, [self.campaign.saveName, self.campaign.currentTestName, True])
+        #
+        #     self.controlsWindow.centralWidget.controlsSidebarWidget.tabWidget.noteWidget.enableNoteCreation()
 
     @pyqtSlot()
     def serverDisconnect(self):

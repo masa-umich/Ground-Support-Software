@@ -254,3 +254,12 @@ class Constants:
         time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
 
         return time
+
+    @staticmethod
+    def get_file_timestamp_string():
+        """
+        Simply returns current time formatted for filename string
+        :return: filename timestamp string
+        """
+        return QDateTime.currentDateTime().date().toString(
+            "yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
