@@ -875,8 +875,6 @@ class Server(QThread):  # See below
             # Write header
             self.data_log.write("Time," + self.interface.get_header() + "\n")
 
-        self.synnax_log = SynnaxLog()
-
     def open_test_log(
         self, campaign_save_name: str, test_name, is_recovered: bool = False
     ):
@@ -953,7 +951,6 @@ class Server(QThread):  # See below
         self.close_test_log()
 
         # Close the Synnax log
-        self.synnax_log.close()
 
         # Close campaign logs
         if self.campaign_log is not None and not self.campaign_log.closed:
@@ -996,7 +993,6 @@ class Server(QThread):  # See below
             if self.test_data_log is not None:
                 self.test_data_log.write(msg + "\n")
 
-            self.synnax_log.write(self.data_frame(self.data_dict))
 
     def data_frame(self, data: dict) -> pd.DataFrame:
         """Converts a data dict to a data frame"""
