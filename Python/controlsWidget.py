@@ -15,7 +15,8 @@ from tube import Tube
 from regulator import Regulator
 from checkValve import CheckValve
 from overrides import overrides
-#from datetime import datetime
+
+# from datetime import datetime
 
 from termcolor import colored
 from bidict import bidict
@@ -56,13 +57,23 @@ class ControlsWidget(QWidget):
         self.width = self.gui.screenResolution[0] - self.parent.panel_width
         self.height = self.parent.height
 
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(self.left, self.top, int(self.width), self.height)
         self.show()
 
         # Keeps track of all the different object types
         # Fun Fact you can call self.object_type_list[0](init vars) to create a new Solenoid Object
-        self.object_type_list = [Solenoid, Tank, Motor, GenSensor, ThreeWayValve, Chamber,
-                                 ThrottleValve, HeatEx, Regulator, CheckValve]
+        self.object_type_list = [
+            Solenoid,
+            Tank,
+            Motor,
+            GenSensor,
+            ThreeWayValve,
+            Chamber,
+            ThrottleValve,
+            HeatEx,
+            Regulator,
+            CheckValve,
+        ]
 
         # Object Tracker
         self.object_list = []
@@ -110,39 +121,63 @@ class ControlsWidget(QWidget):
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.monospace_font)
-        font.setPointSize(50 * self.gui.font_scale_ratio)
+        font.setPointSize(int(50 * self.gui.font_scale_ratio))
 
         self.main_abort_button.setFont(font)
-        self.main_abort_button.setFixedWidth(200 * self.gui.pixel_scale_ratio[0])
+        self.main_abort_button.setFixedWidth(int(200 * self.gui.pixel_scale_ratio[0]))
         self.main_abort_button.setStyleSheet("background-color : darkred")
         self.main_abort_button.setDisabled(False)
-        self.main_abort_button.setFixedHeight(90 * self.gui.pixel_scale_ratio[1])
-        self.main_abort_button.move(self.width - self.main_abort_button.width() - 20 * self.gui.pixel_scale_ratio[0], self.height - self.main_abort_button.height() - 20 * self.gui.pixel_scale_ratio[1])
+        self.main_abort_button.setFixedHeight(int(90 * self.gui.pixel_scale_ratio[1]))
+        self.main_abort_button.move(
+            int(
+                self.width
+                - self.main_abort_button.width()
+                - 20 * self.gui.pixel_scale_ratio[0]
+            ),
+            int(
+                self.height
+                - self.main_abort_button.height()
+                - 20 * self.gui.pixel_scale_ratio[1]
+            ),
+        )
         self.main_abort_button.show()
 
         self.gui.liveDataHandler.updateScreenSignal.connect(self.update)
-        self.window.button_box.softwareAbortSoftArmedSignal.connect(self.setAbortButtonState)
+        self.window.button_box.softwareAbortSoftArmedSignal.connect(
+            self.setAbortButtonState
+        )
 
         # TODO: move these somewhere when file system is initiated
-        #self.loadData()
+        # self.loadData()
 
         # Masa Logo on bottom left of screen
         # FIXME: Make this not blurry as hell
         # TODO: Move this to the main window instead of the widget
         # TODO: Make CustomMainWindow Class to handle things like this for all windows
         self.masa_logo = QLabel(self)
-        pixmap = QPixmap(self.gui.LAUNCH_DIRECTORY+'Images/masawhiteworm3.png')
-        pixmap = pixmap.scaled(300 * self.gui.pixel_scale_ratio[0], 100 * self.gui.pixel_scale_ratio[1], Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pixmap = QPixmap(self.gui.LAUNCH_DIRECTORY + "Images/masawhiteworm3.png")
+        pixmap = pixmap.scaled(
+            int(300 * self.gui.pixel_scale_ratio[0]),
+            int(100 * self.gui.pixel_scale_ratio[1]),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation,
+        )
         self.masa_logo.setPixmap(pixmap)
 
         if self.gui.platform == "OSX":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
-                                       (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
-                                       100 * self.gui.pixel_scale_ratio[1])
+            self.masa_logo.setGeometry(
+                int(10 * self.gui.pixel_scale_ratio[0]),
+                int(self.height - 100 * self.gui.pixel_scale_ratio[1]),
+                int(300 * self.gui.pixel_scale_ratio[0]),
+                int(100 * self.gui.pixel_scale_ratio[1]),
+            )
         elif self.gui.platform == "Windows":
-            self.masa_logo.setGeometry(10 * self.gui.pixel_scale_ratio[0], self.height -
-                                   (100 * self.gui.pixel_scale_ratio[1]), 300 * self.gui.pixel_scale_ratio[0],
-                                   100 * self.gui.pixel_scale_ratio[1])
+            self.masa_logo.setGeometry(
+                int(10 * self.gui.pixel_scale_ratio[0]),
+                int(self.height - (100 * self.gui.pixel_scale_ratio[1])),
+                int(300 * self.gui.pixel_scale_ratio[0]),
+                int(100 * self.gui.pixel_scale_ratio[1]),
+            )
 
     # TODO: Almost anything but this, that being said it works
     def finalizeInit(self):
@@ -150,7 +185,9 @@ class ControlsWidget(QWidget):
         There simply must be an elegant solution to this
         """
         self.controlsPanel = self.parent.controlsPanelWidget
-        self.main_abort_button.clicked.connect(self.centralWidget.controlsSidebarWidget.abort_init)
+        self.main_abort_button.clicked.connect(
+            self.centralWidget.controlsSidebarWidget.abort_init
+        )
 
     def initContextMenu(self):
         """
@@ -158,7 +195,9 @@ class ControlsWidget(QWidget):
         """
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args)) # *args passes point
+        self.customContextMenuRequested.connect(
+            lambda *args: self.contextMenuEvent_(*args)
+        )  # *args passes point
 
         # For all the object types, create a right button action called "New 'Object Name'"
         for object_type in self.object_type_list:
@@ -306,10 +345,17 @@ class ControlsWidget(QWidget):
             if self.controlsPanel.object_editing is not None:
                 self.controlsPanel.object_editing.rotate()
                 self.update()
+        if self.parent.is_editing:
+            print("Key Pressed: " + str(e.key()))
+        else:
+            for solenoid in self.object_list:
+                if isinstance(solenoid, Solenoid):
+                    if str(e.key()) == str(solenoid.keybind):
+                        solenoid.toggle()
 
     @overrides
-    def mousePressEvent(self, e:QMouseEvent):
-        """"
+    def mousePressEvent(self, e: QMouseEvent):
+        """ "
         This event is called when the user is drawing a new line and wants to put 'bends' into the line
         """
 
@@ -321,8 +367,8 @@ class ControlsWidget(QWidget):
                     self.update()
 
     @overrides
-    def mouseMoveEvent(self, e:QMouseEvent):
-        """"
+    def mouseMoveEvent(self, e: QMouseEvent):
+        """ "
         This event is called when the mouse is moving on screen. This is just to keep internal track of when the user is
         moving an object.
         """
@@ -337,7 +383,7 @@ class ControlsWidget(QWidget):
                     self.update()
 
     @overrides
-    def mouseReleaseEvent(self, e:QMouseEvent):
+    def mouseReleaseEvent(self, e: QMouseEvent):
         """
         This event is called when the user clicks on the widget background, ie. no buttons, labels, etc.
         It tells the controls panel to removes all the editing objects and clear itself.
@@ -370,55 +416,103 @@ class ControlsWidget(QWidget):
                 if self.gui.platform == "OSX" and self.window.isFullScreen():
                     point = point - self.window.pos()
                 elif self.gui.platform == "Windows" and self.window.isFullScreen():
-                    point = point - self.window.pos() - self.window.central_widget_offset + self.centralWidget.pos()
+                    point = (
+                        point
+                        - self.window.pos()
+                        - self.window.central_widget_offset
+                        + self.centralWidget.pos()
+                    )
                 else:
-                    point = point - self.window.central_widget_offset - self.window.pos()
+                    point = (
+                        point - self.window.central_widget_offset - self.window.pos()
+                    )
                 # TODO: This is a suppppppper janky fix but it works
-                point = QPointF(point.x() / self.gui.pixel_scale_ratio[0], point.y() / self.gui.pixel_scale_ratio[1])
+                point = QPointF(
+                    point.x() / self.gui.pixel_scale_ratio[0],
+                    point.y() / self.gui.pixel_scale_ratio[1],
+                )
 
-                #TODO: I think this can be condensed with a for loop
+                # TODO: I think this can be condensed with a for loop
                 if action.text() == "New Solenoid":
-                    self.object_count["Solenoid"] = self.object_count["Solenoid"]+1
-                    self.object_list.append(Solenoid(self, position=point,fluid=0, is_vertical=False))
+                    self.object_count["Solenoid"] = self.object_count["Solenoid"] + 1
+                    self.object_list.append(
+                        Solenoid(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New 3 Way Valve":
-                    self.object_count["3 Way Valve"] = self.object_count["3 Way Valve"] + 1
-                    self.object_list.append(ThreeWayValve(self, position=point,fluid=0, is_vertical=False))
+                    self.object_count["3 Way Valve"] = (
+                        self.object_count["3 Way Valve"] + 1
+                    )
+                    self.object_list.append(
+                        ThreeWayValve(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Tank":
                     self.object_count["Tank"] = self.object_count["Tank"] + 1
-                    self.object_list.append(Tank(self, position=point, fluid=False))
+                    self.object_list.append(
+                        Tank(
+                            self, position=point, fluid=False, override_indicator=False
+                        )
+                    )
                 elif action.text() == "New Generic Sensor":
-                    self.object_count["Generic Sensor"] = self.object_count["Generic Sensor"] + 1
-                    self.object_list.append(GenSensor(self, position=point, fluid=0, is_vertical=False))
+                    self.object_count["Generic Sensor"] = (
+                        self.object_count["Generic Sensor"] + 1
+                    )
+                    self.object_list.append(
+                        GenSensor(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Motor":
                     self.object_count["Motor"] = self.object_count["Motor"] + 1
-                    self.object_list.append(Motor(self, position=point, fluid=0, is_vertical=False))
+                    self.object_list.append(
+                        Motor(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Chamber":
                     self.object_count["Chamber"] = self.object_count["Chamber"] + 1
-                    self.object_list.append(Chamber(self, position=point, fluid=4, is_vertical=True))
+                    self.object_list.append(
+                        Chamber(self, position=point, fluid=4, is_vertical=True)
+                    )
                 elif action.text() == "New Throttle Valve":
-                    self.object_count["Throttle Valve"] = self.object_count["Throttle Valve"] + 1
-                    self.object_list.append(ThrottleValve(self, position=point, fluid=0, is_vertical=False))
+                    self.object_count["Throttle Valve"] = (
+                        self.object_count["Throttle Valve"] + 1
+                    )
+                    self.object_list.append(
+                        ThrottleValve(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Heat Exchanger":
-                    self.object_count["Heat Exchanger"] = self.object_count["Heat Exchanger"] + 1
-                    self.object_list.append(HeatEx(self, position=point, fluid=0, is_vertical=False))
+                    self.object_count["Heat Exchanger"] = (
+                        self.object_count["Heat Exchanger"] + 1
+                    )
+                    self.object_list.append(
+                        HeatEx(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Regulator":
                     self.object_count["Regulator"] = self.object_count["Regulator"] + 1
-                    self.object_list.append(Regulator(self, position=point, fluid=0, is_vertical=False))
+                    self.object_list.append(
+                        Regulator(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Check Valve":
-                    self.object_count["Check Valve"] = self.object_count["Check Valve"] + 1
-                    self.object_list.append(CheckValve(self, position=point, fluid=0, is_vertical=False))
+                    self.object_count["Check Valve"] = (
+                        self.object_count["Check Valve"] + 1
+                    )
+                    self.object_list.append(
+                        CheckValve(self, position=point, fluid=0, is_vertical=False)
+                    )
                 elif action.text() == "New Tube":
-                    self.tube_list.append(Tube(self, [],Constants.fluid["HE"], [self]))
+                    self.tube_list.append(Tube(self, [], Constants.fluid["HE"], [self]))
                     self.setMouseTracking(True)
                 else:
-                    print(colored("WARNING: Context menu has no action attached to " + action.text(), 'red'))
+                    print(
+                        colored(
+                            "WARNING: Context menu has no action attached to "
+                            + action.text(),
+                            "red",
+                        )
+                    )
 
                 # Add editing object, and move back because the position is scaled and I am lazy
                 if action.text() == "New Tube":
                     self.is_drawing = True
                     self.tube_list[-1].is_being_drawn = True
                 else:
-                    #mod = QApplication.keyboardModifiers()
+                    # mod = QApplication.keyboardModifiers()
                     self.controlsPanel.addEditingObject(self.object_list[-1])
                     self.object_list[-1].move(point)
 
@@ -441,7 +535,12 @@ class ControlsWidget(QWidget):
         for object_ in self.object_list:
             if hasattr(object_, "channel") and object_.isAvionicsFullyDefined():
                 if object_.object_name != "Generic Sensor":
-                    mapDict[counter] = [object_.long_name, self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] + object_.channel]
+                    mapDict[counter] = [
+                        object_.long_name,
+                        self.window.interface.getPrefix(object_.avionics_board)
+                        + Constants.object_prefix_map[object_.name]
+                        + object_.channel,
+                    ]
                 else:
                     mapDict[counter] = [object_.long_name, object_.channel]
                 counter += 1
@@ -455,24 +554,40 @@ class ControlsWidget(QWidget):
         """
 
         with open("data/.tempMappings.txt", "w") as write_file:
-            write_file.write("CONNECTED BOARDS:\n---------------------------------------------------------\n")
+            write_file.write(
+                "CONNECTED BOARDS:\n---------------------------------------------------------\n"
+            )
             for board in self.centralWidget.controlsSidebarWidget.board_objects:
                 write_file.write(board.name + "\n")
 
-            write_file.write("\n" + f'{"NAME":<25}{"CHANNEL":<12}' + "\n---------------------------------------------------------\n")
+            write_file.write(
+                "\n"
+                + f'{"NAME":<25}{"CHANNEL":<12}'
+                + "\n---------------------------------------------------------\n"
+            )
             for object_ in self.object_list:
-                if hasattr(object_, 'channel') and object_.channel != "Undefined":
+                if hasattr(object_, "channel") and object_.channel != "Undefined":
                     if object_.object_name != "Generic Sensor":
-                        write_file.write(f'{object_.long_name + ",":<40}{self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] +  object_.channel:<12}' + "\n")
+                        write_file.write(
+                            f'{object_.long_name + ",":<40}{self.window.interface.getPrefix(object_.avionics_board) + Constants.object_prefix_map[object_.name] +  object_.channel:<12}'
+                            + "\n"
+                        )
                     else:
-                        write_file.write(f'{object_.long_name + ",":<40}{object_.channel:<12}' + "\n")
+                        write_file.write(
+                            f'{object_.long_name + ",":<40}{object_.channel:<12}' + "\n"
+                        )
 
         if self.gui.platform == "Windows":
-            os.system('notepad data/.tempMappings.txt')
+            os.system("notepad data/.tempMappings.txt")
         elif self.gui.platform == "OSX":
-            os.system('open -e data/.tempMappings.txt')
+            os.system("open -e data/.tempMappings.txt")
         else:
-            print(colored("WARNING: System not supported. Manually open sensor mappings under data/.tempMappings", 'red'))
+            print(
+                colored(
+                    "WARNING: System not supported. Manually open sensor mappings under data/.tempMappings",
+                    "red",
+                )
+            )
 
     def generateConfigurationSaveData(self):
         """
@@ -513,9 +628,12 @@ class ControlsWidget(QWidget):
             self.gui.setStatusBarMessage("Configuration saved to " + filename)
 
         except PermissionError:
-            self.window.showStandardMessageDialog("Cannot Save File", "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify", "Warning")
+            self.window.showStandardMessageDialog(
+                "Cannot Save File",
+                "The file you are saving to is locked, or you do not have permission. Please use 'Save As' if you wish to modify",
+                "Warning",
+            )
             self.gui.setStatusBarMessage("Edit permission denied for file: " + filename)
-
 
     # TODO: This should not be the location that data is started the load from,
     #  ideally it would come from the top level GUI application and dispatch the data to where it needs to go
@@ -534,166 +652,366 @@ class ControlsWidget(QWidget):
         # TODO: I was really lazy so I just copy pasted but can be done nicer
         # Quickly parses json data dict and calls the right object initializer to add it to screen
         for i in data:
-            obj_type = i.rsplit(' ', 1)[0]
+            obj_type = i.rsplit(" ", 1)[0]
 
             if obj_type in self.object_count.keys():
                 self.object_count[obj_type] = self.object_count[obj_type] + 1
 
             if obj_type == "Solenoid":
                 sol = data[i]
-                self.object_list.append(Solenoid(self, _id=sol["id"], position=QPointF(sol["pos"]["x"],sol["pos"]["y"]),
-                                                 fluid=sol["fluid"],width=sol["width"], height=sol["height"],
-                                                 name=sol["name"],scale=sol["scale"],
-                                                 serial_number=sol["serial number"],
-                                                 long_name=sol["long name"], is_vertical=sol["is vertical"],
-                                                 locked=sol["is locked"],position_locked=sol["is pos locked"],
-                                                 serial_number_label_pos=sol["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=sol["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(sol["serial number label"]["local pos"]["x"],sol["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=sol["long name label"]["pos string"],
-                                                 long_name_label_font_size=sol["long name label"]["font size"],
-                                                 long_name_label_local_pos=QPointF(sol["long name label"]["local pos"]["x"],sol["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=sol["long name label"]["rows"], channel=sol["channel"], board=sol["board"],
-                                                 normally_open=sol['normally open'],long_name_visible=sol["long name label"]["is visible"],
-                                                 serial_number_visible=sol["serial number label"]["is visible"]))
+                self.object_list.append(
+                    Solenoid(
+                        self,
+                        _id=sol["id"],
+                        position=QPointF(sol["pos"]["x"], sol["pos"]["y"]),
+                        fluid=sol["fluid"],
+                        width=sol["width"],
+                        height=sol["height"],
+                        name=sol["name"],
+                        scale=sol["scale"],
+                        serial_number=sol["serial number"],
+                        long_name=sol["long name"],
+                        is_vertical=sol["is vertical"],
+                        locked=sol["is locked"],
+                        position_locked=sol["is pos locked"],
+                        serial_number_label_pos=sol["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=sol["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            sol["serial number label"]["local pos"]["x"],
+                            sol["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=sol["long name label"]["pos string"],
+                        long_name_label_font_size=sol["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            sol["long name label"]["local pos"]["x"],
+                            sol["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=sol["long name label"]["rows"],
+                        channel=sol["channel"],
+                        board=sol["board"],
+                        normally_open=sol["normally open"],
+                        long_name_visible=sol["long name label"]["is visible"],
+                        serial_number_visible=sol["serial number label"]["is visible"],
+                    )
+                )
+                self.object_list[-1].keybind = sol.get("keybind", -1)
 
             elif obj_type == "Tank":
                 tnk = data[i]
-                self.object_list.append(Tank(self, _id=tnk["id"], position=QPointF(tnk["pos"]["x"], tnk["pos"]["y"]),
-                                             fluid=tnk["fluid"], width=tnk["width"], height=tnk["height"],
-                                             name=tnk["name"], scale=tnk["scale"],
-                                             serial_number=tnk["serial number"],
-                                             long_name=tnk["long name"], is_vertical=tnk["is vertical"],
-                                             locked=tnk["is locked"], position_locked=tnk["is pos locked"],
-                                             serial_number_label_pos=tnk["serial number label"]["pos string"],
-                                             serial_number_label_font_size=tnk["serial number label"]["font size"],
-                                             serial_number_label_local_pos=QPointF(tnk["serial number label"]["local pos"]["x"], tnk["serial number label"]["local pos"]["y"]),
-                                             long_name_label_pos=tnk["long name label"]["pos string"],
-                                             long_name_label_font_size=tnk["long name label"]["font size"],
-                                             long_name_label_local_pos=QPointF(tnk["long name label"]["local pos"]["x"], tnk["long name label"]["local pos"]["y"]),
-                                             long_name_label_rows=tnk["long name label"]["rows"],long_name_visible=tnk["long name label"]["is visible"],
-                                             serial_number_visible=tnk["serial number label"]["is visible"], board=tnk["board"], channel=tnk["channel"]))
+                self.object_list.append(
+                    Tank(
+                        self,
+                        _id=tnk["id"],
+                        position=QPointF(tnk["pos"]["x"], tnk["pos"]["y"]),
+                        fluid=tnk["fluid"],
+                        width=tnk["width"],
+                        height=tnk["height"],
+                        name=tnk["name"],
+                        scale=tnk["scale"],
+                        serial_number=tnk["serial number"],
+                        long_name=tnk["long name"],
+                        is_vertical=tnk["is vertical"],
+                        locked=tnk["is locked"],
+                        position_locked=tnk["is pos locked"],
+                        serial_number_label_pos=tnk["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=tnk["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            tnk["serial number label"]["local pos"]["x"],
+                            tnk["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=tnk["long name label"]["pos string"],
+                        long_name_label_font_size=tnk["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            tnk["long name label"]["local pos"]["x"],
+                            tnk["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=tnk["long name label"]["rows"],
+                        long_name_visible=tnk["long name label"]["is visible"],
+                        serial_number_visible=tnk["serial number label"]["is visible"],
+                        board=tnk["board"],
+                        channel=tnk["channel"],
+                    )
+                )
             elif obj_type == "Motor":
                 motor = data[i]
-                self.object_list.append(Motor(self, _id=motor["id"], position=QPointF(motor["pos"]["x"],motor["pos"]["y"]),
-                                                 fluid=motor["fluid"],width=motor["width"], height=motor["height"],
-                                                 name=motor["name"],scale=motor["scale"],
-                                                 serial_number=motor["serial number"],
-                                                 long_name=motor["long name"], is_vertical=motor["is vertical"],
-                                                 locked=motor["is locked"],position_locked=motor["is pos locked"],
-                                                 serial_number_label_pos=motor["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=motor["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(motor["serial number label"]["local pos"]["x"],motor["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=motor["long name label"]["pos string"],
-                                                 long_name_label_font_size=motor["long name label"]["font size"],
-                                                 long_name_label_local_pos=QPointF(motor["long name label"]["local pos"]["x"],motor["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=motor["long name label"]["rows"], channel=motor["channel"], board=motor["board"],long_name_visible=motor["long name label"]["is visible"],
-                                                 serial_number_visible=motor["serial number label"]["is visible"]))
+                self.object_list.append(
+                    Motor(
+                        self,
+                        _id=motor["id"],
+                        position=QPointF(motor["pos"]["x"], motor["pos"]["y"]),
+                        fluid=motor["fluid"],
+                        width=motor["width"],
+                        height=motor["height"],
+                        name=motor["name"],
+                        scale=motor["scale"],
+                        serial_number=motor["serial number"],
+                        long_name=motor["long name"],
+                        is_vertical=motor["is vertical"],
+                        locked=motor["is locked"],
+                        position_locked=motor["is pos locked"],
+                        serial_number_label_pos=motor["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=motor["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            motor["serial number label"]["local pos"]["x"],
+                            motor["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=motor["long name label"]["pos string"],
+                        long_name_label_font_size=motor["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            motor["long name label"]["local pos"]["x"],
+                            motor["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=motor["long name label"]["rows"],
+                        channel=motor["channel"],
+                        board=motor["board"],
+                        long_name_visible=motor["long name label"]["is visible"],
+                        serial_number_visible=motor["serial number label"][
+                            "is visible"
+                        ],
+                    )
+                )
 
             elif obj_type == "Generic Sensor":
                 pt = data[i]
-                self.object_list.append(GenSensor(self, _id=pt["id"], position=QPointF(pt["pos"]["x"], pt["pos"]["y"]),
-                                                 fluid=pt["fluid"], width=pt["width"], height=pt["height"],
-                                                 name=pt["name"], scale=pt["scale"],
-                                                 serial_number=pt["serial number"],
-                                                 long_name=pt["long name"], is_vertical=pt["is vertical"],
-                                                 locked=pt["is locked"], position_locked=pt["is pos locked"],
-                                                 serial_number_label_pos=pt["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=pt["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(pt["serial number label"]["local pos"]["x"], pt["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=pt["long name label"]["pos string"],
-                                                 long_name_label_font_size=pt["long name label"]["font size"],
-                                                 long_name_label_local_pos=QPointF(pt["long name label"]["local pos"]["x"], pt["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=pt["long name label"]["rows"],
-                                                 channel=pt["channel"],board=pt["board"],long_name_visible=pt["long name label"]["is visible"],
-                                                 serial_number_visible=pt["serial number label"]["is visible"]))
-            
+                self.object_list.append(
+                    GenSensor(
+                        self,
+                        _id=pt["id"],
+                        position=QPointF(pt["pos"]["x"], pt["pos"]["y"]),
+                        fluid=pt["fluid"],
+                        width=pt["width"],
+                        height=pt["height"],
+                        name=pt["name"],
+                        scale=pt["scale"],
+                        serial_number=pt["serial number"],
+                        long_name=pt["long name"],
+                        is_vertical=pt["is vertical"],
+                        locked=pt["is locked"],
+                        position_locked=pt["is pos locked"],
+                        serial_number_label_pos=pt["serial number label"]["pos string"],
+                        serial_number_label_font_size=pt["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            pt["serial number label"]["local pos"]["x"],
+                            pt["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=pt["long name label"]["pos string"],
+                        long_name_label_font_size=pt["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            pt["long name label"]["local pos"]["x"],
+                            pt["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=pt["long name label"]["rows"],
+                        channel=pt["channel"],
+                        board=pt["board"],
+                        long_name_visible=pt["long name label"]["is visible"],
+                        serial_number_visible=pt["serial number label"]["is visible"],
+                    )
+                )
+
             elif obj_type == "Chamber":
                 idx = data[i]
-                self.object_list.append(Chamber(self, _id=idx["id"], position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
-                                                fluid=idx["fluid"], width=idx["width"], height=idx["height"],
-                                                name=idx["name"], scale=idx["scale"],
-                                                serial_number=idx["serial number"],
-                                                long_name=idx["long name"], is_vertical=idx["is vertical"],
-                                                locked=idx["is locked"], position_locked=idx["is pos locked"],
-                                                serial_number_label_pos=idx["serial number label"]["pos string"],
-                                                serial_number_label_font_size=idx["serial number label"]["font size"],
-                                                serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"], idx["serial number label"]["local pos"]["y"]),
-                                                long_name_label_pos=idx["long name label"]["pos string"],
-                                                long_name_label_font_size=idx["long name label"]["font size"],
-                                                long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"], idx["long name label"]["local pos"]["y"]),
-                                                long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
-                                                 serial_number_visible=idx["serial number label"]["is visible"]))
+                self.object_list.append(
+                    Chamber(
+                        self,
+                        _id=idx["id"],
+                        position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                        fluid=idx["fluid"],
+                        width=idx["width"],
+                        height=idx["height"],
+                        name=idx["name"],
+                        scale=idx["scale"],
+                        serial_number=idx["serial number"],
+                        long_name=idx["long name"],
+                        is_vertical=idx["is vertical"],
+                        locked=idx["is locked"],
+                        position_locked=idx["is pos locked"],
+                        serial_number_label_pos=idx["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=idx["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            idx["serial number label"]["local pos"]["x"],
+                            idx["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=idx["long name label"]["pos string"],
+                        long_name_label_font_size=idx["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            idx["long name label"]["local pos"]["x"],
+                            idx["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=idx["long name label"]["rows"],
+                        long_name_visible=idx["long name label"]["is visible"],
+                        serial_number_visible=idx["serial number label"]["is visible"],
+                    )
+                )
 
             elif obj_type == "Throttle Valve":
                 idx = data[i]
-                self.object_list.append(ThrottleValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
-                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
-                                                 name=idx["name"],scale=idx["scale"],
-                                                 serial_number=idx["serial number"],
-                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
-                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=idx["long name label"]["pos string"],
-                                                 long_name_label_font_size=idx["long name label"]["font size"],
-                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=idx["long name label"]["rows"],long_name_visible=idx["long name label"]["is visible"],
-                                                 serial_number_visible=idx["serial number label"]["is visible"]))
-            
+                self.object_list.append(
+                    ThrottleValve(
+                        self,
+                        _id=idx["id"],
+                        position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                        fluid=idx["fluid"],
+                        width=idx["width"],
+                        height=idx["height"],
+                        name=idx["name"],
+                        scale=idx["scale"],
+                        serial_number=idx["serial number"],
+                        long_name=idx["long name"],
+                        is_vertical=idx["is vertical"],
+                        locked=idx["is locked"],
+                        position_locked=idx["is pos locked"],
+                        serial_number_label_pos=idx["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=idx["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            idx["serial number label"]["local pos"]["x"],
+                            idx["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=idx["long name label"]["pos string"],
+                        long_name_label_font_size=idx["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            idx["long name label"]["local pos"]["x"],
+                            idx["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=idx["long name label"]["rows"],
+                        long_name_visible=idx["long name label"]["is visible"],
+                        serial_number_visible=idx["serial number label"]["is visible"],
+                    )
+                )
+
             elif obj_type == "3 Way":
                 idx = data[i]
-                self.object_list.append(ThreeWayValve(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
-                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
-                                                 name=idx["name"],scale=idx["scale"],
-                                                 serial_number=idx["serial number"],
-                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
-                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=idx["long name label"]["pos string"],
-                                                 long_name_label_font_size=idx["long name label"]["font size"],
-                                                 channel=idx["channel"], board=idx["board"],
-                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=idx["long name label"]["rows"]))
-            
+                self.object_list.append(
+                    ThreeWayValve(
+                        self,
+                        _id=idx["id"],
+                        position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                        fluid=idx["fluid"],
+                        width=idx["width"],
+                        height=idx["height"],
+                        name=idx["name"],
+                        scale=idx["scale"],
+                        serial_number=idx["serial number"],
+                        long_name=idx["long name"],
+                        is_vertical=idx["is vertical"],
+                        locked=idx["is locked"],
+                        position_locked=idx["is pos locked"],
+                        serial_number_label_pos=idx["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=idx["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            idx["serial number label"]["local pos"]["x"],
+                            idx["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=idx["long name label"]["pos string"],
+                        long_name_label_font_size=idx["long name label"]["font size"],
+                        channel=idx["channel"],
+                        board=idx["board"],
+                        long_name_label_local_pos=QPointF(
+                            idx["long name label"]["local pos"]["x"],
+                            idx["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=idx["long name label"]["rows"],
+                    )
+                )
+
             elif obj_type == "Heat Exchanger":
                 idx = data[i]
-                self.object_list.append(HeatEx(self, _id=idx["id"], position=QPointF(idx["pos"]["x"],idx["pos"]["y"]),
-                                                 fluid=idx["fluid"],width=idx["width"], height=idx["height"],
-                                                 name=idx["name"],scale=idx["scale"],
-                                                 serial_number=idx["serial number"],
-                                                 long_name=idx["long name"], is_vertical=idx["is vertical"],
-                                                 locked=idx["is locked"],position_locked=idx["is pos locked"],
-                                                 serial_number_label_pos=idx["serial number label"]["pos string"],
-                                                 serial_number_label_font_size=idx["serial number label"]["font size"],
-                                                 serial_number_label_local_pos=QPointF(idx["serial number label"]["local pos"]["x"],idx["serial number label"]["local pos"]["y"]),
-                                                 long_name_label_pos=idx["long name label"]["pos string"],
-                                                 long_name_label_font_size=idx["long name label"]["font size"],
-                                                 long_name_label_local_pos=QPointF(idx["long name label"]["local pos"]["x"],idx["long name label"]["local pos"]["y"]),
-                                                 long_name_label_rows=idx["long name label"]["rows"]))
+                self.object_list.append(
+                    HeatEx(
+                        self,
+                        _id=idx["id"],
+                        position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                        fluid=idx["fluid"],
+                        width=idx["width"],
+                        height=idx["height"],
+                        name=idx["name"],
+                        scale=idx["scale"],
+                        serial_number=idx["serial number"],
+                        long_name=idx["long name"],
+                        is_vertical=idx["is vertical"],
+                        locked=idx["is locked"],
+                        position_locked=idx["is pos locked"],
+                        serial_number_label_pos=idx["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=idx["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            idx["serial number label"]["local pos"]["x"],
+                            idx["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=idx["long name label"]["pos string"],
+                        long_name_label_font_size=idx["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            idx["long name label"]["local pos"]["x"],
+                            idx["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=idx["long name label"]["rows"],
+                    )
+                )
 
             elif obj_type == "Regulator":
                 idx = data[i]
-                self.object_list.append(Regulator(self, _id=idx["id"], position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
-                                               fluid=idx["fluid"], width=idx["width"], height=idx["height"],
-                                               name=idx["name"], scale=idx["scale"],
-                                               serial_number=idx["serial number"],
-                                               long_name=idx["long name"], is_vertical=idx["is vertical"],
-                                               locked=idx["is locked"], position_locked=idx["is pos locked"],
-                                               serial_number_label_pos=idx["serial number label"]["pos string"],
-                                               serial_number_label_font_size=idx["serial number label"]["font size"],
-                                               serial_number_label_local_pos=QPointF(
-                                                   idx["serial number label"]["local pos"]["x"],
-                                                   idx["serial number label"]["local pos"]["y"]),
-                                               long_name_label_pos=idx["long name label"]["pos string"],
-                                               long_name_label_font_size=idx["long name label"]["font size"],
-                                               long_name_label_local_pos=QPointF(
-                                                   idx["long name label"]["local pos"]["x"],
-                                                   idx["long name label"]["local pos"]["y"]),
-                                               long_name_label_rows=idx["long name label"]["rows"]))
+                self.object_list.append(
+                    Regulator(
+                        self,
+                        _id=idx["id"],
+                        position=QPointF(idx["pos"]["x"], idx["pos"]["y"]),
+                        fluid=idx["fluid"],
+                        width=idx["width"],
+                        height=idx["height"],
+                        name=idx["name"],
+                        scale=idx["scale"],
+                        serial_number=idx["serial number"],
+                        long_name=idx["long name"],
+                        is_vertical=idx["is vertical"],
+                        locked=idx["is locked"],
+                        position_locked=idx["is pos locked"],
+                        serial_number_label_pos=idx["serial number label"][
+                            "pos string"
+                        ],
+                        serial_number_label_font_size=idx["serial number label"][
+                            "font size"
+                        ],
+                        serial_number_label_local_pos=QPointF(
+                            idx["serial number label"]["local pos"]["x"],
+                            idx["serial number label"]["local pos"]["y"],
+                        ),
+                        long_name_label_pos=idx["long name label"]["pos string"],
+                        long_name_label_font_size=idx["long name label"]["font size"],
+                        long_name_label_local_pos=QPointF(
+                            idx["long name label"]["local pos"]["x"],
+                            idx["long name label"]["local pos"]["y"],
+                        ),
+                        long_name_label_rows=idx["long name label"]["rows"],
+                    )
+                )
 
             # TODO: Pass data to properly attach these to the right anchor point if applicable
             elif obj_type == "Tube":
@@ -701,16 +1019,28 @@ class ControlsWidget(QWidget):
                 # First pull all the point data out and put it in an array
                 points = []
                 for j in tube["bend positions"]:
-                    points.append(QPointF(tube["bend positions"][j]["x"]* self.parent.gui.pixel_scale_ratio[0],
-                                         tube["bend positions"][j]["y"]* self.parent.gui.pixel_scale_ratio[1]))
+                    points.append(
+                        QPointF(
+                            tube["bend positions"][j]["x"]
+                            * self.parent.gui.pixel_scale_ratio[0],
+                            tube["bend positions"][j]["y"]
+                            * self.parent.gui.pixel_scale_ratio[1],
+                        )
+                    )
 
-                self.tube_list.append(Tube(self, tube_id=tube["tube id"], attachment_aps=[], fluid=tube["fluid"], points=points, line_width=tube["line width"]))
+                self.tube_list.append(
+                    Tube(
+                        self,
+                        tube_id=tube["tube id"],
+                        attachment_aps=[],
+                        fluid=tube["fluid"],
+                        points=points,
+                        line_width=tube["line width"],
+                    )
+                )
 
             elif obj_type == "Board":
                 boards.append(data[i])
 
         self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(boards)
         self.gui.setStatusBarMessage("Configuration opened from " + fileName)
-
-
-

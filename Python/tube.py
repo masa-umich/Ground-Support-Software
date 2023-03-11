@@ -12,7 +12,15 @@ class Tube:
 
     object_name = "Tube"
 
-    def __init__(self, parent: QWidget, points: [QPointF], fluid: int, attachment_aps, tube_id: int = None, line_width: int = Constants.line_width/2):
+    def __init__(
+        self,
+        parent: QWidget,
+        points: [QPointF],
+        fluid: int,
+        attachment_aps,
+        tube_id: int = None,
+        line_width: int = Constants.line_width / 2,
+    ):
         self.parent = parent
         self.widget_parent = parent
         self.gui = self.widget_parent.gui
@@ -23,9 +31,13 @@ class Tube:
 
         if tube_id is not None:
             self.tube_id = tube_id
-            self.widget_parent.last_tube_id = max(self.widget_parent.last_tube_id, self.tube_id)
-            for i in range(1,len(self.points)-1):
-                self.tube_anchor_points.append(TubeAnchorPoint(self.widget_parent, self,self.points[i], i))
+            self.widget_parent.last_tube_id = max(
+                self.widget_parent.last_tube_id, self.tube_id
+            )
+            for i in range(1, len(self.points) - 1):
+                self.tube_anchor_points.append(
+                    TubeAnchorPoint(self.widget_parent, self, self.points[i], i)
+                )
 
         else:
             self.tube_id = self.widget_parent.last_tube_id + 1
@@ -69,7 +81,11 @@ class Tube:
             self.points.append(current_pos)
 
         if len(self.points) > 2:
-            self.tube_anchor_points.append(TubeAnchorPoint(self.widget_parent, self, self.points[-2], len(self.points)-2))
+            self.tube_anchor_points.append(
+                TubeAnchorPoint(
+                    self.widget_parent, self, self.points[-2], len(self.points) - 2
+                )
+            )
 
     def updateCurrentPos(self, current_pos: QPointF):
 
@@ -117,11 +133,17 @@ class Tube:
                 for obj_ap in obj.anchor_points:
                     obj_ap.x_aligned = False
                     obj_ap.y_aligned = False
-                    if obj_ap.x()-5 < self.points[-1].x() < obj_ap.x()+5 and self.draw_direction == "Horizontal":
+                    if (
+                        obj_ap.x() - 5 < self.points[-1].x() < obj_ap.x() + 5
+                        and self.draw_direction == "Horizontal"
+                    ):
                         self.points[-1] = QPointF(obj_ap.x() + 3, self.points[-1].y())
                         obj_ap.x_aligned = True
-                    if obj_ap.y()-5 < self.points[-1].y() < obj_ap.y()+5  and self.draw_direction == "Vertical":
-                        self.points[-1] = QPointF(self.points[-1].x(),obj_ap.y() + 3)
+                    if (
+                        obj_ap.y() - 5 < self.points[-1].y() < obj_ap.y() + 5
+                        and self.draw_direction == "Vertical"
+                    ):
+                        self.points[-1] = QPointF(self.points[-1].x(), obj_ap.y() + 3)
                         obj_ap.y_aligned = True
 
             # This will check for tube end alignment with tube anchor points
@@ -130,11 +152,21 @@ class Tube:
                     for tube_ap in tube.tube_anchor_points:
                         tube_ap.x_aligned = False
                         tube_ap.y_aligned = False
-                        if tube_ap.x()-5 < self.points[-1].x() < tube_ap.x()+5 and self.draw_direction == "Horizontal":
-                            self.points[-1] = QPointF(tube_ap.x() + 3, self.points[-1].y())
+                        if (
+                            tube_ap.x() - 5 < self.points[-1].x() < tube_ap.x() + 5
+                            and self.draw_direction == "Horizontal"
+                        ):
+                            self.points[-1] = QPointF(
+                                tube_ap.x() + 3, self.points[-1].y()
+                            )
                             tube_ap.x_aligned = True
-                        if tube_ap.y()-5 < self.points[-1].y() < tube_ap.y()+5  and self.draw_direction == "Vertical":
-                            self.points[-1] = QPointF(self.points[-1].x(),tube_ap.y() + 3)
+                        if (
+                            tube_ap.y() - 5 < self.points[-1].y() < tube_ap.y() + 5
+                            and self.draw_direction == "Vertical"
+                        ):
+                            self.points[-1] = QPointF(
+                                self.points[-1].x(), tube_ap.y() + 3
+                            )
                             tube_ap.y_aligned = True
 
         else:
@@ -155,7 +187,7 @@ class Tube:
     def draw(self):
         # Default pen qualities
         pen = QPen()
-        pen.setWidth(self.line_width)
+        pen.setWidth(int(self.line_width))
         pen.setColor(Constants.fluidColor[self.fluid])
         self.widget_parent.painter.setPen(pen)
 
@@ -191,17 +223,22 @@ class Tube:
         points_dict = {}
         i = 0
         for point in self.points:
-            points_dict[i] = {"x": point.x()/self.parent.gui.pixel_scale_ratio[0], "y": point.y()/self.parent.gui.pixel_scale_ratio[1]}
+            points_dict[i] = {
+                "x": point.x() / self.parent.gui.pixel_scale_ratio[0],
+                "y": point.y() / self.parent.gui.pixel_scale_ratio[1],
+            }
             i = i + 1
 
         # Put it all together
         # TODO: Add attachment save id
         save_dict = {
-            self.object_name + " " + str(self.tube_id): {
+            self.object_name
+            + " "
+            + str(self.tube_id): {
                 "tube id": self.tube_id,
                 "fluid": self.fluid,
                 "bend positions": points_dict,
-                "line width": self.line_width
+                "line width": self.line_width,
             }
         }
 
@@ -229,28 +266,42 @@ class TubeAnchorPoint(QPushButton):
         self.context_menu.addAction("Change Fluid")
         self.context_menu.addAction("Increase Line Width")
         self.context_menu.addAction("Decrease Line Width")
-        self.customContextMenuRequested.connect(lambda *args: self.contextMenuEvent_(*args))
+        self.customContextMenuRequested.connect(
+            lambda *args: self.contextMenuEvent_(*args)
+        )
 
         self.setStyleSheet("background-color:transparent;border:0;")
 
         # Below makes sure the anchor point size is rounded to the nearest odd number
-        self.resize(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2),
-                    2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2))
+        self.resize(
+            int(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2)),
+            int(2 * math.floor((6 * self.gui.pixel_scale_ratio[0]) / 2)),
+        )
 
-        self.move(QPoint(point.x() - self.size().width()/2, point.y() - self.size().height()/2))
+        self.move(
+            QPoint(
+                int(point.x() - self.size().width() / 2),
+                int(point.y() - self.size().height() / 2),
+            )
+        )
 
         self.show()
 
-        self.gui.setStatusBarMessage("Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")")
-
+        self.gui.setStatusBarMessage(
+            "Tube point created at " + "(" + str(self.x()) + ", " + str(self.y()) + ")"
+        )
 
     def draw(self):
         """
         Draws the anchor point on the screen, also draws the alignment lines
         """
         # Draws the box
-        self.controlsWidget.painter.drawRect(QRectF(self.x(), self.y(), self.width(), self.height()))
-        self.controlsWidget.painter.eraseRect(QRectF(self.x(), self.y(), self.width(), self.height()))
+        self.controlsWidget.painter.drawRect(
+            QRectF(self.x(), self.y(), self.width(), self.height())
+        )
+        self.controlsWidget.painter.eraseRect(
+            QRectF(self.x(), self.y(), self.width(), self.height())
+        )
 
         # Draws the yellow dashed alignment lines when dragging the ap's object or drawing the ap's tube
         if self.controlsWidget.is_drawing:
@@ -264,11 +315,15 @@ class TubeAnchorPoint(QPushButton):
             self.controlsWidget.painter.setPen(pen)
 
             if self.x_aligned:
-                self.controlsWidget.painter.drawLine(QPointF(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
-                                             QPointF(self.x(), self.gui.screenResolution[1]))
+                self.controlsWidget.painter.drawLine(
+                    QPointF(self.x() + (5 * self.gui.pixel_scale_ratio[0]), 0),
+                    QPointF(self.x(), self.gui.screenResolution[1]),
+                )
             if self.y_aligned:
-                self.controlsWidget.painter.drawLine(QPointF(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
-                                             QPointF(self.gui.screenResolution[0], self.y()))
+                self.controlsWidget.painter.drawLine(
+                    QPointF(0, self.y() + (6 * self.gui.pixel_scale_ratio[1])),
+                    QPointF(self.gui.screenResolution[0], self.y()),
+                )
 
     def contextMenuEvent_(self, event):
         """
@@ -291,15 +346,21 @@ class TubeAnchorPoint(QPushButton):
                     self.tube.fluid = self.tube.fluid + 1
                 else:
                     self.tube.fluid = 0
-                self.gui.setStatusBarMessage("Tube fluid set to " + Constants.fluid[self.tube.fluid])
+                self.gui.setStatusBarMessage(
+                    "Tube fluid set to " + Constants.fluid[self.tube.fluid]
+                )
             elif action.text() == "Increase Line Width":
                 self.tube.line_width = self.tube.line_width + 1
-                self.gui.setStatusBarMessage("Tube width increased to " + str(self.tube.line_width))
+                self.gui.setStatusBarMessage(
+                    "Tube width increased to " + str(self.tube.line_width)
+                )
             elif action.text() == "Decrease Line Width":
                 self.tube.line_width = self.tube.line_width - 1
                 if self.tube.line_width < 1:
                     self.tube.line_width = 1
-                self.gui.setStatusBarMessage("Tube width decreaseed to " + str(self.tube.line_width))
+                self.gui.setStatusBarMessage(
+                    "Tube width decreaseed to " + str(self.tube.line_width)
+                )
 
     @overrides
     def mousePressEvent(self, event: QMouseEvent):
@@ -329,23 +390,39 @@ class TubeAnchorPoint(QPushButton):
             for tube in self.controlsWidget.tube_list:
                 if tube.is_being_drawn:
                     if tube.draw_direction == "Vertical":
-                        tube.setCurrentPos(QPointF(tube.points[-1].x(),self.tube.points[self.points_index].y()), True)
+                        tube.setCurrentPos(
+                            QPointF(
+                                tube.points[-1].x(),
+                                self.tube.points[self.points_index].y(),
+                            ),
+                            True,
+                        )
                         tube.setCurrentPos(self.tube.points[self.points_index])
                     else:
-                        tube.setCurrentPos(QPointF(self.tube.points[self.points_index].x(),tube.points[-1].y()), True)
+                        tube.setCurrentPos(
+                            QPointF(
+                                self.tube.points[self.points_index].x(),
+                                tube.points[-1].y(),
+                            ),
+                            True,
+                        )
                         tube.setCurrentPos(self.tube.points[self.points_index])
 
                     tube.completeTube(False)
 
-        elif event.button() == Qt.LeftButton and self.controlsWidget.is_drawing is False:
+        elif (
+            event.button() == Qt.LeftButton and self.controlsWidget.is_drawing is False
+        ):
             self.tube.is_being_drawn = True
             self.controlsWidget.is_drawing = True
             self.controlsWidget.setMouseTracking(True)
-            del self.tube.points[self.points_index+2:]  # Need to keep two extra points for drawing sake, idrk why
-            del self.tube.tube_anchor_points[self.points_index:]
+            del self.tube.points[
+                self.points_index + 2 :
+            ]  # Need to keep two extra points for drawing sake, idrk why
+            del self.tube.tube_anchor_points[self.points_index :]
             if len(self.tube.attachment_aps) > 1:
                 if len(self.tube.attachment_aps) > 2:
                     print("WEIRD SHIT IN TUBE MOUSE PRESS PLEASE LOOK AT")
                 del self.tube.attachment_aps[-1]
 
-        #super().mousePressEvent(event)
+        # super().mousePressEvent(event)

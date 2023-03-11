@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "gui"
+version = "0.1.0"
+description = ""
+authors = ["Avionics Comp <@umich.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+matplotlib = "^3.6.3"
+overrides = "^3.1.0"
+dash = "^2.7.1"
+bidict = "^0.22.1"
+numpy = "^1.24.1"
+pandas = "^1.5.2"
+PyQt5 = "^5.15.4"
+PyQt5-Qt5 = "^5.15.2"
+PyQt5-sip = "^12.11.0"
+pyqtgraph = "^0.13.1"
+pyserial = "^3.5"
+python-dateutil = "^2.8.2"
+pytz = "^2022.7.1"
+setuptools = "^65.7.0"
+six = "^1.16.0"
+termcolor = "^2.2.0"
+synnax = "^0.2.25"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

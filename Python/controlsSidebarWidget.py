@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from constants import Constants
 from board import Board
+from packetLogWidget import PacketLogWidget
 
 import math
 import random
@@ -31,7 +32,9 @@ class ControlsSidebarWidget(QWidget):
 
         self.width = self.centralWidget.panel_width
         self.height = self.parent.height
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(
+            int(self.left), int(self.top), int(self.width), int(self.height)
+        )
 
         # Sets color of control panel
         self.setAutoFillBackground(True)
@@ -54,16 +57,18 @@ class ControlsSidebarWidget(QWidget):
         self.title_label.setFont(title_font)
         self.title_label.setStyleSheet("color: white")
         self.title_label.setText("Avionics")
-        self.title_label.setFixedHeight(75 * self.gui.pixel_scale_ratio[1])
-        self.title_label.setFixedWidth(self.width)
+        self.title_label.setFixedHeight(int(75 * self.gui.pixel_scale_ratio[1]))
+        self.title_label.setFixedWidth(int(self.width))
         self.title_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.title_label.move(10 * self.gui.pixel_scale_ratio[0], 0)  # Nasty but makes it look more centered
+        self.title_label.move(
+            int(10 * self.gui.pixel_scale_ratio[0]), 0
+        )  # Nasty but makes it look more centered
         self.title_label.show()
 
         time_font = QFont()
         time_font.setStyleStrategy(QFont.PreferAntialias)
         time_font.setFamily(Constants.default_font)
-        time_font.setPointSize(30 * self.gui.font_scale_ratio)
+        time_font.setPointSize(int(30 * self.gui.font_scale_ratio))
 
         # self.state_time_label = QLabel(self)
         # self.state_time_label = QLabel(self)
@@ -77,7 +82,14 @@ class ControlsSidebarWidget(QWidget):
         # self.state_time_label.show()
 
         self.tabWidget = SidebarTabWidget(self)
-        self.tabWidget.move(3, self.height - self.tabWidget.height() + 3 * self.gui.pixel_scale_ratio[1])
+        self.tabWidget.move(
+            3,
+            int(
+                self.height
+                - self.tabWidget.height()
+                + 3 * self.gui.pixel_scale_ratio[1]
+            ),
+        )
         self.tabWidget.show()
 
         self.board_objects = []  # An empty array to start
@@ -92,12 +104,19 @@ class ControlsSidebarWidget(QWidget):
         self.scroll.setWidget(self.scrollAreaLayoutBox)
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QFrame.NoFrame)
-        self.scroll.setFixedWidth(self.parent.panel_width - 2)
-        self.scroll.move(2, self.title_label.pos().y() + self.title_label.height() + 15 * self.gui.pixel_scale_ratio[1])
+        self.scroll.setFixedWidth(int(self.parent.panel_width - 2))
+        self.scroll.move(
+            2,
+            int(
+                self.title_label.pos().y()
+                + self.title_label.height()
+                + 15 * self.gui.pixel_scale_ratio[1]
+            ),
+        )
         self.scroll.setFixedHeight(self.tabWidget.y() - self.scroll.pos().y())
         self.scroll.show()
 
-    def addBoardsToScrollWidget(self, boardNames: [], silent = False):
+    def addBoardsToScrollWidget(self, boardNames: [], silent=False):
         """
         Add in boards to be shown on the sidebar. Only need to pass in the name
         :param boardNames: A list of board names that needs to be passed
@@ -150,12 +169,14 @@ class ControlsSidebarWidget(QWidget):
         self.window.setStatusBarMessage("Boards: " + str(boardNames) + " added")'''
 
     def abort_init(self):
-        """Changes the state of each board. 
-        """
+        """Changes the state of each board."""
         self.gui.setStatusBarMessage("Abort button clicked!")
         if self.board_objects:
             for board in self.board_objects:
-                if board.name == "Pressurization Controller" or board.name == "Engine Controller":
+                if (
+                    board.name == "Pressurization Controller"
+                    or board.name == "Engine Controller"
+                ):
                     board.sendBoardState("Abort")
 
     @overrides
@@ -182,8 +203,8 @@ class ControlsSidebarWidget(QWidget):
 
         path.moveTo(1, 0)
         path.lineTo(1, self.height)
-        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1]-1)
-        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1]-1)
+        path.moveTo(1, 85 * self.gui.pixel_scale_ratio[1] - 1)
+        path.lineTo(self.width, 85 * self.gui.pixel_scale_ratio[1] - 1)
 
         self.painter.drawPath(path)
 
@@ -196,7 +217,7 @@ class ControlsSidebarWidget(QWidget):
         """
         save_dict = {}
         for i, board in enumerate(self.board_objects):
-            save_dict["Board "+str(i)] = board.name
+            save_dict["Board " + str(i)] = board.name
 
         return save_dict
 
@@ -214,7 +235,7 @@ class SidebarTabWidget(QWidget):
         self.gui = self.controlsSidebarWidget.gui
 
         self.setFixedHeight(int(415 * self.gui.pixel_scale_ratio[1]))
-        self.setFixedWidth(self.controlsSidebarWidget.width)
+        self.setFixedWidth(int(self.controlsSidebarWidget.width))
 
         self.tabWidget = QTabWidget(self)
         self.tabWidget.setFixedWidth(self.width())
@@ -222,7 +243,12 @@ class SidebarTabWidget(QWidget):
 
         # create widgets
         self.noteWidget = SidebarNoteWidget(self.tabWidget, self.controlsSidebarWidget)
-        self.packetLogWidget = SidebarPacketLogWidget(self.tabWidget, self.controlsSidebarWidget)
+        self.packetLogWidget = PacketLogWidget(
+            self.tabWidget,
+            self.controlsSidebarWidget.window.interface,
+            self.gui.liveDataHandler.dataPacketSignal,
+        )
+        # SidebarPacketLogWidget(self.tabWidget, self.controlsSidebarWidget)
 
         self.tab3 = QWidget()
         self.tab4 = QWidget()
@@ -241,193 +267,6 @@ class SidebarTabWidget(QWidget):
         self.show()
 
 
-class SidebarPacketLogWidget(QWidget):
-    """
-    Adds in the equivalent of the server side packet log. This is designed to go in the tab widget in the sidebar.
-    This packet log has the advantage of being filterable so users can quickly find what they are looking for
-    """
-
-    def __init__(self, tabWidget, sideBar=None):
-
-        super().__init__()
-
-        self.gui = sideBar.gui
-        self.tabWidget = tabWidget
-        self.controlsSidebarWidget = sideBar
-        self.interface = self.controlsSidebarWidget.window.interface
-
-        # holds the all the widgets
-        self.vertLayout = QVBoxLayout()
-
-        # holds the filter buttons
-        self.filterHLayout = QHBoxLayout()
-
-        # setup the packet log, lot of shenanigans to make things fit and look good
-        self.packet_log = QTableWidget(self)
-        self.packet_log.setColumnCount(3)
-        self.packet_log.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
-        self.packet_log.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.packet_log.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.packet_log.setColumnWidth(0, self.controlsSidebarWidget.width * .57 - 34 * self.gui.pixel_scale_ratio[0])
-        self.packet_log.setColumnWidth(1, self.controlsSidebarWidget.width * .25)
-        self.packet_log.setColumnWidth(2, self.controlsSidebarWidget.width * .18)
-        self.packet_log.verticalHeader().hide()
-
-        # Board filter, tool buttons are a special button that act like menu items
-        self.boardFilterButton = QToolButton(self)
-        self.boardFilterButton.setText("Board Filter")
-        self.boardtoolmenu = QMenu(self)
-        self.boardFilterList = []  # Holds board names that we want to filter by. Defualt all (added later)
-
-        # type filter, tool buttons are a special button that act like menu items
-        self.typeFilterButton = QToolButton(self)
-        self.typeFilterButton.setText("Type Filter")
-        self.typetoolmenu = QMenu(self)
-        self.typeFilterList = ["other", "pressure", "vlv", "mtr", "STATE", "load", "tc", "rtd", "tnk", "ctrl_press",
-                               "cal"]  # Holds type names that we want to filter by. Defualt all
-
-        self.filteredChannels = []  # populated later
-
-        # I stole this from a stackoverflow post that I can't find again. Adds checkbox to combobox basically
-        # also this is where the function callbacks are
-        for boardName in Constants.boards:
-            checkBox = QCheckBox(boardName, self.boardtoolmenu)
-            checkBox.stateChanged.connect(self.boardFilterButtonUpdated)
-            checkBox.setChecked(True)
-            checkableAction = QWidgetAction(self.boardtoolmenu)
-            checkableAction.setDefaultWidget(checkBox)
-            self.boardtoolmenu.addAction(checkableAction)
-
-        self.boardFilterButton.setMenu(self.boardtoolmenu)
-        self.boardFilterButton.setPopupMode(QToolButton.InstantPopup)
-
-        # type filter setup, same as above board
-        for typeName in self.typeFilterList:
-            checkBox = QCheckBox(typeName, self.typetoolmenu)
-            checkBox.setChecked(True)
-            checkBox.stateChanged.connect(self.typeFilterButtonUpdated)
-            checkableAction = QWidgetAction(self.typetoolmenu)
-            checkableAction.setDefaultWidget(checkBox)
-            self.typetoolmenu.addAction(checkableAction)
-
-        self.typeFilterButton.setMenu(self.typetoolmenu)
-        self.typeFilterButton.setPopupMode(QToolButton.InstantPopup)
-        self.typeFilterButton.installEventFilter(self)
-        self.boardFilterButton.installEventFilter(self)
-
-        self.filterHLayout.addWidget(self.boardFilterButton)
-        self.filterHLayout.addWidget(self.typeFilterButton)
-
-        self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
-
-        self.vertLayout.addLayout(self.filterHLayout)
-        self.vertLayout.addWidget(self.packet_log)
-        self.setLayout(self.vertLayout)
-
-    @overrides
-    def eventFilter(self, source, event: QEvent):
-        """
-        Need an event filter to prevent the tool button from causing the status bar to disappear
-        :param source: the self.blahh of whatever is sending the signal
-        :param event: the event triggered
-        :return: True for preventing the event to handled again later downstream
-        """
-        if (source is self.typeFilterButton or source is self.boardFilterButton) and event.type() == QEvent.StatusTip:
-            return True  # Returning true will prevent this event from being processed again down the line
-
-        return super().eventFilter(source, event)
-
-    def boardFilterButtonUpdated(self, state):
-        """
-        Called from board menu callback. When called it updates the filter list and table
-        :param state: state of the menu checkbox clicked. 2 = checked
-        :return: none
-        """
-        board = self.sender().text()
-        if state == 2:
-            self.boardFilterList.append(self.controlsSidebarWidget.interface.getPrefix(board))
-        else:
-            self.boardFilterList.remove(self.controlsSidebarWidget.interface.getPrefix(board))
-
-        self.populatePacketLogFromFilter()
-
-    def typeFilterButtonUpdated(self, state):
-        """
-        Called from type menu callback. When called it updates the filter list and table
-        :param state: state of the menu checkbox clicked. 2 = checked
-        :return: none
-        """
-        type = self.sender().text()
-        if state == 2:
-            self.typeFilterList.append(type)
-        else:
-            self.typeFilterList.remove(type)
-
-        self.populatePacketLogFromFilter()
-
-    # TODO: Gets once for every board on startup which is probably not great
-    def populatePacketLogFromFilter(self):
-        """
-        This function is called when the filter is updated. When updated, this compiles a list of all channels that
-        comply with the filter. It then updates the table to show those items
-        :return: none
-        """
-
-        # Get all the channels and then first filter by board
-        allChannels = self.controlsSidebarWidget.interface.channels
-        boardfilteredChannels = [x for x in allChannels if any(y in x for y in self.boardFilterList)]
-
-        # Other is used to represent items that don't fit into the filter. Other channels need to be filtered
-        # alone because the other filters will always remove them
-        if "other" in self.typeFilterList:
-            otherChannels = [x for x in boardfilteredChannels if all(y not in x for y in self.typeFilterList)]
-        else:
-            otherChannels = []
-
-        # from the board filtered list, then filter by the type filters
-        filteredChannels = [x for x in boardfilteredChannels if any(y in x for y in self.typeFilterList)]
-
-        # TODO: Try to preserve the given order, not just thrown at the end
-        self.filteredChannels = filteredChannels + otherChannels
-
-        # Update the table, need ot clear, set the rows, then for each item add it to the table, row num, value, units
-        self.clearTable()
-        self.packet_log.setRowCount(len(self.filteredChannels))
-        for n in range(len(self.filteredChannels)):
-            item = QTableWidgetItem(self.filteredChannels[n])
-            self.packet_log.setItem(
-                n, 0, item)
-            item = QTableWidgetItem("", 1)
-            item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
-            self.packet_log.setItem(n, 1, item)
-            self.packet_log.setItem(n, 2, QTableWidgetItem(
-                self.interface.units[self.filteredChannels[n]]))
-
-    def clearTable(self):
-        """
-        Clears the whole tables
-        :return: none
-        """
-
-        self.packet_log.clear()
-        self.packet_log.setRowCount(0)
-
-    @pyqtSlot(object)
-    def updateFromDataPacket(self, data_packet: dict):
-        """
-        Update the data in the packet log
-        :param data_packet: data packet from the livedatahandler
-        """
-
-        # We only want to update this if we are looking at the tab
-        if self.tabWidget.tabText(self.tabWidget.currentIndex()) == "Packet Log":
-            for n in range(len(self.filteredChannels)):
-                key = self.filteredChannels[n]
-                item = QTableWidgetItem(str(round(data_packet[key], 1)))
-                item.setTextAlignment(Qt.AlignVCenter | Qt.AlignRight)
-                self.packet_log.setItem(n, 1, item)
-
-
 class SidebarNoteWidget(QWidget):
     """
     This class is a wrapper for a custom note widget. It allows for single line entry of notes. Once entered the notes
@@ -435,7 +274,7 @@ class SidebarNoteWidget(QWidget):
     easily be used as its own widget
     """
 
-    def __init__(self, tabWidget,  sideBar):
+    def __init__(self, tabWidget, sideBar):
 
         super().__init__()
 
@@ -457,7 +296,7 @@ class SidebarNoteWidget(QWidget):
 
         # widget where notes are displayed
         self.noteBox = QTableWidget(self)
-        font.setPointSize(12 * self.gui.font_scale_ratio)
+        font.setPointSize(int(12 * self.gui.font_scale_ratio))
 
         self.vlayout.addWidget(self.noteBox)
 
@@ -466,8 +305,14 @@ class SidebarNoteWidget(QWidget):
         self.noteBox.setRowCount(0)
         # This is kinda a mess, need to set the width so things can fit. Can't use all the space because then starts to
         # clip weirdly so this was easiest
-        self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * .35))
-        self.noteBox.setColumnWidth(1, math.floor(self.tabWidget.width() * .65)-40*self.gui.pixel_scale_ratio[0])
+        self.noteBox.setColumnWidth(0, math.floor(self.tabWidget.width() * 0.35))
+        self.noteBox.setColumnWidth(
+            1,
+            int(
+                math.floor(self.tabWidget.width() * 0.65)
+                - 40 * self.gui.pixel_scale_ratio[0]
+            ),
+        )
         self.noteBox.horizontalHeader().hide()
         self.noteBox.verticalHeader().hide()
 
@@ -504,27 +349,33 @@ class SidebarNoteWidget(QWidget):
             return
 
         # add row for note to be displayed
-        self.noteBox.setRowCount(self.noteBox.rowCount()+1)
+        self.noteBox.setRowCount(self.noteBox.rowCount() + 1)
 
-        cetString = self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(self.gui.campaign.CET)
+        cetString = (
+            self.gui.controlsWindow.centralWidget.missionWidget.generateCETAsText(
+                self.gui.campaign.CET
+            )
+        )
 
         # add in both items to the table. Need to use the below class, the flags prevent them from being edited.
         item = QTableWidgetItem(cetString)
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
-        self.noteBox.setItem(self.noteBox.rowCount()-1, 0, item)
+        self.noteBox.setItem(self.noteBox.rowCount() - 1, 0, item)
 
         item = QTableWidgetItem(self.lineEdit.text())
         item.setFlags(item.flags() ^ Qt.ItemIsEditable)
         item.setTextAlignment(Qt.AlignTop)
-        self.noteBox.setItem(self.noteBox.rowCount()-1, 1, item)
+        self.noteBox.setItem(self.noteBox.rowCount() - 1, 1, item)
 
         self.noteBox.resizeRowsToContents()
 
         self.noteBox.scrollToBottom()
 
         # send command to server
-        self.gui.liveDataHandler.sendCommand(9, [cetString,  "NOTE", self.lineEdit.text()])
+        self.gui.liveDataHandler.sendCommand(
+            9, [cetString, "NOTE", self.lineEdit.text()]
+        )
 
         self.clearFocus()
 
@@ -539,7 +390,7 @@ class SidebarNoteWidget(QWidget):
         self.lineEdit.setEnabled(True)
         self.lineEdit.setPlaceholderText("Enter note here")
 
-    def disableNoteCreation(self, noServer:bool = False):
+    def disableNoteCreation(self, noServer: bool = False):
         """
         Function that is connected to the campaignEndSignal. Can be called directly when server connection is lost to
         display that no server is connected

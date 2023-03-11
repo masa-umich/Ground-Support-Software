@@ -10,28 +10,58 @@ import bidict
 
 
 class AvionicsObject(BaseObject):
+    def __init__(
+        self,
+        parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float = 40 * 1,
+        height: float = 28,
+        name: str = "Solenoid",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Solenoid",
+        is_vertical: bool = False,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        channel: str = "Undefined",
+        board: str = "Undefined",
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
 
-    def __init__(self, parent: QWidget, position: QPointF, fluid: int, width: float = 40 *1,
-                 height: float = 28, name: str = "Solenoid",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Solenoid', is_vertical: bool = False,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0,0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
-                 long_name_visible: bool = True, serial_number_visible: bool = True):
-
-        super().__init__(parent=parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name,locked=locked,position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos,long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows, long_name_visible = long_name_visible,
-                         serial_number_visible = serial_number_visible)
+        super().__init__(
+            parent=parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+        )
 
         self.avionics_board = board
         self.channel = channel
@@ -50,7 +80,9 @@ class AvionicsObject(BaseObject):
 
         self.updateAvionicsMappings(oldBoardChan)
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": board set to " + board)
+        self.gui.setStatusBarMessage(
+            self.object_name + "(" + self.long_name + ")" + ": board set to " + board
+        )
 
     def setChannel(self, channel: str):
         """
@@ -64,7 +96,14 @@ class AvionicsObject(BaseObject):
 
         self.updateAvionicsMappings(oldBoardChan)
 
-        self.gui.setStatusBarMessage(self.object_name + "(" + self.long_name + ")" + ": channel set to " + channel)
+        self.gui.setStatusBarMessage(
+            self.object_name
+            + "("
+            + self.long_name
+            + ")"
+            + ": channel set to "
+            + channel
+        )
 
     def setLongName(self, name):
         """
@@ -80,7 +119,10 @@ class AvionicsObject(BaseObject):
         if not succeeded:
             super().setLongName(old_name)
             self.updateAvionicsMappings(self.getBoardChannelString())
-            self.gui.setStatusBarMessage("Cannot update name to '" + name + "' as that name is already taken!", True)
+            self.gui.setStatusBarMessage(
+                "Cannot update name to '" + name + "' as that name is already taken!",
+                True,
+            )
 
     def updateAvionicsMappings(self, oldBoardChan: str):
         """
@@ -96,12 +138,19 @@ class AvionicsObject(BaseObject):
         :return: False if it cannot update name due to duplication, true if it does
         """
         # If the old key is in the dict then update then pop (remove) it
-        if str(self._id) + "_" + oldBoardChan in self.central_widget.controlsWidget.avionics_mappings:
-            self.central_widget.controlsWidget.avionics_mappings.pop(str(self._id) + "_" + oldBoardChan)
+        if (
+            str(self._id) + "_" + oldBoardChan
+            in self.central_widget.controlsWidget.avionics_mappings
+        ):
+            self.central_widget.controlsWidget.avionics_mappings.pop(
+                str(self._id) + "_" + oldBoardChan
+            )
 
         # Add new key value pair
         try:
-            self.central_widget.controlsWidget.avionics_mappings[str(self._id) + "_" + self.getBoardChannelString()] = self.long_name
+            self.central_widget.controlsWidget.avionics_mappings[
+                str(self._id) + "_" + self.getBoardChannelString()
+            ] = self.long_name
         except bidict.ValueDuplicationError:
             return False
 
@@ -116,7 +165,11 @@ class AvionicsObject(BaseObject):
         if self.object_name == "Generic Sensor":
             return self.channel
         elif self.isAvionicsFullyDefined():
-            return self.central_widget.window.interface.getPrefix(self.avionics_board) + Constants.object_prefix_map[self.object_name] + self.channel
+            return (
+                self.central_widget.window.interface.getPrefix(self.avionics_board)
+                + Constants.object_prefix_map[self.object_name]
+                + self.channel
+            )
         else:
             return "Undefined"
 
@@ -174,10 +227,7 @@ class AvionicsObject(BaseObject):
         super_dict = super().generateSaveDict()
 
         # Extra data the avionics object contains that needs to be saved
-        save_dict = {
-            "channel": self.channel,
-            "board": self.avionics_board
-        }
+        save_dict = {"channel": self.channel, "board": self.avionics_board}
 
         # Update the super_dict under the solenoid entry with the solenoid specific data
         super_dict[self.object_name + " " + str(self._id)].update(save_dict)

@@ -10,6 +10,7 @@ from matplotlib.figure import Figure
 
 import numpy as np
 
+
 class Plot(QWidget):
     """
     Widget to generate a plot window of data vs. time
@@ -26,16 +27,15 @@ class Plot(QWidget):
         """
         super().__init__(parent)
         self.parent = parent
-        self.dataTuples = [] #Actual data storage
-        self.dataTypes = [] #DataTypes on plot
+        self.dataTuples = []  # Actual data storage
+        self.dataTypes = []  # DataTypes on plot
         self.openBool = True
         self.name = name
 
         self.create_main_frame()
 
         ## Open thread to update plot
-        plotUpdater = threading.Thread(target=self.read_data,
-                                       name='plotUpdater')
+        plotUpdater = threading.Thread(target=self.read_data, name="plotUpdater")
         plotUpdater.setDaemon(True)
         plotUpdater.start()
 
@@ -45,7 +45,7 @@ class Plot(QWidget):
         :param msg: string to output
         :return:
         """
-        print('{}: {}'.format(self.name, msg))
+        print("{}: {}".format(self.name, msg))
 
     def link_data(self, button):
         """
@@ -56,7 +56,7 @@ class Plot(QWidget):
         """
 
         if len(self.dataTypes) == 2 and button.dataType not in self.dataTypes:
-            self.message('This plot is full. Please select another plot')
+            self.message("This plot is full. Please select another plot")
             return
 
         if button.dataType not in self.dataTypes:
@@ -72,7 +72,7 @@ class Plot(QWidget):
         """
         while True:
             if self.openBool is True and len(self.dataTuples) > 0:
-                self.message('checking for data')
+                self.message("checking for data")
                 try:
                     dataArray = []
                     dataTypes = []
@@ -83,7 +83,7 @@ class Plot(QWidget):
                         dataName = dataTuple[2]
 
                         data = []
-                        with open(dataFile, 'r') as f:
+                        with open(dataFile, "r") as f:
                             rd = csv.reader(f)
                             for row in rd:
                                 data.append([float(f) for f in row])
@@ -95,11 +95,11 @@ class Plot(QWidget):
                     ## TODO: Instead of re-plotting everything, just update the data variables
                     self.update_plot(dataArray, dataTypes, dataNames)
                 except FileNotFoundError:
-                    print('Could not find {}'.format(dataFile))
+                    print("Could not find {}".format(dataFile))
                     pass
                 except Exception as e:
                     e_type, e_obj, e_tb = sys.exc_info()
-                    print('Got {} on line {}: {}'.format(e_type, e_tb.tb_lineno, e))
+                    print("Got {} on line {}: {}".format(e_type, e_tb.tb_lineno, e))
                     pass
             time.sleep(self.parent.update_rate)
 
@@ -111,7 +111,7 @@ class Plot(QWidget):
         :param dataNames: names of the line (array)
         :return:
         """
-        self.message('plotting')
+        self.message("plotting")
 
         for i in range(0, len(dataArray)):
 
@@ -119,18 +119,18 @@ class Plot(QWidget):
             dataType = dataTypes[i]
             dataName = dataNames[i]
 
-            if dataType == 'Force':
+            if dataType == "Force":
                 ylabel = "Force (N)"
-                frm = 'b'
-            elif dataType == 'Pressure':
+                frm = "b"
+            elif dataType == "Pressure":
                 ylabel = "Pressure (psi)"
-                frm = 'g'
+                frm = "g"
             elif dataType == "Temperature":
-                ylabel = 'Temperature (C)'
-                frm = 'r'
+                ylabel = "Temperature (C)"
+                frm = "r"
             else:
-                ylabel = 'State'
-                frm = 'k'
+                ylabel = "State"
+                frm = "k"
 
             indx = self.dataTypes.index(dataType)
 
@@ -148,17 +148,17 @@ class Plot(QWidget):
             ## Draw the plot
             self.canvas.draw()
 
-        self.fig.legend(loc='best')
+        self.fig.legend(loc="best")
 
     def get_figure_dimensions(self):
         ## Determine plot size via window size
-        parentWidth = self.parent.geometry().width()+25
-        parentHeight = self.parent.geometry().height()-10
+        parentWidth = self.parent.geometry().width() + 25
+        parentHeight = self.parent.geometry().height() - 10
         monitorDPIX = self.physicalDpiX()
         monitorDPIY = self.physicalDpiY()
 
-        figWidth = float(parentWidth) / (self.parent.plotNumber/2) / monitorDPIX
-        figHeight = float(parentHeight) / (self.parent.plotNumber/2) / monitorDPIY
+        figWidth = float(parentWidth) / (self.parent.plotNumber / 2) / monitorDPIX
+        figHeight = float(parentHeight) / (self.parent.plotNumber / 2) / monitorDPIY
 
         return figWidth, figHeight
 

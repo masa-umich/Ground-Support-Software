@@ -1,7 +1,7 @@
-
 import json
 
 # TODO: Actually implement this and update how objects are created
+
 
 class ConfigurationManager:
     """
@@ -24,11 +24,10 @@ class ConfigurationManager:
     def writeConfigurationToFile(self):
         with open(self.filepath, "w") as write_file:
             print()
-            #json.dump(data, write_file, indent="\t")
+            # json.dump(data, write_file, indent="\t")
 
     def loadConfigurationFromFile(self):
         # Open and read the loaded json file
 
-
         with open(self.filepath, "r") as read_file:
-            self.jsonData  = json.load(read_file)
+            self.jsonData = json.load(read_file)

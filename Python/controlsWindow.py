@@ -11,7 +11,7 @@ from controlsPanelWidget import ControlsPanelWidget
 from controlsSidebarWidget import ControlsSidebarWidget
 from missionWidget import MissionWidget
 from constants import Constants
-from ClientWidget import ClientWidget, ClientDialog
+import hashlib
 from data_viewer import DataViewerDialog
 from s2Interface import S2_Interface
 from flash import FlashWindow
@@ -37,35 +37,49 @@ class ControlsWindow(QMainWindow):
         super().__init__()
         # Set geometry
         self.gui = parent
-        self.title = 'MASA Console'
-        self.setWindowIcon(QIcon(self.gui.LAUNCH_DIRECTORY+'Images/M_icon.png'))
-        #self.client = ClientWidget(True, self)  # control client
+        self.title = "MASA Console"
+        self.setWindowIcon(QIcon(self.gui.LAUNCH_DIRECTORY + "Images/M_icon.png"))
+        # self.client = ClientWidget(True, self)  # control client
         self.last_packet = {}
         self.interface = S2_Interface()
-        self.statusBar().setFixedHeight(22 * self.gui.pixel_scale_ratio[1])
+        self.statusBar().setFixedHeight(int(22 * self.gui.pixel_scale_ratio[1]))
         self.button_box = AbortButton(self.gui)  # .client)
         self.limits = LimitWindow(10, gui=self.gui)  # .client)
-        self.auto_manager = AutoManager(self.gui) #.client)
-        self.tank_levels = TankLevelDialog(dual=False, gui = self.gui)
+        self.auto_manager = AutoManager(self.gui)  # .client)
+        self.tank_levels = TankLevelDialog(dual=False, gui=self.gui)
         self.sensorsWindow = SensorCalibrationDialog(self.gui)
         self.data_viewer_dialog = DataViewerDialog(self.gui)
-        self.menuBar().setFixedHeight(32 * self.gui.pixel_scale_ratio[1])
+        self.menuBar().setFixedHeight(int(32 * self.gui.pixel_scale_ratio[1]))
         if self.gui.platform == "Windows":
             # Need to pull out the title bar height, and menu bar height from windows
             # TODO: Move the title bar height adjustment to screen resolution
-            self.setGeometry(0, 0, self.gui.screenResolution[0], self.gui.screenResolution[1]-QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight) - self.menuBar().height())
+            self.setGeometry(
+                0,
+                0,
+                self.gui.screenResolution[0],
+                self.gui.screenResolution[1]
+                - QApplication.style().pixelMetric(QStyle.PM_TitleBarHeight)
+                - self.menuBar().height(),
+            )
         else:
-            self.setGeometry(0, 0, self.gui.screenResolution[0], self.gui.screenResolution[1] - self.statusBar().height())
+            self.setGeometry(
+                0,
+                0,
+                self.gui.screenResolution[0],
+                self.gui.screenResolution[1] - self.statusBar().height(),
+            )
 
         self.centralWidget = ControlsCentralWidget(self, self)
         self.setCentralWidget(self.centralWidget)
         self.fileName = ""
         self.setWindowTitle(self.title)
         self.flash_dialog = FlashWindow(self.gui)
-        self.gui.liveDataHandler.connectionStatusSignal.connect(self.updateFromConnectionStatus)
+        self.gui.liveDataHandler.connectionStatusSignal.connect(
+            self.updateFromConnectionStatus
+        )
 
-        appid = 'MASA.GUI' # arbitrary string
-        if os.name == 'nt': # Bypass command because it is not supported on Linux 
+        appid = "MASA.GUI"  # arbitrary string
+        if os.name == "nt":  # Bypass command because it is not supported on Linux
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
         else:
             pass
@@ -78,8 +92,8 @@ class ControlsWindow(QMainWindow):
         self.statusBar().setFont(font)
 
         # Menu system, probably should be its own function, allows things to be placed in menu bar at top of application
-        exitAct = QAction('&Save and Quit', self)
-        exitAct.setStatusTip('Exit application')
+        exitAct = QAction("&Save and Quit", self)
+        exitAct.setStatusTip("Exit application")
         exitAct.triggered.connect(self.gui.guiExit)
 
         # The next several segments of code create objects to represent each button action for the toolbar
@@ -87,160 +101,178 @@ class ControlsWindow(QMainWindow):
         # The third line of each segment calls a function, defined below, that carries out the action of the button
         # Help menu is added in the baseGUI class
         # FILE -> New
-        newAct = QAction('&New Configuration', self)
-        newAct.setShortcut('Ctrl+N')
+        newAct = QAction("&New Configuration", self)
+        newAct.setShortcut("Ctrl+N")
         newAct.triggered.connect(self.newFile)
 
         # FILE -> Open
-        openAct = QAction('&Open Configuration', self)
-        openAct.setShortcut('Ctrl+O')
+        openAct = QAction("&Open Configuration", self)
+        openAct.setShortcut("Ctrl+O")
         openAct.triggered.connect(self.openFileDialog)
 
         # FILE -> Save
-        saveAct = QAction('&Save Configuration', self)
-        saveAct.setShortcut('Ctrl+S')
+        saveAct = QAction("&Save Configuration", self)
+        saveAct.setShortcut("Ctrl+S")
         saveAct.triggered.connect(self.saveRegular)
 
         # FILE -> Save As
-        saveAsAct = QAction('&Save Configuration As', self)
-        saveAsAct.setShortcut('Ctrl+Shift+S')
+        saveAsAct = QAction("&Save Configuration As", self)
+        saveAsAct.setShortcut("Ctrl+Shift+S")
         saveAsAct.triggered.connect(self.saveFileDialog)
 
         # FILE -> Enter Debug Mode
-        self.debugAct = QAction('&Enter Debug Mode', self)
-        self.debugAct.setShortcut('Ctrl+D')
-        self.debugAct.triggered.connect(self.enterDebug)
+        self.debugAct = QAction("&Enter Debug Mode", self)
+        self.debugAct.setShortcut("Ctrl+D")
+        self.debugAct.triggered.connect(self.showDebugDialog)
 
         # FILE -> Exit Debug Mode
-        self.exitDebugAct = QAction('&Leave Debug Mode', self)
-        self.exitDebugAct.setShortcut('Ctrl+Shift+D')
+        self.exitDebugAct = QAction("&Leave Debug Mode", self)
+        self.exitDebugAct.setShortcut("Ctrl+Shift+D")
         self.exitDebugAct.triggered.connect(self.exitDebug)
         self.exitDebugAct.setDisabled(True)
 
         # FILE -> Screen Draw Settings
-        self.screenSettingsAct = QAction('&Screen Draw Settings', self)
+        self.screenSettingsAct = QAction("&Screen Draw Settings", self)
         self.screenSettingsAct.triggered.connect(self.showDrawingSettingsDialog)
 
         # EDIT -> Enter Edit Mode
-        self.enterEditAct = QAction('&Enter Edit Mode', self)
-        self.enterEditAct.setShortcut('Ctrl+E')
+        self.enterEditAct = QAction("&Enter Edit Mode", self)
+        self.enterEditAct.setShortcut("Ctrl+E")
         self.enterEditAct.triggered.connect(self.enterEdit)
 
         # EDIT -> Leave Edit Mode
-        self.exitEditAct = QAction('&Leave Edit Mode', self)
-        self.exitEditAct.setShortcut('Ctrl+Shift+E')
+        self.exitEditAct = QAction("&Leave Edit Mode", self)
+        self.exitEditAct.setShortcut("Ctrl+Shift+E")
         self.exitEditAct.triggered.connect(self.exitEdit)
         self.exitEditAct.setDisabled(True)  # Start with it disabled
 
         # EDIT -> Add Boards
-        self.addAvionicsAct = QAction('&Add Avionics', self)
+        self.addAvionicsAct = QAction("&Add Avionics", self)
         self.addAvionicsAct.triggered.connect(self.showAvionicsDialog)
-        self.addAvionicsAct.setShortcut('Alt+A')
+        self.addAvionicsAct.setShortcut("Alt+A")
 
         # EDIT -> Toggle Snapping
-        self.toggleSnappingAct = QAction('&Disable Snapping', self)
+        self.toggleSnappingAct = QAction("&Disable Snapping", self)
         self.toggleSnappingAct.triggered.connect(self.toggleSnapping)
-        self.toggleSnappingAct.setShortcut('Alt+J')
+        self.toggleSnappingAct.setShortcut("Alt+J")
 
         # VIEW -> Show Avionics Mappings
-        self.showAvionicsMapAct = QAction('&Show Avionics Mappings', self)
-        self.showAvionicsMapAct.triggered.connect(self.centralWidget.controlsWidget.showSensorMappings)
+        self.showAvionicsMapAct = QAction("&Show Avionics Mappings", self)
+        self.showAvionicsMapAct.triggered.connect(
+            self.centralWidget.controlsWidget.showSensorMappings
+        )
 
         # VIEW -> Data Viewer
         data_view_dialog = QAction("&Data Viewer", self)
-        data_view_dialog.triggered.connect(lambda: self.gui.show_window(self.data_viewer_dialog))
+        data_view_dialog.triggered.connect(
+            lambda: self.gui.show_window(self.data_viewer_dialog)
+        )
 
         # VIEW -> Limits
-        self.limit_action = QAction('&Limits', self)
+        self.limit_action = QAction("&Limits", self)
         self.limit_action.triggered.connect(lambda: self.gui.show_window(self.limits))
-        self.limit_action.setShortcut('Alt+L')
+        self.limit_action.setShortcut("Alt+L")
 
         # VIEW -> Autosequence Manager
-        self.auto_action = QAction('Auto&sequence Manager', self)
-        self.auto_action.triggered.connect(lambda: self.gui.show_window(self.auto_manager))
-        self.auto_action.setShortcut('Alt+S')
+        self.auto_action = QAction("Auto&sequence Manager", self)
+        self.auto_action.triggered.connect(
+            lambda: self.gui.show_window(self.auto_manager)
+        )
+        self.auto_action.setShortcut("Alt+S")
 
         # VIEW -> Level Sensing
         self.level_action = QAction("&Level Sensing", self)
-        self.level_action.triggered.connect(lambda: self.gui.show_window(self.tank_levels))
+        self.level_action.triggered.connect(
+            lambda: self.gui.show_window(self.tank_levels)
+        )
         # self.level_action.setShortcut('Alt+D')
 
         # Campaign -> Start Campaign
-        self.startRunAct = QAction('&Start Campaign', self)
-        self.startRunAct.setShortcut('Ctrl+R')
+        self.startRunAct = QAction("&Start Campaign", self)
+        self.startRunAct.setShortcut("Ctrl+R")
         self.startRunAct.triggered.connect(lambda: self.showRunDialog(False))
 
         # Campaign -> End Campaign
-        self.endRunAct = QAction('&End Campaign', self)
-        self.endRunAct.setShortcut('Ctrl+Shift+R')
+        self.endRunAct = QAction("&End Campaign", self)
+        self.endRunAct.setShortcut("Ctrl+Shift+R")
         self.endRunAct.triggered.connect(self.endRun)
         self.endRunAct.setDisabled(True)  # Start with it disabled
 
         # Campaign -> Start Test
-        self.startTestAct = QAction('&Start Test', self)
-        self.startTestAct.setShortcut('Ctrl+T')
+        self.startTestAct = QAction("&Start Test", self)
+        self.startTestAct.setShortcut("Ctrl+T")
         self.startTestAct.triggered.connect(lambda: self.showRunDialog(True))
         self.startTestAct.setDisabled(True)
 
         # Campaign -> End Test
-        self.endTestAct = QAction('&End Test', self)
-        self.endTestAct.setShortcut('Ctrl+Shift+T')
+        self.endTestAct = QAction("&End Test", self)
+        self.endTestAct.setShortcut("Ctrl+Shift+T")
         self.endTestAct.triggered.connect(self.endTest)
         self.endTestAct.setDisabled(True)  # Start with it disabled
 
         # Campaign -> Ambientize
-        self.ambientizeMenu = QMenu('Ambientize', self)
+        self.ambientizeMenu = QMenu("Ambientize", self)
         self.ambientizeMenu.triggered.connect(self.ambientizeCmd)
         for board in Constants.boards:
             self.ambientizeMenu.addAction(board)
 
         # Campaign -> Tare Load Cells
-        self.tareLoadCellAct = QAction('Tare GSE Load Cells', self)
+        self.tareLoadCellAct = QAction("Tare GSE Load Cells", self)
         self.tareLoadCellAct.triggered.connect(self.tareLoadCell)
 
         # Campaign -> Zero Board System Time
-        self.zeroTimeAct = QAction('Zero Board System Clocks', self)
+        self.zeroTimeAct = QAction("Zero Board System Clocks", self)
         self.zeroTimeAct.triggered.connect(self.zeroSystemClock)
 
         # Campaign -> Open Campaign Folder
-        self.openConfigurationDir = QAction('Open Configuration Folder', self)
+        self.openConfigurationDir = QAction("Open Configuration Folder", self)
         self.openConfigurationDir.triggered.connect(self.openConfigurationFolder)
 
         # Avionics -> Connection Settings
         self.connect = QAction("&Connection", self)
-        self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
-        self.connect.setShortcut('Alt+C')
+        self.connect.triggered.connect(
+            lambda: self.gui.show_window(self.gui.liveDataHandler.getClient())
+        )
+        self.connect.setShortcut("Alt+C")
 
         # Avionics -> Flash
         self.flashsettings = QAction("&Flash", self)
-        self.flashsettings.triggered.connect(lambda: self.gui.show_window(self.flash_dialog))
-        self.flashsettings.setShortcut('Alt+F')
+        self.flashsettings.triggered.connect(
+            lambda: self.gui.show_window(self.flash_dialog)
+        )
+        self.flashsettings.setShortcut("Alt+F")
 
         # Avionics -> Abort Button Settings
-        self.buttonBoxAct = QAction('Abort &Button', self)
-        self.buttonBoxAct.setShortcut('Alt+B')
-        self.buttonBoxAct.triggered.connect(lambda: self.gui.show_window(self.button_box))
+        self.buttonBoxAct = QAction("Abort &Button", self)
+        self.buttonBoxAct.setShortcut("Alt+B")
+        self.buttonBoxAct.triggered.connect(
+            lambda: self.gui.show_window(self.button_box)
+        )
 
         # Avionics -> Sensor Calibrations
         self.sensor_calibration = QMenu("Sensor Calibrations", self)
-        self.sensor_calibration.triggered.connect(self.sensorsWindow.calibrateSensorsWindow)
+        self.sensor_calibration.triggered.connect(
+            self.sensorsWindow.calibrateSensorsWindow
+        )
         for board in Constants.boards:
             self.sensor_calibration.addAction(board)
 
         # Creates menu bar, adds tabs file, edit, view
         menuBar = self.menuBar()
         menuBar.setNativeMenuBar(True)
-        menuBar.installEventFilter(self)  # See event filter below, allows for custom event to prevent status bar update
+        menuBar.installEventFilter(
+            self
+        )  # See event filter below, allows for custom event to prevent status bar update
         menuBar.setStyleSheet("background-color:white;border:0;color:black;")
-        file_menu = menuBar.addMenu('File')
-        edit_menu = menuBar.addMenu('Edit')
-        view_menu = menuBar.addMenu('View')
-        campaign_menu = menuBar.addMenu('Campaign')
+        file_menu = menuBar.addMenu("File")
+        edit_menu = menuBar.addMenu("Edit")
+        view_menu = menuBar.addMenu("View")
+        campaign_menu = menuBar.addMenu("Campaign")
 
         # Mac does not allow adding buttons directly to menu bar so we will toss them in the avionics group
         # However if the menu bar is not native for whatever reason then can default to windows behavior
         if self.gui.platform == "OSX" and menuBar.isNativeMenuBar():
-            avionics_menu = menuBar.addMenu('Avionics')
+            avionics_menu = menuBar.addMenu("Avionics")
 
         # Adds all the file buttons to the file tab
         file_menu.addAction(newAct)
@@ -281,7 +313,9 @@ class ControlsWindow(QMainWindow):
         campaign_menu.addAction(self.openConfigurationDir)
 
         # If the gui is being run on windows, dont use the menu bar
-        if self.gui.platform == "Windows" or (self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()):
+        if self.gui.platform == "Windows" or (
+            self.gui.platform == "OSX" and not menuBar.isNativeMenuBar()
+        ):
             menuBar.addAction(self.connect)
             menuBar.addAction(self.flashsettings)
             menuBar.addAction(self.buttonBoxAct)
@@ -295,10 +329,12 @@ class ControlsWindow(QMainWindow):
 
         # Add all menus to a dict for easy access by other functions
         # Help menu is added in the baseGUI class
-        self.menus = {"File": file_menu,
-                      "Edit": edit_menu,
-                      "View": view_menu,
-                      "Run":  campaign_menu}
+        self.menus = {
+            "File": file_menu,
+            "Edit": edit_menu,
+            "View": view_menu,
+            "Run": campaign_menu,
+        }
 
         self.showMaximized()
 
@@ -311,7 +347,11 @@ class ControlsWindow(QMainWindow):
 
         # Not sure why this is different, but seems to due with the fact that windows handles central widget differently
         if self.gui.platform == "Windows":
-            self.central_widget_offset = self.centralWidget.pos() - self.pos() + QPointF(0, self.menuBar().height())
+            self.central_widget_offset = (
+                self.centralWidget.pos()
+                - self.pos()
+                + QPointF(0, self.menuBar().height())
+            )
         elif self.gui.platform == "OSX":
             self.central_widget_offset = self.pos()
 
@@ -335,10 +375,10 @@ class ControlsWindow(QMainWindow):
         """
         if self.fileName != "":
             self.centralWidget.controlsWidget.saveData(self.fileName)
-            #self.saveNotes(self.fileName.removesuffix('.json'))
+            # self.saveNotes(self.fileName.removesuffix('.json'))
         else:
             self.saveFileDialog()
-            #self.saveNotes()
+            # self.saveNotes()
 
     def saveFileDialog(self):
         """
@@ -346,14 +386,20 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, 'Save Configuration', self.gui.workspace_path+"/Configurations", "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Configuration",
+            self.gui.workspace_path + "/Configurations",
+            "JSON Files (*.json)",
+            options=options,
+        )
         if fileName:
             if fileName.find(".json") == -1:
                 fileName = fileName + ".json"
             self.fileName = fileName
             self.centralWidget.controlsWidget.saveData(fileName)
 
-            #self.saveNotes(fileName.removesuffix('.json'))
+            # self.saveNotes(fileName.removesuffix('.json'))
 
     def openFileDialog(self):
         """
@@ -361,11 +407,17 @@ class ControlsWindow(QMainWindow):
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open Configuration", self.gui.workspace_path+"/Configurations", "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Configuration",
+            self.gui.workspace_path + "/Configurations",
+            "JSON Files (*.json)",
+            options=options,
+        )
 
         if fileName:
             self.newFile()
-            #self.gui.configuration.setFilename(fileName)
+            # self.gui.configuration.setFilename(fileName)
             self.fileName = fileName
             self.centralWidget.controlsWidget.loadData(fileName)
 
@@ -374,7 +426,7 @@ class ControlsWindow(QMainWindow):
 
             # TODO: Properly remove this/ move somehwere
             # rewrites the notes in the notebox
-            #self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
+            # self.centralWidget.controlsSidebarWidget.noteBox.setText(data)
 
     def newFile(self):
         """
@@ -390,7 +442,9 @@ class ControlsWindow(QMainWindow):
 
         length = len(self.centralWidget.controlsWidget.object_list)
         for i in range(length):
-            self.centralWidget.controlsWidget.deleteObject(self.centralWidget.controlsWidget.object_list[0])
+            self.centralWidget.controlsWidget.deleteObject(
+                self.centralWidget.controlsWidget.object_list[0]
+            )
 
         for tube in reversed(self.centralWidget.controlsWidget.tube_list):
             tube.deleteTube()
@@ -425,7 +479,9 @@ class ControlsWindow(QMainWindow):
         Same as enter edit mode, but the opposite
         """
         if self.centralWidget.is_editing:
-            self.gui.setStatusBarMessage("Exit Edit Mode")  # Do this up top because we want save to show up if it happens
+            self.gui.setStatusBarMessage(
+                "Exit Edit Mode"
+            )  # Do this up top because we want save to show up if it happens
             self.centralWidget.controlsWidget.toggleEdit()
             self.centralWidget.controlsPanelWidget.hide()
             self.centralWidget.controlsSidebarWidget.show()
@@ -438,30 +494,39 @@ class ControlsWindow(QMainWindow):
                 board_names.append(board.name)
 
             self.centralWidget.controlsSidebarWidget.addBoardsToScrollWidget(
-                board_names, True)
+                board_names, True
+            )
 
             self.enterEditAct.setEnabled(True)
             self.exitEditAct.setDisabled(True)
             self.debugAct.setEnabled(True)
             self.exitDebugAct.setEnabled(True)
             self.startRunAct.setEnabled(True)
-            self.centralWidget.missionWidget.updateStatusLabel("GUI Configuration", False)
+            self.centralWidget.missionWidget.updateStatusLabel(
+                "GUI Configuration", False
+            )
 
-    def saveNotes(self, fileName=''):
+    def saveNotes(self, fileName=""):
         """
-                Pulls up Save As dialog, saves notes to designated file and sets filename field
+        Pulls up Save As dialog, saves notes to designated file and sets filename field
         """
-        if fileName == '':
+        if fileName == "":
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            fileName, _ = QFileDialog.getSaveFileName(self, 'Save notes',
-                                                      self.gui.workspace_path + "/testNotes", "Text Files (*.txt)",
-                                                      options=options)
+            fileName, _ = QFileDialog.getSaveFileName(
+                self,
+                "Save notes",
+                self.gui.workspace_path + "/testNotes",
+                "Text Files (*.txt)",
+                options=options,
+            )
         if fileName:
             if fileName.find(".txt") == -1:
                 fileName = fileName + ".txt"
 
-            self.centralWidget.controlsSidebarWidget.noteBoxText = self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
+            self.centralWidget.controlsSidebarWidget.noteBoxText = (
+                self.centralWidget.controlsSidebarWidget.noteBox.toPlainText()
+            )
             with open(fileName, "w") as write_file:
                 write_file.write(self.centralWidget.controlsSidebarWidget.noteBoxText)
 
@@ -470,13 +535,96 @@ class ControlsWindow(QMainWindow):
         Opens the OS specific file explorer to where all the campaign data is saved for
         :return: None
         """
-        webbrowser.open('file:///' + os.path.realpath(self.gui.workspace_path))
+        webbrowser.open("file:///" + os.path.realpath(self.gui.workspace_path))
 
-    def enterDebug(self):
+    def showDebugDialog(self):
+        """
+        Shows a dialog for a password to enter debug mode, mostly a meme because I think I only use this
+        """
+
+        # Create the dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Enter Debug Mode")
+
+        dialog.setWindowModality(Qt.ApplicationModal)
+
+        # Set dialog size and place in middle of window
+        dialog.resize(
+            500 * self.gui.pixel_scale_ratio[0], 80 * self.gui.pixel_scale_ratio[1]
+        )
+        dialog.setMinimumWidth(500 * self.gui.pixel_scale_ratio[0])
+        dialog.move(
+            (self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2
+        )
+
+        # Create the form layout that will hold the text box
+        formLayout = QFormLayout()
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.ExpandingFieldsGrow
+        )  # This is properly resize textbox on OSX
+
+        # Vertical layout to hold everything
+        verticalLayout = QVBoxLayout(dialog)
+        verticalLayout.addLayout(formLayout)
+
+        font = QFont()
+        font.setStyleStrategy(QFont.PreferAntialias)
+        font.setFamily(Constants.default_font)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
+
+        textbox = QLineEdit(dialog)
+        textbox.setFont(font)
+        textbox.setEchoMode(QLineEdit.Password)
+
+        label = QLabel("Password ;)")
+        label.setFont(font)
+        formLayout.addRow(label, textbox)
+
+        # Horizontal button layout
+        buttonLayout = QHBoxLayout()
+
+        # Create the buttons, make sure there is no default option, and connect to functions
+        cancel_button = QPushButton("Cancel")
+        cancel_button.setDefault(False)
+        cancel_button.setAutoDefault(False)
+        cancel_button.clicked.connect(lambda: dialog.done(1))
+        cancel_button.setFont(font)
+        cancel_button.setFixedWidth(
+            125 * self.gui.pixel_scale_ratio[0]
+        )  # Lazy way to make buttons not full width
+
+        start_button = QPushButton("Enter")
+        start_button.clicked.connect(lambda: self.enterDebug(dialog, textbox.text()))
+
+        start_button.setDefault(True)
+        start_button.setAutoDefault(False)
+        start_button.setFont(font)
+        start_button.setFixedWidth(
+            125 * self.gui.pixel_scale_ratio[0]
+        )  # Lazy way to make buttons not full width
+
+        buttonLayout.addWidget(cancel_button)
+        buttonLayout.addWidget(start_button)
+
+        verticalLayout.addLayout(buttonLayout)
+
+        dialog.show()
+
+    def enterDebug(self, dialog: QDialog, password: str):
         """
         Enter debug mode which overrides the gui to attempt to send commands and instead shows what you would see in
-        a test
+        a test, also allows data through when not in campaign
+        :param dialog: dialog associated with entering debug
+        :param password: password needed to start
         """
+        if (
+            hashlib.sha256(password.encode("utf-8")).hexdigest()
+            != "0a061c76a77236774fdd5cba18554a443ae979c02f9af60c2654060e4a4e6063"
+        ):
+            self.gui.setStatusBarMessage("Incorrect Debug Password", True)
+            dialog.done(1)
+            return
+
         self.gui.debug_mode = True
         self.debugAct.setDisabled(True)
         self.exitDebugAct.setEnabled(True)
@@ -485,6 +633,8 @@ class ControlsWindow(QMainWindow):
 
         self.centralWidget.missionWidget.updateStatusLabel("Debug Mode", True)
         self.gui.setStatusBarMessage("Enter Debug Mode")
+
+        dialog.done(2)
 
     def exitDebug(self):
         """
@@ -515,33 +665,45 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(500*self.gui.pixel_scale_ratio[0], 80*self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(500*self.gui.pixel_scale_ratio[0])
-        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+        dialog.resize(
+            int(500 * self.gui.pixel_scale_ratio[0]),
+            int(80 * self.gui.pixel_scale_ratio[1]),
+        )
+        dialog.setMinimumWidth(int(500 * self.gui.pixel_scale_ratio[0]))
+        dialog.move(
+            int((self.width() - dialog.width()) / 2),
+            int((self.height() - dialog.height()) / 2),
+        )
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
-        formLayout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)  # This is properly resize textbox on OSX
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.ExpandingFieldsGrow
+        )  # This is properly resize textbox on OSX
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
         verticalLayout.addLayout(formLayout)
 
         # Create a regular expression validator for the QLineEdit to make sure only characters we want are accepted
-        reg_exp = QRegExp("[a-zA-Z0-9 -]+")  # Lower and capital letters, numbers,-, and spaces, at any length (+)
+        reg_exp = QRegExp(
+            "[a-zA-Z0-9 -]+"
+        )  # Lower and capital letters, numbers,-, and spaces, at any length (+)
         reg_exp_validator = QRegExpValidator(reg_exp)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Add in the textbox to give run a title
         textbox = QLineEdit(dialog)
         if is_test:
             textbox.setPlaceholderText("Only number, letters, and spaces")
         else:
-            textbox.setPlaceholderText("DATE AUTO ADDED, Only number, letters, and spaces")
+            textbox.setPlaceholderText(
+                "DATE AUTO ADDED, Only number, letters, and spaces"
+            )
 
         textbox.setValidator(reg_exp_validator)
         textbox.setFont(font)
@@ -554,14 +716,16 @@ class ControlsWindow(QMainWindow):
 
         # Horizontal button layout
         buttonLayout = QHBoxLayout()
-        
+
         # Create the buttons, make sure there is no default option, and connect to functions
         cancel_button = QPushButton("Cancel")
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: self.startRunCanceled(dialog))
         cancel_button.setFont(font)
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(
+            int(125 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full width
 
         if is_test:
             start_button = QPushButton("Start Test")
@@ -573,7 +737,9 @@ class ControlsWindow(QMainWindow):
         start_button.setDefault(True)
         start_button.setAutoDefault(False)
         start_button.setFont(font)
-        start_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        start_button.setFixedWidth(
+            int(125 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full width
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(start_button)
@@ -583,7 +749,9 @@ class ControlsWindow(QMainWindow):
         dialog.show()
 
     @pyqtSlot(int, str, bool)
-    def updateFromConnectionStatus(self, status: int, error_string: str, is_commander: bool):
+    def updateFromConnectionStatus(
+        self, status: int, error_string: str, is_commander: bool
+    ):
         """
         Just disables the campaign if the server connection is dropped
         :param status: connection status, 3 is server dropped
@@ -647,9 +815,17 @@ class ControlsWindow(QMainWindow):
 
         self.endTestAct.setEnabled(True)
         self.startTestAct.setDisabled(True)
-        self.gui.campaign.startTest(test_name)  # This 2 is arbitrary expect it differs from the the canceled
+        self.gui.campaign.startTest(
+            test_name
+        )  # This 2 is arbitrary expect it differs from the the canceled
         dialog.done(2)
-        self.gui.setStatusBarMessage("Test '" + test_name + "' started under the '" + self.gui.campaign.title + "' campaign")
+        self.gui.setStatusBarMessage(
+            "Test '"
+            + test_name
+            + "' started under the '"
+            + self.gui.campaign.title
+            + "' campaign"
+        )
 
     def endTest(self):
         """
@@ -659,7 +835,9 @@ class ControlsWindow(QMainWindow):
         self.endTestAct.setDisabled(True)
         self.startTestAct.setEnabled(True)
         self.gui.campaign.endTest()
-        self.gui.setStatusBarMessage("Test '" + self.gui.campaign.currentTestName + "' ended")
+        self.gui.setStatusBarMessage(
+            "Test '" + self.gui.campaign.currentTestName + "' ended"
+        )
 
     @staticmethod  # Idk if this will stay static but for now
     def startRunCanceled(dialog):
@@ -679,23 +857,31 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
-        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+        dialog.resize(
+            int(450 * self.gui.pixel_scale_ratio[0]),
+            int(240 * self.gui.pixel_scale_ratio[1]),
+        )
+        dialog.setMinimumWidth(int(450 * self.gui.pixel_scale_ratio[0]))
+        dialog.setMinimumWidth(int(240 * self.gui.pixel_scale_ratio[1]))
+        dialog.move(
+            int((self.width() - dialog.width()) / 2),
+            int((self.height() - dialog.height()) / 2),
+        )
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
-        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.AllNonFixedFieldsGrow
+        )  # This is properly resize textbox on OSX
         verticalLayout.addLayout(formLayout)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14*self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Add in all the dropdowns
         dropdown1 = QComboBox(dialog)
@@ -720,15 +906,27 @@ class ControlsWindow(QMainWindow):
         # If boards are already set, populate the dropdowns
         if self.centralWidget.controlsSidebarWidget.board_objects:
             for i in range(len(self.centralWidget.controlsSidebarWidget.board_objects)):
-                dropdowns[i].setCurrentText(self.centralWidget.controlsSidebarWidget.board_objects[i].name)
-                self.updateAvionicsDialog(dropdowns, dropdowns[i], i+1)
+                dropdowns[i].setCurrentText(
+                    self.centralWidget.controlsSidebarWidget.board_objects[i].name
+                )
+                self.updateAvionicsDialog(dropdowns, dropdowns[i], i + 1)
 
         # Callback functions
-        dropdown1.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown1, 1))
-        dropdown2.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown2, 2))
-        dropdown3.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown3, 3))
-        dropdown4.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown4, 4))
-        dropdown5.currentIndexChanged.connect(lambda: self.updateAvionicsDialog(dropdowns, dropdown5, 5))
+        dropdown1.currentIndexChanged.connect(
+            lambda: self.updateAvionicsDialog(dropdowns, dropdown1, 1)
+        )
+        dropdown2.currentIndexChanged.connect(
+            lambda: self.updateAvionicsDialog(dropdowns, dropdown2, 2)
+        )
+        dropdown3.currentIndexChanged.connect(
+            lambda: self.updateAvionicsDialog(dropdowns, dropdown3, 3)
+        )
+        dropdown4.currentIndexChanged.connect(
+            lambda: self.updateAvionicsDialog(dropdowns, dropdown4, 4)
+        )
+        dropdown5.currentIndexChanged.connect(
+            lambda: self.updateAvionicsDialog(dropdowns, dropdown5, 5)
+        )
 
         label1 = QLabel("Board 1:")
         label1.setFont(font)
@@ -756,14 +954,16 @@ class ControlsWindow(QMainWindow):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(
+            int(125 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Save")
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.avionicsDialogSave(dropdowns, dialog))
-        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+        save_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)
@@ -786,18 +986,18 @@ class ControlsWindow(QMainWindow):
 
         # Checks to make sure a selection is skipped, if it is set the box back to none and return out
         if boxNumber > 1:
-            if dropdowns[boxNumber-2].currentIndex() == 0:
+            if dropdowns[boxNumber - 2].currentIndex() == 0:
                 currentDropdown.setCurrentIndex(0)  # 'None' index
                 return
 
         # Every time a dropdown changes, make sure all the ones below them are reset
         for i in range(boxNumber, 5):
-                dropdowns[i].clear()
-                dropdowns[i].addItems(["None"] + Constants.boards)
+            dropdowns[i].clear()
+            dropdowns[i].addItems(["None"] + Constants.boards)
 
         # For each dropdown below the current dropdown, remove any options that have already been selected
         for i in range(5):
-            if i > boxNumber-1:
+            if i > boxNumber - 1:
                 for j in range(boxNumber):
                     if dropdowns[j].currentIndex() != 0:
                         dropdowns[i].removeItem(dropdowns[j].currentIndex())
@@ -816,7 +1016,9 @@ class ControlsWindow(QMainWindow):
         dialog.done(2)
 
     def toggleSnapping(self):
-        self.centralWidget.controlsWidget.shouldSnap = not self.centralWidget.controlsWidget.shouldSnap
+        self.centralWidget.controlsWidget.shouldSnap = (
+            not self.centralWidget.controlsWidget.shouldSnap
+        )
 
         if self.centralWidget.controlsWidget.shouldSnap:
             self.gui.setStatusBarMessage("Snapping Enabled")
@@ -836,23 +1038,29 @@ class ControlsWindow(QMainWindow):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450*self.gui.pixel_scale_ratio[0], 240*self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(450*self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240*self.gui.pixel_scale_ratio[1])
-        dialog.move((self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2)
+        dialog.resize(
+            450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1]
+        )
+        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
+        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
+        dialog.move(
+            (self.width() - dialog.width()) / 2, (self.height() - dialog.height()) / 2
+        )
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
-        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.AllNonFixedFieldsGrow
+        )  # This is properly resize textbox on OSX
         verticalLayout.addLayout(formLayout)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14*self.gui.font_scale_ratio)
+        font.setPointSize(14 * self.gui.font_scale_ratio)
 
         # Create labels and spin boxes
         warningLabel = QLabel("WARNING: REQUIRES GUI REBOOT")
@@ -862,16 +1070,16 @@ class ControlsWindow(QMainWindow):
         font2.setStyleStrategy(QFont.PreferAntialias)
         font2.setFamily(Constants.default_font)
         font2.setBold(True)
-        font2.setPointSizeF(20*self.gui.font_scale_ratio)
+        font2.setPointSizeF(20 * self.gui.font_scale_ratio)
         warningLabel.setFont(font2)
 
         font_label = QLabel("Font Scale:")
         font_label.setFont(font)
 
         font_spinBox = QDoubleSpinBox(self)
-        font_spinBox.setMinimum(.1)
+        font_spinBox.setMinimum(0.1)
         font_spinBox.setMaximum(5)
-        font_spinBox.setSingleStep(.1)
+        font_spinBox.setSingleStep(0.1)
         font_spinBox.setFont(font)
         font_spinBox.setValue(self.gui.font_scale_ratio)
 
@@ -879,9 +1087,9 @@ class ControlsWindow(QMainWindow):
         pixel_label.setFont(font)
 
         pixel_spinBox = QDoubleSpinBox(self)
-        pixel_spinBox.setMinimum(.1)
+        pixel_spinBox.setMinimum(0.1)
         pixel_spinBox.setMaximum(5)
-        pixel_spinBox.setSingleStep(.1)
+        pixel_spinBox.setSingleStep(0.1)
         pixel_spinBox.setFont(font)
         pixel_spinBox.setValue(self.gui.pixel_scale_ratio[0])
 
@@ -896,9 +1104,9 @@ class ControlsWindow(QMainWindow):
         line_spinBox.setValue(Constants.line_width)
 
         formLayout.addRow(warningLabel)
-        formLayout.addRow(pixel_label,pixel_spinBox)
+        formLayout.addRow(pixel_label, pixel_spinBox)
         formLayout.addRow(font_label, font_spinBox)
-        formLayout.addRow(line_label,line_spinBox)
+        formLayout.addRow(line_label, line_spinBox)
 
         # TODO: Make a little viewer to see the changes before applying them
 
@@ -910,13 +1118,22 @@ class ControlsWindow(QMainWindow):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(
+            125 * self.gui.pixel_scale_ratio[0]
+        )  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Reboot")
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
-        save_button.clicked.connect(lambda: self.updateScreenDrawSettings(dialog, pixel_spinBox.value(), font_spinBox.value(), line_spinBox.value()))
+        save_button.clicked.connect(
+            lambda: self.updateScreenDrawSettings(
+                dialog,
+                pixel_spinBox.value(),
+                font_spinBox.value(),
+                line_spinBox.value(),
+            )
+        )
         save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
 
         buttonLayout.addWidget(cancel_button)
@@ -953,7 +1170,9 @@ class ControlsWindow(QMainWindow):
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.show()
 
-    def updateScreenDrawSettings(self, dialog, new_pixel_scale, new_font_scale, new_line_scale):
+    def updateScreenDrawSettings(
+        self, dialog, new_pixel_scale, new_font_scale, new_line_scale
+    ):
         """
         This function is called when the user clicks reboot in above dialog, updates the screen settings, saves them to
         file and then calls for a reboot
@@ -966,7 +1185,11 @@ class ControlsWindow(QMainWindow):
         dialog.done(2)
 
         # The user only updates the x pixel scale ratio, must keep things square so this updates y
-        pixel_scale_change = new_pixel_scale/self.gui.pixel_scale_ratio[0] * self.gui.pixel_scale_ratio[1]
+        pixel_scale_change = (
+            new_pixel_scale
+            / self.gui.pixel_scale_ratio[0]
+            * self.gui.pixel_scale_ratio[1]
+        )
         self.gui.pixel_scale_ratio = [new_pixel_scale, pixel_scale_change]
 
         # Update other visual settings
@@ -987,7 +1210,7 @@ class ControlsWindow(QMainWindow):
             "function_name": "ambientize_pressure_transducers",
             "target_board_addr": self.interface.getBoardAddr(action.text()),
             "timestamp": int(datetime.now().timestamp()),
-            "args": []
+            "args": [],
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)
@@ -1002,7 +1225,7 @@ class ControlsWindow(QMainWindow):
             "function_name": "tare_load_cells",
             "target_board_addr": 0,
             "timestamp": int(datetime.now().timestamp()),
-            "args": []
+            "args": [],
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)
@@ -1012,7 +1235,7 @@ class ControlsWindow(QMainWindow):
             "function_name": "set_system_clock",
             "target_board_addr": 3,
             "timestamp": int(datetime.now().timestamp()),
-            "args": [0]
+            "args": [0],
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)
@@ -1020,7 +1243,7 @@ class ControlsWindow(QMainWindow):
             "function_name": "set_system_clock",
             "target_board_addr": 0,
             "timestamp": int(datetime.now().timestamp()),
-            "args": [0]
+            "args": [0],
         }
         # print(cmd_dict)
         self.gui.liveDataHandler.sendCommand(3, cmd_dict)

@@ -36,27 +36,60 @@ class Limit(QtWidgets.QGroupBox):
         self.layout.addWidget(self.indicator, 0, 0)
 
         # bounds and value
+
         self.low = QtWidgets.QLineEdit()
         self.low.setPlaceholderText("Low")
+        self.low.setFixedWidth(100)
+
+        self.lower_bound_label = QtWidgets.QLabel("Lower Bound")
+        self.lower_bound_label.setFixedWidth(100)
+        self.lower_bound_label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+        )
+
+        self.lower_bound = QtWidgets.QComboBox(self)
+        self.lower_bound.addItems(["-∞", "<", "≤"])
+        self.lower_bound.resize(self.lower_bound.sizeHint())
+        # add signal stuff
+
         self.value = QtWidgets.QLabel("Value")
         self.value.setFixedWidth(100)
         self.value.setAlignment(Qt.AlignCenter)
+
+        self.upper_bound_label = QtWidgets.QLabel("Upper Bound")
+        self.upper_bound_label.setFixedWidth(80)
+        self.upper_bound_label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+        )
+
+        self.upper_bound = QtWidgets.QComboBox(self)
+        self.upper_bound.addItems(["+∞", "<", "≤"])
+        self.upper_bound.resize(self.upper_bound.sizeHint())
+        # add signal stuff
+
         self.high = QtWidgets.QLineEdit()
         self.high.setPlaceholderText("High")
+        self.high.setFixedWidth(100)
+
         self.layout.addWidget(self.low, 0, 1)
-        self.layout.addWidget(self.value, 0, 2)
-        self.layout.addWidget(self.high, 0, 3)
+        self.layout.addWidget(self.lower_bound_label, 0, 2)
+        self.layout.addWidget(self.lower_bound, 0, 3)
+        self.layout.addWidget(self.value, 0, 4)
+        self.layout.addWidget(self.upper_bound_label, 0, 5)
+        self.layout.addWidget(self.upper_bound, 0, 6)
+        self.layout.addWidget(self.high, 0, 7)
 
         # channel selection
         self.channel = QtWidgets.QLineEdit()
         self.channel.setPlaceholderText("Channel")
         completer = QtWidgets.QCompleter(channels)  # channel autocomplete
         self.channel.setCompleter(completer)
-        self.layout.addWidget(self.channel, 0, 4)
+        self.channel.setFixedWidth(100)
+        self.layout.addWidget(self.channel, 0, 8)
 
         self.delete_button = QtWidgets.QPushButton("x")
         # self.delete_button.setStyleSheet("")
-        self.layout.addWidget(self.delete_button, 0, 5)
+        self.layout.addWidget(self.delete_button, 0, 9)
         self.delete_button.clicked.connect(self.delete)
         # self.delete_button.setIcon(QtGui.QIcon('Python/xicon.jpg'))
         self.delete_button.setFixedSize(QtCore.QSize(30, 30))
@@ -71,9 +104,61 @@ class Limit(QtWidgets.QGroupBox):
     def update(self, val: float):
         val = float(val)
         self.value.setText(str(val))
-        if len(self.high.text()) > 0 and len(self.low.text()) > 0:
+        self.low.setStyleSheet("QLineEdit{background : ;}")
+        self.high.setStyleSheet("QLineEdit{background : ;}")
+        self.low.setEnabled(True)
+        self.high.setEnabled(True)
+        min, max = "-∞", "+∞"
+        if self.lower_bound.currentText() == min:
+            self.low.setStyleSheet("QLineEdit{background : grey;}")
+            self.low.setEnabled(False)
+        if self.upper_bound.currentText() == max:
+            self.high.setStyleSheet("QLineEdit{background : grey;}")
+            self.high.setEnabled(False)
+        if (
+            self.lower_bound.currentText() == min
+            and self.upper_bound.currentText() == max
+        ):
+            self.indicator.setChecked(True)
+        elif self.lower_bound.currentText() == min and len(self.high.text()) > 0:
             try:
-                if val <= float(self.high.text()) and val >= float(self.low.text()):
+                if (
+                    self.upper_bound.currentText() == "<"
+                    and val < float(self.high.text())
+                    or self.upper_bound.currentText() == "≤"
+                    and val <= float(self.high.text())
+                ):
+                    self.indicator.setChecked(True)
+                else:
+                    self.indicator.setChecked(False)
+            except:
+                pass
+        elif self.upper_bound.currentText() == max and len(self.low.text()) > 0:
+            try:
+                if (
+                    self.lower_bound.currentText() == "<"
+                    and val > float(self.low.text())
+                    or self.lower_bound.currentText() == "≤"
+                    and val >= float(self.low.text())
+                ):
+                    self.indicator.setChecked(True)
+                else:
+                    self.indicator.setChecked(False)
+            except:
+                pass
+        elif len(self.high.text()) > 0 and len(self.low.text()) > 0:
+            try:
+                if (
+                    self.lower_bound.currentText() == "<"
+                    and val > float(self.low.text())
+                    or self.lower_bound.currentText() == "≤"
+                    and val >= float(self.low.text())
+                ) and (
+                    self.upper_bound.currentText() == "<"
+                    and val < float(self.high.text())
+                    or self.upper_bound.currentText() == "≤"
+                    and val <= float(self.high.text())
+                ):
                     self.indicator.setChecked(True)
                 else:
                     self.indicator.setChecked(False)
@@ -86,7 +171,11 @@ class Limit(QtWidgets.QGroupBox):
         self.high.setText(str(config["high"]))
 
     def save(self):
-        return {"channel": self.channel.text(), "low": self.low.text(), "high": self.high.text()}
+        return {
+            "channel": self.channel.text(),
+            "low": self.low.text(),
+            "high": self.high.text(),
+        }
 
     def delete(self):
         self.parent.delete_limit(self)
@@ -99,11 +188,12 @@ class LimitWidget(QtWidgets.QWidget):
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.setStyleSheet("")
+        self.setMinimumWidth(850)
 
         self.interface = S2_Interface()
         self.channels = self.interface.channels
         self.num_channels = num_channels
-        #self.client_dialog = client
+        # self.client_dialog = client
 
         self.limits_box = QtWidgets.QWidget()
         self.limits_layout = QtWidgets.QVBoxLayout()
@@ -131,7 +221,7 @@ class LimitWidget(QtWidgets.QWidget):
         self.save_button = QtWidgets.QPushButton("Save")
         self.layout.addWidget(self.save_button, 2, 0, 1, 1)
         self.save_button.clicked.connect(self.save)
-    
+
         self.starttime = datetime.now().timestamp()
 
     def delete_limit(self, widget):
@@ -149,16 +239,20 @@ class LimitWidget(QtWidgets.QWidget):
         self.num_channels = len(self.limits)
 
     def save(self):
-        configs = {"num_channels": self.num_channels,
-                   "limit_configs": [limit.save() for limit in self.limits]}
+        configs = {
+            "num_channels": self.num_channels,
+            "limit_configs": [limit.save() for limit in self.limits],
+        }
         savename = QtGui.QFileDialog.getSaveFileName(
-            self, 'Save Config', 'limits.cfg', "Config (*.cfg)")[0]
+            self, "Save Config", "limits.cfg", "Config (*.cfg)"
+        )[0]
         with open(savename, "w") as f:
             json.dump(configs, f)
 
     def load(self):
         loadname = QtGui.QFileDialog.getOpenFileName(
-            self, "Load Config", "", "Config (*.cfg)")[0]
+            self, "Load Config", "", "Config (*.cfg)"
+        )[0]
         with open(loadname, "r") as f:
             configs = json.load(f)
         while self.num_channels < int(configs["num_channels"]):
@@ -168,26 +262,26 @@ class LimitWidget(QtWidgets.QWidget):
 
     def update_limits(self, last_packet: dict):
         if last_packet:
-            last_packet["time"] -= self.starttime  # time to elapsed
+            # last_packet["Time"] -= int(self.starttime) # time to elapsed
             for i in range(len(self.limits)):
                 channel = self.limits[i].channel.text()
                 if channel in self.channels:
                     self.limits[i].update(last_packet[channel])
-    
+
     # def cycle(self):
     #     last_packet = self.client_dialog.client.cycle()
     #     self.update_limits(last_packet)
 
 
 class LimitWindow(QtWidgets.QMainWindow):
-    def __init__(self, num_channels, gui, singular : bool = False, *args, **kwargs):
+    def __init__(self, num_channels, gui, singular: bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.gui = gui
         # menu bar
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
-        self.options_menu = self.main_menu.addMenu('&Options')
+        self.options_menu = self.main_menu.addMenu("&Options")
 
         # # set up client
         # if client is None:
@@ -196,26 +290,28 @@ class LimitWindow(QtWidgets.QMainWindow):
 
         if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
-            self.connect.setShortcut('Alt+C')
-            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.connect.setShortcut("Alt+C")
+            self.connect.triggered.connect(
+                lambda: self.gui.show_window(self.gui.liveDataHandler.getClient())
+            )
             self.options_menu.addAction(self.connect)
         # else:
         #     self.client_dialog = client
 
         self.gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
-        
+
         self.widget = LimitWidget(num_channels, *args, **kwargs)
         self.setWindowTitle("Limits")
         self.setCentralWidget(self.widget)
 
         # save menu item
-        self.save_action = QtGui.QAction("&Save Config", self.options_menu)
+        self.save_action = QtWidgets.QAction("&Save Config", self.options_menu)
         self.save_action.setShortcut("Ctrl+S")
         self.save_action.triggered.connect(self.save)
         self.options_menu.addAction(self.save_action)
 
         # load menu item
-        self.load_action = QtGui.QAction("&Load Config", self.options_menu)
+        self.load_action = QtWidgets.QAction("&Load Config", self.options_menu)
         self.load_action.setShortcut("Ctrl+O")
         self.load_action.triggered.connect(self.load)
         self.options_menu.addAction(self.load_action)
@@ -223,9 +319,9 @@ class LimitWindow(QtWidgets.QMainWindow):
         # set up environment and database
         self.interface = S2_Interface()
         self.channels = self.interface.channels
-        self.header = ['time', 'packet_num', 'commander'] + self.channels
+        self.header = ["time", "packet_num", "commander"] + self.channels
         self.database = pd.DataFrame(columns=self.header)
-    
+
     def load(self):
         """Load config file"""
         self.widget.load()
@@ -233,21 +329,21 @@ class LimitWindow(QtWidgets.QMainWindow):
     def save(self):
         """Saves config to a file"""
         self.widget.save()
-    
+
     def exit(self):
         """Exit application"""
-        #self.client_dialog.disconnect() #.client
-        #app.quit()
-        #sys.exit()
+        # self.client_dialog.disconnect() #.client
+        # app.quit()
+        # sys.exit()
 
     def closeEvent(self, event):
         """Handler for closeEvent at window close"""
 
         self.exit()
-    
+
     def cycle(self):
         self.widget.cycle()
-    
+
     def update_limits(self, last_packet: dict):
         self.widget.update_limits(last_packet)
 
@@ -263,17 +359,17 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication.instance()
 
     # initialize application
-    appid = 'MASA.Limits'  # arbitrary string
+    appid = "MASA.Limits"  # arbitrary string
     app.setApplicationName("MASA GUI")
     app.setApplicationDisplayName("MASA GUI (Singular) - Limits")
 
-    if os.name == 'nt':  # Bypass command because it is not supported on Linux
+    if os.name == "nt":  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
     else:
         pass
         # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
 
-    #app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    # app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     lwgui = BaseGui(app)
     limit = LimitWindow(8, gui=lwgui, singular=True)
     lwgui.setMainWindow(limit)

@@ -1,6 +1,7 @@
 from s2Interface import S2_Interface
 import traceback
 
+
 def parse_auto(command_list: list, i: int = 0):
     """Recursive autosequence parser
 
@@ -19,19 +20,21 @@ def parse_auto(command_list: list, i: int = 0):
         constructed = []
         loop = []
         loop_len = 0
-        #in_loop = False
+        # in_loop = False
         while i < len(command_list):  # loop parsing
             line = command_list[i]
             cmd = line[0]
             args = line[1:]
-            #print(line)
+            # print(line)
 
             if cmd == "loop":  # start loop
                 loop_len = int(args[0])
-                #in_loop = True
-                (loop, i) = parse_auto(command_list, i+1)
-                constructed += (loop * loop_len)
-            elif cmd in (commands + ["set_addr", "delay", "new_log"]):  # add commands to loop
+                # in_loop = True
+                (loop, i) = parse_auto(command_list, i + 1)
+                constructed += loop * loop_len
+            elif cmd in (
+                commands + ["set_addr", "delay", "new_log"]
+            ):  # add commands to loop
                 constructed.append(line)
             elif cmd == "auto":
                 seq = args[0]
@@ -45,9 +48,8 @@ def parse_auto(command_list: list, i: int = 0):
             elif cmd == "end_loop":  # stop loop and add to sequence
                 return (constructed, i)
 
-            i+=1
+            i += 1
         return (constructed, i)
     except:
         traceback.print_exc()
         return ([], i)
-        

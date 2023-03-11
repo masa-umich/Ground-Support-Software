@@ -1,9 +1,9 @@
-
 """
 Helper class with various mth functions
 """
-class MathHelper:
 
+
+class MathHelper:
     @staticmethod
     def mapValue(value, leftMin, leftMax, rightMin, rightMax):
         """

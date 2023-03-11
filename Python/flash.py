@@ -1,5 +1,6 @@
 import sys
-#import os
+
+# import os
 from datetime import datetime
 from overrides import overrides
 
@@ -13,7 +14,6 @@ from s2Interface import S2_Interface
 
 
 class FlashWindow(QtWidgets.QMainWindow):
-
     def __init__(self, gui, singular: bool = False, *args, **kwargs):
 
         super().__init__()
@@ -23,7 +23,7 @@ class FlashWindow(QtWidgets.QMainWindow):
 
         self.main_menu = self.menuBar()
         self.main_menu.setNativeMenuBar(True)
-        self.options_menu = self.main_menu.addMenu('&Options')
+        self.options_menu = self.main_menu.addMenu("&Options")
 
         # # set up client
         # if client is None:
@@ -32,8 +32,10 @@ class FlashWindow(QtWidgets.QMainWindow):
 
         if singular:
             self.connect = QtGui.QAction("&Connection", self.options_menu)
-            self.connect.setShortcut('Alt+C')
-            self.connect.triggered.connect(lambda: self.gui.show_window(self.gui.liveDataHandler.getClient()))
+            self.connect.setShortcut("Alt+C")
+            self.connect.triggered.connect(
+                lambda: self.gui.show_window(self.gui.liveDataHandler.getClient())
+            )
             self.options_menu.addAction(self.connect)
 
         self.widget = FlashController(self.gui)
@@ -50,9 +52,9 @@ class FlashController(QtWidgets.QWidget):
         self._gui.liveDataHandler.dataPacketSignal.connect(self.updateFromDataPacket)
 
         # logo
-        self.logo = QtGui.QLabel()
-        pixmap = QtGui.QPixmap(self._gui.LAUNCH_DIRECTORY+"Images/flash.png")
-        #pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
+        self.logo = QtWidgets.QLabel()
+        pixmap = QtGui.QPixmap(self._gui.LAUNCH_DIRECTORY + "Images/flash.png")
+        # pixmap = pixmap.scaled(400, 400, QtCore.Qt.KeepAspectRatio)
         self.logo.setPixmap(pixmap)
         self.logo.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -71,14 +73,14 @@ class FlashController(QtWidgets.QWidget):
         rem_mem_font.setPointSizeF(14 * self._gui.font_scale_ratio)
         self.rem_mem.setFont(rem_mem_font)
         self.rem_mem.setText("0000 kb")
-        #self.rem_mem.setStyleSheet("color: black")
+        # self.rem_mem.setStyleSheet("color: black")
 
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         self.layout.addWidget(self.logo, 0, 0, 1, 2)
         self.layout.addWidget(self.board_selector, 1, 0, 1, 2)
-        #self.layout.addWidget(self.file_selector, 2, 0, 1, 1)
-        #self.layout.addWidget(self.file_button, 2, 1, 1, 1)
+        # self.layout.addWidget(self.file_selector, 2, 0, 1, 1)
+        # self.layout.addWidget(self.file_button, 2, 1, 1, 1)
         self.layout.addWidget(self.download_button, 3, 0, 1, 2)
         self.layout.addWidget(self.wipe_button, 6, 0, 1, 2)
         self.layout.addWidget(self.start_button, 4, 0, 1, 2)
@@ -98,9 +100,14 @@ class FlashController(QtWidgets.QWidget):
 
     def select_file(self):
         options = QtWidgets.QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        # options |= QFileDialog.DontUseNativeDialog
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self, "Select Dump File", "", "Text Files (*.csv);;All Files (*)", options=options)
+            self,
+            "Select Dump File",
+            "",
+            "Text Files (*.csv);;All Files (*)",
+            options=options,
+        )
         if filename:
             self.file_selector.setText(filename)
 
@@ -126,20 +133,27 @@ class FlashController(QtWidgets.QWidget):
             self._gui.liveDataHandler.sendCommand(5, addr)
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Information)
-        msgBox.setText("It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper.")
+        msgBox.setText(
+            "It's normal if the server freezes up for a bit so do not close or restart. Patience, grasshopper."
+        )
         msgBox.setWindowTitle("Notice!")
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msgBox.exec()
 
     def wipe(self):
         addr = self.get_addr()
-        dialog = QtWidgets.QMessageBox.question(self, '', "Are you sure you want to wipe flash?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if addr != -1 & dialog == QtWidgets.QMessageBox.Yes :
+        dialog = QtWidgets.QMessageBox.question(
+            self,
+            "",
+            "Are you sure you want to wipe flash?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+        )
+        if addr != -1 & dialog == QtWidgets.QMessageBox.Yes:
             cmd_dict = {
                 "function_name": "wipe_flash",
                 "target_board_addr": addr,
                 "timestamp": int(datetime.now().timestamp()),
-                "args": []
+                "args": [],
             }
             self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
@@ -150,7 +164,7 @@ class FlashController(QtWidgets.QWidget):
                 "function_name": "stop_logging",
                 "target_board_addr": addr,
                 "timestamp": int(datetime.now().timestamp()),
-                "args": []
+                "args": [],
             }
             self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 
@@ -161,7 +175,7 @@ class FlashController(QtWidgets.QWidget):
                 "function_name": "start_logging",
                 "target_board_addr": addr,
                 "timestamp": int(datetime.now().timestamp()),
-                "args": []
+                "args": [],
             }
             self._gui.liveDataHandler.sendCommand(3, cmd_dict)
 

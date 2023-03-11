@@ -17,15 +17,31 @@ Class to handle all Chamber objects and their functionality
 class Regulator(BaseObject):
     object_name = "Regulator"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int = 4, width: float = 40 * 1,
-                 height: float = 36 * 1, name: str = "Regulator",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Regulator', is_vertical: bool = True,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int = 4,
+        width: float = 40 * 1,
+        height: float = 36 * 1,
+        name: str = "Regulator",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Regulator",
+        is_vertical: bool = True,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
         """
         Initializer for Solenoid
 
@@ -53,16 +69,30 @@ class Regulator(BaseObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows, long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible)
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+        )
 
         self.setAnchorPoints()
 
@@ -93,42 +123,46 @@ class Regulator(BaseObject):
 
         if self.is_vertical is False:  # Draw horizontally
             # Move path to starting position
-            path.moveTo(0, self.height/2)
+            path.moveTo(0, self.height / 2)
             path.lineTo(0, self.height)
-            path.lineTo(self.width, self.height/2)
+            path.lineTo(self.width, self.height / 2)
             path.lineTo(self.width, self.height)
-            path.lineTo(0, self.height/2)
+            path.lineTo(0, self.height / 2)
             Diam = self.height * 0.375
-            path.moveTo(self.width/2, 0)
-            path.lineTo(self.width/2, (3*self.height/2 - Diam)/2)
-            path.lineTo(3*self.width/4, 0)
-            path.lineTo(self.width/2, 0)
+            path.moveTo(self.width / 2, 0)
+            path.lineTo(self.width / 2, (3 * self.height / 2 - Diam) / 2)
+            path.lineTo(3 * self.width / 4, 0)
+            path.lineTo(self.width / 2, 0)
             # Draws "solenoid" shape with current brush
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
             # Draws ball shape overtop of solenoid shape
             path = QPainterPath()
-            path.addEllipse((self.width - Diam) / 2, (3 * self.height / 2 - Diam) / 2, Diam, Diam)
+            path.addEllipse(
+                (self.width - Diam) / 2, (3 * self.height / 2 - Diam) / 2, Diam, Diam
+            )
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
 
         else:  # Draw vertically
             path.moveTo(0, 0)
-            path.lineTo(self.width/2, 0)
+            path.lineTo(self.width / 2, 0)
             path.lineTo(0, self.height)
-            path.lineTo(self.width/2, self.height)
+            path.lineTo(self.width / 2, self.height)
             path.lineTo(0, 0)
             Diam = self.width * 0.375
-            path.moveTo(self.width, self.height/2)
-            path.lineTo(self.width - (3*self.width/2 - Diam)/2, self.height/2)
-            path.lineTo(self.width, 3*self.height/4)
-            path.lineTo(self.width, self.height/ 2)
+            path.moveTo(self.width, self.height / 2)
+            path.lineTo(self.width - (3 * self.width / 2 - Diam) / 2, self.height / 2)
+            path.lineTo(self.width, 3 * self.height / 4)
+            path.lineTo(self.width, self.height / 2)
             # Draws "solenoid" shape with current brush
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
             # Draws ball shape overtop of solenoid shape
             path = QPainterPath()
-            path.addEllipse((self.width / 2 - Diam) / 2, (self.height - Diam) / 2, Diam, Diam)
+            path.addEllipse(
+                (self.width / 2 - Diam) / 2, (self.height - Diam) / 2, Diam, Diam
+            )
             path.translate(self.position.x(), self.position.y())
             self.widget_parent.painter.drawPath(path)
 
@@ -136,19 +170,28 @@ class Regulator(BaseObject):
 
         super().draw()
 
-
     @overrides
     def setAnchorPoints(self):
         """
         Sets the anchor points for the object. Called when object is created, and when scale changes
         """
         if self.is_vertical == False:
-            self.anchor_points[0].updateLocalPosition(QPointF(0,int(3*self.height/4)))
-            self.anchor_points[1].updateLocalPosition(QPointF(self.width ,int(3*self.height/4)))
-            self.anchor_points[2].updateLocalPosition(QPointF(self.width/2,0))
-            self.anchor_points[3].updateLocalPosition(QPointF(self.width/2, self.height))
+            self.anchor_points[0].updateLocalPosition(
+                QPointF(0, int(3 * self.height / 4))
+            )
+            self.anchor_points[1].updateLocalPosition(
+                QPointF(self.width, int(3 * self.height / 4))
+            )
+            self.anchor_points[2].updateLocalPosition(QPointF(self.width / 2, 0))
+            self.anchor_points[3].updateLocalPosition(
+                QPointF(self.width / 2, self.height)
+            )
         else:
-            self.anchor_points[0].updateLocalPosition(QPointF(int(self.width/4),0))
-            self.anchor_points[1].updateLocalPosition(QPointF(int(self.width/4),self.height))
-            self.anchor_points[2].updateLocalPosition(QPointF(self.width, int(self.height/2)))
-            self.anchor_points[3].updateLocalPosition(QPointF(0, int(self.height/2)))
+            self.anchor_points[0].updateLocalPosition(QPointF(int(self.width / 4), 0))
+            self.anchor_points[1].updateLocalPosition(
+                QPointF(int(self.width / 4), self.height)
+            )
+            self.anchor_points[2].updateLocalPosition(
+                QPointF(self.width, int(self.height / 2))
+            )
+            self.anchor_points[3].updateLocalPosition(QPointF(0, int(self.height / 2)))

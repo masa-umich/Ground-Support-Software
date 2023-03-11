@@ -4,19 +4,21 @@ from PyQt5.QtCore import *
 
 from plot import Plot
 
+
 class PlotWindow(QMainWindow):
     """
     Window for plots
     """
 
     resized = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         ##TODO: Change this back to 5 Hz for operational use
-        self.update_rate = 1/1 #Update plots at 1 Hz
+        self.update_rate = 1 / 1  # Update plots at 1 Hz
 
         # Set geometry
-        self.title = 'Plot View'
+        self.title = "Plot View"
         self.left = 300
         self.top = 100
         self.width = 1100
@@ -46,9 +48,9 @@ class PlotWindow(QMainWindow):
         :return:
         """
         self.plotList = []
-        for i in range(0,int(self.plotNumber/2)):
-            for j in range(0,int(self.plotNumber/2)):
-                plot = Plot('plot{}-{}'.format(i,j),parent=self)
+        for i in range(0, int(self.plotNumber / 2)):
+            for j in range(0, int(self.plotNumber / 2)):
+                plot = Plot("plot{}-{}".format(i, j), parent=self)
                 self.plotList.append(plot)
                 self.grid.addWidget(plot, i, j)
 
@@ -68,8 +70,8 @@ class PlotWindow(QMainWindow):
             plot.update_figure()
 
             ## Keep counters between 0 and 1
-            i+=1
-            j+=1
+            i += 1
+            j += 1
 
             if i > 1:
                 i = 0
@@ -86,7 +88,7 @@ class PlotWindow(QMainWindow):
         for plot in self.plotList:
             plot.openBool = False
         event.accept()
-        print('closing window')
+        print("closing window")
 
     def resizeEvent(self, event):
         self.resized.emit()

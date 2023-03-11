@@ -16,15 +16,31 @@ class Chamber(BaseObject):
 
     object_name = "Chamber"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int = 4, width: float = 88*1,
-                 height: float = 170*1, name: str = "Chamber",
-                 scale: float = 1, serial_number: str = 'RP-D2',
-                 long_name: str = 'Arpulus Delus the Second', is_vertical: bool = True,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Bottom", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0,0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, long_name_visible:bool = True, serial_number_visible:bool = True):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int = 4,
+        width: float = 88 * 1,
+        height: float = 170 * 1,
+        name: str = "Chamber",
+        scale: float = 1,
+        serial_number: str = "RP-D2",
+        long_name: str = "Arpulus Delus the Second",
+        is_vertical: bool = True,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Bottom",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
         """
         Initializer for Solenoid
 
@@ -51,17 +67,31 @@ class Chamber(BaseObject):
         """
 
         ## Initialize underlying class
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked, position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos, long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows, long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible)
-    
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+        )
+
     @overrides
     def onClick(self):
         """
@@ -73,8 +103,8 @@ class Chamber(BaseObject):
 
         # Tells widget painter to update screen
         self.widget_parent.update()
-        
-        #placeholder for future functionality
+
+        # placeholder for future functionality
         print("Chamber object clicked")
 
     @overrides
@@ -83,28 +113,30 @@ class Chamber(BaseObject):
         Draws the chamber on the screen
         """
         path = QPainterPath()
-        
+
         if self.is_vertical == True:
-            path.moveTo(0,self.height)
-            path.lineTo(self.width*0.25, self.height*0.75)
-            path.lineTo(0,self.height/2)
-            path.lineTo(0,0)
+            path.moveTo(0, self.height)
+            path.lineTo(self.width * 0.25, self.height * 0.75)
+            path.lineTo(0, self.height / 2)
+            path.lineTo(0, 0)
             path.lineTo(self.width, 0)
-            path.lineTo(self.width,self.height/2)
-            path.lineTo(self.width*0.75,self.height*0.75)
-            path.lineTo(self.width,self.height)
-        
+            path.lineTo(self.width, self.height / 2)
+            path.lineTo(self.width * 0.75, self.height * 0.75)
+            path.lineTo(self.width, self.height)
+
         elif self.is_vertical == False:
-            path.moveTo(self.width,0)
-            path.lineTo(self.width*0.75, self.height*0.25)
-            path.lineTo(self.width/2,0)
-            path.lineTo(0,0)
+            path.moveTo(self.width, 0)
+            path.lineTo(self.width * 0.75, self.height * 0.25)
+            path.lineTo(self.width / 2, 0)
+            path.lineTo(0, 0)
             path.lineTo(0, self.height)
-            path.lineTo(self.width/2,self.height)
-            path.lineTo(self.width*0.75,self.height*0.75)
-            path.lineTo(self.width,self.height)
-        
-        path.translate(self.position.x(), self.position.y()) # Translate it into position
-        self.widget_parent.painter.drawPath(path) # Draw Path
+            path.lineTo(self.width / 2, self.height)
+            path.lineTo(self.width * 0.75, self.height * 0.75)
+            path.lineTo(self.width, self.height)
+
+        path.translate(
+            self.position.x(), self.position.y()
+        )  # Translate it into position
+        self.widget_parent.painter.drawPath(path)  # Draw Path
 
         super().draw()

@@ -18,16 +18,33 @@ class Motor(AvionicsObject):
 
     object_name = "Motor"
 
-    def __init__(self, widget_parent: QWidget, position: QPointF, fluid: int, width: float = 70,
-                 height: float = 78*1.5, name: str = "Motor",
-                 scale: float = 1, serial_number: str = '',
-                 long_name: str = 'Motor', is_vertical: bool = False,
-                 locked: bool = False, position_locked: bool = False, _id: int = None,
-                 serial_number_label_pos: str = "Right", serial_number_label_local_pos: QPointF = QPointF(0, 0),
-                 serial_number_label_font_size: float = 10, long_name_label_pos: str = "Top",
-                 long_name_label_local_pos: QPointF = QPointF(0, 0), long_name_label_font_size: float = 12,
-                 long_name_label_rows: int = 1, channel: str = 'Undefined', board: str = 'Undefined',
-                 long_name_visible:bool = True, serial_number_visible:bool = True):
+    def __init__(
+        self,
+        widget_parent: QWidget,
+        position: QPointF,
+        fluid: int,
+        width: float = 70,
+        height: float = 78 * 1.5,
+        name: str = "Motor",
+        scale: float = 1,
+        serial_number: str = "",
+        long_name: str = "Motor",
+        is_vertical: bool = False,
+        locked: bool = False,
+        position_locked: bool = False,
+        _id: int = None,
+        serial_number_label_pos: str = "Right",
+        serial_number_label_local_pos: QPointF = QPointF(0, 0),
+        serial_number_label_font_size: float = 10,
+        long_name_label_pos: str = "Top",
+        long_name_label_local_pos: QPointF = QPointF(0, 0),
+        long_name_label_font_size: float = 12,
+        long_name_label_rows: int = 1,
+        channel: str = "Undefined",
+        board: str = "Undefined",
+        long_name_visible: bool = True,
+        serial_number_visible: bool = True,
+    ):
 
         """
         Initializer for Solenoid
@@ -58,19 +75,32 @@ class Motor(AvionicsObject):
 
         # TODO: Still bleah, should have a way to rotate or something
 
-        super().__init__(parent=widget_parent, position=position, fluid=fluid, width=width, height=height,
-                         name=name, is_vertical=is_vertical, scale=scale,
-                         serial_number=serial_number, long_name=long_name, locked=locked,
-                         position_locked=position_locked,
-                         _id=_id, serial_number_label_pos=serial_number_label_pos,
-                         serial_number_label_local_pos=serial_number_label_local_pos,
-                         serial_number_label_font_size=serial_number_label_font_size,
-                         long_name_label_pos=long_name_label_pos,
-                         long_name_label_local_pos=long_name_label_local_pos,
-                         long_name_label_font_size=long_name_label_font_size,
-                         long_name_label_rows=long_name_label_rows,long_name_visible=long_name_visible,
-                         serial_number_visible=serial_number_visible, board=board, channel=channel)
-
+        super().__init__(
+            parent=widget_parent,
+            position=position,
+            fluid=fluid,
+            width=width,
+            height=height,
+            name=name,
+            is_vertical=is_vertical,
+            scale=scale,
+            serial_number=serial_number,
+            long_name=long_name,
+            locked=locked,
+            position_locked=position_locked,
+            _id=_id,
+            serial_number_label_pos=serial_number_label_pos,
+            serial_number_label_local_pos=serial_number_label_local_pos,
+            serial_number_label_font_size=serial_number_label_font_size,
+            long_name_label_pos=long_name_label_pos,
+            long_name_label_local_pos=long_name_label_local_pos,
+            long_name_label_font_size=long_name_label_font_size,
+            long_name_label_rows=long_name_label_rows,
+            long_name_visible=long_name_visible,
+            serial_number_visible=serial_number_visible,
+            board=board,
+            channel=channel,
+        )
 
         self.window = self.widget_parent.window
 
@@ -89,30 +119,42 @@ class Motor(AvionicsObject):
         self.Dconstant = 0
 
         # Define the labels that keep track of position and set point
-        self.set_pos_title_label = CustomLabel(self.widget_parent, self.gui, text="Set Pos")
-        self.set_pos_title_label.setFixedWidth(self.width)
+        self.set_pos_title_label = CustomLabel(
+            self.widget_parent, self.gui, text="Set Pos"
+        )
+        self.set_pos_title_label.setFixedWidth(int(self.width))
         self.set_pos_title_label.lower()
 
-        self.set_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.setPoint)+ "°")
-        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.set_pos_label = CustomLabel(
+            self.widget_parent, self.gui, text=str(self.setPoint) + "°"
+        )
+        self.set_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.set_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.set_pos_label.lower()
 
-        self.current_pos_title_label = CustomLabel(self.widget_parent,self.gui, text="Curr Pos")
-        self.current_pos_title_label.setFixedWidth(self.width)
+        self.current_pos_title_label = CustomLabel(
+            self.widget_parent, self.gui, text="Curr Pos"
+        )
+        self.current_pos_title_label.setFixedWidth(int(self.width))
         self.current_pos_title_label.lower()
 
-        self.current_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.currentPos)+ "°")
-        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.current_pos_label = CustomLabel(
+            self.widget_parent, self.gui, text=str(self.currentPos) + "°"
+        )
+        self.current_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.current_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.current_pos_label.lower()
 
-        self.pot_pos_title_label = CustomLabel(self.widget_parent,self.gui, text="Pot Pos")
-        self.pot_pos_title_label.setFixedWidth(self.width)
+        self.pot_pos_title_label = CustomLabel(
+            self.widget_parent, self.gui, text="Pot Pos"
+        )
+        self.pot_pos_title_label.setFixedWidth(int(self.width))
         self.pot_pos_title_label.lower()
 
-        self.pot_pos_label = CustomLabel(self.widget_parent, self.gui, text=str(self.currentPos)+ "°")
-        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
+        self.pot_pos_label = CustomLabel(
+            self.widget_parent, self.gui, text=str(self.currentPos) + "°"
+        )
+        self.pot_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
         self.pot_pos_label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
         self.pot_pos_label.lower()
 
@@ -133,25 +175,56 @@ class Motor(AvionicsObject):
         :return:
         """
 
-        blankSpaceHeight = (self.height-self.boxHeight*3 - self.set_pos_title_label.height()*3)/4
+        blankSpaceHeight = (
+            self.height - self.boxHeight * 3 - self.set_pos_title_label.height() * 3
+        ) / 4
 
-        self.set_pos_title_label.setFixedWidth(self.width)
-        self.set_pos_title_label.move(self.position.x(), self.position.y() + blankSpaceHeight * (1))
+        self.set_pos_title_label.setFixedWidth(int(self.width))
+        self.set_pos_title_label.move(
+            int(self.position.x()), int(self.position.y() + blankSpaceHeight * (1))
+        )
 
-        self.set_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.set_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.set_pos_title_label.y() + self.set_pos_title_label.height())
+        self.set_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.set_pos_label.move(
+            int(self.position.x() + (self.width - self.boxWidth) / 2),
+            int(self.set_pos_title_label.y() + self.set_pos_title_label.height()),
+        )
 
-        self.current_pos_title_label.setFixedWidth(self.width)
-        self.current_pos_title_label.move(self.position.x(), self.position.y() + self.set_pos_title_label.height() + self.boxHeight + blankSpaceHeight * (2))
+        self.current_pos_title_label.setFixedWidth(int(self.width))
+        self.current_pos_title_label.move(
+            int(self.position.x()),
+            int(
+                self.position.y()
+                + self.set_pos_title_label.height()
+                + self.boxHeight
+                + blankSpaceHeight * (2)
+            ),
+        )
 
-        self.current_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.current_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.current_pos_title_label.y() + self.current_pos_title_label.height())
+        self.current_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.current_pos_label.move(
+            int(self.position.x() + (self.width - self.boxWidth) / 2),
+            int(
+                self.current_pos_title_label.y() + self.current_pos_title_label.height()
+            ),
+        )
 
-        self.pot_pos_title_label.setFixedWidth(self.width)
-        self.pot_pos_title_label.move(self.position.x(), self.position.y() + 2*self.current_pos_title_label.height() + 2*self.boxHeight + blankSpaceHeight * (3))
+        self.pot_pos_title_label.setFixedWidth(int(self.width))
+        self.pot_pos_title_label.move(
+            int(self.position.x()),
+            int(
+                self.position.y()
+                + 2 * self.current_pos_title_label.height()
+                + 2 * self.boxHeight
+                + blankSpaceHeight * (3)
+            ),
+        )
 
-        self.pot_pos_label.setFixedSize(self.boxWidth, self.boxHeight)
-        self.pot_pos_label.move(self.position.x() + (self.width - self.boxWidth)/2, self.pot_pos_title_label.y() + self.pot_pos_title_label.height())
+        self.pot_pos_label.setFixedSize(int(self.boxWidth), int(self.boxHeight))
+        self.pot_pos_label.move(
+            int(self.position.x() + (self.width - self.boxWidth) / 2),
+            int(self.pot_pos_title_label.y() + self.pot_pos_title_label.height()),
+        )
 
     @overrides
     def draw(self):
@@ -167,20 +240,34 @@ class Motor(AvionicsObject):
 
         path.addRect(0, 0, self.width, self.height)
 
-        path.moveTo(self.width/2 - 1,self.height)
+        path.moveTo(self.width / 2 - 1, self.height)
 
-        path.lineTo(self.width/2 - 1,self.height+20*self.gui.pixel_scale_ratio[1])
+        path.lineTo(
+            self.width / 2 - 1, self.height + 20 * self.gui.pixel_scale_ratio[1]
+        )
 
-        x1 = (self.width - self.boxWidth)/2
+        x1 = (self.width - self.boxWidth) / 2
         x2 = x1 + self.boxWidth
 
-        y1 = self.set_pos_title_label.y() - self.position.y() + self.set_pos_title_label.height()
+        y1 = (
+            self.set_pos_title_label.y()
+            - self.position.y()
+            + self.set_pos_title_label.height()
+        )
         y2 = y1 + self.boxHeight
 
-        y3 = self.current_pos_title_label.y()-self.position.y() + self.current_pos_title_label.height()
+        y3 = (
+            self.current_pos_title_label.y()
+            - self.position.y()
+            + self.current_pos_title_label.height()
+        )
         y4 = y3 + self.boxHeight
 
-        y5 = self.pot_pos_title_label.y()-self.position.y() + self.pot_pos_title_label.height()
+        y5 = (
+            self.pot_pos_title_label.y()
+            - self.position.y()
+            + self.pot_pos_title_label.height()
+        )
         y6 = y5 + self.boxHeight
 
         path.moveTo(x1, y1)
@@ -236,24 +323,31 @@ class Motor(AvionicsObject):
         dialog.setWindowModality(Qt.ApplicationModal)
 
         # Set dialog size and place in middle of window
-        dialog.resize(450 * self.gui.pixel_scale_ratio[0], 240 * self.gui.pixel_scale_ratio[1])
-        dialog.setMinimumWidth(450 * self.gui.pixel_scale_ratio[0])
-        dialog.setMinimumWidth(240 * self.gui.pixel_scale_ratio[1])
-        dialog.move((self.window.width() - dialog.width()) / 2,
-                    (self.window.height() - dialog.height()) / 2)
+        dialog.resize(
+            int(450 * self.gui.pixel_scale_ratio[0]),
+            int(240 * self.gui.pixel_scale_ratio[1]),
+        )
+        dialog.setMinimumWidth(int(450 * self.gui.pixel_scale_ratio[0]))
+        dialog.setMinimumWidth(int(240 * self.gui.pixel_scale_ratio[1]))
+        dialog.move(
+            int((self.window.width() - dialog.width()) / 2),
+            int((self.window.height() - dialog.height()) / 2),
+        )
 
         # Vertical layout to hold everything
         verticalLayout = QVBoxLayout(dialog)
 
         # Create the form layout that will hold the text box
         formLayout = QFormLayout()
-        formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)  # This is properly resize textbox on OSX
+        formLayout.setFieldGrowthPolicy(
+            QFormLayout.AllNonFixedFieldsGrow
+        )  # This is properly resize textbox on OSX
         verticalLayout.addLayout(formLayout)
 
         font = QFont()
         font.setStyleStrategy(QFont.PreferAntialias)
         font.setFamily(Constants.default_font)
-        font.setPointSize(14 * self.gui.font_scale_ratio)
+        font.setPointSize(int(14 * self.gui.font_scale_ratio))
 
         # Create spin boxes
         setPointBox = QDoubleSpinBox()
@@ -281,12 +375,13 @@ class Motor(AvionicsObject):
         DPointBox.setDecimals(2)
         DPointBox.setFont(font)
 
-
         # Create zero button
         zeroBtn = QPushButton("Zero Motor")
         zeroBtn.setDefault(False)
         zeroBtn.setAutoDefault(False)
-        zeroBtn.clicked.connect(lambda: self.motorDialogZeroButtonClicked(spinBoxes, dialog))
+        zeroBtn.clicked.connect(
+            lambda: self.motorDialogZeroButtonClicked(spinBoxes, dialog)
+        )
 
         # Create zero pot button
         zeroPotBtn = QPushButton("Zero Pot")
@@ -324,14 +419,16 @@ class Motor(AvionicsObject):
         cancel_button.setDefault(False)
         cancel_button.setAutoDefault(False)
         cancel_button.clicked.connect(lambda: dialog.done(1))
-        cancel_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])  # Lazy way to make buttons not full width
+        cancel_button.setFixedWidth(
+            int(125 * self.gui.pixel_scale_ratio[0])
+        )  # Lazy way to make buttons not full width
 
         save_button = QPushButton("Save")
         save_button.setFont(font)
         save_button.setDefault(False)
         save_button.setAutoDefault(False)
         save_button.clicked.connect(lambda: self.motorDialogSave(spinBoxes, dialog))
-        save_button.setFixedWidth(125 * self.gui.pixel_scale_ratio[0])
+        save_button.setFixedWidth(int(125 * self.gui.pixel_scale_ratio[0]))
 
         buttonLayout.addWidget(cancel_button)
         buttonLayout.addWidget(save_button)
@@ -340,39 +437,61 @@ class Motor(AvionicsObject):
 
         dialog.show()
 
-    def motorDialogZeroButtonClicked(self, spinBoxes, dialog): #TODO: update
+    def motorDialogZeroButtonClicked(self, spinBoxes, dialog):  # TODO: update
         """
         Function called when the zero button is clicked in motor dialog
         """
         if self.gui.debug_mode:
-            self.updateValues(self.currenta,self.currentb, 0,self.potPos,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
+            self.updateValues(
+                self.currenta,
+                self.currentb,
+                0,
+                self.potPos,
+                self.setPoint,
+                self.Pconstant,
+                self.Iconstant,
+                self.Dconstant,
+            )
         else:
             if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_zero",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel)]
+                    "args": [int(self.channel)],
                 }
-                #print(cmd_dict)
+                # print(cmd_dict)
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 spinBoxes[0].setValue(0)
-    
-    def motorDialogZeroPotButtonClicked(self): #TODO: update
+
+    def motorDialogZeroPotButtonClicked(self):  # TODO: update
         """
         Function called when the zero pot button is clicked in motor dialog
         """
         if self.gui.debug_mode:
-            self.updateValues(self.currenta,self.currentb, self.currentPos,0,self.setPoint,self.Pconstant,self.Iconstant,self.Dconstant)
+            self.updateValues(
+                self.currenta,
+                self.currentb,
+                self.currentPos,
+                0,
+                self.setPoint,
+                self.Pconstant,
+                self.Iconstant,
+                self.Dconstant,
+            )
         else:
             if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "ambientize_pot",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel)]
+                    "args": [int(self.channel)],
                 }
-                #print(cmd_dict)
+                # print(cmd_dict)
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
 
     def motorDialogSave(self, spinBoxes, dialog):
@@ -387,43 +506,70 @@ class Motor(AvionicsObject):
         d = spinBoxes[3].value()
 
         if self.gui.debug_mode:
-            self.updateValues(self.currenta,self.currentb,self.currentPos,self.potPos,setpoint,p,i,d)
+            self.updateValues(
+                self.currenta,
+                self.currentb,
+                self.currentPos,
+                self.potPos,
+                setpoint,
+                p,
+                i,
+                d,
+            )
         else:
             if self.isAvionicsFullyDefined():
                 cmd_dict = {
                     "function_name": "set_stepper_pos",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(setpoint)]
+                    "args": [int(self.channel), float(setpoint)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kp",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(p)]
+                    "args": [int(self.channel), float(p)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_ki",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(i)]
+                    "args": [int(self.channel), float(i)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
                 time.sleep(0.1)
                 cmd_dict = {
                     "function_name": "set_kd",
-                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(self.avionics_board),
+                    "target_board_addr": self.widget_parent.window.interface.getBoardAddr(
+                        self.avionics_board
+                    ),
                     "timestamp": int(datetime.now().timestamp()),
-                    "args": [int(self.channel), float(d)]
+                    "args": [int(self.channel), float(d)],
                 }
                 self.gui.liveDataHandler.sendCommand(3, cmd_dict)
         dialog.done(2)
 
-    def updateValues(self, currenta, currentb, currPos, potPos, setPoint, Pconstant, Iconstant, Dconstant):
+    def updateValues(
+        self,
+        currenta,
+        currentb,
+        currPos,
+        potPos,
+        setPoint,
+        Pconstant,
+        Iconstant,
+        Dconstant,
+    ):
         """
         Updates the current motor values from passed data packet values
         """
@@ -437,7 +583,7 @@ class Motor(AvionicsObject):
         self.Dconstant = Dconstant
 
         # Update labels
-        self.set_pos_label.setText(str(self.setPoint)+ "°", False)
+        self.set_pos_label.setText(str(self.setPoint) + "°", False)
         self.current_pos_label.setText(str(self.currentPos) + "°", False)
         self.pot_pos_label.setText(str(self.potPos) + "°", False)
 
@@ -497,8 +643,8 @@ class Motor(AvionicsObject):
 
         # text += "Currenta: " + str(self.currenta) + "A\n"
         # text += "Currentb: " + str(self.currentb) + "A\n"
-        text += "P constant: " + str(self.Pconstant) +"\n"
-        text += "I constant: " + str(self.Iconstant) +"\n"
+        text += "P constant: " + str(self.Pconstant) + "\n"
+        text += "I constant: " + str(self.Iconstant) + "\n"
         text += "D constant: " + str(self.Dconstant)
 
         self.setToolTip_(text)
@@ -525,14 +671,26 @@ class Motor(AvionicsObject):
         :param should_be_transparent:
         """
         super().setMouseEventTransparency(should_be_transparent)
-        self.set_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.set_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.set_pos_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
+        self.set_pos_title_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
 
-        self.current_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.current_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.current_pos_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
+        self.current_pos_title_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
 
-        self.pot_pos_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
-        self.pot_pos_title_label.setAttribute(Qt.WA_TransparentForMouseEvents, should_be_transparent)
+        self.pot_pos_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
+        self.pot_pos_title_label.setAttribute(
+            Qt.WA_TransparentForMouseEvents, should_be_transparent
+        )
 
     @overrides
     def deleteSelf(self):
@@ -558,7 +716,9 @@ class Motor(AvionicsObject):
     def updateFromDataPacket(self, data_packet: dict):
 
         if self.isAvionicsFullyDefined():
-            board_prefix = self.gui.controlsWindow.interface.getPrefix(self.avionics_board)
+            board_prefix = self.gui.controlsWindow.interface.getPrefix(
+                self.avionics_board
+            )
             channel_name = board_prefix + "mtr" + str(self.channel)
 
             # curra = data_packet[channel_name + ".ia"]
@@ -566,7 +726,9 @@ class Motor(AvionicsObject):
             curra = 0
             currb = 0
             pos = data_packet[channel_name + ".pos"]
-            pot_pos = data_packet[board_prefix+"pot" + str(self.channel)+".e"]  # i hate u avionics
+            pot_pos = data_packet[
+                board_prefix + "pot" + str(self.channel) + ".e"
+            ]  # i hate u avionics
             setp = data_packet[channel_name + ".set"]
             p = data_packet[channel_name + ".kp"]
             i = data_packet[channel_name + ".ki"]

@@ -1,3 +1,7 @@
+from __future__ import (
+    annotations,
+)  # see https://stackoverflow.com/questions/61544854/from-future-import-annotations
+
 import ctypes
 import os
 from stat import S_IREAD, S_IRGRP, S_IROTH, S_IWUSR
@@ -11,758 +15,931 @@ import traceback
 import time
 import hashlib
 import json
-
+from termcolor import colored
+from typing import TextIO
 
 from overrides import overrides
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import Qt, QDateTime, QStandardPaths
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
+import pandas as pd
+from synnax import TimeStamp
+from synnax.io import DataFrameWriter
+from synnax_log import SynnaxLog
 
 from constants import Constants
 from party import PartyParrot
 from s2Interface import S2_Interface
+from packetLogWidget import PacketLogWidget
 import parse_auto
 
 threading.stack_size(134217728)
 
 
-class Server(QtWidgets.QMainWindow):
+class ServerGraphics(QMainWindow):
     """
-    MASA Data Aggregation Server
+    This class strictly handles drawing and updating graphics for the server. All commands and connections handled
+    elsewhere
     """
 
-    def __init__(self, qapp, autoconnect=False):
-        """Init server window"""
+    def __init__(self, qapp):
         super().__init__()
 
-        self.LAUNCH_DIRECTORY = QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+        self.LAUNCH_DIRECTORY = (
+            QStandardPaths.writableLocation(QStandardPaths.DataLocation) + "/"
+        )
 
         if not os.path.isdir(self.LAUNCH_DIRECTORY):
             os.mkdir(path=self.LAUNCH_DIRECTORY)
 
-        qapp.setWindowIcon(QtGui.QIcon(self.LAUNCH_DIRECTORY+'Images/logo_server.png'))
+        print("MASA GUI Version: " + Constants.GUI_VERSION)
+        print("Python Version: " + str(sys.version_info))
+        print("QT Version: " + QT_VERSION_STR)
+        print("Launch Directory: " + os.path.abspath(self.LAUNCH_DIRECTORY))
 
-        # init variables
-        self.packet_num = 0
-        self.packet_size = 0
-        self.commander = None
-        self.dataframe = {}
-        self.starttime = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
-        self.threads = []
-        self.command_queue = queue.Queue()
-        self.log_queue = queue.Queue()
-        self.do_flash_dump = False
-        self.dump_addr = None
-        self.dump_loc = None
-        self.database_lock = threading.Lock()
-        self.abort_auto = False
-        self.is_actively_receiving = False
-        self.history_idx = -1
-        self.history = []
+        qapp.setWindowIcon(QIcon(self.LAUNCH_DIRECTORY + "Images/logo_server.png"))
 
-        # init logs
-        self.server_log = None
-        self.serial_log = None
-        self.data_log = None
-        self.test_data_log = None
-        self.command_log = None
-        self.campaign_log = None
-        self.campaign_location = None
+        self.setWindowTitle("Server (Updated)")
 
-        # initialize parser
-        self.interface = S2_Interface()
-        self.num_items = len(self.interface.channels)
+        self.central_widget = QWidget()
 
-        # init empty dataframe
-        self.dataframe["commander"] = None
-        self.dataframe["packet_num"] = 0
-        self.dataframe["ser_open"] = False
-        self.dataframe["actively_rx"] = False
-        self.dataframe["error_msg"] = "No Board Connection Attempted"
-        self.dataframe["time"] = datetime.now().timestamp()
-        for channel in self.interface.channels:  # hardcoded
-            self.dataframe[channel] = 0
-        self.dataframe["press.vlv3.en"] = 1
+        self.setCentralWidget(self.central_widget)
 
-        self.log_box = QTextEdit()
-        self.log_box.setReadOnly(True)
+        base_size = 700
+        AR = 1.4  # H/W
+        self.setMinimumSize(int(AR * base_size), int(base_size))
 
-        # init csv header
-        self.header = "Time," + self.interface.get_header()
-        self.open_log(self.starttime, "data/")  # start initial run
+        self.statusBar().setFixedHeight(22)
 
-        # window layout
-        self.setWindowTitle("Server (" + Constants.GUI_VERSION + ")")
-        w = QtWidgets.QWidget()
-        self.setCentralWidget(w)
-        top_layout = QtWidgets.QGridLayout()
-        w.setLayout(top_layout)
-        base_size = 500
-        AR = 1.5  # H/W
-        self.setMinimumWidth(int(AR * base_size))
-        self.setMinimumHeight(int(base_size))
+        self.show()
 
+        self.server = Server()
 
-        # server log
-        tab = QTabWidget()
+        # Setup displat
+        self.top_grid_layout = QGridLayout()
+        self.central_widget.setLayout(self.top_grid_layout)
 
-        packet_widget = QWidget()
-        packet_layout = QHBoxLayout()
-        packet_widget.setLayout(packet_layout)
+        self.board_connection_group_box = QGroupBox("Board Serial Connection")
+        b_c_group_box_layout = QGridLayout()  # b_c = client connection
+        self.board_connection_group_box.setLayout(b_c_group_box_layout)
 
-        self.data_box = QTextEdit()
-        self.data_box.setReadOnly(True)
-        self.data_box.setLineWrapMode(QTextEdit.NoWrap)
+        self.b_c_scan_button = QPushButton("Scan Ports:")
+        self.b_c_scan_button.clicked.connect(self.update_b_c_ports_combo)
+        self.b_c_scan_button.setFocusPolicy(Qt.NoFocus)
+        b_c_group_box_layout.addWidget(self.b_c_scan_button, 0, 0)
 
-        command_widget = QWidget()
-        command_widget_layout = QVBoxLayout()
-        command_widget.setLayout(command_widget_layout)
+        self.b_c_ports_combo_box = QComboBox()
+        self.b_c_ports_combo_box.addItems(self.server.scan())
+        b_c_group_box_layout.addWidget(self.b_c_ports_combo_box, 0, 1, 0, 2)
 
-        # command line interface
-        command_line_widget = QWidget()
-        command_line_layout = QHBoxLayout()
-        command_line_widget.setLayout(command_line_layout)
-        self.command_line = QLineEdit()
-        self.command_line.returnPressed.connect(self.command_line_send)
-        self.command_line.setPlaceholderText(
-            "Command line interface. Type \"help\" for info.")
-        self.command_line.installEventFilter(self)
-        self.board_dropdown = QComboBox()
-        self.board_dropdown.addItems(["Engine Controller", "Flight Computer",
-                                      "Pressurization Controller", "Recovery Controller", "GSE Controller"])
-        command_line_layout.addWidget(self.command_line)
-        command_line_layout.addWidget(self.board_dropdown)
+        self.b_c_baudrate_label = QLabel("Baudrate:")
+        self.b_c_baudrate_label.adjustSize()
+        self.b_c_baudrate_label.setAlignment(Qt.AlignRight | Qt.AlignCenter)
+        b_c_group_box_layout.addWidget(self.b_c_baudrate_label, 0, 3)
 
-        self.command_textedit = QTextEdit()
-        self.command_textedit.setReadOnly(True)
-        command_widget_layout.addWidget(command_line_widget)
-        command_widget_layout.addWidget(self.command_textedit)
+        self.b_c_baudrate_combo_box = QComboBox()
+        self.b_c_baudrate_combo_box.addItems(["3913043", "115200"])
+        b_c_group_box_layout.addWidget(self.b_c_baudrate_combo_box, 0, 4)
 
-        # telemetry table
-        self.data_table = QTableWidget()
-        self.data_table.setRowCount(self.num_items)
-        self.data_table.setColumnCount(3)
-        header = self.data_table.horizontalHeader()
-        # header.setStretchLastSection(True)
-        self.data_table.setHorizontalHeaderLabels(["Channel", "Value", "Unit"])
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
-        for n in range(self.num_items):
-            self.data_table.setItem(
-                n, 0, QTableWidgetItem(self.interface.channels[n]))
-            self.data_table.setItem(n, 2, QTableWidgetItem(
-                self.interface.units[self.interface.channels[n]]))
+        self.b_c_connect_button = QPushButton("Connect")
+        self.b_c_connect_button.clicked.connect(
+            lambda: self.server.connect_to_board(
+                self.b_c_ports_combo_box.currentText(),
+                int(self.b_c_baudrate_combo_box.currentText()),
+            )
+        )
 
-        packet_layout.addWidget(self.data_box)
-        packet_layout.addWidget(self.data_table)
+        b_c_group_box_layout.addWidget(self.b_c_connect_button, 0, 5)
 
-        # tabs
-        tab.addTab(self.log_box, "Server Log")
-        tab.addTab(packet_widget, "Packet Log")
-        tab.addTab(command_widget, "Command Line")
-        # top_layout.addWidget(tab, 2, 0) # no parrot
-        top_layout.addWidget(tab, 2, 0, 1, 2)
+        self.b_c_packet_label = QLabel("Last Packet Size: 0")
+        self.b_c_packet_label.adjustSize()
+        self.b_c_packet_label.setAlignment(Qt.AlignLeft | Qt.AlignCenter)
+        self.b_c_packet_label.setMinimumWidth(200)
+        self.b_c_packet_label.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        b_c_group_box_layout.addWidget(self.b_c_packet_label, 0, 6)
 
-        # please ask Alex before reenabling, need to add circular buffer
-        self.send_to_log(self.data_box, "Packet log disabled")
-
-        # connection box (add to top_layout)
-        connection = QGroupBox("Serial Port")
-        top_layout.addWidget(connection, 0, 0)
-        connection_layout = QGridLayout()
-        connection.setLayout(connection_layout)
-        self.packet_size_label = QLabel("Last Packet Size: 0")
-        connection_layout.addWidget(self.packet_size_label, 0, 6)
-        self.ports_box = QComboBox()
-        connection_layout.addWidget(self.ports_box, 0, 0, 0, 2)
-        self.baudrate_box = QComboBox()
-        connection_layout.addWidget(self.baudrate_box, 0, 3)
-        self.baudrate_box.addItems(["3913043", "115200"])
-        scan_button = QPushButton("Scan")
-        scan_button.clicked.connect(self.scan)
-        connection_layout.addWidget(scan_button, 0, 4)
-        connect_button = QPushButton("Connect")
-        connect_button.clicked.connect(self.connect)
-        connection_layout.addWidget(connect_button, 0, 5)
-
-        # heartbeat indicator
         self.party_parrot = PartyParrot()
         self.party_parrot.setFixedSize(60, 60)
-        top_layout.addWidget(self.party_parrot, 0, 1)
-
-        # populate port box
-        self.scan()
-        if autoconnect:
-            self.connect()
-
-        # commander status
-        command_box = QGroupBox("Command Status")
-        # top_layout.addWidget(command_box, 1, 0) #no parrot
-        top_layout.addWidget(command_box, 1, 0, 1, 2)
-        command_layout = QGridLayout()
-        command_box.setLayout(command_layout)
-        self.commander_label = QLabel("Commander: None")
-        command_layout.addWidget(self.commander_label, 0, 0, 0, 4)
-        override_button = QPushButton("Override")
-        override_button.clicked.connect(self.override_commander)
-        command_layout.addWidget(override_button, 0, 4)
-
-        # start server connection thread
-        # waits for clients and then creates a thread for each connection
-        self.t = threading.Thread(target=self.server_handler, daemon=True)
-        self.t.start()
-
-        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % self.starttime)
-
-        # menu bar
-        main_menu = self.menuBar()
-        main_menu.setNativeMenuBar(True)
-        file_menu = main_menu.addMenu('&File')
-
-        # quit application menu item
-        quit_action = QAction("&Quit", file_menu)
-        quit_action.setShortcut("Ctrl+Q")
-        quit_action.triggered.connect(self.exit)
-        file_menu.addAction(quit_action)
-
+        # b_c_group_box_layout.addWidget(self.party_parrot, 0, 7)
         self.party_parrot.step()
 
-    def send_to_log(self, textedit: QTextEdit, text: str, timestamp: bool = True):
-        """Sends a message to a log.
+        self.top_grid_layout.addWidget(self.board_connection_group_box, 0, 0)
+        self.board_connection_group_box.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Fixed
+        )
+        self.top_grid_layout.addWidget(self.party_parrot, 0, 2)
 
-        Args:
-            textedit (QTextEdit): Text box to send to
-            text (str): Text to write
-            timestamp (bool): add timestamp
+        self.commander_group_box = QGroupBox("Commander Status")
+        commander_group_box_layout = QGridLayout()
+        self.commander_group_box.setLayout(commander_group_box_layout)
+
+        self.top_grid_layout.addWidget(self.commander_group_box, 1, 0, 1, 0)
+
+        self.commander_label = QLabel("Commander UUID: None")
+        commander_group_box_layout.addWidget(self.commander_label, 0, 0, 0, 4)
+
+        self.commander_override_button = QPushButton("Override Commander")
+        self.commander_override_button.clicked.connect(self.server.override_commander)
+        commander_group_box_layout.addWidget(self.commander_override_button, 0, 5, 0, 1)
+
+        self.info_tab_widget = QTabWidget()
+
+        mono_font = QFont()
+        mono_font.setStyleStrategy(QFont.PreferAntialias)
+        mono_font.setFamily(Constants.monospace_font)
+
+        self.server_log_textedit = QTextEdit()
+        self.server_log_textedit.setReadOnly(True)
+        self.server_log_textedit.setFont(mono_font)
+        self.info_tab_widget.addTab(self.server_log_textedit, "Server Log")
+
+        self.command_log_textedit = QTextEdit()
+        self.command_log_textedit.setReadOnly(True)
+        self.command_log_textedit.setLineWrapMode(QTextEdit.NoWrap)
+        self.command_log_textedit.setFont(mono_font)
+        self.info_tab_widget.addTab(self.command_log_textedit, "Board Command Log")
+
+        packet_log_widget = QWidget()
+        packet_log_hbox_layout = QHBoxLayout()
+        packet_log_widget.setLayout(packet_log_hbox_layout)
+        self.packet_log_textedit = QTextEdit("Packet Log disabled until implemented")
+        self.packet_log_textedit.setReadOnly(True)
+
+        self.packet_log_table = PacketLogWidget(
+            self.info_tab_widget,
+            self.server.interface,
+            self.server.dataPacketSignal,
+            True,
+        )
+
+        # packet_log_hbox_layout.addWidget(self.packet_log_textedit)
+        packet_log_hbox_layout.addWidget(self.packet_log_table)
+
+        self.info_tab_widget.addTab(packet_log_widget, "Packet Log")
+
+        commandline_widget = QWidget()
+        commandline_grid_layout = QGridLayout()
+        commandline_widget.setLayout(commandline_grid_layout)
+
+        self.commandline_line_edit = QLineEdit()
+        self.commandline_line_edit.installEventFilter(self)
+        self.commandline_line_edit.setStyleSheet("border: 1px solid")
+        self.commandline_line_edit.setPlaceholderText(
+            'Command line interface. Type "help" for info.'
+        )
+
+        self.commandline_local_commands = [
+            "delay",
+            "set_addr",
+            "help",
+            "auto",
+            "auto_list",
+        ]
+        possible_commands = (
+            self.server.get_command_list() + self.commandline_local_commands
+        )
+        possible_commands = possible_commands + [
+            "help " + x
+            for x in (self.server.get_command_list() + self.commandline_local_commands)
+        ]
+        completer = QCompleter(possible_commands)
+        self.commandline_line_edit.setCompleter(completer)
+        self.commandline_line_edit.returnPressed.connect(self.processCommandLine)
+        commandline_grid_layout.addWidget(self.commandline_line_edit, 0, 0, 1, 4)
+
+        self.commandline_board_dropdown = QComboBox()
+        self.commandline_board_dropdown.addItems(Constants.boards)
+        commandline_grid_layout.addWidget(self.commandline_board_dropdown, 0, 4)
+
+        self.commandline_textbox = QTextEdit()
+        self.commandline_textbox.setReadOnly(True)
+        self.commandline_textbox.setFont(mono_font)
+        commandline_grid_layout.addWidget(self.commandline_textbox, 1, 0, 1, 0)
+
+        self.info_tab_widget.addTab(commandline_widget, "Command Line")
+
+        self.top_grid_layout.addWidget(self.info_tab_widget, 2, 0, 1, 0)
+
+        self.command_line_history = []
+        self.command_line_history_idx = -1
+
+        # Signal connections
+        self.server.statusBarMessageSignal.connect(self.setStatusBarMessage)
+        self.server.logSignal.connect(self.messageToLog)
+        self.server.commanderLabelSignal.connect(self.commander_label.setText)
+        self.server.packetSizeLabelSignal.connect(self.b_c_packet_label.setText)
+        self.server.partyParrotStepSignal.connect(self.party_parrot.step)
+
+        self.server.delayed_init()
+
+        self.setStatusBarMessage("Startup Complete")
+
+    def update_b_c_ports_combo(self):
         """
-        self.log_queue.put([textedit, text, timestamp])
+        Simply updates the Client Connection groupbox, ports dropdown
+        :return: None
+        """
+        self.b_c_ports_combo_box.clear()
+        self.b_c_ports_combo_box.addItems(self.server.scan())
+
+    def exit(self, args):
+        """
+        Called when the server is closed or exited
+        :param args: idk if anything is actually here but I don't care about it
+        :return: None
+        """
+        self.server.exit()
+
+    def setStatusBarMessage(self, text: str, error: bool = False):
+        """
+        Set text and possible show as error for status bar
+        :param text: text to set
+        :param error: bool, true for error
+        :return: none
+        """
+        if error:
+            self.statusBar().setStyleSheet("background-color: red")
+        else:
+            self.statusBar().setStyleSheet("border-top :1px solid #4F4F52")
+
+        self.statusBar().showMessage(text)
+
+    def processCommandLine(self):
+        """
+        Processes command line interface
+        :return: None
+        """
+
+        commands = self.server.get_command_list()
+
+        # Add and reset history
+        self.command_line_history = [
+            self.commandline_line_edit.text()
+        ] + self.command_line_history
+        self.command_line_history_idx = -1
+
+        # Get inputted command + board address
+        cmd_str = self.commandline_line_edit.text().lower().split(" ")
+        board_addr = self.server.get_board_address(
+            self.commandline_board_dropdown.currentText()
+        )
+        cmd = cmd_str[0]
+        args = cmd_str[1:]
+
+        # Couple commands to log command. Insert plain text still gets colors.
+        self.commandline_textbox.append(Constants.getCurrentTimestamp())
+
+        self.commandline_textbox.setTextColor(QColor(55, 70, 200))
+
+        self.commandline_textbox.insertPlainText(
+            self.commandline_board_dropdown.currentText()
+        )
+
+        self.commandline_textbox.setTextColor(QColor(0, 0, 0, 255))
+
+        self.commandline_textbox.insertPlainText(" % ")
+
+        self.commandline_textbox.setTextColor(QColor(140, 30, 140))
+
+        self.commandline_textbox.insertPlainText(cmd + " " + str(args))
+
+        self.commandline_textbox.setTextColor(QColor(0, 0, 0, 255))
+
+        if cmd == "help":
+            if len(args) == 0:
+                self.commandline_textbox.append(
+                    "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n"
+                    % commands,
+                )
+            elif args[0] in (self.commandline_local_commands + commands):
+                selected_cmd = args[0]
+                cmd_args = self.getCommandLineHelp(selected_cmd)
+                # TODO: Improve how this is shown
+                self.commandline_textbox.append("Args: arg(format)\n%s" % (cmd_args))
+        else:
+            response = self.server.process_command_line(cmd, args, board_addr)
+            if response:
+                self.commandline_textbox.append(response)
+
+        self.commandline_textbox.scroll(
+            0, 0
+        )  # Not sure why/ how but this scrolls textbox to bottom
+
+        self.commandline_line_edit.clearFocus()
+        self.commandline_line_edit.clear()
+
+    def getCommandLineHelp(self, selected_command):
+        """
+        Shows quick command help from s2 interface
+        :param selected_command: command requested for help
+        :return: help text for command
+        """
+        commands = self.server.get_command_list()
+
+        tooltips = {}
+        for cmd in commands:
+
+            tip = "%s" % cmd
+            cmd_args = self.server.get_command_args(cmd)
+            for arg in cmd_args:
+                name = arg[0]
+                arg_type = arg[1]
+                tip += " %s(%s)" % (name, arg_type)
+            tooltips[cmd] = tip
+
+        tooltips["delay"] = "delay time(int, milliseconds)"
+        tooltips["set_addr"] = "set_addr target_addr(int)"
+        tooltips["auto"] = "auto auto_name(str)"
+        tooltips["auto_list"] = "auto_list"
+
+        for local_cmd in self.commandline_local_commands:
+            if local_cmd != "help" and local_cmd not in tooltips.keys():
+                print(
+                    colored(
+                        "WARNING: No help text defined for local command " + local_cmd,
+                        "red",
+                    )
+                )
+
+        return tooltips[selected_command]
+
+    @pyqtSlot(str, str)
+    def messageToLog(self, log: str, message: str):
+        """
+        Add message to one of the logs with timemstamp
+        :param log: name of log to send too
+        :param message: message to add
+        :return: None
+        """
+
+        if log == "Server":
+            self.server_log_textedit.append(Constants.getCurrentTimestamp() + message)
+        elif log == "Command":
+            self.command_log_textedit.append(Constants.getCurrentTimestamp() + message)
+        else:
+            print(
+                colored(
+                    "WARNING: messageToLog() called with '%s' log identifier that does not exist"
+                    % log
+                )
+            )
 
     def eventFilter(self, source, event):
+        """
+        Event filters handles keyboard input, focus events and other things. Here it is used for command line
+        :param source: source widget calling this
+        :param event: even that occurred
+        :return: Return true when event was dealt with, if not the pass to super
+        """
         # up and down arrows in command line to see previous commands
-        if source is self.command_line and event.type() == QtCore.QEvent.KeyPress:
+        if source is self.commandline_line_edit and event.type() == QEvent.KeyPress:
+
+            # Bound to make sure we are not going to be index out of range
             if event.key() == Qt.Key_Up:
-                self.history_idx += 1
-                if self.history_idx >= len(self.history):
-                    self.history_idx = len(self.history)-1
+                self.command_line_history_idx += 1
+                if self.command_line_history_idx >= len(self.command_line_history):
+                    self.command_line_history_idx = len(self.command_line_history) - 1
             elif event.key() == Qt.Key_Down:
-                self.history_idx -= 1
-                if self.history_idx < -1:
-                    self.history_idx = -1
+                self.command_line_history_idx -= 1
+                if self.command_line_history_idx < -1:
+                    self.command_line_history_idx = -1
+            # If both are then no history
             else:
-                return QtWidgets.QMainWindow.eventFilter(self, source, event)
-            #print(self.history_idx)
-            if self.history_idx == -1:
-                self.command_line.setText("")
+                return super().eventFilter(source, event)
+
+            # This is reaching end of history (going downwards)
+            if self.command_line_history_idx == -1:
+                self.commandline_line_edit.setText("")
             else:
-                self.command_line.setText(self.history[self.history_idx])
+                self.commandline_line_edit.setText(
+                    self.command_line_history[self.command_line_history_idx]
+                )
             return True
-        
-        return QtWidgets.QMainWindow.eventFilter(self, source, event)
 
-    def connect(self):
-        """Connects to COM port"""
+        return super().eventFilter(source, event)
 
-        try:
-            port = str(self.ports_box.currentText())
-            baud = int(self.baudrate_box.currentText())
-            if port:
-                self.interface.connect(port, baud, 0.5) # 3913043 or 115200
-                self.interface.parse_serial()
-        except:
-            # traceback.print_exc()
-            pass
+    @staticmethod
+    def applyDarkTheme(qapp: QApplication):
+        qapp.setStyle("Fusion")
 
-        if self.interface.ser.isOpen():
-            self.send_to_log(
-                self.log_box, "Connection established on %s" % port)
-        else:
-            self.send_to_log(
-                self.log_box, "Unable to connect to selected port or no ports available")
+        darkPalette = QPalette()
+        darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.WindowText, Qt.white)
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.WindowText, QColor(127, 127, 127)
+        )
+        darkPalette.setColor(QPalette.Base, QColor(42, 42, 42))
+        darkPalette.setColor(QPalette.AlternateBase, QColor(66, 66, 66))
+        darkPalette.setColor(QPalette.ToolTipBase, Qt.black)
+        darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+        darkPalette.setColor(QPalette.Text, Qt.white)
+        darkPalette.setColor(QPalette.Disabled, QPalette.Text, QColor(127, 127, 127))
+        darkPalette.setColor(QPalette.Dark, QColor(35, 35, 35))
+        darkPalette.setColor(QPalette.Shadow, QColor(20, 20, 20))
+        darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.ButtonText, Qt.white)
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.ButtonText, QColor(127, 127, 127)
+        )
+        darkPalette.setColor(QPalette.BrightText, Qt.red)
+        darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(80, 80, 80))
+        darkPalette.setColor(QPalette.HighlightedText, Qt.white)
+        darkPalette.setColor(
+            QPalette.Disabled, QPalette.HighlightedText, QColor(127, 127, 127)
+        )
+
+        qapp.setPalette(darkPalette)
+
+
+class Server(QThread):  # See below
+    """
+    This class handles a majority of the command processing, data processing etc.
+    """
+
+    synnax_log: DataFrameWriter
+
+    statusBarMessageSignal = pyqtSignal(str, bool)
+    logSignal = pyqtSignal(str, str)
+    commanderLabelSignal = pyqtSignal(str)
+    packetSizeLabelSignal = pyqtSignal(str)
+    partyParrotStepSignal = pyqtSignal()
+    dataPacketSignal = pyqtSignal(dict)
+    # Doing all this because we may want to run this server when no
+    # graphics are present. Don't want to pass in window that may not exist
+
+    def __init__(self):
+        super().__init__()
+
+        self.interface = S2_Interface()
+        self.is_active = False
+
+        self.commander: str = None
+        # Tracks how many packets have been sent. Do NOT use for any type of guarantees
+        self.packet_num = 0
+        # Tracks that even if the serial is open, good data may not be coming through
+        self.is_actively_receiving_data = False
+        # Current server error message
+        self.current_error_message = "No Board Connection Attempted"
+
+        # Hold what clients server is connected to
+        self.open_client_connections = []
+
+        # Hold commands that will go to the board
+        self.command_queue = queue.Queue()
+
+        # TODO: Kinda hate that have all these vars. Probs can not have them instance vars
+        # Flag and holder for flash dump
+        self.do_flash_dump = False
+        self.flash_dump_addr: str = None
+        self.flash_dump_loc: str = None
+
+        # Holds reference to autosequence thread
+        self.active_autosequence: AutosequenceThread = None
+
+        # Holds all the data sent from the boards as a dict. Also contains header that has server connection info
+        # For example can call self.data_dict["ec.pressure[0]"] to get the pressure of channel 0 on ec
+        self.data_dict = dict()
+        self.data_dict["Time"] = TimeStamp.now()
+        self.data_dict["commander"] = self.commander
+        self.data_dict["packet_num"] = self.packet_num
+        self.data_dict["ser_open"] = self.interface.ser.is_open
+        self.data_dict["actively_rx"] = self.is_actively_receiving_data
+        self.data_dict["error_msg"] = self.current_error_message
+
+        # Add  all possible channels to the data dict. Best to do it this way because we know everything is there
+        # and don't know what we will get in the future
+        for channel in self.interface.channels:
+            self.data_dict[channel] = 0  # Init all to 0
+
+        self.server_connection_handler = ServerConnectionHandler(self)
+        self.server_connection_handler.start()
+
+        # Directory where files are saved
+        self.working_directory = "data/"
+
+        # Initialize logs (will be files later in open_base_logs())
+        self.server_log: TextIO = None
+        self.serial_log: TextIO = None
+        self.data_log: TextIO = None
+        self.test_data_log: TextIO = None
+        self.command_log: TextIO = None
+        self.campaign_log: TextIO = None
+        self.campaign_location: str = None
+
+        self._averaged_update_freq = -1
+        self._num_update_steps = 0
+        self._last_update_time = time.time()
+
+        # Start main server thread
+        self.start()
+
+    def delayed_init(self):
+        """
+        This function is called after the ServerGraphics window is done loading because some things need to wait for
+        other processes to finish
+        :return: None
+        """
+
+        # Start logging
+        self.update_campaign_logging(None)
+        # Have to do this after we start logging obv
+        self.logSignal.connect(self.write_to_log)
 
     def scan(self):
-        """Scans for COM ports"""
-
-        ports = self.interface.scan()
-        self.ports_box.clear()
-        self.ports_box.addItems(ports)
-
-    def set_commander(self, clientid: str, ip: str):
-        """Sets a client as commander
-
-        Args:
-            clientid (str): UUID of client
-            ip (str): IP address of client
         """
+        Scans for comm ports and returns them
+        :return: comm ports found
+        """
+        ports = self.interface.scan()
+        self.statusBarMessageSignal.emit("Ports scanned: " + str(ports), False)
 
-        self.commander = clientid
-        self.send_to_log(self.log_box, "New commander: " +
-                         str(clientid) + " (" + str(ip) + ")")
+        return ports
 
     def override_commander(self):
-        """Removes the current commander"""
+        """
+        Override the active client commander, set to none
+        :return: None
+        """
 
-        self.send_to_log(self.log_box, "Clearing commander")
+        self.logSignal.emit("Server", "Commander '%s' cleared" % self.commander)
+        self.statusBarMessageSignal.emit(
+            "Commander '%s' cleared" % self.commander, False
+        )
+
         self.commander = None
 
-    def client_handler(self, clientsocket: socket.socket, addr: str):
-        """Client thread handler function.
-
-        Args:
-            clientsocket (socket.socket): Socket object of new connection
-            addr (str): IP address of client connection
+    @property
+    def commander(self):
         """
-        # print(type(clientsocket))
-        # client handler
-        counter = 0
-        last_uuid = None
-        while True:
+        Gets commander from server
+        :return: commander uuid
+        """
+        return self._commander
+
+    @commander.setter
+    def commander(self, value):
+        """
+        Set commander value. Allows us to always make sure server label is up to date
+        :param value: value for commander
+        :return: None
+        """
+        self._commander = value
+        self.commanderLabelSignal.emit("Commander UUID: " + str(self._commander))
+
+    def check_commander(self, client_uuid):
+        """
+        Checks if the uuid passes is the current commander
+        :param client_uuid: passed client uuid
+        :return: True if uuid is the commander
+        """
+        if self.commander is None:
+            return False
+
+        return client_uuid == self.commander
+
+    def update_packet_header(self):
+        """
+        Update the data_dict packet header with the current server info
+        :return: None
+        """
+        if self.commander:
+            # We are using hash to send out commander so someone else can't spoof it. For example two clients are
+            # connected, one is commander. Sending that client UUID to the second client means it could inject that into
+            # its packet and then pretend it is commander. Overkill? likely
+            self.data_dict["commander"] = hashlib.sha256(
+                self.commander.encode("utf-8")
+            ).hexdigest()
+        else:
+            self.data_dict["commander"] = None
+        self.data_dict["packet_num"] = self.packet_num
+        # Check if the serial to the board is even open
+        self.data_dict["ser_open"] = self.interface.ser.is_open
+        self.data_dict["actively_rx"] = self.is_actively_receiving_data
+        self.data_dict["error_msg"] = self.current_error_message
+        self.data_dict["Time"] = TimeStamp.now()
+
+    @pyqtSlot(object)
+    def client_connection_closed(self, client_handler_thread: ClientConnectionHandler):
+        """
+        Called from a signal from client handler when connection is closed. Update the commander and remove client
+        from open connections
+        :param client_handler_thread: client handler thread that needs to be closed
+        :return: None
+        """
+        self.update_commander_from_lost_connection(client_handler_thread.last_uuid)
+
+        # Stop campaign logging if active
+        if self.campaign_location is not None:
+            self.update_campaign_logging(None)
+
+        if client_handler_thread in self.open_client_connections:
+            self.open_client_connections.remove(client_handler_thread)
+
+    def update_commander_from_lost_connection(self, uuid: str):
+        """
+        Closes the connection with a client.
+        :param uuid: last uuid from client closing connection
+        :return: None
+        """
+
+        if self.commander == uuid:
+            self.logSignal.emit(
+                "Server",
+                "Lost/ closed commander connection with id (UUID) '%s'"
+                % self.commander,
+            )
+            self.statusBarMessageSignal.emit(
+                "Lost/ closed commander connection with id (UUID) '%s'"
+                % self.commander,
+                False,
+            )
+            self.commander = None
+        else:
+            self.logSignal.emit(
+                "Server", "Lost/ closed connection to client with id (UUID): %s" % uuid
+            )
+            self.statusBarMessageSignal.emit(
+                "Lost/ closed connection to client with id (UUID): %s" % uuid, False
+            )
+
+    def connect_to_board(self, port: str, baud: int):
+        """
+        Attempts a connection to the board through serial COM
+        :param port: selected port
+        :param baud: selected baud rate
+        :return: None
+        """
+
+        # Check to make sure port is not none
+        if port:
+            # This is purposely not in the running section of the thread. If this hangs, indicates a problem so good to
+            # show that to the user
+            self.interface.connect(port, baud, timeout=0.5)
+
+        if self.interface.ser.isOpen():
+            self.logSignal.emit("Server", "Connection established on %s" % port)
+
+        else:
+            self.logSignal.emit(
+                "Server", "Unable to connect to selected port or no ports available"
+            )
+
+    def get_command_list(self):
+        """
+        Returns a list of all possible commands (commands on board)
+        :return: list
+        """
+        return list(
+            self.interface.get_cmd_names_dict().keys()
+        )  # Get all commands to reference
+
+    def get_board_address(self, boardName: str):
+        """
+        Gets board address from name of the board
+        :param boardName: Name of board (as defined in S2 interface)
+        :return: board address
+        """
+
+        return self.interface.getBoardAddr(boardName)
+
+    def get_command_args(self, command: str):
+        """
+        Gets a command's args as a list
+        :param command: command as string
+        :return: list of args
+        """
+
+        cmd_id = self.interface.get_cmd_names_dict()[command]
+        cmd_args = self.interface.get_cmd_args_dict()[cmd_id]
+
+        return cmd_args
+
+    @pyqtSlot(socket.socket, tuple)
+    def create_new_client_connection(self, client_socket: socket.socket, addr: tuple):
+        """
+        Called from a signal from server connection handler. Creates a new client thread, starts it, connects it,
+        and tracks it
+        :param client_socket: client socket received from the server connection handler
+        :param addr: address of the client (ip)
+        :return:
+        """
+
+        client = ClientConnectionHandler(client_socket, addr, self)
+        self.dataPacketSignal.connect(client.get_new_data_for_client)
+
+        self.open_client_connections.append(client)
+        client.start()
+
+    def process_command_line(self, cmd: str, args: list, board_addr: int):
+        """
+        Processes commands entered through the command line
+        :param cmd: command to process
+        :param args: command arguments
+        :param board_addr: address of board to send to
+        :return: Text to be displayed in textbox, if needed
+        """
+
+        possible_commands = self.get_command_list()
+
+        # Validate then parse command
+        if cmd in possible_commands:
+            return self.parse_command_from_text(cmd, args, board_addr)
+
+        # List all files in autosequence folder
+        elif cmd == "auto_list":
+
+            return_str = ""
+            for file in os.listdir("autos/"):
+                if file.endswith(".txt"):
+                    return_str += file + ", "
+
+            return return_str
+
+        elif cmd == "auto":  # run an auto sequence
+            filename = args[0]
+            path = "autos/" + str(filename) + ".txt"
+
+            if self.active_autosequence is not None:
+                return "Active autosequence already running"
+
+            # Open file and call thread
             try:
-                msg = clientsocket.recv(4096*8)  # if the data is ever bigger then this so help me
-                if msg == b'':
-                    # remote connection closed
-                    if self.commander == last_uuid:
-                        self.commander = None
-                    break
-                else:
-                    command = pickle.loads(msg)
-                    last_uuid = command["clientid"]
-                    if command["command"] == 0:  # do nothing
-                        pass
-                    elif command["command"] == 1 and not self.commander:  # take command
-                        print(command)
-                        self.set_commander(command["clientid"], addr[0])
-                    # give up command
-                    elif command["command"] == 2 and self.commander == command["clientid"]:
-                        print(command)
-                        self.override_commander()
-                    # send command
-                    elif command["command"] == 3 and self.commander == command["clientid"]:
-                        print(command)
-                        self.command_queue.put(command["args"])
-                    elif command["command"] == 4:  # close connection
-                        print(command)
-                        if self.commander == command["clientid"]:
-                            self.override_commander()
-                        break
-                    # flash dump
-                    elif command["command"] == 5 and self.commander == command["clientid"]:
-                        print(command)
-                        self.do_flash_dump = True
-                        self.dump_addr = command["args"]
-                        if self.campaign_log is not None and not self.campaign_log.closed:
-                            self.dump_loc = self.campaign_location
-                        else:
-                            self.dump_loc = None
+                with open(path) as f:
+                    lines = f.read().splitlines()  # read file
 
-                    # elif (command["command"] == 6 and commander == command["clientid"]): # checkpoint logs for only commander
-                    elif command["command"] == 6:  # checkpoint logs
-                        print(command)
-                        new_runname = command["args"]
-                        dictData = None
-                        mappings = None
-                        if command["args"] is not None and len(command["args"]) > 1:
-                            new_runname = command["args"][0]
-                            dictData = command["args"][1]
-                            mappings = command["args"][2]
-                        elif new_runname is not None:
-                            new_runname = command["args"][0]
-                        self.checkpoint_logs(new_runname, dictData, mappings)
-                    # run autosequence
-                    elif command["command"] == 7 and self.commander == command["clientid"]:
-                        print(command)
-                        target_addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
-                        lines = command["args"][0]
-                        auto_thread = threading.Thread(target=self.run_auto,
-                                                       args=(lines, target_addr, True), daemon=True)
-                        auto_thread.start()
-                    elif command["command"] == 8 and self.commander == command["clientid"]:
-                        print(command)
-                        with self.command_queue.mutex:
-                            self.command_queue.queue.clear()
-                        self.abort_auto = True
-                    elif command["command"] == 9:
-                        print(command)
-                        CET = command["args"][0]
-                        type_ = command["args"][1]
-                        text = command["args"][2]
+                if not self.interface.ser.is_open:
+                    return "Warning: No connection to serial. Stopping"
 
-                        self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
+                auto_thread = AutosequenceThread(self, lines, False)
+                self.active_autosequence = auto_thread
 
-                    elif command["command"] == 10:
-                        print(command)
-                        runname = command["args"][0]
-                        testName = command["args"][1]
+                return (
+                    "Autosequence started, check server log and command log for status"
+                )
 
-                        if testName is not None:
-                            isRecovered = command["args"][2]
-                            self.open_test_log(runname, testName, Constants.campaign_data_dir, isRecovered)
-                        else:
-                            self.close_test_log()
+            except FileNotFoundError:
+                return "File not found"
+            except:
+                traceback.print_exc()
+        else:
+            return "Command not recognized"
 
-                    else:
-                        print("WARNING: Unhandled command: ", command)
-
-                    self.database_lock.acquire()
-                    try:
-                        if self.commander:
-                            self.dataframe["commander"] = hashlib.sha256(self.commander.encode('utf-8')).hexdigest()
-                            #self.dataframe["commander"] = self.commander
-                        else:
-                            self.dataframe["commander"] = None
-                        self.dataframe["packet_num"] = self.packet_num
-                        # if the serial to the board is even open
-                        self.dataframe["ser_open"] = self.interface.ser.is_open
-                        # is actively recieving good data
-                        self.dataframe["actively_rx"] = self.is_actively_receiving
-                        data = pickle.dumps(self.dataframe)
-                    except:
-                        data = None
-                        traceback.print_exc()
-                    finally:
-                        self.database_lock.release()
-
-                    clientsocket.sendall(data)
-                counter = 0
-            except Exception as e:  # detect dropped connection
-                print(traceback.format_exc())
-                if counter > 3:  # close connection after 3 consecutive failed packets
-                    if self.commander == command["clientid"]:
-                        self.override_commander()
-                    break
-                #print(addr)
-                print("Failed Packet from %s (consecutive: %s)" % (addr[0], counter+1))
-                counter += 1
-        clientsocket.close()
-        self.send_to_log(self.log_box, "Closing connection to " + addr[0])
-        self.t.join()
-
-    def server_handler(self):
-        """Handler for server thread. Main server target function."""
-
-        # initialize socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        host = socket.gethostbyname(socket.gethostname())
-        port = 6969
-        # s.bind(("masadataserver.local", port))
-        sock.bind((host, port))
-
-        # wait
-        self.send_to_log(
-            self.log_box, 'Server initialized. Waiting for clients to connect...')
-        self.send_to_log(self.log_box, "Listening on %s:%s" % (host, port))
-        sock.listen(5)
-
-        # create connection
-        while True:
-            # establish connection with client
-            cli, addr = sock.accept()
-            self.send_to_log(self.log_box, 'Got connection from ' + addr[0])
-
-            # create thread to handle client
-            client_thread = threading.Thread(target=self.client_handler,
-                                             args=(cli, addr), daemon=True)
-            client_thread.start()
-
-        # close socket on exit (i don't think this ever actually will run. probably should figure this out)
-        sock.close()
-
-    # quit application function
-    def exit(self):
-        """Exits application safely"""
-
-        self.interface.ser.close()
-        self.close_log()
-        sys.exit()
-
-    def closeEvent(self, event):
-        """Handler for closeEvent at window close"""
-
-        self.exit()
-
-    def parse_command(self, cmd: str, args: list, addr: int):
-        """Parses a command and compiles the command dict.
-
-        Args:
-            cmd (str): Command
-            args (list): List of command arguments
-            addr (int): Target addr
+    def parse_command_from_text(self, cmd: str, args: list, addr: int):
+        """
+        Takes a command from text (autosequence or command line) and compiles a command dict that is then added to
+        command queue
+        :param cmd: Command name
+        :param args: arguments as a list
+        :param addr: Board addr command is intended for
+        :return: Error message if applicable, otherwise none
         """
 
-        selected_cmd = self.interface.get_cmd_names_dict()[cmd]
-        cmd_args = self.interface.get_cmd_args_dict()[selected_cmd]
+        # Get arguments
+        cmd_args = self.get_command_args(cmd)
 
-        # make sure it has the right number of args
-        #if sum([a.isnumeric() for a in args]) == len(cmd_args):
+        # Parse and assemble command
         try:
             if len(args) == len(cmd_args):
                 cmd_dict = {
                     "function_name": cmd,
                     "target_board_addr": int(addr),
                     "timestamp": int(datetime.now().timestamp()),
-                    #"args": [float(a) for a in args if a.isnumeric()]
-                    "args": [float(a) for a in args]
+                    # "args": [float(a) for a in args if a.isnumeric()]
+                    "args": [float(a) for a in args],
                 }
-                print(cmd_dict)
-                self.command_queue.put(cmd_dict)  # add command to queue
+
+                # Add it to command queue
+                self.command_queue.put(cmd_dict)
+            else:
+                return "Command does not have correct number of arguments"
         except Exception as e:
-            print("Error: could not send command because of error ", e)
+            traceback.print_exc()
+            return "Error: could not send command because of error: " + str(e)
 
-    def run_auto(self, lines: list, addr: int, remote: bool = False):
-        """Runs an autosequence
+        return None
 
-        Args:
-            lines (list): list of autosequence lines
-            addr (int): starting target address
-            remote (bool): is a pre-parsed auto from remote client
+    @overrides
+    def exit(self):
+        super().exit()
+        self.close_logs()
+        self.server_connection_handler.exit()
+
+    def shutdown(self):
         """
-
-        commands = list(self.interface.get_cmd_names_dict().keys())
-        if not remote:
-            try:
-                command_list = []
-                for line in lines:  # loop parsing
-                    command_list.append(line.lstrip().lower().split(" "))
-
-                (constructed, _) = parse_auto.parse_auto(command_list)
-            except:
-                traceback.print_exc()
-                return
-        else:
-            constructed = lines
-        
-        #print(constructed)
-        if len(constructed) == 0:
-            self.send_to_log(
-                self.command_textedit, "Error in autosequence or autosequence not found", timestamp=False)
-        for cmd_str in constructed:  # run auto
-            if self.abort_auto:
-                with self.command_queue.mutex:
-                    self.command_queue.queue.clear()
-                self.abort_auto = False
-                return
-            else:
-                cmd = cmd_str[0]
-                args = cmd_str[1:]
-
-                if cmd == "delay":  # delay time in ms
-                    print("delay %s ms" % args[0])
-                    time.sleep(float(args[0])/1000)
-                elif cmd == "set_addr":  # set target addr
-                    print("set_addr %s" % args[0])
-                    addr = args[0]
-                elif cmd == "new_log":  # creates new log file
-                    
-                    if len(args) > 0:
-                        print("new_log %s" % args[0])
-                        self.checkpoint_logs(args[0], None, None)
-                    else:
-                        print("new_log")
-                        self.checkpoint_logs(None, None, None)
-                elif cmd in commands:  # handle commands
-                    self.parse_command(cmd, args, addr)
-
-    def startCampaignLogging(self, campaign_save_name, dataDict, avionicsMappings):
-        self.close_log()
-
-        recovered_state = os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/")
-
-        if not os.path.isdir(Constants.campaign_data_dir+campaign_save_name+"/tests/"):
-            os.makedirs(Constants.campaign_data_dir+campaign_save_name+"/tests/")
-
-        self.open_log(campaign_save_name, Constants.campaign_data_dir, recovered_state)
-
-        if not recovered_state:
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
-            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "w")
-            self.campaign_log.write("Campaign started with save name: " + campaign_save_name + "\n")
-            self.send_to_log(self.log_box, "Campaign '%s' started" % campaign_save_name)
-
-            with open(Constants.campaign_data_dir + campaign_save_name + "/configuration.json", "w") as write_file:
-                json.dump(dataDict, write_file, indent="\t")
-                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
-
-            with open(Constants.campaign_data_dir + campaign_save_name + "/avionicsMappings.csv", "w") as write_file:
-                write_file.write("Channel,Name\n")
-                for key in avionicsMappings:
-                    if key != "Boards":  # currently don't list the boards the user has added
-                        write_file.write(avionicsMappings[key][1] + "," + avionicsMappings[key][
-                            0] + "\n")  # key is not useful, first index is name, second is channel
-                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
-        else:
-            os.chmod(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", S_IWUSR | S_IREAD)
-            self.campaign_location = Constants.campaign_data_dir + campaign_save_name + "/"
-            self.campaign_log = open(Constants.campaign_data_dir + campaign_save_name + "/campaign_log.txt", "a+")
-            self.send_to_log(self.log_box, "Campaign '%s' recovered" % campaign_save_name)
-            self.campaign_log.write("Campaign %s recovered during new server connection\n" % campaign_save_name)
-
-    def checkpoint_logs(self, filename, dataDict, avionicsMappings):
-        if filename in (None, (), []):
-            runname = QDateTime.currentDateTime().date().toString("yyyy-MM-dd") + "-T" + QDateTime.currentDateTime().time().toString("hhmmss")
-        elif isinstance(filename, str):
-            self.startCampaignLogging(filename, dataDict, avionicsMappings)
-            return
-        else:
-            print("Error: Unhandled Runname")
-
-        self.close_log()
-        self.open_log(runname, "data/")
-        self.send_to_log(self.log_box, "Raw server logging started under '%s'" % runname)
-
-    def getHelp(self, selected_command):
-        commands = list(self.interface.get_cmd_names_dict().keys())
-        keywords = ["set_addr", "delay", "auto"] + commands
-
-        tooltips = {}
-        for cmd in commands:
-            cmd_id = self.interface.get_cmd_names_dict()[cmd]
-            cmd_args = self.interface.get_cmd_args_dict()[cmd_id]
-            tip = "%s" % cmd  
-            for arg in cmd_args:
-                name = arg[0]
-                arg_type = arg[1]
-                tip += " %s(%s)" % (name, arg_type)
-            tooltips[cmd] = tip
-        tooltips["delay"] = "delay time(int, milliseconds)"
-        tooltips["set_addr"] = "set_addr target_addr(int)"
-        tooltips["auto"] = "auto auto_name(str)"
-        tooltips["new_log"] = "new_log logname(str)"
-
-        return tooltips[selected_command]
-
-    def command_line_send(self):
-        """Processes command line interface"""
-
-        commands = list(self.interface.get_cmd_names_dict().keys())
-
-        self.history = [self.command_line.text()] + self.history
-        self.history_idx = -1
-        #print(self.history)
-        cmd_str = self.command_line.text().lower().split(" ")
-        addr = self.interface.getBoardAddr(self.board_dropdown.currentText())
-        cmd = cmd_str[0]
-        args = cmd_str[1:]
-
-        if cmd in commands:
-            self.parse_command(cmd, args, addr)
-
-        elif cmd == "help":
-            if len(args) == 0:
-                self.send_to_log(
-                    self.command_textedit, "Enter commands as: <COMMAND> <ARG1> <ARG2> ... <ARGN>\n\nAvailable commands:\n%s\n\nFor more information on a command type: help <COMMAND>\n\nTo run an auto-sequence type: auto <NAME>\nPut your autosequence files in Python/autos/\n" % commands, timestamp=False)
-            elif args[0] in (["set_addr", "delay", "auto", "new_log"] + commands):
-                selected_cmd = args[0]
-                cmd_args = self.getHelp(selected_cmd)
-                self.send_to_log(
-                    self.command_textedit, "Help for: %s\nArgs: arg(format)\n%s" % (selected_cmd, cmd_args), timestamp=False)
-
-        elif cmd == "auto":  # run an auto sequence
-            seq = args[0]
-            path = "autos/" + str(seq) + ".txt"
-
-            try:
-                with open(path) as f:
-                    lines = f.read().splitlines()  # read file
-
-                # create thread to handle auto
-                auto_thread = threading.Thread(target=self.run_auto,
-                                               args=(lines, addr), daemon=True)
-                auto_thread.start()
-            except:
-                pass
-        
-        elif cmd == "new_log":
-            #print("new_log %s" % args[0])
-            if len(args) > 0:
-                self.checkpoint_logs(args[0], None, None)
-            else:
-                self.checkpoint_logs(None, None, None)
-
-        self.command_line.clear()
-
-    # get data formatted for csv
-    def get_logstring(self):
-        """Constructs a datalog CSV row from current data
-
-        Returns:
-            str: Formatted CSV row
+        Shutdown thread
+        :return: Nona
         """
+        self.is_active = False
 
-        logstring = str(self.dataframe["time"]) + ","
-        for channel in self.interface.channels:
-            logstring += "%s," % (self.dataframe[channel])
-        return logstring
-
-    def open_log(self, runname: str, save_location: str, is_recovered: bool = False):
-        """Opens a new set of log files.
-
-        Args:
-            runname (str): Run-name label
-            save_location (str): location where to save logs, must have ending /
-            is_recovered (bool): pass in true if you are opening logs that were previously open. Does not write new
-            headers
+    def open_base_logs(self, runname: str, save_location: str, is_recovered: bool):
+        """
+        Opens all logs (except test log because that isn't created until a test is created). Can re-open logs that were
+        previously closed due to gui crashing
+        :param runname: name attached to files, is either the campaign or if no campaign the timestamp
+        :param save_location: location files are saved in
+        :param is_recovered: if the files should be recovered (re-opened)
+        :return: None
         """
 
         # make data folder if it does not exist
-        if not os.path.exists(save_location + runname + "/"):
-            os.makedirs(save_location + runname + "/")
+        if not os.path.exists(save_location):
+            os.makedirs(save_location)
 
         # Un lock these files
         if is_recovered:
-            os.chmod(save_location + runname + "/" + runname + "_server_log.txt", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "/" + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "/" + runname + "_data_log.csv", S_IWUSR | S_IREAD)
-            os.chmod(save_location + runname + "/" + runname + "_command_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "_server_log.txt", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "_serial_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "_data_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(save_location + runname + "_command_log.csv", S_IWUSR | S_IREAD)
             # log file init and headers
-            self.server_log = open(save_location + runname + "/" +
-                                   runname + "_server_log.txt", "a+")
-            self.serial_log = open(save_location + runname + "/" +
-                                   runname + "_serial_log.csv", "a+")
-            self.data_log = open(save_location + runname + "/" +
-                                 runname + "_data_log.csv", "a+")
-            self.command_log = open(save_location + runname + "/" +
-                                    runname + "_command_log.csv", "a+")
+            self.server_log = open(save_location + runname + "_server_log.txt", "a+")
+            self.serial_log = open(save_location + runname + "_serial_log.csv", "a+")
+            self.data_log = open(save_location + runname + "_data_log.csv", "a+")
+            self.command_log = open(save_location + runname + "_command_log.csv", "a+")
         else:
 
             # log file init and headers
-            self.server_log = open(save_location + runname + "/" +
-                                   runname + "_server_log.txt", "w")
-            self.serial_log = open(save_location + runname + "/" +
-                                   runname + "_serial_log.csv", "w")
-            self.data_log = open(save_location + runname + "/" +
-                                 runname + "_data_log.csv", "w")
-            self.command_log = open(save_location + runname + "/" +
-                                    runname + "_command_log.csv", "w")
-            self.command_log.write("Time, Command/info\n")
+            self.server_log = open(save_location + runname + "_server_log.txt", "w")
+            self.serial_log = open(save_location + runname + "_serial_log.csv", "w")
+            self.data_log = open(save_location + runname + "_data_log.csv", "w")
+            self.command_log = open(save_location + runname + "_command_log.csv", "w")
+
+            # Write in the first lines
+            self.command_log.write(
+                "Time, From Client/ To Board/ To Client, Command/info\n"
+            )
             self.serial_log.write("Time, Packet\n")
-            self.data_log.write(self.header + "\n")
+            # Write header
+            self.data_log.write("Time," + self.interface.get_header() + "\n")
 
-    def open_test_log(self, runname:str, test_name, save_location: str, is_recovered: bool = False):
+        self.synnax_log = SynnaxLog()
+
+    def open_test_log(
+        self, campaign_save_name: str, test_name, is_recovered: bool = False
+    ):
+        """
+        Open logs when a new test is started. We cannot do this with the other base logs because we log those when tests
+        are not active
+        :param campaign_save_name: save name of the campaign
+        :param test_name: name of the test
+        :param is_recovered: flag if the test was recovered or not
+        :return:
+        """
 
         # make data folder if it does not exist
-        if not os.path.exists(save_location + runname + "/tests/"):
-            os.makedirs(save_location + runname + "/tests/")
+        if not os.path.exists(self.campaign_location + "tests/"):
+            os.makedirs(self.campaign_location + "tests/")
 
-        # Un lock these files
+        # Unlock these files
         if is_recovered:
-            os.chmod(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", S_IWUSR | S_IREAD)
+            os.chmod(
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                S_IWUSR | S_IREAD,
+            )
+
             # log file init and headers
-            self.test_data_log = open(save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+            self.test_data_log = open(
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                "a+",
+            )
         else:
             self.test_data_log = open(
-                save_location + runname + "/tests/" + runname + "__test__" + test_name + "_data_log.csv", "a+")
+                self.campaign_location
+                + "tests/"
+                + campaign_save_name
+                + "__test__"
+                + test_name
+                + "_data_log.csv",
+                "a+",
+            )
 
-            self.test_data_log.write(self.header + "\n")
+            # Write header
+            self.test_data_log.write("Time," + self.interface.get_header() + "\n")
 
-    def close_test_log(self):
-        if self.test_data_log is not None and not self.test_data_log.closed:
-            self.test_data_log.close()
-            os.chmod(self.test_data_log.name, S_IREAD | S_IRGRP | S_IROTH)
-            self.test_data_log = None
+    def close_logs(self):
+        """
+        Closes all logs and locks them
+        :return:
+        """
 
-    def close_log(self):
-        """Safely closes all logfiles"""
+        # Check if server log is open, if it is others should also be. Too lazy to check all
+        if self.server_log is None:
+            return  # Nothing should be open, nothing to close
 
+        # Close all the logs, also lock them from being edited
         self.server_log.close()
         os.chmod(self.server_log.name, S_IREAD | S_IRGRP | S_IROTH)
         self.serial_log.close()
@@ -772,163 +949,874 @@ class Server(QtWidgets.QMainWindow):
         self.data_log.close()
         os.chmod(self.data_log.name, S_IREAD | S_IRGRP | S_IROTH)
 
+        # Close test logs
         self.close_test_log()
 
+        # Close the Synnax log
+        self.synnax_log.close()
+
+        # Close campaign logs
         if self.campaign_log is not None and not self.campaign_log.closed:
             self.campaign_log.close()
             self.campaign_location = None
-            os.chmod(self.campaign_log.name, S_IREAD|S_IRGRP|S_IROTH)
+            os.chmod(self.campaign_log.name, S_IREAD | S_IRGRP | S_IROTH)
+
+    def close_test_log(self):
+        """
+        Closes test log. Can't have this as a part of the above close_logs function because it sometimes needs to
+        be called independently. For example when a campaign ends, we are going to restart all logging. But when a test
+        ends we are going to keep everything else running
+        :return:
+        """
+        if self.test_data_log is not None and not self.test_data_log.closed:
+            self.test_data_log.close()
+            os.chmod(self.test_data_log.name, S_IREAD | S_IRGRP | S_IROTH)
+            self.test_data_log = None
+
+    @pyqtSlot(str, str)
+    def write_to_log(self, location: str, msg: str):
+        """
+        This actually also leverages the logSignal that gets emitted to update the server graphics. That way one only
+        one call needs to be made. However is also  directly called
+        :param location: String that is either "Server" or "Command" for server and command log respectively
+        :param msg: message to log
+        :return: None
+        """
+
+        if location == "Server":
+            self.server_log.write(Constants.getCurrentTimestamp() + msg + "\n")
+        elif location == "Command":
+            self.command_log.write(Constants.getCurrentTimestamp() + "," + msg + "\n")
+        elif location == "Serial":
+            self.serial_log.write(Constants.getCurrentTimestamp() + "," + msg + "\n")
+        elif location == "Data":
+            self.data_log.write(msg + "\n")  # Timestamp already included in data
+
+            # Check if the test log is open (test is running)
+            if self.test_data_log is not None:
+                self.test_data_log.write(msg + "\n")
+
+            self.synnax_log.write(self.data_frame(self.data_dict))
+
+    def data_frame(self, data: dict) -> pd.DataFrame:
+        """Converts a data dict to a data frame"""
+        return pd.DataFrame.from_records(
+            [data]
+        )
+
+    def get_data_dict_as_csv_string(self):
+        """
+        Returns a string that contains data for all data dict channels
+        :return: string of data
+        """
+
+        # Get time to start
+        data_dict_string = str(self.data_dict["Time"]) + ","
+
+        # For all channels (even if not connected), get the data and put it in the string
+        for channel in self.interface.channels:
+            data_dict_string += "%s," % (self.data_dict[channel])
+
+        return data_dict_string
+
+    def update_campaign_logging(
+        self,
+        campaign_save_name: str,
+        configuration_data: dict = None,
+        avionics_mappings: dict = None,
+    ):
+        """
+        Functions updates (starts/ stops) campaign logging. On start config data and avionics mappings are also sent. If
+        filename is passed as None then it stops the campaign and starts general logging. If the filename is not none,
+        but the configuration data and avionics mappings are, that means the server should recover the campaign
+        :param campaign_save_name: save name of campaign
+        :param configuration_data: dict of configuration data
+        :param avionics_mappings: dict of avionics mappings
+        :return: None
+        """
+
+        self.close_logs()
+
+        # No campaign, revert to general logging
+        if campaign_save_name is None:
+            file_timestamp = self.get_file_timestamp_string()
+            self.open_base_logs(
+                file_timestamp, self.working_directory + file_timestamp + "/", False
+            )
+            self.logSignal.emit(
+                "Server", "Raw server logging started under '%s'" % file_timestamp
+            )
+
+        elif (
+            configuration_data is None and avionics_mappings is None
+        ):  # Check if function call matches recovered state
+
+            self.campaign_location = (
+                Constants.campaign_data_dir + campaign_save_name + "/"
+            )
+
+            # If this exists then we know we are properly recoverable, otherwise something bad happened
+            campaign_dir_exists = os.path.isdir(self.campaign_location)
+
+            if not campaign_dir_exists:
+                print(
+                    colored("WARNING: Recovered state requested, directory not found"),
+                    "red",
+                )
+                self.statusBarMessageSignal.emit(
+                    "Campaign recovery failed. See terminal", True
+                )
+                # Restart logging before exiting
+                self.update_campaign_logging(None)
+                return
+
+            # Re-open base logs with recovered flag
+            self.open_base_logs(
+                campaign_save_name, self.campaign_location, is_recovered=True
+            )
+
+            # Re-open campaign log
+            os.chmod(self.campaign_location + "campaign_log.txt", S_IWUSR | S_IREAD)
+            self.campaign_log = open(self.campaign_location + "campaign_log.txt", "a+")
+            self.logSignal.emit(
+                "Server", "Campaign '%s' recovered" % campaign_save_name
+            )
+            self.campaign_log.write(
+                "Campaign %s recovered during new server connection\n"
+                % campaign_save_name
+            )
+
+        elif (
+            campaign_save_name is not None
+            and configuration_data is not None
+            and avionics_mappings is not None
+        ):
+            # Create new campaign logging stuff
+            self.campaign_location = (
+                Constants.campaign_data_dir + campaign_save_name + "/"
+            )
+
+            # Create test folder
+            if not os.path.isdir(self.campaign_location + "tests/"):
+                os.makedirs(self.campaign_location + "tests/")
+
+            # Open base logs
+            self.open_base_logs(
+                campaign_save_name, self.campaign_location, is_recovered=False
+            )
+
+            # Open log and write a few things
+            self.campaign_log = open(self.campaign_location + "campaign_log.txt", "w")
+            self.campaign_log.write(
+                "Campaign started with save name: " + campaign_save_name + "\n"
+            )
+            self.logSignal.emit("Server", "Campaign '%s' started" % campaign_save_name)
+
+            # Write configuration to file
+            with open(self.campaign_location + "configuration.json", "w") as write_file:
+                json.dump(configuration_data, write_file, indent="\t")
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+
+            # Write avionics mappings to file
+            with open(
+                self.campaign_location + "avionicsMappings.csv", "w"
+            ) as write_file:
+                write_file.write("Channel,Name\n")
+                for key in avionics_mappings:
+                    if (
+                        key != "Boards"
+                    ):  # currently don't list the boards the user has added
+                        write_file.write(
+                            avionics_mappings[key][1]
+                            + ","
+                            + avionics_mappings[key][0]
+                            + "\n"
+                        )  # key is not useful, first index is name, second is channel
+                os.chmod(write_file.name, S_IREAD | S_IRGRP | S_IROTH)
+
+        else:
+            print(
+                colored(
+                    "WARNING: Got a call to update_campaign_logging() that should not occur"
+                ),
+                "red",
+            )
+            self.statusBarMessageSignal.emit(
+                "Logging command failed. See terminal", True
+            )
+            # Restart logging
+            self.update_campaign_logging(None)
+
+    def _calc_server_thread_update_freq(self):
+        """
+        Function that calculates the update frequency of the run method in the thread. Can let us know if we have too
+        much slow code bogging down the server
+        :return: None
+        """
+
+        self._num_update_steps += 1
+        if self._num_update_steps == Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY:
+            self._averaged_update_freq = self._num_update_steps / (
+                time.time() - self._last_update_time
+            )
+            # print("Server Run Freq: " + str(self._averaged_update_freq))
+            self._num_update_steps = 0
+            self._last_update_time = time.time()
+
+    @pyqtSlot(dict)
+    def process_client_command(self, command_dict: dict):
+        """
+        Function for processing any commands from the client. Does not need to be in thread because nothing here should
+        be blocking
+        :param command_dict: command dict to pull command and args from
+        :return: None
+        """
+
+        command = command_dict["command"]
+        clientid = command_dict["clientid"]
+        args = command_dict["args"]
+
+        if (
+            command == Constants.cli_to_ser_cmd_ref["Heartbeat"]
+        ):  # Heartbeat, do nothing
+            pass
+
+        elif (
+            command == Constants.cli_to_ser_cmd_ref["Request Commander"]
+            and self.commander is None
+        ):
+            self.commander = clientid
+            self.logSignal.emit(
+                "Server", "New commander with UUID: %s" % self.commander
+            )
+            self.statusBarMessageSignal.emit(
+                "New commander with UUID: %s" % self.commander, False
+            )
+
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Give Commander"
+        ] and self.check_commander(clientid):
+            self.override_commander()
+
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Board Command"
+        ] and self.check_commander(clientid):
+            self.command_queue.put(args)
+
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Dump Flash"
+        ] and self.check_commander(clientid):
+            self.do_flash_dump = True
+            self.flash_dump_addr = args
+
+            if self.campaign_log is not None and not self.campaign_log.closed:
+                self.flash_dump_loc = self.campaign_location
+            else:
+                self.flash_dump_loc = None
+
+        elif command == Constants.cli_to_ser_cmd_ref["Campaign Logging"]:
+            # If you are like me, I had no idea this * was a thing. Inside a function call that takes a list and
+            # expands it as an iterable so you can use a list to call a function. Pretty cool, from here:
+            # https://stackoverflow.com/questions/3941517/converting-list-to-args-when-calling-function
+            if args is None:
+                self.logSignal.emit(
+                    "Server",
+                    ("Campaign '%s' ended" % self.campaign_location)
+                    .replace(Constants.campaign_data_dir, "")
+                    .replace("/", ""),
+                )
+                self.update_campaign_logging(None)
+            else:
+                self.update_campaign_logging(*args)
+
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Run Autosequence"
+        ] and self.check_commander(clientid):
+            if self.active_autosequence is None:
+                lines = args[0]
+                auto_thread = AutosequenceThread(self, lines, True)
+                self.active_autosequence = auto_thread
+            else:
+                self.logSignal.emit(
+                    "Server",
+                    "Rejected new run autosequence command as another is already running",
+                )
+                self.statusBarMessageSignal.emit(
+                    "Rejected new run autosequence command as another is already running",
+                    True,
+                )
+
+        elif command == Constants.cli_to_ser_cmd_ref[
+            "Abort Autosequence"
+        ] and self.check_commander(clientid):
+
+            # If the autosequence is active then clear any commands and kill the thread
+            if self.active_autosequence is not None:
+                self.active_autosequence.set_should_abort()
+
+                # We clear commands here, and also in the thread to catch the case if the thread is on a delay, want
+                # to prevent sending out any more commands
+                with self.command_queue.mutex:
+                    self.command_queue.queue.clear()
+
+                self.active_autosequence = None
+
+                self.logSignal.emit("Server", "Autosequence aborted!")
+                self.statusBarMessageSignal.emit("Autosequence aborted!", False)
+
+        elif command == Constants.cli_to_ser_cmd_ref["Write to Campaign Log"]:
+            CET = args[0]
+            type_ = args[1]
+            text = args[2]
+
+            self.campaign_log.write(CET + " | " + type_ + " | " + text + "\n")
+
+        elif command == Constants.cli_to_ser_cmd_ref["New Test"]:
+            campaign_name = args[0]
+            test_name = args[1]
+
+            if test_name is not None:
+                isRecovered = args[2]
+                self.open_test_log(campaign_name, test_name, isRecovered)
+            else:
+                self.close_test_log()
+
+        elif command == 11:
+            self.logSignal.emit(
+                "Server", "Connection established with client id (UUID): %s" % clientid
+            )
+
+        elif command not in Constants.cli_to_ser_cmd_ref.values():
+            self.statusBarMessageSignal.emit(
+                "Warning, Unhandled command from client", True
+            )
+            print(
+                colored(
+                    "WARNING: Recieved command %s from the client which current has no mapping"
+                    % str(command),
+                    "red",
+                )
+            )
+
+        if command != Constants.cli_to_ser_cmd_ref["Heartbeat"]:
+            print(command_dict)
+            self.logSignal.emit(
+                "Command", "From Client, " + str(self.commander) + str(command_dict)
+            )
+
+    def get_flash_download_progress(self, progress: float):
+        """
+        This is a callback function from the s2 interface download. Gets the progress and emits a signal to the
+        graphics to update
+        :param progress: % completed
+        :return: None
+        """
+
+        self.logSignal.emit("Server", "Flash download progress: %s" % str(progress))
 
     @overrides
-    def update(self):
-        """Main server update loop"""
-        super().update()
-        
-        if not self.log_queue.empty():
-            log_args = self.log_queue.get()
-            textedit = log_args[0]
-            text = log_args[1]
-            timestamp = log_args[2]
+    def run(self):
+        """
+        Run method for thread
+        :return: None
+        """
 
-            time_obj = datetime.now().time()
-            time = "<{:02d}:{:02d}:{:02d}> ".format(time_obj.hour, time_obj.minute, time_obj.second)
-            if timestamp:
-                textedit.append(time + text)
-            else:
-                textedit.append(text)
-            if textedit is self.log_box:
-                self.server_log.write(time + text + "\n")
+        # When server is open, should always be attempting this
+        while True:
+            # Check to see we have good board serial data before sending
 
-        try:
-            if self.interface.ser.is_open:
-                if not self.command_queue.empty():
-                    cmd = self.command_queue.get()
-                    self.send_to_log(self.command_textedit, str(cmd))
-                    self.interface.s2_command(cmd)
-                    self.command_log.write(datetime.now().strftime(
-                        "%H:%M:%S,") + str(cmd) + '\n')
+            try:
+                if self.interface.ser.is_open:
 
-                if self.do_flash_dump:
-                    self.send_to_log(
-                        self.log_box, "Taking a dump. Be out in just a sec")
-                    QApplication.processEvents()
-                    self.interface.download_flash(self.dump_addr, int(
-                        datetime.now().timestamp()), self.command_log, self.dump_loc)
-                    self.do_flash_dump = False
-                    self.dump_loc = None
-                    self.send_to_log(self.log_box, "Dump Complete.")
+                    if self.is_actively_receiving_data:
+                        # Most important thing lol
+                        self.partyParrotStepSignal.emit()
+
+                    # Send commands
+                    if not self.command_queue.empty():
+                        command_to_send = self.command_queue.get()
+                        self.logSignal.emit(
+                            "Command", "To Board, " + str(command_to_send)
+                        )
+                        print("To Board:" + str(command_to_send))
+                        self.interface.s2_command(command_to_send)
+
+                    if self.do_flash_dump:
+                        self.logSignal.emit(
+                            "Server", "Taking a dump. Be out in just a sec"
+                        )
+                        self.interface.download_flash(
+                            self.flash_dump_addr,
+                            int(datetime.now().timestamp()),
+                            self.command_log,
+                            self.flash_dump_loc,
+                            self.get_flash_download_progress,
+                        )
+                        self.do_flash_dump = False
+                        self.flash_dump_loc = None
+                        self.flash_dump_addr = None
+                        self.logSignal.emit(
+                            "Server", "Dump Complete. See terminal for more info"
+                        )
+                        self.statusBarMessageSignal.emit(
+                            "Flash download completed", False
+                        )
+
+                    else:
+                        # Parse serial, return the board addr the packet originated from & type of packet (data vs cal)
+                        board_addr, packet_type = self.interface.parse_serial()
+                        self.packet_num += 1
+
+                        # Do some error checking, if the board addr is negative, indicates an error with parser.
+                        # More info farther down
+                        if board_addr != -1 and board_addr != -2:
+
+                            self.is_actively_receiving_data = True
+                            self.current_error_message = "'Norminal' - Jon Insprucker"
+
+                            # Log and update serial packet length
+                            self.write_to_log(
+                                "Serial", str(self.interface.last_raw_packet)
+                            )
+                            self.packetSizeLabelSignal.emit(
+                                "Last Packet Size: %s"
+                                % len(self.interface.last_raw_packet)
+                            )
+
+                            # Gets new data from the corresponding parser dict
+                            if (
+                                packet_type
+                                == Constants.serial_packet_type_ref["Board Data"]
+                            ):
+                                new_data = self.interface.board_parser[board_addr].dict
+
+                            elif (
+                                packet_type
+                                == Constants.serial_packet_type_ref["Calibration Data"]
+                            ):
+                                new_data = self.interface.calibration_parser[
+                                    board_addr
+                                ].dict
+                            else:
+                                new_data = {}
+
+                            # Get board prefix (like gse., ec., fc.) from board name
+                            board_prefix = self.interface.getPrefix(
+                                self.interface.getName(board_addr)
+                            )
+
+                            # Update data dict. Take the prefix + key to build a string that is key for data
+                            for key in new_data.keys():
+                                self.data_dict[str(board_prefix + key)] = new_data[key]
+
+                        else:
+                            # We are here if the parser failed
+                            self.is_actively_receiving_data = False
+
+                            # Check which error
+                            if board_addr == -1:
+                                self.current_error_message = "Serial Parse Failed"
+                            elif board_addr == -2:
+                                self.current_error_message = "Packet Parse Failed"
+
+                            self.packetSizeLabelSignal.emit(
+                                "Last Packet Size: %s" % self.current_error_message
+                            )
 
                 else:
-                    # read in packet from system
-                    packet_addr, packet_type = self.interface.parse_serial()  # returns origin address
-                    # packet_addr = -1
-                    if packet_addr != -1 and packet_addr != -2:
-                        # print("PARSER WORKED")
-                        self.is_actively_receiving = True
-                        self.dataframe["error_msg"] = "'Norminal' - Jon Insprucker"
+                    # Serial is closed
+                    self.is_actively_receiving_data = False
+                    self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
+                    with self.command_queue.mutex:
+                        self.command_queue.queue.clear()
 
-                        raw_packet = self.interface.last_raw_packet
-                        self.serial_log.write(datetime.now().strftime(
-                            "%H:%M:%S,") + str(raw_packet) + '\n')
+            except Exception as e:
+                print("Server run loop had an error:  ", e)
+                traceback.print_exc()
+                self.is_actively_receiving_data = False
+                self.packetSizeLabelSignal.emit("Last Packet Size: %s" % "0")
+                self.statusBarMessageSignal.emit(
+                    "Warning: Server run loop error, check terminal", True
+                )
 
-                        raw_packet_size = len(raw_packet)
-                        self.packet_size_label.setText(
-                            "Last Packet Size: %s" % raw_packet_size)
-                        # send_to_log(data_box, "Received Packet of length: %s" % raw_packet_size)
-                        # disabled to stop server logs becoming massive, see just below send_to_log
+            # Make sure data dict headers are updated
+            self.update_packet_header()
 
-                        # parse packet and aggregate
+            # Only write data to log if we are getting serial data
+            if self.is_actively_receiving_data:
+                # Write to data log
+                self.write_to_log("Data", self.get_data_dict_as_csv_string())
 
-                        # default to board_parser
-                        new_data = self.interface.board_parser[packet_addr].dict
+            # Send data dict
+            self.dataPacketSignal.emit(self.data_dict)
 
-                        # Override with correct parser if packet type != 0
-                        if (packet_type == 2):
-                            new_data = self.interface.calibration_parser[packet_addr].dict
-                        # New parsers get called here as they get added
+            # Calc running freq and sleep till next cycle
+            self._calc_server_thread_update_freq()
+            time.sleep(1 / Constants.SERVER_BOARD_DATA_UPDATE_FREQUENCY)
 
-                        prefix = self.interface.getPrefix(
-                            self.interface.getName(packet_addr))
+    @staticmethod
+    def get_file_timestamp_string():
+        """
+        Simply returns current time formatted for filename string
+        :return: filename timestamp string
+        """
+        return (
+            QDateTime.currentDateTime().date().toString("yyyy-MM-dd")
+            + "-T"
+            + QDateTime.currentDateTime().time().toString("hhmmss")
+        )
 
-                        self.database_lock.acquire()
-                        try:
-                            for key in new_data.keys():
-                                self.dataframe[str(
-                                    prefix + key)] = new_data[key]
 
-                            # print(dataframe)
-                            self.dataframe["time"] = datetime.now().timestamp()
-                            for n in range(self.num_items):
-                                key = self.interface.channels[n]
-                                self.data_table.setItem(
-                                    n, 1, QTableWidgetItem(str(self.dataframe[key])))
-                                #print([n, key, dataframe[key]])
+class AutosequenceThread(QThread):
+    """
+    Handles running the autosequence that is defined from the server command line or as sent from the client
+    """
 
-                            self.data_log.write(self.get_logstring() + '\n')
+    sendToLogSignal = pyqtSignal(str, str)
+    statusBarMessageSignal = pyqtSignal(str, bool)
 
-                            if self.test_data_log is not None:
-                                self.test_data_log.write(self.get_logstring() + '\n')
-                        finally:
-                            self.database_lock.release()
-                    else:
+    def __init__(self, server: Server, lines: list, is_pre_parsed: bool = False):
+        super().__init__()
 
-                        # send_to_log(data_box, "PARSER FAILED OR TIMEDOUT")
-                        self.is_actively_receiving = False
-                        if packet_addr == -1:
-                            self.dataframe["error_msg"] = "Serial Parse Failed"
-                        elif packet_addr == -2:
-                            self.dataframe["error_msg"] = "Packet Parse Failed"
+        self.server = server
 
-                        self.packet_size_label.setText("Last Packet Size: %s" % self.dataframe["error_msg"])
-                        pass
+        self.sendToLogSignal.connect(self.server.logSignal)
+        self.statusBarMessageSignal.connect(self.server.statusBarMessageSignal)
+
+        self.should_abort = False
+
+        # TODO: Add a filename or some descriptor to this
+        self.sendToLogSignal.emit("Server", "Running Autosequence")
+        self.statusBarMessageSignal.emit("Running Autosequence", False)
+        # If the line are not parses, ie server is opening from file then we need to parse them
+        if not is_pre_parsed:
+            try:
+                command_list = []
+                # For each line, removes left spaces, set to lowercase and then split on spaces
+                for line in lines:
+                    command_list.append(line.lstrip().lower().split(" "))
+
+                # Parses the autosequence and adds in correct commands depending on loop etc
+                (self.constructed, _) = parse_auto.parse_auto(command_list)
+            except:
+                traceback.print_exc()
+                return
+        else:
+            self.constructed = lines
+
+        # Check to make sure actually can run sequence
+        if len(self.constructed) == 0:
+            self.sendToLogSignal.emit(
+                "Server", "Error in autosequence or autosequence not found. Stopping"
+            )
+            self.statusBarMessageSignal.emit(
+                "Error in autosequence or autosequence not found. Stopping", True
+            )
+
+        # Start the thread
+        self.start()
+
+    def set_should_abort(self):
+        """
+        Called when an abort is called, just updates a flag
+        :return: None
+        """
+        self.should_abort = True
+
+    @overrides
+    def run(self):
+        """
+        Main autosequence thread. We only need to use a for loop so this does not stick around. The whole class is gone
+        once this function ends
+        :return:
+        """
+
+        available_commands = self.server.get_command_list()
+        board_addr = -1
+
+        # For each command in the constructed commands
+        for cmd_str in self.constructed:
+
+            # Check if abort called
+            if self.should_abort:
+
+                # You may be wondering why we can change the command queue from this thread, even though it is owned bt
+                # the server thread. Since the queue class has a mutex, we can be surer this update is thread safe
+                with self.server.command_queue.mutex:
+                    self.server.command_queue.queue.clear()
+
+                return
+
             else:
-                self.packet_size_label.setText("Last Packet Size: %s" % "0")
-                self.is_actively_receiving = False
+                cmd = cmd_str[0]
+                args = cmd_str[1:]
 
-            self.party_parrot.step()
+                # Delay time in ms
+                if cmd == "delay":
+                    time.sleep(float(args[0]) / 1000)
 
-        except Exception as e:
-            #traceback.print_exc()
-            print("Parser failed with error ", e)
-            self.is_actively_receiving = False
-            self.packet_size_label.setText("Last Packet Size: %s" % "Exception, check terminal")
+                # Set target addr
+                elif cmd == "set_addr":
+                    board_addr = args[0]
 
-        # update server state
-        self.packet_num += 1
-        self.commander_label.setText("Commander: " + str(self.commander))
+                # Handle other commands
+                elif cmd in available_commands:
+                    if board_addr == -1:
+                        self.sendToLogSignal.emit(
+                            "Sever",
+                            "Autosequence rejected because board address never set",
+                        )
+                        self.statusBarMessageSignal.emit(
+                            "Autosequence rejected because board address never set",
+                            True,
+                        )
+                    else:
+                        # Another call to server, mutex inside this class ensures we are not double accessing
+                        self.server.parse_command_from_text(cmd, args, board_addr)
+
+        # Set back to none before thread ends
+        self.sendToLogSignal.emit("Server", "Autosequence complete")
+        self.statusBarMessageSignal.emit("Autosequence complete", False)
+        self.server.active_autosequence = None
+
+
+class ClientConnectionHandler(QThread):
+    """
+    Processes commands and data sent from the client (GUI/ standalone widgets) to the server. Called the client handler
+    because it is handling the connection to the client
+    """
+
+    sendToLogSignal = pyqtSignal(str, str)
+    connectionClosedSignal = pyqtSignal(object)
+    sendProcessCommandSignal = pyqtSignal(dict)
+
+    def __init__(self, clientsocket: socket.socket, addr: str, server: Server):
+        super().__init__()
+
+        self.client_socket = clientsocket
+        self.address = addr
+        self.server = server
+
+        self.data_to_client = None
+
+        self.sendToLogSignal.connect(self.server.logSignal)
+        self.sendProcessCommandSignal.connect(self.server.process_client_command)
+        self.connectionClosedSignal.connect(self.server.client_connection_closed)
+
+        self.error_counter = 0
+
+        # This is called 'last' but shouldn't actually change. It is updated every cycle when a command is received
+        # from the client but since this class only controls one client (multiple clients = multiple instances) then
+        # the uuid should never change. However going to leave it as last_uuid to communicate that it is updated
+        self.last_uuid = None
+
+        self.is_active = True
+
+    def shutdown(self):
+        """
+        Shuts down thread
+        :return: None
+        """
+        self.is_active = False
+
+    def close_connection(self):
+        """
+        Performs task to close to connection to the client. Either because no data received or requested disconnect
+        :return: None
+        """
+        self.connectionClosedSignal.emit(self)
+        self.shutdown()
+
+    @pyqtSlot(dict)
+    def get_new_data_for_client(self, data_dict: dict):
+        """
+        Function called from signal from server class with data. Data is not sent to client immediately, it has to
+        wait for this thread to be ready to send data
+        :param data_dict: dict of data to sent to client. Contains header + data from board
+        :return: None
+        """
+        # TODO: Rate at which data is sent to client, is tied to speed of heartbeat, if heartbeat is too fast then we
+        #  are just sending the same data again. Also need to check that the server is actually getting data at a rate
+        #  to support the rate. Ideally will have Constants defined, runtime check, and then verify by calculating real
+        #  frequencies
+
+        #  TODO: Maybe also add warning for sending same packet twice without getting update between. Just track last
+        #   update time
+
+        # TODO: Final note so I don't forget. The serial call used to read serial in s2interface is blocking.
+        #  So no matter what the server update freq is, it will wait for that packet. Need to check this tho
+
+        # ^ Last point seems to be the case. We run at freq of data in. At 10hz have to check GSE rate but I think it
+        # is that
+
+        self.data_to_client = data_dict
+
+    @overrides
+    def exit(self):
+        """
+        Called when application exits. Only calls for open connections obviously
+        :return: None
+        """
+        super().exit()
+
+        self.shutdown()
+
+        for open_client_thread in self.open_client_connections:
+            open_client_thread.exit()
+
+        # From https://stackoverflow.com/questions/54964856/how-to-interrupt-socket-recv-in-python
+        self.client_socket.shutdown(socket.SHUT_RDWR)
+        # What is happening here is that the above line prevents client_socket.recv from getting any more recv. To
+        # terminate it actually sends an empty packet to the recv which we handle by closing the connection.
+
+    @overrides
+    def run(self):
+        """
+        Run function for thread
+        :return: None
+        """
+
+        while self.is_active:
+            try:
+                # Receive in command/ data from client
+                msg = self.client_socket.recv(
+                    4096 * 8
+                )  # if the data is ever bigger than this so help me
+                if msg == b"":
+                    # Remote connection closed
+
+                    self.close_connection()
+                    break
+
+                # Load in the command
+                command_dict = pickle.loads(msg)
+                self.last_uuid = command_dict["clientid"]
+
+                # Only want to check for disconnect command here, all else goes to server class for processing
+                if command_dict["command"] == 4:  # Disconnect command:
+                    self.close_connection()
+                    break
+
+                # Have the server process the commands
+                self.sendProcessCommandSignal.emit(command_dict)
+
+                # Send the current data dict we have to client
+                data = pickle.dumps(self.data_to_client)
+                self.client_socket.sendall(data)
+
+            except ConnectionResetError:
+                self.close_connection()
+            except Exception as e:
+                traceback.print_exc()
+
+        self.client_socket.close()
+
+
+class ServerConnectionHandler(QThread):
+    """
+    Simply waits for server to receive a new connection request and then creates a new client handler to deal with it.
+    Called the server connection handler because it manages the connection requests to the server handler
+    """
+
+    sendToLogSignal = pyqtSignal(str, str)
+    sendOpenClientConnectionSignal = pyqtSignal(socket.socket, tuple)
+
+    def __init__(self, server: Server):
+        super().__init__()
+
+        self.server = server
+
+        # initialize socket
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.host = socket.gethostbyname(socket.gethostname())
+        self.port = 6969
+        # The below line may be my favorite line in the whole server. Found from below link, previously restarting
+        # the server quickly after closing it would throw a address in use error, now with this line it does not
+        # https://stackoverflow.com/questions/6380057/python-binding-socket-address-already-in-use
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.host, self.port))
+
+        self.sendToLogSignal.connect(self.server.logSignal)
+        self.sendOpenClientConnectionSignal.connect(
+            self.server.create_new_client_connection
+        )
+
+        self.sock.listen(5)  # TODO: What does this do?
+
+        self.is_active = True
+
+    def shutdown(self):
+        """
+        Shutdown the thread with a flag
+        :return: None
+        """
+        self.is_active = False
+
+    @overrides
+    def exit(self):
+        """
+        Called when server exits. Also makes sure all the client sockets are properly closed
+        :return: None
+        """
+        super().exit()
+
+        self.shutdown()
+        self.sock.close()
+
+    @overrides
+    def run(self):
+        """
+        Update thread
+        :return: None
+        """
+        self.sendToLogSignal.emit(
+            "Server", "Server initialized. Waiting for clients to connect..."
+        )
+        self.sendToLogSignal.emit(
+            "Command", "Info, Server initialized. Waiting for commands"
+        )
+        self.sendToLogSignal.emit(
+            "Server", "Listening on %s:%s" % (self.host, self.port)
+        )
+
+        while self.is_active:
+
+            # establish connection with client
+            try:
+                cli, addr = self.sock.accept()
+
+            # When we close the socket it throws and exception that the connection was aborted. We catch that and exit
+            except ConnectionAbortedError as e:
+                # Safe exit out. Need to return to prevent anything else happening below
+                return
+
+            # This creates the thread to handle the client. This method differs from the past. We used to have the
+            # server handler class (this class) to create the client thread. However we cannot do that any longer if
+            # we wish to communicate through signals from the client handler to the server. Since the server,
+            # server handler, and client handler are all threads it gets complicated. If the server handler creates the
+            # client handler, due to how PyQt5 handles threads, the client handler is made one a different thread
+            # process than the server. As a result any signals the client emits is not handled in a place where the
+            # server event loop can handle them.
+            self.sendOpenClientConnectionSignal.emit(cli, addr)
+
+        self.sock.close()
 
 
 if __name__ == "__main__":
-    QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    QtWidgets.QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-    if not QtWidgets.QApplication.instance():
-        app = QtWidgets.QApplication(sys.argv)
-    else:
-        app = QtWidgets.QApplication.instance()
 
-    # initialize application
-    APPID = 'MASA.Server'  # arbitrary string
-    if os.name == 'nt':  # Bypass command because it is not supported on Linux
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
-    else:
-        pass
-        # NOTE: On Ubuntu 18.04 this does not need to done to display logo in task bar
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+    os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
+    QApplication.setHighDpiScaleFactorRoundingPolicy(
+        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+    )
+    app = QApplication(sys.argv)
     app.setApplicationName("MASA Server")
     app.setApplicationDisplayName("MASA Server")
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "--connect":
-            server = Server(app, autoconnect=True)
-        else:
-            server = Server(app, autoconnect=False)
-    else:
-        server = Server(app, autoconnect=False)
+    server = ServerGraphics(app)
+    app.setStyle("Fusion")
+    # server.applyDarkTheme(app)
 
-    # timer and tick updates
-    timer = QtCore.QTimer()
-    timer.timeout.connect(server.update)
-    timer.start(20)  # 50hz
-
-    # run
     server.show()
     server.exit(app.exec())

@@ -5,6 +5,7 @@ import ntpath
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCursor
 from overrides import overrides
 from constants import Constants
 
@@ -20,7 +21,7 @@ TOOLTIPS = {}
 for cmd in COMMANDS:
     cmd_id = INTERFACE.get_cmd_names_dict()[cmd]
     cmd_args = INTERFACE.get_cmd_args_dict()[cmd_id]
-    tip = "<nobr><b>%s</b>" % cmd  
+    tip = "<nobr><b>%s</b>" % cmd
     for arg in cmd_args:
         name = arg[0]
         arg_type = arg[1]
@@ -31,27 +32,27 @@ TOOLTIPS["set_addr"] = "<nobr><b>set_addr</b> target_addr<i>(int)</i></nobr>"
 TOOLTIPS["loop"] = "<nobr><b>loop</b> num_loops<i>(int)</i></nobr>"
 TOOLTIPS["end_loop"] = "<nobr><b>end_loop</b></nobr>"
 TOOLTIPS["auto"] = "<nobr><b>auto</b> auto_name<i>(str)</i></nobr>"
-TOOLTIPS["new_log"] = "<nobr><b>new_log</b> logname<i>(str)</i></nobr>"
 
-class DictionaryCompleter(QtGui.QCompleter):
+
+class DictionaryCompleter(QtWidgets.QCompleter):
     insertText = QtCore.pyqtSignal(str)
 
     def __init__(self, keywords=None, parent=None):
         keywords = KEYWORDS
-        QtGui.QCompleter.__init__(self, keywords, parent)
+        QtWidgets.QCompleter.__init__(self, keywords, parent)
         self.activated.connect(self.changeCompletion)
 
     def changeCompletion(self, completion):
         if completion.find("(") != -1:
-            completion = completion[:completion.find("(")]
+            completion = completion[: completion.find("(")]
         # print(completion)
         self.insertText.emit(completion)
 
 
-class AutoTextEdit(QtGui.QTextEdit):
+class AutoTextEdit(QtWidgets.QTextEdit):
     def __init__(self, *args):
         # *args to set parent
-        QtGui.QLineEdit.__init__(self, *args)
+        QtWidgets.QLineEdit.__init__(self, *args)
         self.completer = None
 
     def setCompleter(self, completer):
@@ -61,72 +62,82 @@ class AutoTextEdit(QtGui.QTextEdit):
             return
 
         completer.setWidget(self)
-        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.completer = completer
         self.completer.insertText.connect(self.insertCompletion)
 
     def insertCompletion(self, completion):
         tc = self.textCursor()
-        extra = (len(completion) -
-                 len(self.completer.completionPrefix()))
-        tc.movePosition(QtGui.QTextCursor.Left)
-        tc.movePosition(QtGui.QTextCursor.EndOfWord)
+        extra = len(completion) - len(self.completer.completionPrefix())
+        tc.movePosition(Qt.QTextCursor.Left)
+        tc.movePosition(Qt.QTextCursor.EndOfWord)
         tc.insertText(completion[-extra:])
         self.setTextCursor(tc)
 
     def textUnderCursor(self):
         tc = self.textCursor()
-        tc.select(QtGui.QTextCursor.WordUnderCursor)
+        tc.select(QTextCursor.WordUnderCursor)
         return tc.selectedText()
-    
+
     def textUnderMouse(self):
         oldCur = self.textCursor()
         textCursor = self.cursorForPosition(self.mapFromGlobal(QtGui.QCursor().pos()))
-        textCursor.select(QtGui.QTextCursor.WordUnderCursor)
+        textCursor.select(QTextCursor.WordUnderCursor)
         self.setTextCursor(textCursor)
         word = self.textCursor().selectedText()
         self.setTextCursor(oldCur)
         return word
-    
+
     @overrides
     def focusInEvent(self, event):
         if self.completer:
             self.completer.setWidget(self)
-        QtGui.QTextEdit.focusInEvent(self, event)
+        QtWidgets.QTextEdit.focusInEvent(self, event)
 
     @overrides
     def keyPressEvent(self, event):
-        if self.completer and self.completer.popup() and self.completer.popup().isVisible():
+        if (
+            self.completer
+            and self.completer.popup()
+            and self.completer.popup().isVisible()
+        ):
             if event.key() in (
-                    QtCore.Qt.Key_Enter,
-                    QtCore.Qt.Key_Return,
-                    QtCore.Qt.Key_Escape,
-                    QtCore.Qt.Key_Tab,
-                    QtCore.Qt.Key_Backtab):
+                QtCore.Qt.Key_Enter,
+                QtCore.Qt.Key_Return,
+                QtCore.Qt.Key_Escape,
+                QtCore.Qt.Key_Tab,
+                QtCore.Qt.Key_Backtab,
+            ):
                 event.ignore()
                 return
         # has ctrl-Space been pressed?
-        isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier and
-                      event.key() == QtCore.Qt.Key_Space)
+        isShortcut = (
+            event.modifiers() == QtCore.Qt.ControlModifier
+            and event.key() == QtCore.Qt.Key_Space
+        )
         # modifier to complete suggestion inline ctrl-e
-        inline = (event.modifiers() == QtCore.Qt.ControlModifier and
-                  event.key() == QtCore.Qt.Key_E)
-        
+        inline = (
+            event.modifiers() == QtCore.Qt.ControlModifier
+            and event.key() == QtCore.Qt.Key_E
+        )
+
         help_tip = event.key() == QtCore.Qt.Key_F1
         if help_tip:
-            #phrase = self.textUnderMouse().lower() # at mouse pointer
-            phrase = self.textUnderCursor().lower() # at text cursor
+            # phrase = self.textUnderMouse().lower() # at mouse pointer
+            phrase = self.textUnderCursor().lower()  # at text cursor
             if phrase in KEYWORDS:
-                QtWidgets.QToolTip.showText(QtGui.QCursor().pos(), TOOLTIPS[phrase], self, QtCore.QRect())
-                #print(phrase)
-        
+                QtWidgets.QToolTip.showText(
+                    QtGui.QCursor().pos(), TOOLTIPS[phrase], self, QtCore.QRect()
+                )
+                # print(phrase)
+
         # if inline completion has been chosen
         if inline:
             # set completion mode as inline
             self.completer.setCompletionMode(QtGui.QCompleter.InlineCompletion)
             completionPrefix = self.textUnderCursor()
-            if (completionPrefix != self.completer.completionPrefix()):
+            if completionPrefix != self.completer.completionPrefix():
                 self.completer.setCompletionPrefix(completionPrefix)
             self.completer.complete()
             # set the current suggestion in the text box
@@ -134,17 +145,18 @@ class AutoTextEdit(QtGui.QTextEdit):
             # reset the completion mode
             self.completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
             return
-        if (not self.completer or not isShortcut):
+        if not self.completer or not isShortcut:
             pass
-            QtGui.QTextEdit.keyPressEvent(self, event)
-        ctrlOrShift = event.modifiers() in (QtCore.Qt.ControlModifier,
-                                            QtCore.Qt.ShiftModifier)
-        if ctrlOrShift and event.text() == '':
+            QtWidgets.QTextEdit.keyPressEvent(self, event)
+        ctrlOrShift = event.modifiers() in (
+            QtCore.Qt.ControlModifier,
+            QtCore.Qt.ShiftModifier,
+        )
+        if ctrlOrShift and event.text() == "":
             return
         eow = "~!@#$%^&*+{}|:\"<>?,./;'[]\\-="  # end of word
 
-        hasModifier = ((event.modifiers() != QtCore.Qt.NoModifier) and
-                       not ctrlOrShift)
+        hasModifier = (event.modifiers() != QtCore.Qt.NoModifier) and not ctrlOrShift
 
         completionPrefix = self.textUnderCursor()
         if not isShortcut:
@@ -154,11 +166,12 @@ class AutoTextEdit(QtGui.QTextEdit):
 
         self.completer.setCompletionPrefix(completionPrefix)
         popup = self.completer.popup()
-        popup.setCurrentIndex(
-            self.completer.completionModel().index(0, 0))
+        popup.setCurrentIndex(self.completer.completionModel().index(0, 0))
         cr = self.cursorRect()
-        cr.setWidth(self.completer.popup().sizeHintForColumn(0)
-                    + self.completer.popup().verticalScrollBar().sizeHint().width())
+        cr.setWidth(
+            self.completer.popup().sizeHintForColumn(0)
+            + self.completer.popup().verticalScrollBar().sizeHint().width()
+        )
         self.completer.complete(cr)  # popup
 
 
@@ -174,13 +187,13 @@ class NumberBar(QtWidgets.QWidget):
         self.edit = edit
 
     def update(self, *args):
-        '''
+        """
         Updates the number bar to display the current set of numbers.
         Also, adjusts the width of the number bar if necessary.
-        '''
+        """
         # The + 4 is used to compensate for the current line being bold.
-        #width = self.fontMetrics().width(str(self.highest_line)) + 4
-        width = int((self.fontMetrics().width(str(self.highest_line)) + 4)*1.5)
+        # width = self.fontMetrics().width(str(self.highest_line)) + 4
+        width = int((self.fontMetrics().width(str(self.highest_line)) + 4) * 1.5)
         if self.width() != width:
             self.setFixedWidth(width)
         QtWidgets.QWidget.update(self, *args)
@@ -189,7 +202,9 @@ class NumberBar(QtWidgets.QWidget):
         contents_y = self.edit.verticalScrollBar().value()
         page_bottom = contents_y + self.edit.viewport().height()
         font_metrics = self.fontMetrics()
-        current_block = self.edit.document().findBlock(self.edit.textCursor().position())
+        current_block = self.edit.document().findBlock(
+            self.edit.textCursor().position()
+        )
 
         painter = QtGui.QPainter(self)
         font = painter.font()
@@ -203,7 +218,9 @@ class NumberBar(QtWidgets.QWidget):
             line_count += 1
 
             # The top left position of the block in the document
-            position = self.edit.document().documentLayout().blockBoundingRect(block).topLeft()
+            position = (
+                self.edit.document().documentLayout().blockBoundingRect(block).topLeft()
+            )
 
             # Check if the position of the block is out side of the visible
             # area.
@@ -220,9 +237,12 @@ class NumberBar(QtWidgets.QWidget):
 
             # Draw the line number right justified at the y position of the
             # line. 3 is a magic padding number. drawText(x, y, text).
-            #painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
-            painter.drawText(int(self.width() - font_metrics.width(str(line_count))*1.5 - 3), int(
-                round(position.y()) - contents_y + font_metrics.ascent()*1.5), str(line_count))
+            # painter.drawText(self.width() - font_metrics.width(str(line_count)) - 3, round(position.y()) - contents_y + font_metrics.ascent(), str(line_count))
+            painter.drawText(
+                int(self.width() - font_metrics.width(str(line_count)) * 1.5 - 3),
+                int(round(position.y()) - contents_y + font_metrics.ascent() * 1.5),
+                str(line_count),
+            )
 
             # Remove the bold style if it was set previously.
             if bold:
@@ -242,8 +262,7 @@ class LineTextWidget(QtWidgets.QFrame):
     def __init__(self, *args):
         QtWidgets.QFrame.__init__(self, *args)
 
-        self.setFrameStyle(QtWidgets.QFrame.StyledPanel |
-                           QtWidgets.QFrame.Sunken)
+        self.setFrameStyle(QtWidgets.QFrame.StyledPanel | QtWidgets.QFrame.Sunken)
 
         self.edit = AutoTextEdit()
         self.edit.setCompleter(DictionaryCompleter())
@@ -295,20 +314,20 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         stripped = text.lstrip()
-        if stripped.find(' ') != -1:
+        if stripped.find(" ") != -1:
             padding = len(text) - len(stripped)
             self.setFormat(0, padding + stripped.find(" "), self.cmdFormat)
         else:
             self.setFormat(0, len(text), self.cmdFormat)
-        if text.find('#') != -1:
+        if text.find("#") != -1:
             self.setFormat(text.find("#"), len(text), self.commentFormat)
 
 
 class AutoManager(QtWidgets.QMainWindow):
-    def __init__(self, gui, singular : bool = False, *args, **kwargs):
+    def __init__(self, gui, singular: bool = False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.filename = 'Untitled'
+        self.filename = "Untitled"
         self.path = None
         self._gui = gui
 
@@ -325,7 +344,7 @@ class AutoManager(QtWidgets.QMainWindow):
         # menu bar
         main_menu = self.menuBar()
         main_menu.setNativeMenuBar(True)
-        options_menu = main_menu.addMenu('&Options')
+        options_menu = main_menu.addMenu("&Options")
 
         # connection menu item
         # set up client
@@ -348,34 +367,38 @@ class AutoManager(QtWidgets.QMainWindow):
         self.is_master = False
 
         # save menu item
-        save_action = QtGui.QAction("&Save", options_menu)
+        save_action = QtWidgets.QAction("&Save", options_menu)
         save_action.setShortcut("Ctrl+S")
         save_action.triggered.connect(self.save)
         options_menu.addAction(save_action)
 
         # save as menu item
-        saveas_action = QtGui.QAction("&Save As", options_menu)
+        saveas_action = QtWidgets.QAction("&Save As", options_menu)
         saveas_action.setShortcut("Ctrl+Shift+S")
         saveas_action.triggered.connect(self.saveas)
         options_menu.addAction(saveas_action)
 
         # load menu item
-        load_action = QtGui.QAction("&Open", options_menu)
+        load_action = QtWidgets.QAction("&Open", options_menu)
         load_action.setShortcut("Ctrl+O")
         load_action.triggered.connect(self.load)
         options_menu.addAction(load_action)
 
         if singular:
-            connect = QtGui.QAction("&Connection", options_menu)
-            connect.setShortcut('Alt+C')
-            connect.triggered.connect(lambda: self._gui.show_window(self._gui.liveDataHandler.getClient()))
+            connect = QtWidgets.QAction("&Connection", options_menu)
+            connect.setShortcut("Alt+C")
+            connect.triggered.connect(
+                lambda: self._gui.show_window(self._gui.liveDataHandler.getClient())
+            )
             options_menu.addAction(connect)
 
         self.code_area = LineTextWidget()
         top_layout.addWidget(self.code_area)
         self.code_area.setMouseTracking(True)
 
-        self.code_area.setText("#Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70")
+        self.code_area.setText(
+            "#Information on how to use this auto sequence manager: https://docs.google.com/presentation/d/1ovd95IWSdamBq9KX5BZLxof0ONpbLbK9XGYBpSTEeDo/edit#slide=id.g8b33905ada_2_70"
+        )
 
         butt_layout = QtWidgets.QHBoxLayout()
         self.run_button = QtWidgets.QPushButton("Execute")
@@ -392,19 +415,21 @@ class AutoManager(QtWidgets.QMainWindow):
         command_list = []
         for line in lines:  # loop parsing
             command_list.append(line.lstrip().lower().split(" "))
-        
+
         # minor code validation
         first_pharses = [c[0] for c in command_list]
         if first_pharses.count("set_addr") < 1:
             self.showDialog("set_addr command missing. Please set the target address.")
         elif first_pharses.count("loop") != first_pharses.count("end_loop"):
-            self.showDialog("Mismatched loop and end_loop statements. Number must match.")
+            self.showDialog(
+                "Mismatched loop and end_loop statements. Number must match."
+            )
         else:
             (constructed, i) = parse_auto(command_list)
             print(constructed, i)
             if i > 0:
                 self._gui.liveDataHandler.sendCommand(7, (constructed,))
-    
+
     def showDialog(self, msg):
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
@@ -414,7 +439,7 @@ class AutoManager(QtWidgets.QMainWindow):
         return msgBox.exec()
 
     def abort(self):
-        self._gui.liveDataHandler(8)
+        self._gui.liveDataHandler.sendCommand(8, None)
 
     def save(self):
         if self.path:
@@ -425,13 +450,15 @@ class AutoManager(QtWidgets.QMainWindow):
 
     def saveas(self):
         savename = QtGui.QFileDialog.getSaveFileName(
-            self, 'Save Config', 'autos/' + self.filename + '.txt', "MASAscript (*.txt)")[0]
+            self, "Save Config", "autos/" + self.filename + ".txt", "MASAscript (*.txt)"
+        )[0]
         with open(savename, "w") as f:
             f.write(self.code_area.getText())
 
     def load(self):
         loadname = QtGui.QFileDialog.getOpenFileName(
-            self, "Load Auto", "autos/", "MASAScript (*.txt)")[0]
+            self, "Load Auto", "autos/", "MASAScript (*.txt)"
+        )[0]
         with open(loadname, "r") as f:
             self.code_area.setText(f.read())
             self.filename = ntpath.basename(loadname).split(".")[0]
@@ -460,11 +487,11 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication.instance()
 
     # initialize application
-    APPID = 'MASA.AutoManager'  # arbitrary string
+    APPID = "MASA.AutoManager"  # arbitrary string
     app.setApplicationName("MASA GUI")
     app.setApplicationDisplayName("MASA GUI (Singular) - Autosequence Manager")
 
-    if os.name == 'nt':  # Bypass command because it is not supported on Linux
+    if os.name == "nt":  # Bypass command because it is not supported on Linux
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APPID)
     else:
         pass
