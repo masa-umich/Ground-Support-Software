@@ -1,6 +1,11 @@
 import traceback
 import sys
 
+import pandas as pd
+from synnax import TimeStamp
+
+from Python.synnax_log import generate_virtual_time, get_elapsed_time_channel
+
 
 class BinaryParser:
     """
@@ -10,9 +15,7 @@ class BinaryParser:
     def __init__(self, interface):
         self.interface = interface
 
-        self.dataframe = {}
-        for channel in self.interface.channels:
-            self.dataframe[channel] = ""
+        self.dataframe = pd.DataFrame()
 
     def get_logstring(self):
         """Constructs a datalog CSV row from current data
@@ -64,18 +67,9 @@ class BinaryParser:
             try:
                 if len(packet) > 0:
                     num_cons_zeros = 0
-
                     if open_new_file:
-                        datalog = open(
-                            filename.rstrip(".bin")
-                            + "_datalog_"
-                            + str(num_logs)
-                            + ".csv",
-                            "w",
-                        )  # tests are 1 indexed for consistency
-                        datalog.write(self.interface.get_header())  # csv header
+                        datalog =filename.rstrip(".bin") + "_datalog_" + str(num_logs) + ".csv"
                         open_new_file = False
-
                     if verbose:
                         print(len(packet))
                         print(bytes(packet))
@@ -88,24 +82,25 @@ class BinaryParser:
                         prefix = self.interface.getPrefix(
                             self.interface.getName(packet_addr)
                         )
-                        for key in new_data.keys():
-                            self.dataframe[str(prefix + key)] = new_data[key]
-                        # print(self.dataframe)
+                        series = pd.Series({f"{prefix}{key} (hs)": new_data[key] for key in new_data.keys()})
                         if datalog:
-                            datalog.write(self.get_logstring() + "\n")
+                            pd.concat([self.dataframe, series.to_frame().T], ignore_index=True)
                 else:
                     num_cons_zeros += 1
                     if num_cons_zeros >= 2000:  # Test delimiter
                         open_new_file = True
                         num_cons_zeros = 0
                         num_logs += 1
-                        if datalog:
-                            datalog.close()
             except:
                 traceback.print_exc()
-        if datalog:
-            datalog.close()
+        
+        self.dataframe = self.dataframe.dropna(axis=1, how="all")
+        channel = get_elapsed_time_channel(self.dataframe)
+        if channel is not None:
+            self.dataframe["Time"] = generate_virtual_time(TimeStamp.now(), channel)
 
+        if datalog:
+            self.dataframe.to_csv(datalog, index=False)
 
 if __name__ == "__main__":
     from s2Interface import S2_Interface
