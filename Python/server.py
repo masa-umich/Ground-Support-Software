@@ -1012,7 +1012,7 @@ class Server(QThread):  # See below
         """
 
         # Get time to start
-        data_dict_string = str(self.data_dict["Time"]) + ","
+        data_dict_string = str(int(self.data_dict["Time"])) + ","
 
         # For all channels (even if not connected), get the data and put it in the string
         for channel in self.interface.channels:

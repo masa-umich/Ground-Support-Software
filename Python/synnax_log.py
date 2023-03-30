@@ -32,6 +32,7 @@ def _synnax_shield(func):
 
     return wrapper
 
+
 def new_client() -> Synnax:
     return Synnax(
         host="10.0.0.15",
@@ -92,7 +93,6 @@ class SynnaxLog(io.DataFrameWriter):
         if self._client is not None:
             self._client.close()
 
-    
     def _new_writer(self, df: DataFrame):
         """Open a new writer for the channels in the given dataframe."""
         assert self._client is not None
@@ -109,8 +109,10 @@ class SynnaxLog(io.DataFrameWriter):
             time_threshold=self._time_threshold,
         )
 
+
 def generate_virtual_time(start: TimeStamp, data: np.ndarray) -> np.ndarray:
     return convert_time_units(data, "us", "ns") + start
+
 
 def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
     OPTIONS = ["ec.timestamp (hs)", "gse.timestamp (hs)", "fc.timestamp (hs)"]
@@ -118,6 +120,7 @@ def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
         if opt in df.columns:
             return df[opt].to_numpy(dtype=np.int64)
     return None
+
 
 def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
     if "Time" not in df.columns:
@@ -164,5 +167,3 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         valid_channels.extend([ch.name for ch in channels])
 
     return valid_channels
-
-
