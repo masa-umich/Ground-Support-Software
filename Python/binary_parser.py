@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 from synnax import TimeStamp
 
-from Python.synnax_log import generate_virtual_time, get_elapsed_time_channel
+from synnax_log import generate_virtual_time, get_elapsed_time_channel
 
 
 class BinaryParser:
@@ -16,6 +16,7 @@ class BinaryParser:
         self.interface = interface
 
         self.dataframe = pd.DataFrame()
+        self.data_list = []
 
     def get_logstring(self):
         """Constructs a datalog CSV row from current data
@@ -63,7 +64,8 @@ class BinaryParser:
         num_cons_zeros = 0  # Track consecutive 0s found in the binary - 2000 0's in a row signals the start of a log
         num_logs = 0
         open_new_file = False
-        for packet in packets:
+        counter = 0
+        for i, packet in enumerate(packets):
             try:
                 if len(packet) > 0:
                     num_cons_zeros = 0
@@ -77,23 +79,29 @@ class BinaryParser:
                     # print
                     if packet_addr != -1:
                         print(packet_addr)
+                        # print the progress
+                        counter += 1
+                        if counter > 100:
+                            print(f"Progress: {i/len(packets)}")
+                            counter = 0
+
                         new_data = self.interface.board_parser[packet_addr].dict
-                        # print(new_data)
                         prefix = self.interface.getPrefix(
                             self.interface.getName(packet_addr)
                         )
-                        series = pd.Series({f"{prefix}{key} (hs)": new_data[key] for key in new_data.keys()})
                         if datalog:
-                            pd.concat([self.dataframe, series.to_frame().T], ignore_index=True)
+                            self.data_list.append({f"{prefix}{key} (hs)": new_data[key] for key in new_data.keys()})
                 else:
                     num_cons_zeros += 1
+                    print("Opening new file")
                     if num_cons_zeros >= 2000:  # Test delimiter
                         open_new_file = True
                         num_cons_zeros = 0
                         num_logs += 1
             except:
                 traceback.print_exc()
-        
+
+        self.dataframe = pd.DataFrame.from_dict(self.data_list)
         self.dataframe = self.dataframe.dropna(axis=1, how="all")
         channel = get_elapsed_time_channel(self.dataframe)
         if channel is not None:

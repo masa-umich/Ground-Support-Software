@@ -10,6 +10,7 @@ from synnax import (
     BufferedDataFrameWriter,
     TimeStamp,
     Channel,
+    convert_time_units
 )
 
 from synnax import io
@@ -109,7 +110,7 @@ class SynnaxLog(io.DataFrameWriter):
         )
 
 def generate_virtual_time(start: TimeStamp, data: np.ndarray) -> np.ndarray:
-    return data * int(TimeSpan.NANOSECOND / TimeSpan.MICROSECOND) + start
+    return convert_time_units(data, "us", "ns") + start
 
 def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
     OPTIONS = ["ec.timestamp (hs)", "gse.timestamp (hs)", "fc.timestamp (hs)"]

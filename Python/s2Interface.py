@@ -501,9 +501,9 @@ class S2_Interface:
             print("Error when converting binary file to csv ", e)
             traceback.print_exc()
 
+        print(self.binparse.dataframe)
         try:
-            if self.binparse.dataframe.empty:
-                return
+            return
             client = new_client()
             channels = maybe_create_channels(client, self.binparse.dataframe)
             with client.new_writer(
@@ -514,7 +514,7 @@ class S2_Interface:
                 w.write(self.binparse.dataframe)
                 w.commit()
         except Exception as e:
-            print("Failed to dumpy data to synnax", e)
+            print("Failed to dump data to synnax", e)
             traceback.print_exc()
 
             
