@@ -78,6 +78,7 @@ class SynnaxLog(io.DataFrameWriter):
             self,
             df: DataFrame,
     ):
+        df = convert_df_to_fc(df)
         if self._client is None:
             return
         if not self._started:
@@ -123,7 +124,7 @@ def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
 
 
 def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
-    if "FCTime" not in df.columns:
+    if "aux.Time" not in df.columns:
         raise ValueError("Synnax Dataframe must have a column named 'Time'")
 
     columns = []
@@ -138,10 +139,10 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
             not_found.append(ch)
 
     valid_channels = list()
-    time_ch = [ch for ch in channels if ch.name == "FCTime"]
+    time_ch = [ch for ch in channels if ch.name == "aux.Time"]
     if len(time_ch) == 0:
         time_ch = client.channels.create(
-            name="FCTime", data_type=DataType.TIMESTAMP, is_index=True
+            name="aux.Time", data_type=DataType.TIMESTAMP, is_index=True
         )
         valid_channels.append(time_ch.name)
     else:
@@ -153,7 +154,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != "FCTime" and not col.startsWith("fc"):
+            if col != "FCTime":
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
@@ -168,3 +169,16 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         valid_channels.extend([ch.name for ch in channels])
 
     return valid_channels
+
+
+def to_fc(name: str) -> str:
+    return f"aux.{name}"
+
+
+def from_fc(name: str) -> str:
+    return name[4:]
+
+
+def convert_df_to_fc(df: DataFrame) -> DataFrame:
+    df.columns = [to_fc(col) for col in df.columns]
+    return df
