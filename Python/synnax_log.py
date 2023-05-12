@@ -58,6 +58,7 @@ class SynnaxLog(io.DataFrameWriter):
     _started: bool = False
     _size_threshold: int
     _time_threshold: TimeSpan
+    _prev_frame: DataFrame
 
     @_synnax_shield
     def __init__(
@@ -85,6 +86,7 @@ class SynnaxLog(io.DataFrameWriter):
             self._new_writer(df)
             self._started = True
         if self._wrapped is not None:
+            df = self._correct_frame(df)
             self._wrapped.write(df)
 
     @_synnax_shield
@@ -110,6 +112,18 @@ class SynnaxLog(io.DataFrameWriter):
             time_threshold=self._time_threshold,
         )
 
+    def _correct_frame(self, df: DataFrame) -> DataFrame:
+        if self._prev_frame is None:
+            return df
+
+        # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
+        # the first value in prev_frame
+        for col in df.columns:
+            for i in range(len(df[col])):
+                if abs(df[col][i]) > 1e5:
+                    df[col][i] = self._prev_frame[col][0]
+
+        return df
 
 def generate_virtual_time(start: TimeStamp, data: np.ndarray) -> np.ndarray:
     return convert_time_units(data, "us", "ns") + start
@@ -131,6 +145,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
     for col in df.columns.tolist():
         if col.startswith("fc"):
             columns.append(col)
+    print(columns)
     channels = client.channels.retrieve(columns, include_not_found=False)
     not_found = list()
     for ch in columns:
