@@ -128,7 +128,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
 
     columns = []
     for col in df.columns.tolist():
-        if col.startsWith("fc"):
+        if col.startswith("fc"):
             columns.append(col)
     channels = client.channels.retrieve(columns, include_not_found=False)
     not_found = list()
