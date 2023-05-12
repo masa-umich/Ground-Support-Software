@@ -127,17 +127,23 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         raise ValueError("Synnax Dataframe must have a column named 'Time'")
 
     columns = []
+    # Only get the columns that are not the flight computer
     for col in df.columns.tolist():
-        if not col.startsWith("fc"):
+        if not col.startswith("fc"):
             columns.append(col)
+
+    # Retrieve all of our channels
     channels = client.channels.retrieve(columns, include_not_found=False)
     not_found = list()
+    # Find which channels dont exist
     for ch in columns:
         _ch = [c for c in channels if c.name == ch]
         if len(_ch) == 0:
             not_found.append(ch)
 
     valid_channels = list()
+
+    # Get or create the time channel
     time_ch = [ch for ch in channels if ch.name == "Time"]
     if len(time_ch) == 0:
         time_ch = client.channels.create(
@@ -147,13 +153,14 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
     else:
         time_ch = time_ch[0]
 
+    # Create all the other channels
     to_create = list[Channel]()
     for col in columns:
         samples = df[col].to_numpy()
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != "Time" and not col.startsWith("fc"):
+            if col != "Time":
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
@@ -162,6 +169,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
             if can_cast(samples.dtype, ch.data_type.np):
                 valid_channels.append(ch.name)
 
+    # Create all the channels we need
     if len(to_create) > 0:
         print(f"[synnax] - creating {len(to_create)} channels")
         channels = client.channels.create(to_create)
