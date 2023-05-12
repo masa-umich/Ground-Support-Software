@@ -381,7 +381,7 @@ class DataViewer(QtWidgets.QTabWidget):
             channel_name = self.series[i].text()
             if channel_name in self.channels:
                 self.plot2.curves[channel_name].setData(
-                    x=data["Time"].to_numpy().astype(np.float64),
+                    x=data["FCTime"].to_numpy().astype(np.float64),
                     y=data[channel_name].to_numpy().astype(np.float64),
                 )
 
@@ -572,7 +572,7 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
         return
 
-        # packet["Time"] -= int(self.starttime) # time to elapsed
+        # packet["FCTime"] -= int(self.starttime) # time to elapsed
         last_frame = pd.DataFrame(packet, index=[0])
         self.database = pd.concat(
             [self.database, last_frame], axis=0, ignore_index=True
@@ -609,9 +609,9 @@ class DataViewerWindow(QtWidgets.QMainWindow):
 
                     # timestamps start when connection established, plot starts when channel name entered
                     timestamp = (
-                        self.database["Time"]
+                        self.database["FCTime"]
                         .to_numpy()
-                        .astype(np.float64)[self.database["Time"].size - 1]
+                        .astype(np.float64)[self.database["FCTime"].size - 1]
                     )
 
                     # size of database extends beyond range viewed, increase slider size
@@ -635,11 +635,11 @@ class DataViewerWindow(QtWidgets.QMainWindow):
                     # if here then database is full
 
                     end = int(
-                        self.database["Time"]
+                        self.database["FCTime"]
                         .to_numpy()
-                        .astype(np.float64)[self.database["Time"].size - 1]
+                        .astype(np.float64)[self.database["FCTime"].size - 1]
                     )
-                    start = int(self.database["Time"].to_numpy().astype(np.float64)[0])
+                    start = int(self.database["FCTime"].to_numpy().astype(np.float64)[0])
 
                     # slider size doesn't increase but values of min/max increment in order for range_update to work
                     if end >= self.viewers[idx].duration:

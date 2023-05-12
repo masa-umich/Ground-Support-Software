@@ -123,12 +123,12 @@ def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
 
 
 def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
-    if "Time" not in df.columns:
+    if "FCTime" not in df.columns:
         raise ValueError("Synnax Dataframe must have a column named 'Time'")
 
     columns = []
     for col in df.columns.tolist():
-        if not col.startsWith("fc"):
+        if col.startsWith("fc"):
             columns.append(col)
     channels = client.channels.retrieve(columns, include_not_found=False)
     not_found = list()
@@ -138,10 +138,10 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
             not_found.append(ch)
 
     valid_channels = list()
-    time_ch = [ch for ch in channels if ch.name == "Time"]
+    time_ch = [ch for ch in channels if ch.name == "FCTime"]
     if len(time_ch) == 0:
         time_ch = client.channels.create(
-            name="Time", data_type=DataType.TIMESTAMP, is_index=True
+            name="FCTime", data_type=DataType.TIMESTAMP, is_index=True
         )
         valid_channels.append(time_ch.name)
     else:
@@ -153,7 +153,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != "Time" and not col.startsWith("fc"):
+            if col != "FCTime" and not col.startsWith("fc"):
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
