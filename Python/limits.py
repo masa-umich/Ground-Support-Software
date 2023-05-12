@@ -262,7 +262,7 @@ class LimitWidget(QtWidgets.QWidget):
 
     def update_limits(self, last_packet: dict):
         if last_packet:
-            # last_packet["FCTime"] -= int(self.starttime) # time to elapsed
+            # last_packet["Time"] -= int(self.starttime) # time to elapsed
             for i in range(len(self.limits)):
                 channel = self.limits[i].channel.text()
                 if channel in self.channels:

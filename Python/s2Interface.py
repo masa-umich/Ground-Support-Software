@@ -507,7 +507,7 @@ class S2_Interface:
             client = new_client()
             channels = maybe_create_channels(client, self.binparse.dataframe)
             with client.new_writer(
-                self.binparse.dataframe["FCTime"].to_numpy(dtype=np.int64)[0],
+                self.binparse.dataframe["Time"].to_numpy(dtype=np.int64)[0],
                 channels,
                 strict=False
             ) as w:

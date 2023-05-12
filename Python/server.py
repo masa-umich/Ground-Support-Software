@@ -502,7 +502,7 @@ class Server(QThread):  # See below
         # Holds all the data sent from the boards as a dict. Also contains header that has server connection info
         # For example can call self.data_dict["ec.pressure[0]"] to get the pressure of channel 0 on ec
         self.data_dict = dict()
-        self.data_dict["FCTime"] = TimeStamp.now()
+        self.data_dict["Time"] = TimeStamp.now()
         self.data_dict["commander"] = self.commander
         self.data_dict["packet_num"] = self.packet_num
         self.data_dict["ser_open"] = self.interface.ser.is_open
@@ -619,7 +619,7 @@ class Server(QThread):  # See below
         self.data_dict["ser_open"] = self.interface.ser.is_open
         self.data_dict["actively_rx"] = self.is_actively_receiving_data
         self.data_dict["error_msg"] = self.current_error_message
-        self.data_dict["FCTime"] = TimeStamp.now()
+        self.data_dict["Time"] = TimeStamp.now()
 
     @pyqtSlot(object)
     def client_connection_closed(self, client_handler_thread: ClientConnectionHandler):
@@ -1012,7 +1012,7 @@ class Server(QThread):  # See below
         """
 
         # Get time to start
-        data_dict_string = str(int(self.data_dict["FCTime"])) + ","
+        data_dict_string = str(int(self.data_dict["Time"])) + ","
 
         # For all channels (even if not connected), get the data and put it in the string
         for channel in self.interface.channels:

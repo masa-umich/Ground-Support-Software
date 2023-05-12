@@ -105,7 +105,7 @@ class BinaryParser:
         self.dataframe = self.dataframe.dropna(axis=1, how="all")
         channel = get_elapsed_time_channel(self.dataframe)
         if channel is not None:
-            self.dataframe["FCTime"] = generate_virtual_time(TimeStamp.now(), channel)
+            self.dataframe["Time"] = generate_virtual_time(TimeStamp.now(), channel)
 
         if datalog:
             self.dataframe.to_csv(datalog, index=False)

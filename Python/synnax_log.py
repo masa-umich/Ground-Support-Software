@@ -154,7 +154,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != "FCTime":
+            if col != "Time":
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
