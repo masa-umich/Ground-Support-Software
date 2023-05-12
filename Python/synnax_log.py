@@ -58,6 +58,7 @@ class SynnaxLog(io.DataFrameWriter):
     _started: bool = False
     _size_threshold: int
     _time_threshold: TimeSpan
+    _prev_frame: DataFrame | None
 
     @_synnax_shield
     def __init__(
@@ -84,7 +85,7 @@ class SynnaxLog(io.DataFrameWriter):
             self._new_writer(df)
             self._started = True
         if self._wrapped is not None:
-            self._wrapped.write(df)
+            self._wrapped.write(self._correct_frame(df))
 
     @_synnax_shield
     def close(self):
@@ -108,6 +109,21 @@ class SynnaxLog(io.DataFrameWriter):
             size_threshold=self._size_threshold,
             time_threshold=self._time_threshold,
         )
+
+    def _correct_frame(self, df: DataFrame) -> DataFrame:
+        if self._prev_frame is None:
+            return df
+
+        # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
+        # the first value in prev_frame
+        for col in df.columns:
+            if "time" not in col:
+                for i in range(len(df[col])):
+                    if abs(df[col][i]) > 1e5:
+                        df[col][i] = self._prev_frame[col][0]
+
+        self._prev_frame = df
+        return df
 
 
 def generate_virtual_time(start: TimeStamp, data: np.ndarray) -> np.ndarray:
