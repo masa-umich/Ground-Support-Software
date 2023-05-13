@@ -142,7 +142,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
     if "aux.Time" not in df.columns:
         raise ValueError("Synnax Dataframe must have a column named 'Time'")
 
-    columns = df.columns
+    columns = df.columns.tolist()
     channels = client.channels.retrieve(columns, include_not_found=False)
     not_found = list()
     for ch in columns:
@@ -151,10 +151,10 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
             not_found.append(ch)
 
     valid_channels = list()
-    time_ch = [ch for ch in channels if ch.name == "aux.Time"]
+    time_ch = [ch for ch in channels if ch.name == to_fc("Time")]
     if len(time_ch) == 0:
         time_ch = client.channels.create(
-            name="aux.Time", data_type=DataType.TIMESTAMP, is_index=True
+            name=to_fc("Time"), data_type=DataType.TIMESTAMP, is_index=True
         )
         valid_channels.append(time_ch.name)
     else:
@@ -166,7 +166,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != "aux.Time":
+            if col != to_fc("Time"):
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
