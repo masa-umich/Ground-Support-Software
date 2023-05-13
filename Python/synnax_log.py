@@ -117,7 +117,7 @@ class SynnaxLog(io.DataFrameWriter):
         # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
         # the first value in prev_frame
         for col in df.columns:
-            if "time" not in col:
+            if "time" not in col and "Time" not in col:
                 for i in range(len(df[col])):
                     if abs(df[col][i]) > 1e5:
                         df[col][i] = self._prev_frame[col][0]
