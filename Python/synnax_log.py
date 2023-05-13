@@ -58,7 +58,7 @@ class SynnaxLog(io.DataFrameWriter):
     _started: bool = False
     _size_threshold: int
     _time_threshold: TimeSpan
-    _prev_frame: DataFrame
+    _prev_frame: DataFrame | None
 
     @_synnax_shield
     def __init__(
@@ -73,6 +73,7 @@ class SynnaxLog(io.DataFrameWriter):
             raise e
         self._size_threshold = size_threshold
         self._time_threshold = time_threshold
+        self._prev_frame = None
 
     @_synnax_shield
     def write(
