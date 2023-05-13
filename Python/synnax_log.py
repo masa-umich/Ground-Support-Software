@@ -114,11 +114,14 @@ class SynnaxLog(io.DataFrameWriter):
         if self._prev_frame is None:
             return df
 
-        # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
+        # Iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
         # the first value in prev_frame
         for col in df.columns:
             if "time" not in col and "Time" not in col:
                 for i in range(len(df[col])):
+                    v = df[col][i]
+                    if v is None or not isinstance(v, (float, int)):
+                        continue
                     if abs(df[col][i]) > 1e5:
                         df[col][i] = self._prev_frame[col][0]
 
