@@ -127,6 +127,8 @@ class SynnaxLog(io.DataFrameWriter):
                         continue
                     if abs(df[col][i]) > 1e5:
                         df[col][i] = self._prev_frame[col][0]
+
+        self._prev_frame = df
         return df
 
 
