@@ -51,7 +51,7 @@ class SynnaxLog(io.DataFrameWriter):
 
     DEFAULT_SIZE_THRESHOLD = 400 * 500
     # buffer size of 2 seconds with 20hz sampling rate,
-    DEFAULT_TIME_THRESHOLD = TimeSpan.SECOND * 2
+    DEFAULT_TIME_THRESHOLD = TimeSpan.SECOND * 1
 
     _client: Synnax | None = None
     _wrapped: io.DataFrameWriter | None = None
@@ -119,7 +119,7 @@ class SynnaxLog(io.DataFrameWriter):
         # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
         # the first value in prev_frame
         for col in df.columns:
-            if "time" not in col:
+            if "time" not in col and "Time" not in col:
                 for i in range(len(df[col])):
                     if abs(df[col][i]) > 1e5:
                         df[col][i] = self._prev_frame[col][0]
@@ -139,7 +139,8 @@ def get_elapsed_time_channel(df: DataFrame) -> np.ndarray | None:
 
 
 def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
-    if "aux.Time" not in df.columns:
+    time_channel_name = to_fc("Time")
+    if time_channel_name not in df.columns:
         raise ValueError("Synnax Dataframe must have a column named 'Time'")
 
     columns = []
@@ -155,10 +156,10 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
             not_found.append(ch)
 
     valid_channels = list()
-    time_ch = [ch for ch in channels if ch.name == to_fc("Time")]
+    time_ch = [ch for ch in channels if ch.name == time_channel_name]
     if len(time_ch) == 0:
         time_ch = client.channels.create(
-            name=to_fc("Time"), data_type=DataType.TIMESTAMP, is_index=True
+            name=time_channel_name, data_type=DataType.TIMESTAMP, is_index=True
         )
         valid_channels.append(time_ch.name)
     else:
@@ -170,7 +171,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if samples.dtype != np.int64 and samples.dtype != np.float64:
             continue
         if col in not_found:
-            if col != to_fc("Time"):
+            if col != time_channel_name:
                 to_create.append(
                     Channel(name=col, data_type=np.float64, index=time_ch.key)
                 )
