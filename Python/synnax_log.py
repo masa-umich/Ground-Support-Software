@@ -114,6 +114,7 @@ class SynnaxLog(io.DataFrameWriter):
 
     def _correct_frame(self, df: DataFrame) -> DataFrame:
         if self._prev_frame is None:
+            self._prev_frame = df
             return df
 
         # iterate over data in data frame. If the absolute value of any value is greater than 1e5, then set if to
