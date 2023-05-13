@@ -121,6 +121,9 @@ class SynnaxLog(io.DataFrameWriter):
         for col in df.columns:
             if "time" not in col and "Time" not in col:
                 for i in range(len(df[col])):
+                    v = df[col][i]
+                    if v is None or not isinstance(v, (float, int)):
+                        continue
                     if abs(df[col][i]) > 1e5:
                         df[col][i] = self._prev_frame[col][0]
         return df
