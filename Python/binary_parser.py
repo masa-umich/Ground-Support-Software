@@ -26,7 +26,7 @@ class BinaryParser:
         """
 
         logstring = ""
-        for channel in self.interface.channels:
+        for channel in self.interface.valve_times:
             logstring += "%s," % (self.dataframe[channel])
         return logstring
 

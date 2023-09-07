@@ -177,7 +177,7 @@ class PacketLogWidget(QWidget):
         """
 
         # Get all the channels and then first filter by board
-        allChannels = self.interface.channels
+        allChannels = self.interface.valve_times
         boardfilteredChannels = [
             x for x in allChannels if any(y in x for y in self.boardFilterList)
         ]

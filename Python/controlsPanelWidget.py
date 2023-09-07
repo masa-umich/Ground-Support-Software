@@ -25,7 +25,7 @@ class ControlsPanelWidget(QWidget):
         self.painter = QPainter()
 
         # Keeps track of the differnt channels in boxes
-        self.sensor_channels = self.interface.channels
+        self.sensor_channels = self.interface.valve_times
         self.valve_channels = []
         self.motor_channels = []
         self.tank_channels = []

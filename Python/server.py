@@ -27,6 +27,7 @@ import pandas as pd
 from synnax import TimeStamp
 from synnax.io import DataFrameWriter
 from synnax_log import SynnaxLog
+from synnax_cmd import SynnaxCommander
 
 from constants import Constants
 from party import PartyParrot
@@ -460,6 +461,7 @@ class Server(QThread):  # See below
     """
 
     synnax_log: DataFrameWriter
+    synnax_cmd: SynnaxCommander
 
     statusBarMessageSignal = pyqtSignal(str, bool)
     logSignal = pyqtSignal(str, str)
@@ -533,6 +535,7 @@ class Server(QThread):  # See below
         self._num_update_steps = 0
         self._last_update_time = time.time()
 
+        self.synnax_cmd = SynnaxCommander(self)
         # Start main server thread
         self.start()
 

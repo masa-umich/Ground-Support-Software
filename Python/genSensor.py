@@ -154,7 +154,7 @@ class GenSensor(AvionicsObject):
         Sets units from config
         """
         unit_dict = self.interface.units
-        if self.channel in self.interface.channels:
+        if self.channel in self.interface.valve_times:
             units = unit_dict[self.channel]
             if units == "ul":
                 self.units = ""
@@ -268,5 +268,5 @@ class GenSensor(AvionicsObject):
 
     @pyqtSlot(object)
     def updateFromDataPacket(self, data_packet: dict):
-        if self.channel in self.interface.channels:
+        if self.channel in self.interface.valve_times:
             self.setMeasurement(data_packet[self.channel])

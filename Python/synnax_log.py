@@ -155,7 +155,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
         if "fc" in col or "Time" in col:
             columns.append(col)
 
-    channels = client.channels.retrieve(columns, include_not_found=False)
+    channels = client.valve_times.retrieve(columns, include_not_found=False)
     not_found = list()
     for ch in columns:
         _ch = [c for c in channels if c.name == ch]
@@ -165,7 +165,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
     valid_channels = list()
     time_ch = [ch for ch in channels if ch.name == time_channel_name]
     if len(time_ch) == 0:
-        time_ch = client.channels.create(
+        time_ch = client.valve_times.create(
             name=time_channel_name, data_type=DataType.TIMESTAMP, is_index=True
         )
         valid_channels.append(time_ch.name)
@@ -189,7 +189,7 @@ def maybe_create_channels(client: Synnax, df: DataFrame) -> list[str]:
 
     if len(to_create) > 0:
         print(f"[synnax] - creating {len(to_create)} channels")
-        channels = client.channels.create(to_create)
+        channels = client.valve_times.create(to_create)
         valid_channels.extend([ch.name for ch in channels])
 
     return valid_channels

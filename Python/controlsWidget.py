@@ -49,7 +49,7 @@ class ControlsWidget(QWidget):
         self.gui = parent.gui
 
         self.interface = self.window.interface
-        self.channels = self.interface.channels
+        self.channels = self.interface.valve_times
 
         self.left = 0
         self.top = 0
